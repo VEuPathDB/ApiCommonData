@@ -17,7 +17,7 @@ GetOptions(
   'a|args=s' => \@queryArgs
 );
 
-my $ontdir = $ENV{PROJECT_HOME} . "/ApiCommonData/Load/ontology/release/production";
+my $ontdir = $ENV{GUS_HOME} . "/ontology/release/production";
 
 unless($ont){
 	opendir(DH, $ontdir);

@@ -121,9 +121,9 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-    my $allTerms = $self->addNonOntologicalLeaves($ontologyTerms, $studyId);
 
-    $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $allTerms);
+    $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
+    $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForNonontologicalLeaves($studyId, $ontologyTerms);
 
     $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
   }
@@ -132,8 +132,8 @@ sub run {
 }
 
 
-sub addNonOntologicalLeaves {
-  my ($self, $terms, $studyId) = @_;
+sub constructAndSubmitAttributeGraphsForNonontologicalLeaves {
+  my ($self, $studyId, $ontologyTerms) = @_;
 
   my $sql = "select distinct a.stable_id as source_id, a.parent_ontology_term_id, pt.source_id as parent_source_id, a.display_name
 from $SCHEMA.attribute a, $SCHEMA.entitytype et, sres.ontologyterm pt
@@ -147,21 +147,66 @@ and a.ontology_term_id is null";
   $sh->execute($studyId);
 
 
+  my $attributeGraphCount;
+  NONONTOLOGICAL_LEAF:
   while(my $hash = $sh->fetchrow_hashref()) {
     my $sourceId = $hash->{SOURCE_ID};
+    my $parentSourceId = $hash->{PARENT_SOURCE_ID};
+    my $displayName = $hash->{DISPLAY_NAME};
+    my $parentOntologyTerm =  $ontologyTerms->{$parentSourceId};
+    $self->error("Parent $parentSourceId of nonontological leaf $sourceId not found ")
+      unless $parentOntologyTerm;
 
-    if($terms->{$sourceId}) {
+    if($ontologyTerms->{$sourceId}) {
       $self->log("WARNING: Stable Id $sourceId found in BOTH ontology AND nonontological leaf; using parent relation from the latter");
+      next NONONTOLOGICAL_LEAF;
     }
-
-    $terms->{$sourceId} = $hash;
+    my $attributeGraph = $self->createAttributeGraphForNonontologicalLeaf($studyId, $sourceId, $displayName, $parentOntologyTerm);
+    
+    $attributeGraph->submit();
+    $attributeGraphCount++;
+    if ($attributeGraphCount % 1000 == 0){
+      $self->undefPointerCache();
+    }
   }
-  $sh->finish();
 
-  return $terms;
+  $self->undefPointerCache();
+  $sh->finish();
+  return $attributeGraphCount;
 }
 
-
+sub createAttributeGraph {
+  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $parentOntologyTermId, $displayName, $ontologyTerm) = @_;
+  return $self->getGusModelClass('AttributeGraph')->new({study_id => $studyId,
+                                                                 stable_id => $stableId,
+                                                                 ontology_term_id => $ontologyTermId,
+                                                                 parent_stable_id => $parentStableId,
+                                                                 parent_ontology_term_id => $parentOntologyTermId,
+                                                                 provider_label => $ontologyTerm->{PROVIDER_LABEL},
+                                                                 display_name => $displayName,
+                                                                 display_type => $ontologyTerm->{DISPLAY_TYPE}, 
+                                                                 hidden => $ontologyTerm->{HIDDEN}, 
+                                                                 display_range_min => $ontologyTerm->{DISPLAY_RANGE_MIN},
+                                                                 display_range_max => $ontologyTerm->{DISPLAY_RANGE_MAX},
+                                                                 bin_width_override => $ontologyTerm->{BIN_WIDTH_OVERRIDE},
+                                                                 is_temporal => $ontologyTerm->{IS_TEMPORAL},
+                                                                 is_featured => $ontologyTerm->{IS_FEATURED},
+                                                                 is_repeated => $ontologyTerm->{IS_REPEATED},
+                                                                 is_merge_key => $ontologyTerm->{IS_MERGE_KEY},
+                                                                 impute_zero => $ontologyTerm->{IMPUTE_ZERO},
+                                                                 display_order => $ontologyTerm->{DISPLAY_ORDER},
+                                                                 definition => $ontologyTerm->{DEFINITION},
+                                                                 ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
+                                                                });
+}
+sub createAttributeGraphForTerm {
+  my ($self, $studyId, $sourceId, $ontologyTerm) = @_;
+  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_SOURCE_ID}, $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
+}
+sub createAttributeGraphForNonontologicalLeaf {
+  my ($self, $studyId, $sourceId, $displayName, $parentOntologyTerm) = @_;
+  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentOntologyTerm->{SOURCE_ID}, $parentOntologyTerm->{ONTOLOGY_TERM_ID}, $displayName, $parentOntologyTerm);
+}
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
   my ($self, $studyId, $ontologyTerms) = @_;
 
@@ -169,31 +214,16 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
 
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
+    my $attributeGraph = $self->createAttributeGraphForTerm($studyId, $sourceId, $ontologyTerm);
     
-    my $attributeGraph = $self->getGusModelClass('AttributeGraph')->new({study_id => $studyId,
-                                                                 ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                                 stable_id => $sourceId,
-                                                                 parent_stable_id => $ontologyTerm->{PARENT_SOURCE_ID},
-                                                                 parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
-                                                                 provider_label => $ontologyTerm->{PROVIDER_LABEL},
-                                                                 display_name => $ontologyTerm->{DISPLAY_NAME}, 
-                                                                 display_type => $ontologyTerm->{DISPLAY_TYPE}, 
-                                                                 display_range_min => $ontologyTerm->{DISPLAY_RANGE_MIN},
-                                                                 display_range_max => $ontologyTerm->{DISPLAY_RANGE_MAX},
-                                                                 bin_width_override => $ontologyTerm->{BIN_WIDTH_OVERRIDE},
-                                                               #  is_hidden => $ontologyTerm->{IS_HIDDEN},
-                                                                 is_temporal => $ontologyTerm->{IS_TEMPORAL},
-                                                                 is_featured => $ontologyTerm->{IS_FEATURED},
-                                                                 is_repeated => $ontologyTerm->{IS_REPEATED},
-                                                                 is_merge_key => $ontologyTerm->{IS_MERGE_KEY},
-                                                                 display_order => $ontologyTerm->{DISPLAY_ORDER},
-                                                                 definition => $ontologyTerm->{DEFINITION},
-                                                                 ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
-                                                                });
     $attributeGraph->submit();
     $attributeGraphCount++;
+    if ($attributeGraphCount % 1000 == 0){
+      $self->undefPointerCache();
+    }
   }
 
+  $self->undefPointerCache();
   return $attributeGraphCount;
 }
 

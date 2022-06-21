@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 package ApiCommonData::Load::OwlReader;
-## TODO
-## move to another package tree where it belongs (???)
 use Digest::MD5;
 use RDF::Trine;
 use RDF::Query;
-use File::Basename;
+use File::Temp qw/tempfile/;
+use File::Copy qw/move/;
+use File::Basename qw/basename dirname/;
+use JSON qw/to_json/;
 use Env qw/PROJECT_HOME SPARQLPATH/;
 use Data::Dumper;
 
@@ -59,21 +60,44 @@ sub loadOwl {
 		unlink($dbfile);
 		$self->writeMD5($owlFile);
 	}
-	my $model = RDF::Trine::Model->new(
-	    RDF::Trine::Store::DBI->new(
-	        $name,
-	        "dbi:SQLite:dbname=$dbfile",
-	        '',  # no username
-	        '',  # no password
-	    ),
-	);
-	unless( $exists ) { ## assumes existing dbfile is loaded
-		my $parser = RDF::Trine::Parser->new('rdfxml');
-		$parser->parse_file_into_model(undef, $owlFile, $model);
+	if ( not $exists ) {
+            store_model_in_dbfile($owlFile, $name, $dbfile);
 	}
-	$self->{config}->{model} = $model;
+	$self->{config}->{model} = read_model_from_dbfile($name, $dbfile);
 }
-	
+
+sub store_model_in_dbfile {
+  my ($owlFile, $name, $dbfile) = @_;
+  # create dbfile atomically
+  # otherwise another process might start reading from an incomplete file
+  my ($fh, $tempFilePath) = tempfile( "tmpfileXXXXX", DIR => dirname($dbfile));
+  my $model = RDF::Trine::Model->new(
+      RDF::Trine::Store::DBI->new(
+  	$name,
+  	"dbi:SQLite:dbname=$tempFilePath",
+  	'',  # no username
+  	'',  # no password
+      ),
+  );
+  my $parser = RDF::Trine::Parser->new('rdfxml');
+  $parser->parse_file_into_model(undef, $owlFile, $model);
+  move("$tempFilePath", "$dbfile");
+
+
+}
+
+sub read_model_from_dbfile {
+  my ($name, $dbfile) = @_;
+  return RDF::Trine::Model->new(
+      RDF::Trine::Store::DBI->new(
+  	$name,
+  	"dbi:SQLite:dbname=$dbfile",
+  	'',  # no username
+  	'',  # no password
+      ),
+  );
+
+}	
 
 
 sub getLabelsAndParentsHashes {
@@ -93,11 +117,13 @@ sub getLabelsAndParentsHashes {
 		my $col = $row->{column} ? $row->{column}->as_hash()->{literal} : "";
 		my $label = $row->{label} ? $row->{label}->as_hash()->{literal} : "";
 		my $order = $row->{order} ? $row->{order}->as_hash()->{literal} : 99;
+		my $category = $row->{category} ? $row->{category}->as_hash()->{literal} : "";
 		my $repeated = $row->{repeated} ? $row->{repeated}->as_hash()->{literal} : "";
     if($repeated){ $repeated =~ s/^"|"$//g }
 		$propertyOrder->{$sourceid} = $order;
 		$propertyNames->{$sourceid} ||= $label; ## do not overwrite first label, use label that appears first in the OWL
     $otherAttrs->{$sourceid}->{repeated} = $repeated;
+    $otherAttrs->{$sourceid}->{category} = lc($category);
 	}
 	foreach my $parentid (keys %$propertySubclasses){
 		$propertyOrder->{$parentid} ||= 99;
@@ -237,6 +263,33 @@ sub getVariable {
     $seen{$sid} = join(",", sort @$vars);
   }
 	return \%seen;
+}
+
+sub getAnnotationProperties {
+  my ($self) = @_;
+  my %props;
+  my $it = $self->execute('get_entity_attributes');
+  while (my $row = $it->next) {
+    my $termId = $row->{sid}->as_hash->{literal};
+    my $attribName = $row->{ label }->as_hash->{literal};
+    my $attribValue = $row->{ value }->as_hash->{literal};
+    next unless ($attribValue ne "");
+    $props{$termId} ||= {};
+    $props{$termId}->{$attribName} ||= [];
+    push(@{$props{$termId}->{$attribName}},$attribValue);
+  }
+  return \%props;
+}
+
+sub getAnnotationPropertiesJSON {
+  my ($self) = @_;
+  my $props = $self->getAnnotationProperties();
+  while(my ($termId,$termprops) = each %$props){
+    my $json = to_json($termprops);
+    next if $json eq '{}';
+    $props->{$termId} = $json;
+  }
+  return $props;
 }
 
 sub getSourceIdFromIRI {

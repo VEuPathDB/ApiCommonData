@@ -1,35 +1,67 @@
-IRI,label,variable,displayOrder,dataFile,definition,category,parentIRI,parentLabel,codebookDescription,codebookValues,termType,repeated,is_temporal,mergeKey,dataSet,replaces,unitLabel,unitIRI,is_featured,hidden,scale,defaultDisplayRangeMin,defaultDisplayRangeMax,defaultBinWidth
-http://purl.obolibrary.org/obo/EUPATH_0035127,Community,,2,,,Community,http://www.w3.org/2002/07/owl#Thing,,,,category,,,,West Africa ICEMR,,,,,yes,,,,
-http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,,1,,,Community,http://purl.obolibrary.org/obo/EUPATH_0035127,Community,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/ENVO_00000009,Country,crf1_mali project 1 data::country,1,crf1_mali project 1 data,,Community,http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,Country of pt enrollment,"1, no, Senegal
-2, no, Gambia
-3, no, Mali",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000452,Region in Mali,crf1_mali project 1 data::region,1,crf1_mali project 1 data,,Community,http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,Region of Pt enrollment,"1, no, THIES
-2, no, GAMBISSARA
-3, no, SEGOU
-4, no, KOULIKORO",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/ENVO_01000773,Village,crf1_mali project 1 data::village,3,crf1_mali project 1 data,,Community,http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,Village of Residence (Choose only one answer),"1, no, Medina Fall
-2, no, Gambissara town
-3, no, Sare Jawbeh
-4, no, Fula Mori Boch
-5, no, Sare Bondo
-6, no, Dangassa
-7, no, Koila Bamana
-66, no, Other
--77, no, Missing",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0025072,Health center,crf1_mali project 1 data::hc,2,crf1_mali project 1 data,,Community,http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,Health Center of the point of enrollment,"1, no, SLAP
+"IRI","label","variable","displayOrder","dataFile","definition","category","parentIRI","parentLabel","codebookDescription","codebookValues","termType","repeated","is_temporal","mergeKey","dataSet","replaces","unitLabel","unitIRI","is_featured","hidden","scale","defaultDisplayRangeMin","defaultDisplayRangeMax","defaultBinWidth","forceStringType"
+"http://purl.obolibrary.org/obo/PCO_0000024","Household","","","","","Household","http://www.w3.org/2002/07/owl#Thing","","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021094","Study site","3_observations_passive_case_dete::study_site | 1_participants::study_site | 2_observations_cross::study_site","1","2_observations_cross | 1_participants | 3_observations_passive_case_dete","","Household","http://purl.obolibrary.org/obo/GAZ_00000448","Geographic location","","","variable","yes","","","West Africa ICEMR","","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0025072","Health center","1_participants::hc | 2_observations_cross::hc | 3_observations_passive_case_dete::hc","2","2_observations_cross | 1_participants | 3_observations_passive_case_dete","","Household","http://purl.obolibrary.org/obo/GAZ_00000448","Geographic location","Health Center of the point of enrollment","1, no, SLAP de This
 2, no, Medina Fall Post1
 3, no, Medina Fall Post2
 4, no, Gambissara HC
 5, no, Cscom Dangassa
 6, no, Cscom Kolia Bambana
 7, no, Not in a HC
--77, no, Missing",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,1,,,Participant,http://www.w3.org/2002/07/owl#Thing,,,,category,,,,West Africa ICEMR,,,,,yes,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000120,Age at enrollment,crf1_mali project 1 data::age,3,crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0010035,Administrative information,,,variable,,,,West Africa ICEMR,,years,http://purl.obolibrary.org/obo/UO_0000036,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000151,Enrollment date,crf1_mali project 1 data::doc,2,crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0010035,Administrative information,Date of signature of the assent/consent form,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/IAO_0000414,Weight,crf1_mali project 1 data::weight | crf9_mali project 1 data::weight,1,crf1_mali project 1 data | crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000649,Anthropometry,Weight,,variable,yes,,,West Africa ICEMR,EUPATH_0000732,kg,http://purl.obolibrary.org/obo/UO_0000009,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027017,Month of fever or malaria in last 6 months,crf9_mali project 1 data::b22,1,crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,"If yes, at which month (three first letters; -88 no episode; -99 patient does not know","1, no, Jan
+-77, no, Missing","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027061","Neighborhood","2_observations_cross::nborhood | 3_observations_passive_case_dete::nborhood | 1_participants::nborhood","3","3_observations_passive_case_dete | 1_participants | 2_observations_cross","","Household","http://purl.obolibrary.org/obo/GAZ_00000448","Geographic location","","","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/GAZ_00000448","Geographic location","","","","","Household","http://purl.obolibrary.org/obo/PCO_0000024","Household","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","","","Participant","http://www.w3.org/2002/07/owl#Thing","","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003075","Age at enrollment","1_participants::age","","1_participants","","Participant","http://purl.obolibrary.org/obo/EUPATH_0010035","Administrative information","C.3 CRF1","","variable","","","","West Africa ICEMR","EUPATH_0000120","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/IAO_0000414","Weight","1_participants::weight | 3_observations_passive_case_dete::body_weight | 2_observations_cross::weight","","2_observations_cross | 3_observations_passive_case_dete | 1_participants","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000649","Anthropometry","Body weight","-99, -99, Unknown
+-77, -77, Missing | -77, -77, Missing on the form","variable","yes","","","West Africa ICEMR","","kg","http://purl.obolibrary.org/obo/UO_0000009","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027015","Fever or malaria in last 6 months","2_observations_cross::b2","1","2_observations_cross","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Has the patient had an episode of fever/ malaria in the past 6 months","1, no, Yes
+0, no, No
+-77, no, Missing in the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027053","Co-trimoxazole in last 2 weeks treatment duration","3_observations_passive_case_dete::g21_duration","10","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027051","Co-trimoxazole in last 2 weeks doses per day","3_observations_passive_case_dete::g23_doses_day","11","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027052","Co-trimoxazole in last 2 weeks last date used","3_observations_passive_case_dete::g22_date_last_used","12","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027104","Tetracycline in last 2 weeks treatment duration","3_observations_passive_case_dete::g31_duration","13","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027102","Tetracycline in last 2 weeks doses per day","3_observations_passive_case_dete::g33_doses_day","14","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027103","Tetracycline in last 2 weeks last date used","3_observations_passive_case_dete::g32_date_last_used","15","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027066","Other antibiotics in last 2 weeks treatment duration","3_observations_passive_case_dete::g41_duration","16","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027063","Other antibiotics in last 2 weeks doses per day","3_observations_passive_case_dete::g43_doses_day","17","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027064","Other antibiotics in last 2 weeks last date used","3_observations_passive_case_dete::g42_date_last_used","18","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027065","Other antibiotics in last 2 weeks specified","3_observations_passive_case_dete::g44_other_antibiotic","19","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","If other in G.4, specify:","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027016","Fever or malaria in last 6 months count","2_observations_cross::b21","2","2_observations_cross","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","B.2.1 If yes, how many","-99, -99, Does not know
+-88, -88, Skip; no episodes
+-77, -77, Missing in the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027032","Antimalarial in last 2 weeks","3_observations_passive_case_dete::antimalaria","20","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Antimalaria treatment","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027099","Sulfadoxine/pyrimethamine in last 2 weeks treatment duration","3_observations_passive_case_dete::h11_duration","21","3_observations_passive_case_dete","Duration of taking sulfadoxine/pyrimethamine (SP) in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027097","Sulfadoxine/pyrimethamine in last 2 weeks doses per day","3_observations_passive_case_dete::h13_doses_day","22","3_observations_passive_case_dete","Number of sulfadoxine/pyrimethamine (SP) doses per day in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027098","Sulfadoxine/pyrimethamine in last 2 weeks last date used","3_observations_passive_case_dete::h12_date_last_used","23","3_observations_passive_case_dete","Last date of taking sulfadoxine/pyrimethamine (SP) in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027041","Artemether/lumefantrine in last 2 weeks treatment duration","3_observations_passive_case_dete::h21_duration","24","3_observations_passive_case_dete","Duration of taking artemether/lumefantrine (AL) in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027039","Artemether/lumefantrine in last 2 weeks doses per day","3_observations_passive_case_dete::h23_doses_day","25","3_observations_passive_case_dete","Number of artemether/lumefantrine (AL) doses per day in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027040","Artemether/lumefantrine in last 2 weeks last date used","3_observations_passive_case_dete::h22_date_last_used","26","3_observations_passive_case_dete","Last date of taking artemether/lumefantrine (AL) in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027094","Quinine in last 2 weeks treatment duration","3_observations_passive_case_dete::h31_duration","27","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027092","Quinine in last 2 weeks doses per day","3_observations_passive_case_dete::h33_doses_day","28","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027093","Quinine in last 2 weeks last date used","3_observations_passive_case_dete::h32_date_last_used","29","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027017","Month of fever or malaria in last 6 months","2_observations_cross::b22","3","2_observations_cross","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","B.2.2 If yes, at which month","1, no, Jan
 2, no, Feb
 3, no, Mar
 4, no, Apr
@@ -43,118 +75,340 @@ http://purl.obolibrary.org/obo/EUPATH_0027017,Month of fever or malaria in last 
 12, no, Dec
 -88, no, no episode
 -99, no, patient does not know
--77, no, missing in the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027015,Fever or malaria in last 6 months,crf9_mali project 1 data::b2,2,crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,Has the patient had an episode of fever/ malaria in the past 6 months,"1, no, Yes
-0, no, No
--77, no, Missing in the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027016,Fever or malaria in last 6 months count,crf9_mali project 1 data::b21,3,crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history," If yes, how many ",,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027018,Fever or malaria in last 6 months diagnostic method,crf9_mali project 1 data::b23,4,crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,"If yes, how was the diagnosis made ?","1, no, Blood test
+-77, no, missing in the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027047","Artesunate/sulfadoxine/pyrimethamine in last 2 weeks treatment duration","3_observations_passive_case_dete::h41_duration","30","3_observations_passive_case_dete","Duration of taking artesunate/sulfadoxine/pyrimethamine (ASP) in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027045","Artesunate/sulfadoxine/pyrimethamine in last 2 weeks doses per day","3_observations_passive_case_dete::h43_doses_day","31","3_observations_passive_case_dete","Number of artesunate/sulfadoxine/pyrimethamine (ASP) doses per day in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027046","Artesunate/sulfadoxine/pyrimethamine in last 2 weeks last date used","3_observations_passive_case_dete::h42_date_last_used","32","3_observations_passive_case_dete","Last date of taking artesunate/sulfadoxine/pyrimethamine (ASP) in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027028","Amodiaquine/artesunate in last 2 weeks treatment duration","3_observations_passive_case_dete::h51_duration","33","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027026","Amodiaquine/artesunate in last 2 weeks doses per day","3_observations_passive_case_dete::h53_doses_day","34","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027027","Amodiaquine/artesunate in last 2 weeks last date used","3_observations_passive_case_dete::h52_date_last_used","35","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027023","Amodiaquine in last 2 weeks treatment duration","3_observations_passive_case_dete::h71_duration","36","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027021","Amodiaquine in last 2 weeks doses per day","3_observations_passive_case_dete::h73_doses_day","37","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027022","Amodiaquine in last 2 weeks last date used","3_observations_passive_case_dete::h72_date_last_used","38","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027073","Other antimalarial in last 2 weeks treatment duration","3_observations_passive_case_dete::h91_duration","39","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027018","Fever or malaria in last 6 months diagnostic method","2_observations_cross::b23","4","2_observations_cross","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","B.2.3 If yes, how was the diagnosis made ?","1, no, Blood test
 0, no, No blood test
 -99, no, Does not know
 -88, no, No malaria
--77, no, Missing in the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://www.ebi.ac.uk/efo/EFO_0004950,Birth date,crf1_mali project 1 data::dob,5,crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,C1_CRF1,,variable,,,,West Africa ICEMR,,,,,yes,,,,
-http://purl.obolibrary.org/obo/PATO_0000047,Sex,crf1_mali project 1 data::gender,6,crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,C2_CRF1,"1, no, Male
-2, no, Female
--77, no, Missing",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OMRSE_00000205,Ethnicity,crf1_mali project 1 data::ethnicity | crf1_mali project 1 data::spec_ethinicity,7,crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,C4_1_CRF1 | C4_CRF1,"3    Peulh/Fula
-4    Bambara
-5    Sarakhole/Serehule
-6    Soce/Mandinka/Malinke
-8    Maure
-9    Bozo/Somono
-10    Dogon
-66    Other
--77    Missing",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0004991,Observation date,crf1_mali project 1 data::dov | crf9_mali project 1 data::dov,8,crf1_mali project 1 data | crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000310,Observation details,A4_CRF1,,variable,yes,yes,yes,West Africa ICEMR,,,,yes,,,,,
-http://purl.obolibrary.org/obo/BFO_0000015,Observation type,crf9_mali project 1 data::intervalname | crf8_mali project 1 data::x...intervalname | crf1_mali project 1 data::x...intervalname | crf3_mali project 1 data::x...intervalname,9,crf1_mali project 1 data | crf8_mali project 1 data | crf3_mali project 1 data | crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000310,Observation details,,,variable,yes,,,West Africa ICEMR,,,,yes,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0022053,Present at visit,crf9_mali project 1 data::b1,1,crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000310,Observation details,Is the patient present in the village/quarter,"1, no, Yes
+-77, no, Missing in the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027070","Other antimalarial in last 2 weeks doses per day","3_observations_passive_case_dete::h93_doses_day","40","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027071","Other antimalarial in last 2 weeks last date used","3_observations_passive_case_dete::h92_date_last_used","41","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027072","Other antimalarial in last 2 weeks specified","3_observations_passive_case_dete::h94_other_antimalarial","42","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","If other in H9.4, specify:","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027036","Antipyretics in last 2 weeks treatment duration","3_observations_passive_case_dete::i11_duration","43","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027034","Antipyretics in last 2 weeks doses per day","3_observations_passive_case_dete::i13_doses_day","44","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027035","Antipyretics in last 2 weeks last date used","3_observations_passive_case_dete::i12_date_last_used","45","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027082","Other treatment in last 2 weeks specified","3_observations_passive_case_dete::j14_other","46","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","J.1.4 Other Antibiotic","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027080","Other treatment in last 2 weeks duration","3_observations_passive_case_dete::j11_duration","47","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027079","Other treatment in last 2 weeks doses per day","3_observations_passive_case_dete::j13_doses_day","48","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027081","Other treatment in last 2 weeks last date used","3_observations_passive_case_dete::j12_date_last_used","49","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027106","Treatment in last 2 weeks","3_observations_passive_case_dete::no_treatment_2weeks","5","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","No Treatment in the last two weeks","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027030","Antibiotics in last 2 weeks","3_observations_passive_case_dete::antibiotic","6","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Antibiotic","1, no, Yes
 0, no, No
--77, no, Missing in the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/UBERON_0009097,Pregnant,crf9_mali project 1 data::pregnant | crf1_mali project 1 data::pregnant,1,crf1_mali project 1 data | crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0042002,Obstetrics,Is the patient pregnant?,"1, no, Yes
+-77, yes, Missing on the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027086","Penicillin derivatives in last 2 weeks treatment duration","3_observations_passive_case_dete::g11_duration","7","3_observations_passive_case_dete","Duration of taking penicillin derivatives, including amoxicillin, penicillin, ampicillin, and gentamicin, in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027084","Penicillin derivatives in last 2 weeks doses per day","3_observations_passive_case_dete::g13_doses_day","8","3_observations_passive_case_dete","Number of penicillin derivatives, including amoxicillin, penicillin, ampicillin, and gentamicin, doses per day in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027085","Penicillin derivatives in last 2 weeks last date used","3_observations_passive_case_dete::g12_date_last_used","9","3_observations_passive_case_dete","Last date of taking penicillin derivatives, including amoxicillin, penicillin, ampicillin, and gentamicin, in the last two weeks","Participant","http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","Date last used","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://www.ebi.ac.uk/efo/EFO_0004950","Birth date","3_observations_passive_case_dete::dob | 1_participants::dob | 2_observations_cross::dob","1","2_observations_cross | 1_participants | 3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0010981","Demographics","Date of birth","","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/PATO_0000047","Sex","2_observations_cross::gender | 3_observations_passive_case_dete::gender | 1_participants::gender","2","3_observations_passive_case_dete | 1_participants | 2_observations_cross","","Participant","http://purl.obolibrary.org/obo/EUPATH_0010981","Demographics","Gender","1, no, Male
+2, no, Female
+-77, no, Missing","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OMRSE_00000205","Ethnicity","1_participants::ethnicity | 2_observations_cross::ethnicity | 3_observations_passive_case_dete::ethnicity","3","3_observations_passive_case_dete | 2_observations_cross | 1_participants","","Participant","http://purl.obolibrary.org/obo/EUPATH_0010981","Demographics","Ethnic Group","1, no, Wolof
+2, no, S<U+00E9>r<U+00E8>re
+3, no, Peulh/Fula
+4, no, Bambara
+5, no, Sarakhol<U+00E9>/Serehule
+6, no, Soc<U+00E9>/Mandinka/Malinke
+7, no, Diola/Jola
+8, no, Maure
+9, no, Bozo/somono
+10, no, Dogon
+66, no, Other
+-99, no, Unknown
+-77, no, Missing","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027056","Mild malaria","3_observations_passive_case_dete::mild_malaria1","1","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000073","Diagnosis","Mild malaria","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","variable","yes","","","West Africa ICEMR","","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000043","Severe malaria","3_observations_passive_case_dete::severe_malaria1","2","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000073","Diagnosis","Severe malaria","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","variable","yes","","","West Africa ICEMR","","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/BFO_0000015","Observation type","2_observations_cross::visit","1","2_observations_cross","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000310","Observation details","Visit","-1, no, SCREENING
+4, no, HOUSEHOLD
+9, no, FOLLOW UP","variable","yes","","","West Africa ICEMR","","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0001508","Study timepoint","3_observations_passive_case_dete::viscrf3_1 | 2_observations_cross::viscrf3_1","2","2_observations_cross | 3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000310","Observation details","Visit","1, no, SLIDE ENROLLMENT
+0, no, SLIDE PCD
+2, no, VISIT 2
+3, no, VISIT 3
+4, no, VISIT 4
+5, no, VISIT 5
+6, no, VISIT 6
+7, no, VISIT 7
+8, no, VISIT 8
+9, no, VISIT 9
+10, no, VISIT 10","variable","yes","","","West Africa ICEMR","","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0004991","Observation date","3_observations_passive_case_dete::dov | 2_observations_cross::dov | 1_participants::dov","3","1_participants | 3_observations_passive_case_dete | 2_observations_cross","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000310","Observation details","Date of visit","","variable","yes","yes","","West Africa ICEMR","","","","yes","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0022053","Present at visit","2_observations_cross::b1","4","2_observations_cross","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000310","Observation details","Is the patient present in the village/quarter?","1, no, Yes
+0, no, No
+-77, no, Missing in the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/UBERON_0009097","Pregnant","1_participants::pregnant | 2_observations_cross::pregnant","","1_participants | 2_observations_cross","","Participant","http://purl.obolibrary.org/obo/EUPATH_0042002","Obstetrics","Is  the subject pregnant?","1, no, Yes
 0, no, No
 -88, no, Cannot be pregnant (due to age or gender)
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0010035,Administrative information,,2,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,,1,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,EUPATH_0021098,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,,4,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000310,Observation details,,1,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000649,Anthropometry,,2,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OGMS_0000083,Physical examination,,3,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0042002,Obstetrics,,1,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000309,Signs and symptoms,,1,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027003,Spleen size,crf9_mali project 1 data::spleen | crf1_mali project 1 data::spleen,2,crf9_mali project 1 data | crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000083,Physical examination,Spleen size:,,variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000110,Temperature,crf1_mali project 1 data::temperature | crf9_mali project 1 data::temperature,3,crf9_mali project 1 data | crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000083,Physical examination,Temperature,,variable,yes,,,West Africa ICEMR,,C,http://purl.obolibrary.org/obo/UO_0000027,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000544,Temperature measurement method,crf9_mali project 1 data::temperature_site | crf1_mali project 1 data::temperature_site,1,crf9_mali project 1 data | crf1_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/OGMS_0000083,Physical examination,,"1, no, Axillary
-2, no, Tympanic (Ear)
-3, no, Rectal
-4, no, Oral
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021002,Symptoms,,1,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000309,Signs and symptoms,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000100,Subjective fever,crf9_mali project 1 data::fever24 | crf1_mali project 1 data::fever24,2,crf1_mali project 1 data | crf9_mali project 1 data,,Participant,http://purl.obolibrary.org/obo/EUPATH_0021002,Symptoms,Fever in the previous 24 hours?,"1, no, Yes
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0010035","Administrative information","","1","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0042002","Obstetrics","","10","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021097","Personal vector intervention","","11","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000310","Observation details","","2","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0010981","Demographics","","3","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OGMS_0000015","Clinical history","","4","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000649","Anthropometry","","5","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","","6","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000309","Signs and symptoms","","7","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OGMS_0000073","Diagnosis","","8","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","","9","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000096","Participant","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000216","ITN last night","3_observations_passive_case_dete::itn","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021097","Personal vector intervention","ITN Use(Past24h)","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003073","Temperature","3_observations_passive_case_dete::body_temperature | 2_observations_cross::temperature | 1_participants::temperature","1","1_participants | 3_observations_passive_case_dete | 2_observations_cross","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Temperature (Digital): | Body Temperature","-99, -99, Unknown
+-77, -77, Missing | -77, -77, Missing on the form","variable","yes","","","West Africa ICEMR","EUPATH_0000110","C","http://purl.obolibrary.org/obo/UO_0000027","","","","","","",""
+"http://purl.obolibrary.org/obo/CMO_0000289","Respiratory rate","3_observations_passive_case_dete::respiration_rate","2","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Respiration rate (mesure in one minute with subject not crying):","-77, -77, Missing on the form","variable","yes","","","West Africa ICEMR","","breaths/min","http://purl.obolibrary.org/obo/NCIT_C49674","","","","","","",""
+"http://www.ebi.ac.uk/efo/EFO_0004326","Heart rate","3_observations_passive_case_dete::heart_rate","3","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Heart rate","-77, -77, Missing on the form","variable","yes","","","West Africa ICEMR","","bpm","http://purl.obolibrary.org/obo/NCIT_C49673","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021086","Systolic blood pressure","3_observations_passive_case_dete::sys_blood_pressure","4","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Systolic Blood pressure","-77, -77, Missing on the form","variable","yes","","","West Africa ICEMR","","mmHg","http://purl.obolibrary.org/obo/UO_0000272","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021087","Diastolic blood pressure","3_observations_passive_case_dete::dias_blood_pressure","5","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Diastolic Blood pressure","-77, -77, Missing on the form","variable","yes","","","West Africa ICEMR","","mmHg","http://purl.obolibrary.org/obo/UO_0000272","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027003","Spleen size","1_participants::spleen | 2_observations_cross::spleen","6","2_observations_cross | 1_participants","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Spleen size","-99, -99, Unknown
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003080","Temperature measurement method","1_participants::temperature_site | 2_observations_cross::temperature_site","7","2_observations_cross | 1_participants","","Participant","http://purl.obolibrary.org/obo/OGMS_0000083","Physical examination","Temperature site","","variable","yes","","","West Africa ICEMR","EUPATH_0000544","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027055","Hypoglycemia (<40 mg/dL)","3_observations_passive_case_dete::hypoglycemia1","","3_observations_passive_case_dete","Blood sugar <40 mg/dL","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","Hypoglycemia(<40mg/dl)","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027090","Plasmodium density >100,00/uL blood","3_observations_passive_case_dete::parasite_density1","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","Parasite density>1000000","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0020252","Respiratory distress","3_observations_passive_case_dete::respiratory_distress1","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","Respiratory distress","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0020182","Severe anemia (hemoglobin <5 mg/dL)","3_observations_passive_case_dete::severe_anemia1","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","Severe anemia( <5g/dl)","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027110","Shock","3_observations_passive_case_dete::shock1","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","Shock","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027107","Unable to eat or drink","3_observations_passive_case_dete::noeating_drinking1","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","No eating/drinking","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027108","Vomiting repeatedly","3_observations_passive_case_dete::repetitive_vomiting1","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","Repetitive vomiting","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","","1","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000309","Signs and symptoms","","","multifilter","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","","2","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000309","Signs and symptoms","","","multifilter","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0020184","Severe malaria signs","","3","","","Participant","http://purl.obolibrary.org/obo/EUPATH_0000309","Signs and symptoms","","","multifilter","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/HP_0001259","Coma","3_observations_passive_case_dete::coma","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Coma","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/SYMP_0000596","Convulsions","3_observations_passive_case_dete::convulsion","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Convulsion","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/HP_0002240","Hepatomegaly","3_observations_passive_case_dete::hepatomegaly","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Hepatomegaly","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/HP_0000952","Jaundice","3_observations_passive_case_dete::ictericia","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Ictericia (Yellow skin/Jaundice)","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/SYMP_0000116","Prostration","3_observations_passive_case_dete::prostration","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Prostration","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/HP_0001744","Splenomegaly","3_observations_passive_case_dete::spenomegaly","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Spenomegaly","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000100","Subjective fever","1_participants::fever24 | 2_observations_cross::fever24","","1_participants | 2_observations_cross","","Participant","http://purl.obolibrary.org/obo/EUPATH_0021002","Symptoms","Fever in the previous 24 h?","1, no, Yes
 0, no, No
 -99, no, Unknown
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,3,,,Sample,http://www.w3.org/2002/07/owl#Thing,,,,category,,,,West Africa ICEMR,,,,,yes,,,,
-http://purl.obolibrary.org/obo/EUPATH_0025095,Microscopy analysis date,crf3_mali project 1 data::slreddt1,4,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0021130,Blood eukaryote testing,Date the slide is read,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027004,RDT performed,crf1_mali project 1 data::rdt | crf9_mali project 1 data::rdt,2,crf1_mali project 1 data | crf9_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0021130,Blood eukaryote testing,RDT Done,"1, no, Yes
+-77, no, Missing","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0024091","Chills","3_observations_passive_case_dete::chills","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","Chills","1, no, Yes
 0, no, No
--88, no, No symptoms
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027008,Slide reading number,crf3_mali project 1 data::readnum1,1,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0021130,Blood eukaryote testing,Slide reading,"1, no, First
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0024089","Fever","3_observations_passive_case_dete::fever","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","Fever","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0024090","Headache","3_observations_passive_case_dete::headache","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","Headache","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027059","Muscle aches","3_observations_passive_case_dete::muscle_aches","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","Muscle aches","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027060","Nausea","3_observations_passive_case_dete::nausea","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","Nausea","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0024092","Vomiting","3_observations_passive_case_dete::vomiting","","3_observations_passive_case_dete","","Participant","http://purl.obolibrary.org/obo/EUPATH_0024095","Symptoms in past two weeks","Vomiting","1, no, Yes
+0, no, No
+-77, yes, Missing on the form","value","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027031","Antibiotics prescribed","3_observations_passive_case_dete::no_antibiotic","1","3_observations_passive_case_dete","Prescribed any antibiotics","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Not prescribing antibiotic","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027062","Other antibiotics doses per day","3_observations_passive_case_dete::k43_doses_day","10","3_observations_passive_case_dete","Prescribed doses per day of other antibiotics","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0040021","Antimalarial prescribed","3_observations_passive_case_dete::no_antimalarials","11","3_observations_passive_case_dete","Prescribed any antimalarials","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Not prescribing antimalarials","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027100","Sulfadoxine/pyrimethamine treatment duration","3_observations_passive_case_dete::k51_duration","12","3_observations_passive_case_dete","Prescribed treatment duration of Sulfadoxine/pyrimethamine (SP)","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027096","Sulfadoxine/pyrimethamine doses per day","3_observations_passive_case_dete::k53_doses_day","13","3_observations_passive_case_dete","Prescribed doses per day of sulfadoxine/pyrimethamine (SP)","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027042","Artemether/lumefantrine treatment duration","3_observations_passive_case_dete::k61_duration","14","3_observations_passive_case_dete","Prescribed treatment duration of artemether/lumefantrine (AL)","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027038","Artemether/lumefantrine doses per day","3_observations_passive_case_dete::k63_doses_day","15","3_observations_passive_case_dete","Prescribed doses per day of artemether/lumefantrine (AL)","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027095","Quinine treatment duration","3_observations_passive_case_dete::k71_duration","16","3_observations_passive_case_dete","Prescribed treatment duration of quinine","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027091","Quinine doses per day","3_observations_passive_case_dete::k73_doses_day","17","3_observations_passive_case_dete","Prescribed doses per day of quinine","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027049","Artesunate/sulfadoxine/pyrimethaminedoses per day","3_observations_passive_case_dete::k83_doses_day","18","3_observations_passive_case_dete","Prescribed doses per day of artesunate/sulfadoxine/pyrimethamine","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027048","Artesunate/sulfadoxine/pyrimethamine treatment duration","3_observations_passive_case_dete::k81_duration","19","3_observations_passive_case_dete","Prescribed treatment duration of artesunate/sulfadoxine/pyrimethamine","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027087","Penicillin derivatives treatment duration","3_observations_passive_case_dete::k11_duration","2","3_observations_passive_case_dete","Prescribed treatment duration of penicillin derivates","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027029","Amodiaquine/artesunate treatment duration","3_observations_passive_case_dete::k91_duration","20","3_observations_passive_case_dete","Prescribed treatment duration of amodiaquine/artesunate","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027025","Amodiaquine/artesunate doses per day","3_observations_passive_case_dete::k93_doses_day","21","3_observations_passive_case_dete","Prescribed doses per day of amodiaquine/artesunate","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","#Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027044","Artesunate derivatives treatment duration","3_observations_passive_case_dete::k101_duration","22","3_observations_passive_case_dete","Prescribed treatment duration of artesunate derivates","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027043","Artesunate derivatives doses per day","3_observations_passive_case_dete::k103_doses_day","23","3_observations_passive_case_dete","Prescribed doses per day of artesunate derivates","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027024","Amodiaquine treatment duration","3_observations_passive_case_dete::k111_duration","24","3_observations_passive_case_dete","Prescribed treatment duration of amodiaquine derivates","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027020","Amodiaquine doses per day","3_observations_passive_case_dete::k113_doses_day","25","3_observations_passive_case_dete","Prescribed doses per day of amodiaquine derivates","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","#Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027089","Piperaquine/dihydroartemesinin treatment duration","3_observations_passive_case_dete::k121_duration","26","3_observations_passive_case_dete","Prescribed treatment duration of piperaquine/dihydroartemesinin","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027088","Piperaquine/dihydroartemesinin doses per day","3_observations_passive_case_dete::k123_doses_day","27","3_observations_passive_case_dete","Prescribed doses per day of piperaquine/dihydroartemesinin","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","#Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027074","Other antimalarial specified","3_observations_passive_case_dete::k134_other_antimalarial","28","3_observations_passive_case_dete","Type of other antimalarial prescribed","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","K.13.4 Other Antimalarial","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027075","Other antimalarial treatment duration","3_observations_passive_case_dete::k131_duration","29","3_observations_passive_case_dete","Prescribed treatment duration of other antimalarial","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027083","Penicillin derivatives doses per day","3_observations_passive_case_dete::k13_doses_day","3","3_observations_passive_case_dete","Prescribed doses per day of penicillin derivates","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027069","Other antimalarial doses per day","3_observations_passive_case_dete::k133_doses_day","30","3_observations_passive_case_dete","Prescribed doses per day of other antimalarial","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","#Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027037","Antipyretics treatment duration","3_observations_passive_case_dete::k141_duration","31","3_observations_passive_case_dete","Prescribed treatment duration of antipyretics","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027033","Antipyretics doses per day","3_observations_passive_case_dete::k143_doses_day","32","3_observations_passive_case_dete","Prescribed doses per day of antipyretics","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","#Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027077","Other medication specified","3_observations_passive_case_dete::k154_other","33","3_observations_passive_case_dete","Type of other medication prescribed","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","K.15.4 Other","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027078","Other medication treatment duration","3_observations_passive_case_dete::k151_duration","34","3_observations_passive_case_dete","Prescribed treatment duration of other medication","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027076","Other medication doses per day","3_observations_passive_case_dete::k153_doses_day","35","3_observations_passive_case_dete","Prescribed doses per day of other medication","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","#Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027054","Co-trimoxazole treatment duration","3_observations_passive_case_dete::k21_duration","4","3_observations_passive_case_dete","Prescribed treatment duration of co-trimoxazole","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027050","Co-trimoxazole doses per day","3_observations_passive_case_dete::k23_doses_day","5","3_observations_passive_case_dete","Prescribed doses per day of co-trimoxazole","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027105","Tetracycline treatment duration","3_observations_passive_case_dete::k31_duration","6","3_observations_passive_case_dete","Prescribed treatment duration of tetracycline","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027101","Tetracycline doses per day","3_observations_passive_case_dete::k33_doses_day","7","3_observations_passive_case_dete","Prescribed doses per day of tetracycline","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","# Doses/Day","-99, -99, Don't know
+-88, -88, Not applicable
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027067","Other antibiotics specified","3_observations_passive_case_dete::k44_other_antibiotic","8","3_observations_passive_case_dete","Type of other antibiotics prescribed","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","K.4.4 Other Antibiotic","","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027068","Other antibiotics treatment duration","3_observations_passive_case_dete::k41_duration","9","3_observations_passive_case_dete","Prescribed treatment duration of other antibiotics","Participant","http://purl.obolibrary.org/obo/OGMS_0000090","Treatment","Duration of treatment","-99, -99, Don't know
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","","days","http://purl.obolibrary.org/obo/UO_0000033","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000609","Sample","","","","","Sample","http://www.w3.org/2002/07/owl#Thing","","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0025095","Microscopy analysis date","2_observations_cross::slreddt1 | 3_observations_passive_case_dete::slreddt1","1","2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/EUPATH_0021130","Blood eukaryote testing","Date the slide is read | Date slide read","","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027008","Slide reading number","2_observations_cross::readnum1 | 3_observations_passive_case_dete::readnum1","2","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0021130","Blood eukaryote testing","slide reading | Slide reading","1, no, First
 2, no, Second
 3, no, Third
--77, no, Missing on the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0020125,Blood microbiology tests procedures,,1,,,Sample,http://purl.obolibrary.org/obo/OBI_0002649,Blood microbiology test,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0033307,Eukaryota in blood,,2,,,Sample,http://purl.obolibrary.org/obo/OBI_0002649,Blood microbiology test,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021143,Raw test result for blood,,3,,,Sample,http://purl.obolibrary.org/obo/OBI_0002649,Blood microbiology test,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021130,Blood eukaryote testing,,1,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0020125,Blood microbiology tests procedures,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021081,Blood smear sample,crf9_mali project 1 data::smear | crf1_mali project 1 data::smear,1,crf9_mali project 1 data | crf1_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,F5_CRF1,"1, no, Yes
+-77, no, Missing on the form","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027004","RDT performed","3_observations_passive_case_dete::rdt | 2_observations_cross::rdt | 1_participants::rdt","3","1_participants | 3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0021130","Blood eukaryote testing","RDT Done","1, no, Yes
 0, no, No
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027007,Blood smear slide ID,crf3_mali project 1 data::slideid1,4,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,Slide number,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0032048,EDTA-treated sample,crf1_mali project 1 data::edta | crf9_mali project 1 data::edta,3,crf9_mali project 1 data | crf1_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,F7_CRF1,"1, no, Yes
+-88, no, No symptoms
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0033307","Eukaryota in blood","","1","","","Sample","http://purl.obolibrary.org/obo/OBI_0002649","Blood microbiology test","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003244","Raw test result for blood","","2","","","Sample","http://purl.obolibrary.org/obo/OBI_0002649","Blood microbiology test","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0020125","Blood microbiology tests procedures","","3","","","Sample","http://purl.obolibrary.org/obo/OBI_0002649","Blood microbiology test","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021130","Blood eukaryote testing","","","","","Sample","http://purl.obolibrary.org/obo/EUPATH_0020125","Blood microbiology tests procedures","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027012","EDTA-treated sample plasma volume","2_observations_cross::vol_b2","","2_observations_cross","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","B_2 Volume of plama in plasma tube","-88, -88, No Tube 2 collected
+-77, -77, Missing in the form","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021081","Blood smear sample","3_observations_passive_case_dete::smear | 2_observations_cross::smear | 1_participants::smear","1","1_participants | 2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","Thick and thin blood smear collected","1, no, Yes
 0, no, No
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027011,EDTA-treated sample ID,crf8_mali project 1 data::sample_id,2,crf8_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,Sample ID:,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027014,EDTA-treated sample pellet volume,crf8_mali project 1 data::vol_b4,5,crf8_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,b4 Volume in red pellet tubes,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027012,EDTA-treated sample plasma volume,crf8_mali project 1 data::vol_b2,6,crf8_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,B_2 Volume of plama in plasma tube,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027013,EDTA-treated sample plasma volume 2,crf8_mali project 1 data::vol_b3,7,crf8_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,B_3 Volume of plama in plasma tube2,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000127,Filter paper sample,crf1_mali project 1 data::filter | crf9_mali project 1 data::filter,8,crf9_mali project 1 data | crf1_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,F6_CRF1,"1, no, Yes
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003055","Filter paper sample","1_participants::filter | 3_observations_passive_case_dete::filter | 2_observations_cross::filter","2","2_observations_cross | 3_observations_passive_case_dete | 1_participants","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","Sample collected on filter paper in a 14mm circle","1, no, Yes
 0, no, No
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027006,Filter paper sample count,crf9_mali project 1 data::spots | crf1_mali project 1 data::spots,3,crf9_mali project 1 data | crf1_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,F6_1_CRF1,"1, no, One
+-77, no, Missing","variable","yes","","","West Africa ICEMR","EUPATH_0000127","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027006","Filter paper sample count","2_observations_cross::spots | 1_participants::spots | 3_observations_passive_case_dete::spots","3","2_observations_cross | 3_observations_passive_case_dete | 1_participants","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","Number of blood spots collected","1, no, One
 2, no, Two
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0033147,Blood sample collection date,crf8_mali project 1 data::sample_collect_date,1,crf8_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0011482,Blood sample collection process,A5 Date sample collected,,variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027019,Blood tests performed,,2,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0011795,Blood test,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000047,Hemoglobin,crf9_mali project 1 data::hemoglobin | crf1_mali project 1 data::hemoglobin,1,crf1_mali project 1 data | crf9_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0011795,Blood test,F4_CRF1,,variable,yes,,,West Africa ICEMR,,g/dL,http://purl.obolibrary.org/obo/UO_0000208,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027005,Hemoglobin measurement performed,crf1_mali project 1 data::hbsample | crf9_mali project 1 data::hbsample,2,crf9_mali project 1 data | crf1_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0027019,Blood tests performed,F3_CRF1,"1, no, Yes
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0032048","EDTA-treated sample","2_observations_cross::edta | 3_observations_passive_case_dete::edta | 1_participants::edta","4","3_observations_passive_case_dete | 2_observations_cross | 1_participants","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","Sample collected onto EDTA tube","1, no, Yes
 0, no, No
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0033308,Plasmodium in blood,,3,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0033307,Eukaryota in blood,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OBI_0002649,Blood microbiology test,,4,,,Sample,http://purl.obolibrary.org/obo/OGMS_0000056,Laboratory test,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0011795,Blood test,,1,,,Sample,http://purl.obolibrary.org/obo/OGMS_0000056,Laboratory test,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027009,"Plasmodium, by microscopy",crf3_mali project 1 data::smrpos1,2,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0033308,Plasmodium in blood,A4_smearPos_CRF3,"1, no, Yes
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027014","EDTA-treated sample pellet volume","2_observations_cross::vol_b4","5","2_observations_cross","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","b4 Volume in red pellet tubes","-88, -88, No tube
+-77, -77, Missing in the form","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027013","EDTA-treated sample plasma volume 2","2_observations_cross::vol_b3","6","2_observations_cross","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","B_3 Volume of plama in plasma tube2","-88, -88, No Tube 2 collected
+-77, -77, Missing in the form","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027011","EDTA-treated sample ID","2_observations_cross::sample_id","7","2_observations_cross","","Sample","http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","Sample ID:","","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0033147","Blood sample collection date","2_observations_cross::sample_collect_date","","2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0011482","Blood sample collection process","A5 Date sample collected","","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/CMO_0000026","Hemoglobin","3_observations_passive_case_dete::hemoglobin | 1_participants::hemoglobin | 2_observations_cross::hemoglobin","1","1_participants | 2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/OBI_0003040","Blood test","Hemoglobin result","-99, -99, Unknown
+-88, -88, Skip
+-77, -77, Missing","variable","yes","","","West Africa ICEMR","EUPATH_0000047","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027019","Blood tests performed","","2","","","Sample","http://purl.obolibrary.org/obo/OBI_0003040","Blood test","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027005","Hemoglobin measurement performed","1_participants::hbsample | 3_observations_passive_case_dete::hbsample | 2_observations_cross::hbsample","","3_observations_passive_case_dete | 2_observations_cross | 1_participants","","Sample","http://purl.obolibrary.org/obo/EUPATH_0027019","Blood tests performed","Sample taken for hemoglobin measurement","1, no, Yes
 0, no, No
--77, no, Missing on the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000423,"Plasmodium species, by microscopy",,3,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0033308,Plasmodium in blood,,,multifilter,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0027010,"Plasmodium falciparum gametocytes, by microscopy",crf3_mali project 1 data::gamete1,4,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0033308,Plasmodium in blood,Presence of P Falciparum gametocytes,"1, no, Yes
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0033308","Plasmodium in blood","","","","","Sample","http://purl.obolibrary.org/obo/EUPATH_0033307","Eukaryota in blood","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0002649","Blood microbiology test","","1","","","Sample","http://purl.obolibrary.org/obo/OGMS_0000056","Laboratory test","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003040","Blood test","","2","","","Sample","http://purl.obolibrary.org/obo/OGMS_0000056","Laboratory test","","","category","","","","West Africa ICEMR","EUPATH_0011795","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027009","Plasmodium, by microscopy","3_observations_passive_case_dete::smrpos1 | 2_observations_cross::smrpos1","1","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0033308","Plasmodium in blood","Blood smear positive Reading1","1, no, Yes
+0, no, No
+-77, no, Missing on the form","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027010","Plasmodium falciparum gametocytes, by microscopy","2_observations_cross::gamete1 | 3_observations_passive_case_dete::gamete1","2","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0033308","Plasmodium in blood","Presence of P Falciparum gametocytes | Presence of <b>P. falciparum</b> gametocytes","1, no, Yes
 0, no, No
 -88, no, N/A
--77, no, Missing on the form",variable,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0024217,"Plasmodium, by RDT",crf9_mali project 1 data::rdt_hrp | crf1_mali project 1 data::rdt_hrp,1,crf1_mali project 1 data | crf9_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0033308,Plasmodium in blood,RDT (HRP2) Positive,"1, no, Yes
+-77, no, Missing on the form","variable","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","","3","","","Sample","http://purl.obolibrary.org/obo/EUPATH_0033308","Plasmodium in blood","","","multifilter","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0024217","Plasmodium, by RDT","2_observations_cross::rdt_hrp | 3_observations_passive_case_dete::rdt_hrp | 1_participants::rdt_hrp","4","2_observations_cross | 1_participants | 3_observations_passive_case_dete","RDT for HRP2","Sample","http://purl.obolibrary.org/obo/EUPATH_0033308","Plasmodium in blood","RDT (HRP2) Positive","1, no, Yes
 0, no, No
 -88, no, RDT not done
--77, no, Missing",variable,yes,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021028,Plasmodium falciparum,crf3_mali project 1 data::p_falciparum_num1,2,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000423,"Plasmodium species, by microscopy",Value set through dependency,,value,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021030,Plasmodium malariae,crf3_mali project 1 data::p_malariae_num1,1,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000423,"Plasmodium species, by microscopy",Value set through dependency,,value,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0020167,Plasmodium ovale,crf3_mali project 1 data::p_ovale_num1,1,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000423,"Plasmodium species, by microscopy",Value set through dependency,,value,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0021029,Plasmodium vivax,crf3_mali project 1 data::p_vivax_num1,3,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000423,"Plasmodium species, by microscopy",Value set through dependency,,value,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000550,"Plasmodium falciparum asexual stages, by microscopy result",crf3_mali project 1 data::asexpf1,2,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0022270,Raw eukaryota data for blood,Number of P Falciparum,,variable,,,,West Africa ICEMR,,/uL,http://purl.obolibrary.org/obo/UO_0000316,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0000546,"Plasmodium falciparum gametocytes, by microscopy result",crf3_mali project 1 data::num_gametocytes1,1,crf3_mali project 1 data,,Sample,http://purl.obolibrary.org/obo/EUPATH_0022270,Raw eukaryota data for blood,Number of P Falciparum,,variable,,,,West Africa ICEMR,,/uL,http://purl.obolibrary.org/obo/UO_0000316,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0022270,Raw eukaryota data for blood,,1,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0021143,Raw test result for blood,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OBI_0000655,Blood sample,,1,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OGMS_0000056,Laboratory test,,,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,category,,,,West Africa ICEMR,,,,,,,,,
-http://purl.obolibrary.org/obo/OBI_0600005,Sample collection process,,,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,category,,,,West Africa ICEMR,OBI_0000659,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0011482,Blood sample collection process,,,,,Sample,http://purl.obolibrary.org/obo/OBI_0600005,Sample collection process,,,category,,,,West Africa ICEMR,,,,,,,,,
+-77, no, Missing","variable","yes","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021028","Plasmodium falciparum","2_observations_cross::mlspec1_1 | 3_observations_passive_case_dete::mlspec1_1","1","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","P. Falciparum","","value","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021029","Plasmodium vivax","3_observations_passive_case_dete::mlspec2_1 | 2_observations_cross::mlspec2_1","2","2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","P . Vivax","","value","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0021030","Plasmodium malariae","3_observations_passive_case_dete::mlspec4_1 | 2_observations_cross::mlspec4_1","3","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","P. Malariae","","value","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0020167","Plasmodium ovale","2_observations_cross::mlspec3_1 | 3_observations_passive_case_dete::mlspec3_1","4","2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","P Ovale","","value","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027109","Not applicable","2_observations_cross::mlspec88_1 | 3_observations_passive_case_dete::mlspec88_1","5","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","","","value","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0027057","Missing","2_observations_cross::mlspec77_1 | 3_observations_passive_case_dete::mlspec77_1","6","3_observations_passive_case_dete | 2_observations_cross","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000423","Plasmodium species, by microscopy","Misssing on the form","","value","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000550","Plasmodium falciparum asexual stages, by microscopy result","3_observations_passive_case_dete::asexpf1 | 2_observations_cross::asexpf1","1","2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/OBI_0003263","Raw eukaryota data for blood","Number of <b>P falciparum</b> asexual parasites: (if no P.falciparum, 0) | Number of P Falciparum asexual stages","-88, -88, Skip
+-77, -77, Missing on the form","variable","","","","West Africa ICEMR","","/uL","http://purl.obolibrary.org/obo/UO_0000316","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0000546","Plasmodium falciparum gametocytes, by microscopy result","3_observations_passive_case_dete::num_gametocytes1 | 2_observations_cross::num_gametocytes1","2","2_observations_cross | 3_observations_passive_case_dete","","Sample","http://purl.obolibrary.org/obo/OBI_0003263","Raw eukaryota data for blood","Number of P Falciparum Gametocytes","-88, -88, Skip
+-77, -77, Missing on the form","variable","","","","West Africa ICEMR","","/uL","http://purl.obolibrary.org/obo/UO_0000316","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0003263","Raw eukaryota data for blood","","","","","Sample","http://purl.obolibrary.org/obo/OBI_0003244","Raw test result for blood","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OGMS_0000056","Laboratory test","","1","","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000609","Sample","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0000655","Blood sample","","2","","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000609","Sample","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/OBI_0600005","Sample collection process","","3","","","Sample","http://purl.obolibrary.org/obo/EUPATH_0000609","Sample","","","category","","","","West Africa ICEMR","","","","","","","","","",""
+"http://purl.obolibrary.org/obo/EUPATH_0011482","Blood sample collection process","","","","","Sample","http://purl.obolibrary.org/obo/OBI_0600005","Sample collection process","","","category","","","","West Africa ICEMR","","","","","","","","","",""

@@ -1,0 +1,132 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use lib $ENV{'GUS_HOME'} . '/lib/perl';
+
+use GUS::Model::Core::UserInfo;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use ApiCommonModel::Model::Entrez;
+use Data::Dumper;
+use POSIX qw/strftime/;
+use Digest::MD5 qw/md5_hex/;
+use Getopt::Long;
+use File::Basename;
+
+my $program = basename($0);
+unless(@ARGV){
+  printf("%s\n", join("\n",
+  "$program --dbinstance <db instance> [[ --organism <organism abbrev> --mindate <date> ]]",
+  "Audit ESTs for organism <<organism abbrev>> against ESTs from Genbank",
+  "If organism is omitted, audits ESTs for all reference strains",
+  "Optionally limit ESTs from Genbank to a minimum date.",
+  "No new ESTs have been submitted after 2018."
+  );
+  exit;
+}
+
+my (@inclist, @orglist, $mindate);
+
+GetOptions(
+  'i|dbinstance=s' => \@inclist,
+  'o|organism=s' => \@orglist,
+  'd|mindate=s' => \$mindate,
+);
+
+
+# my $mindate = '2011-02-01'; # max dbest.est.lastupdate
+# my $mindate = '2018-09-12'; # max dbest.est.lastupdate
+# my $mindate = '2017-11-01'; # max dbest.est.publc
+# my $mindate = '2018-09-12'; # max dbest.est.create_date
+
+my %organism;
+@organism{ @orglist } = (1) x @orglist ;
+
+foreach my $inst (@inclist){
+  ######################## boilerplate db stuff
+  my $gusconfig = GUS::Supported::GusConfig->new();
+  
+  my $dbVendor = $gusconfig->getDatabaseVendor;
+# my $dsn = $gusconfig->getDbiDsn();
+  my $dsn = "dbi:Oracle:$inst";
+  
+  
+  my $db = GUS::ObjRelP::DbiDatabase->new($dsn,
+                                          $gusconfig->getDatabaseLogin(),
+                                          $gusconfig->getDatabasePassword(),
+                                          0,0,1,
+                                          $gusconfig->getCoreSchemaName());
+  
+  my $dbh = $db->getQueryHandle(0);
+  ######################## 
+  my $ez = ApiCommonModel::Model::Entrez->new();
+  # query for reference strains
+  my $refstrains = $ez->getReferenceStrainsFromDB($dbh);
+  printf STDERR ("Project: %s: ref strains: %s\n", $inst, join(", ", keys %$refstrains));
+  my $logfile = strftime("log/${inst}_%Y%m%d_%H%M.log", localtime());
+  open(LOG, "> $logfile");
+  my $written = 0;
+  while(my($abbrev, $ncbiTaxonId) = each %$refstrains){
+    if(@orglist){ next unless $organism{$abbrev} }
+    printf STDERR ("Project: %s: auditing %s (%d)\n", $inst, $abbrev, $ncbiTaxonId);
+    
+    
+    # open(CMT, "> commentstr.txt");
+    
+    my $loadedAx = $ez->getLoadedESTAccessionsBySubTaxa($dbh,$ncbiTaxonId);
+    printf STDERR ("Got %d loaded ESTs\n", scalar keys %$loadedAx);
+    
+    my $term = $ez->getSubTaxaSearchParams($dbh,$ncbiTaxonId);
+    unless($term){
+      printf STDERR ("No subtaxa found, done with $abbrev\n");
+      next;
+    }
+    $ez->setParam('term', $term);
+    printf STDERR ("Search term: %s\n", $term);
+    #my $accessionsFromGenbank = $ez->getGenbankESTAccessionsbyTaxId(undef,$mindate);
+    my $accessionsFromGenbank = $ez->getGenbankESTAccessionsbyTaxId();
+    
+    printf STDERR ("Checking %d loaded versus %s fetched\n",
+      scalar keys %$loadedAx,
+      scalar keys %$accessionsFromGenbank);
+    
+    my %seqsFetch;
+    foreach my $acc ( keys %$accessionsFromGenbank ){
+      if($loadedAx->{$acc}){
+        # printf STDERR ("OK found $acc\n");
+      }
+      else {
+        # printf STDERR ("NEW!!! $acc\n");
+        $written++;
+        printf LOG ("%s\n", join("\t", $abbrev,
+          $accessionsFromGenbank->{$acc}->{taxid} || 'NA',
+          $acc,
+          $accessionsFromGenbank->{$acc}->{ver},
+          $accessionsFromGenbank->{$acc}->{gi},
+          $accessionsFromGenbank->{$acc}->{title},
+          $accessionsFromGenbank->{$acc}->{length})
+        );
+        my $accver = sprintf("%s.%s", $acc,
+          $accessionsFromGenbank->{$acc}->{ver});
+        $seqsFetch{$accver} = 1;
+      }
+    }
+    my @ids = sort keys %seqsFetch;
+    next unless 0 < scalar @ids;
+    # my $fastafile = "log/fasta/$abbrev.fasta";
+    # open(my $fh, ">$fastafile") or die "Cannot write $fastafile: $!\n";
+    # $ez->downloadToFasta($fh, \@ids);
+    # close($fh);
+    #$ez->loadFromGenbank($dbh,\@ids);
+  }
+  close(LOG);
+  unless($written){
+    printf STDERR ("Deleting log %s, empty\n", $logfile);
+    unlink($logfile);
+  }
+  
+  $dbh->disconnect();
+}
+
+printf STDERR ("Audit complete.\n");

@@ -18,6 +18,7 @@ WHERE {
 	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
 	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
 	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	IF(STRSTARTS(?f2, "general/"), STRAFTER(?f2, "general/"), ?c), 
 	?f2) AS ?dataset) .
 
   ?entity rdfs:label ?org_label .  

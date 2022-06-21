@@ -3,6 +3,7 @@ create or replace function apidb.project_id (organism varchar2)
 return varchar2
 is
    project varchar2(80);
+   org varchar2(200);
 
 begin
 
@@ -15,10 +16,11 @@ begin
       --  is HostDB's "mus" vs. VectorBase's "musca". A better fix would be to
       --  prefer the match with greater N.
 
+      org := replace(organism, '''', '');
       execute immediate
          'select nvl(max( project_id), ''PiroplasmaDB'') ' ||
          'from ApidbTuning.ProjectTaxon pt ' ||
-         'where pt.taxon = substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
+         'where pt.taxon = substr(lower(''' || org || '''), 1, length(pt.taxon)) '
       into project;
       exception
          when NO_DATA_FOUND then

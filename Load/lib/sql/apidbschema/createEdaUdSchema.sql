@@ -18,6 +18,11 @@ GRANT CREATE ANY INDEX TO EDA_UD;
 GRANT CREATE TRIGGER TO EDA_UD;
 GRANT CREATE ANY TRIGGER TO EDA_UD;
 
+
+GRANT REFERENCES ON sres.externaldatabaserelease TO eda_ud;
+GRANT REFERENCES ON sres.ontologyterm TO eda_ud;
+GRANT REFERENCES ON apidbUserDatasets.InstalledUserDataset TO eda_ud;
+
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
     group_read, group_write, other_read, other_write, row_user_id,

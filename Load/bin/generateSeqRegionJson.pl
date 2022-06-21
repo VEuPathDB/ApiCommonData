@@ -257,15 +257,29 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "pfalNF166"
 	|| $organismAbbrev eq "pfalNF54"
 	|| $organismAbbrev eq "pfal7G8-2019"
+	|| $organismAbbrev eq "htarSISKIN1"
        ) {
       $projectName = "PlasmoDB";
-    } elsif ( $organismAbbrev eq "mbalATCC30984") {
+    } elsif ( $organismAbbrev eq "mbalATCC30984"
+	|| $organismAbbrev eq "nfowTy"
+		) {
       $projectName = "AmoebaDB";
+    } elsif ( $organismAbbrev eq "bdiv1802A"
+		) {
+      $projectName = "PiroplasmaDB";
+    } elsif ( $organismAbbrev eq "cvelCCMP2878"
+		) {
+      $projectName = "CryptoDB";
     } elsif ( $organismAbbrev eq "ncanLiverpool2019"
 	|| $organismAbbrev eq "etenHoughton2021"
 	    ) {
       $projectName = "ToxoDB";
-    } elsif ( $organismAbbrev eq "treeQM6a2017") {
+    } elsif ( $organismAbbrev eq "treeQM6a2017"
+	|| $organismAbbrev eq "ctroMYA3404-2020"
+	|| $organismAbbrev eq "rlauRL4"
+	|| $organismAbbrev eq "hvasRaceXXXIII"
+	|| $organismAbbrev eq "rirrC2"
+		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
 	    || $organismAbbrev eq "tbruLister427_2018"

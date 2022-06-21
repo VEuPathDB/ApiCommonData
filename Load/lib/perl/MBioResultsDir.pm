@@ -8,78 +8,72 @@ use JSON qw/encode_json/;
 use feature 'say';
 
 sub new {
-  my ($class, $dir, $fileExtensions, $nodeTypes) = @_;
-  die "node type for amplicon?" unless $nodeTypes->{amplicon};
-  die "node type for wgs?" unless $nodeTypes->{wgs};
-  die "node type for eukdetect?" unless $nodeTypes->{eukdetect};
+  my ($class, $dir, $fileExtensions) = @_;
   return bless {
     dir => $dir,
     fileExtensions => $fileExtensions,
-    nodeTypes => $nodeTypes,
   }, $class;
 }
 
-#<dataset>.<node name>.<file extension>
+#<dataset>.<suffix>.<file extension>
 sub mbioResultTablePath {
-  my ($self, $datasetName, $nodeName, $suffix) = @_;
-  return $self->{dir} . "/" . join(".", $datasetName, $nodeName, $self->{fileExtensions}{$suffix});
+  my ($self, $datasetName, $suffix, $fileType) = @_;
+  my $ext = $self->{fileExtensions}{$fileType};
+  die "What's the file extension for fileType $fileType?" unless $ext;
+  return $self->{dir} . "/" . join(".", $datasetName, $suffix, $ext);
 }
 
 sub ampliconTaxa {
-  my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'ampliconTaxa');
-  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? Trying path: $path";
+  my ($self, $datasetName, $suffix) = @_;
+  my $path = $self->mbioResultTablePath($datasetName, $suffix, 'ampliconTaxa');
+  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->ampliconTaxa($path);
 }
 
 sub eukdetectCpms {
-  my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'eukdetectCpms');
-  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? Trying path: $path";
+  my ($self, $datasetName, $suffix) = @_;
+  my $path = $self->mbioResultTablePath($datasetName, $suffix, 'eukdetectCpms');
+  say STDERR "MBioResultsDir: Does $datasetName have eukdetectCpms for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->eukdetectCpms($path);
 }
 
-}
-
 sub wgsTaxa {
-  my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'wgsTaxa');
-  say STDERR "MBioResultsDir: Does $datasetName have wgsTaxa? Trying path: $path";
+  my ($self, $datasetName, $suffix) = @_;
+  my $path = $self->mbioResultTablePath($datasetName, $suffix, 'wgsTaxa');
+  say STDERR "MBioResultsDir: Does $datasetName have wgsTaxa for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsTaxa($path);
 }
 
 sub level4ECs {
-  my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'level4ECs');
-  say STDERR "MBioResultsDir: Does $datasetName have level4ECs? Trying path: $path";
+  my ($self, $datasetName, $suffix) = @_;
+  my $path = $self->mbioResultTablePath($datasetName, $suffix, 'level4ECs');
+  say STDERR "MBioResultsDir: Does $datasetName have level4ECs for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsFunctions('level4EC', $path);
 }
 
 sub pathways {
-  my ($self, $datasetName, $nodeName) = @_;
-  my $pathA = $self->mbioResultTablePath($datasetName, $nodeName, 'pathwayAbundances');
-  my $pathC = $self->mbioResultTablePath($datasetName, $nodeName, 'pathwayCoverages');
-  say STDERR "MBioResultsDir: Does $datasetName have pathways? Trying paths: $pathA $pathC";
+  my ($self, $datasetName, $suffix) = @_;
+  my $pathA = $self->mbioResultTablePath($datasetName, $suffix, 'pathwayAbundances');
+  my $pathC = $self->mbioResultTablePath($datasetName, $suffix, 'pathwayCoverages');
+  say STDERR "MBioResultsDir: Does $datasetName have pathways? Trying paths: $pathA $pathC = " . (-f $pathA && -f $pathC ? 1 : 0 ) ;
   return unless -f $pathA && -f $pathC;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsPathways($pathA, $pathC);
 }
 
-sub mbioResultTablesForNodeName {
-  my ($self, $datasetName, $nodeType, $nodeName) = @_;
-  my @mbioResultTables = $nodeType eq $self->{nodeTypes}{amplicon} ? (
-      $self->ampliconTaxa($datasetName, $nodeName)
-      )
-    : $nodeType eq $self->{nodeTypes}{wgs} ? (
-      $self->wgsTaxa($datasetName, $nodeName),
-      $self->level4ECs($datasetName, $nodeName),
-      $self->pathways($datasetName, $nodeName),
-      )
-    : ();
-  return [grep {$_} @mbioResultTables];
+sub mbioResultTablesForSuffix {
+  my ($self, $datasetName, $suffix) = @_;
+  my @maybeTables = (
+      $self->ampliconTaxa($datasetName, $suffix),
+      $self->eukdetectCpms($datasetName, $suffix),
+      $self->wgsTaxa($datasetName, $suffix),
+      $self->level4ECs($datasetName, $suffix),
+      $self->pathways($datasetName, $suffix),
+      );
+  return [grep {$_} @maybeTables];
 }
 sub mbioResultTablesBySuffixForStudy {
   my ($self, $studyXml) = @_;
@@ -87,14 +81,15 @@ sub mbioResultTablesBySuffixForStudy {
   die "Not supported for MBio, yet: studyXmls with more datasets than one" unless @{$studyXml->{dataset}} == 1;
   my $datasetName = $studyXml->{dataset}[0];
   $datasetName =~ s{otuDADA2_(.*)_RSRC}{$1};
+  $datasetName =~ s{MicrobiomeStudyEDA_(.*)_RSRC}{$1};
   
   my %result;
   for my $nodeName (keys %{$studyXml->{node}}){
     my $suffix = $studyXml->{node}{$nodeName}{suffix};
     next unless $suffix;
-    my $mbioResultTables = $self->mbioResultTablesForNodeName(
+    my $mbioResultTables = $self->mbioResultTablesForSuffix(
       $datasetName,
-      $studyXml->{node}{$nodeName}{type},
+      $suffix,
       $nodeName
     );
     $result{$suffix} = $mbioResultTables;

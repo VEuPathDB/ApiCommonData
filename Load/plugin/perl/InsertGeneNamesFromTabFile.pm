@@ -205,13 +205,13 @@ sub makeGeneName {
 						     });
 
 
-  unless ($geneNameFeat->retrieveFromDB()){
+#  unless ($geneNameFeat->retrieveFromDB()){
       $geneNameFeat->set("is_preferred",$preferred);
       $geneNameFeat->set("external_database_release_id",$geneNameReleaseId);
       $geneNameFeat->submit();
-  }else{
-      $self->log("WARNING","Gene Name $geneName already exists for na_feature_id: $nafeatureId");
-  }
+#  }else{
+#      $self->log("WARNING","Gene Name $geneName already exists for na_feature_id: $nafeatureId");
+#  }
 
 }
 

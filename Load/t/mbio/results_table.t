@@ -27,6 +27,7 @@ k__DifferentKingdom	0.1	0.2
 k__yet_different_kingdom	1111.0	0
 EOF
 
+
 my $level4ECsPath=<<"EOF";
 	s1	s2
 UNGROUPED	0.1	0.1
@@ -200,4 +201,23 @@ subtest "submitToGus mentions bits of data" => sub {
   like($out, qr/${_}111/, "pathways: $_")
     for ("25".."36", "s1pan", "s2pan");
 };
+subtest "entities does not die" => sub {
+  setUpWithClass('ApiCommonData::Load::MBioResultsTable::AsEntities');
+  my $out = "";
+  $out = Dump $ampliconTaxaTable->entitiesForSample("s1");
+  like($out, qr/k_p_c_o_f_g_s/, "Amplicon taxon string");
+
+  $out = Dump $wgsTaxaTable->entitiesForSample("s1");
+  like($out, qr/K_P_C_O_F_G_S/, "WGS taxon string");
+  unlike($out, qr/DifferentKingdom/, "WGS only species");
+
+  $out = Dump $level4ECsTable->entitiesForSample("s1");
+  like($out, qr/${_}111/, "level4ECs: $_")
+    for ("21", "23");
+
+  $out = Dump $pathwaysTable->entitiesForSample("s1");
+  like($out, qr/${_}111/, "pathways: $_")
+    for ("25", "31");
+};
+  
 done_testing;

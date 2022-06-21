@@ -1,0 +1,23 @@
+# Number of datasets the ontology classes(terms) were used and indicate whether they have same labels among multiple datasets
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?dataSet ?IRI ?label ?hidden ?forceString
+WHERE {
+  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
+  GRAPH ?file {  
+	?IRI a owl:Class .
+	?IRI obo:EUPATH_0001020 ?forceString .
+	FILTER (lcase(str(?forceString)) = "yes")
+	?IRI rdfs:label ?s_label.
+	OPTIONAL {
+            	?IRI obo:EUPATH_0001010 ?dataSet .
+	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001013 ?hidden .
+        	}
+    } .
+    BIND (str(?s_label) AS ?label) .
+}
+ORDER BY ASC(?dataSet) ASC(?label)

@@ -242,6 +242,15 @@ create index dots.SnpDiff_ix on dots.NaFeatureImp
   (subclass_view, parent_id, string18, string9, number3, float2, float3, string12, na_feature_id)
   tablespace INDX;
 
+create index dots.nafeat_subso_ix on dots.NaFeatureImp
+  (subclass_view, sequence_ontology_id, na_feature_id)
+  tablespace INDX;
+
+create index dots.nafeat_scseqfeat_ix on dots.NaFeatureImp
+  (subclass_view, na_sequence_id, na_feature_id)
+  tablespace INDX;
+
+
 -- indexes for orthomcl keyword and pfam searches -- only needed in OrthoMCL instance
 -- CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
 --     indextype IS ctxsys.ctxcat;
@@ -262,7 +271,7 @@ create index dots.SnpDiff_ix on dots.NaFeatureImp
 -- when plugins first run in a workflow on a brand new instance
 ALTER TABLE core.algorithmimplementation
 ADD CONSTRAINT alg_imp_uniq
-UNIQUE (executable, cvs_revision);
+UNIQUE (executable, cvs_revision, executable_md5);
 
 
 -- add columns to a GUS view
@@ -360,7 +369,9 @@ create table RESULTS.REPORTERINTENSITY
   );
 
 create index results.rptrintsty_revix0
-  on results.ReporterIntensity (protocol_app_node_id, reporter_intensity_id) tablespace indx;
+  on results.ReporterIntensity
+       (protocol_app_node_id, reporter_id, value, reporter_intensity_id)
+  tablespace indx;
 
 create sequence RESULTS.REPORTERINTENSITY_SQ;
 

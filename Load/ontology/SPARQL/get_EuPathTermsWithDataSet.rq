@@ -1,0 +1,27 @@
+# List term IRI with the projects that used the term
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT ?ID ?dataSet ?OWLfile
+WHERE {
+  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
+  GRAPH ?file {  
+	?entity a owl:Class .
+	FILTER STRSTARTS(str(?entity), "http://purl.obolibrary.org/obo/EUPATH_")
+	OPTIONAL {
+	   ?entity obo:EUPATH_0001010 ?dataSet . 
+	}
+    } .
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	IF(STRSTARTS(?f2, "general/"), STRAFTER(?f2, "general/"), ?c), 
+	?f2) AS ?OWLfile) .
+  BIND(STRAFTER(STR(?entity), "/obo/") as ?ID)
+}
+ORDER BY ASC(?entity) ASC(?studyName)

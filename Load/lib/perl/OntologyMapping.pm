@@ -3,16 +3,17 @@ package ApiCommonData::Load::OntologyMapping;
 use strict;
 use warnings;
 
-use ApiCommonData::Load::OwlReader;
 use File::Basename qw/basename dirname/;
 use Env qw/PROJECT_HOME/;
 use XML::Simple;
 use Data::Dumper;
 
+my $OWLREADER = qq/ApiCommonData::Load::OwlReader/;
+
 sub asHash { return $_[0]->{_ontology_mapping} }
 
 sub asSourcesAndMapping {
-  my ($self) = @_;
+  my ($self, $maybeNamesPrefix) = @_;
   my $omHash = $self->asHash;
   my %ontologyMapping;
   my %ontologySources;
@@ -21,7 +22,6 @@ sub asSourcesAndMapping {
   foreach my $os (@{$omHash->{ontologySource}//[]}) {
     $ontologySources{lc($os)} = 1;
   }
-
 
   foreach my $ot (@{$omHash->{ontologyTerm}}) {
     my $sourceId = $ot->{source_id};
@@ -37,7 +37,16 @@ sub asSourcesAndMapping {
     else {
       die "Cannot read names from ontologyTerm $sourceId\n"
     }
+    NAME:
     foreach my $name (@names) {
+      my ($nameSplit, $prefix) = reverse split("::", $name);
+      if ($prefix and $maybeNamesPrefix){
+         if (lc $prefix ne lc $maybeNamesPrefix){
+            next NAME;
+         } else {
+           $name = $nameSplit;
+         }
+      }
       $ontologyMapping{lc($name)}->{$ot->{type}} = $ot;
     }
 
@@ -95,11 +104,13 @@ sub ontologyMappingFromOwl {
     $funcToAdd = readFunctionsFile($functionsFile);
   }
   my $vars = getTermsFromOwl($owl, $funcToAdd, $sortByIRI);
+  my $edaTerms = getEdaLabels($owl);
   my $materials = getMaterialTypesFromOwl($owl);
   my $protocols = getProtocols();
   my @terms;
   push(@terms, $_) for @$materials;
   push(@terms, $_) for @$protocols;
+  push(@terms, $_) for @$edaTerms;
   push(@terms, $_) for @$vars;
   # Mirror the XMLIn parse
   return {
@@ -110,15 +121,46 @@ sub ontologyMappingFromOwl {
   
 sub getOwl {
   my ($path) = @_;
-  return ApiCommonData::Load::OwlReader->new($path);
+  my $owl = {};
+  eval "require $OWLREADER";
+  eval "\$owl = $OWLREADER->new(\$path)";
+  #return ApiCommonData::Load::OwlReader->new($path);
+  return $owl;
 }
 
-sub getTermsFromOwl{
+sub getEdaLabels {
+  my ($owl, $sortByIRI) = @_;
+  my $it = $owl->execute('get_eda_labels');
+  my %terms;
+  while (my $row = $it->next) {
+    my $sid = $row->{iri}->as_hash()->{literal};
+    my $label = $row->{label}->as_hash()->{literal};
+    $terms{$sid} = { 
+      source_id => $sid,
+      name => [$label],
+      type => 'characteristicQualifier',
+      parent => 'Data analysis',
+      function => []
+    };
+  }
+  my @sorted;
+  if($sortByIRI){
+    @sorted = sort { $a->{source_id} cmp $b->{source_id} } values %terms;
+  }
+  else {
+    @sorted = sort { $a->{name}->[0] cmp $b->{name}->[0] } values %terms;
+  }
+  return \@sorted;
+}
+
+sub getTermsFromOwl {
   my ($owl,$funcToAdd,$sortByIRI) = @_;
   my $it = $owl->execute('get_column_sourceID');
   my %terms;
   while (my $row = $it->next) {
     my $sid = $row->{iri}->as_hash()->{literal};
+    my $parent = $row->{parent} ? $row->{parent}->as_hash()->{literal} : 'ENTITY';
+    my $omType = $row->{omType} ? $row->{omType}->as_hash()->{literal} : 'characteristicQualifier';
   	my $names = $row->{vars}->as_hash()->{literal};
   	#my $name = "";
   	if(ref($names) eq 'ARRAY'){
@@ -167,12 +209,10 @@ sub getTermsFromOwl{
     $terms{$sid} = { 
       source_id => $sid,
       name =>  $names,
-      type => 'characteristicQualifier',
-      parent=> 'ENTITY',
+      type => $omType,
+      parent => $parent,
       function => \@funcs
     };
-    $terms{$sid}{unit} = $row->{unitLabel}->literal_value if $row->{unitLabel};
-    $terms{$sid}{unitSourceId} = basename $row->{unitIRI}->literal_value if $row->{unitIRI};
   }
   my @sorted;
   if($sortByIRI){
@@ -183,11 +223,23 @@ sub getTermsFromOwl{
   }
   return \@sorted;
 }
-
 sub getMaterialTypesFromOwl {
   my ($owl) = @_;
+  my %materialTypes = (
+    'dna sequencing assay' => "OBI_0000626",
+    'host' => "OBI_0000725",
+    'dna extract' => "OBI_0001051",
+    'sample from organism' => "OBI_0000671",
+    'participant' => "EUPATH_0000096",
+    'whole metagenome sequencing assay' => "OBI_0002623",
+    '16s rrna sequencing assay targeting v1-v2 region' => "EUPATH_0000808",
+    '16s rrna sequencing assay targeting v1-v3 region' => "EUPATH_0000809",
+    '16s rrna sequencing assay targeting v2 region' => "EUPATH_0000810",
+    '16s rrna sequencing assay targeting v3-v4 region' => "EUPATH_0000811",
+    '16s rrna sequencing assay targeting v3-v5 region' => "EUPATH_0000812",
+    '16s rrna sequencing assay targeting v4 region' => "EUPATH_0000813",
+  );
   my $it = $owl->execute('top_level_entities');
-  my %materialTypes;
   while (my $row = $it->next) {
   	my $iri = $row->{entity}->as_hash()->{iri};
   	my $sid = basename($iri); 	
@@ -210,6 +262,10 @@ sub getProtocols {
     enrollment => 'OBI_0600004', # household-participant edge
     observationprotocol => 'BFO_0000015', # participant-observation edge
     'specimen collection' => 'OBI_0000659', # observation-sample edge
+    'dna extraction' => 'OBI_0000257',
+    'dna sequencing' => 'OBI_0000626',
+    'data collection' => 'OBI_0600013',
+    'data transformation' => 'OBI_0200000',
   );
   my @sorted;
   foreach my $prot ( sort keys %protocols ){

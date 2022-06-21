@@ -5,6 +5,9 @@ use warnings;
 use base qw/ApiCommonData::Load::MBioResultsTable/;
 use List::Util qw/sum/;
 
+# needs to make a column for a wide table
+my $MAX_PROPERTY_NAME_LENGTH = 110;
+
 $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
   ampliconTaxa => {
     entitiesForSample => sub {
@@ -22,19 +25,20 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
       my $unitType = $self->{unitType};
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "function_${unitType}", "function_${unitType}_species", undef, undef); 
+      die "Go get an ontology term for this unit: $unitType" unless $unitType =~ /4.*ec.*/i;
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "4th level ec metagenome abundance data", undef, undef, undef); 
     },
   },
   wgsPathways => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"pathway_abundance", "pathway_abundance_species", "pathway_coverage", "pathway_coverage_species");
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"metagenome enzyme pathway abundance data", undef, "metagenome enzyme pathway coverage data", undef);
     }
   },
   eukdetectCpms => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleAbundanceCpms($self->{data}{$sample});
+      return entitiesForSampleGroupedAbundancesEukCpms($self->{data}{$sample});
     }
   }
 };
@@ -46,10 +50,9 @@ sub entitiesForSample {
 sub entitiesForSampleTaxa {
   my ($data) = @_;
   my @values = values %${data};
+  return {} unless @values;
   return {
-    %{entitiesForSampleRelativeAbundances($data)},
-    alpha_diversity_shannon => alphaDiversityShannon(\@values),
-    alpha_diversity_inverse_simpson => alphaDiversityInverseSimpson(\@values),
+    %{entitiesForSampleRelativeAbundances($data)}
   };
 }
 
@@ -58,7 +61,7 @@ sub entitiesForSampleFunctions {
   my %result;
   for my $row (keys %{$data}){
     my $key = $rowDetails->{$row}{name};
-    my $displayName = $rowDetails->{$row}{description} // $key;
+    my $displayName = $rowDetails->{$row}{description} ? join(": ", $key, $rowDetails->{$row}{description}) : $key;
     my $species = $rowDetails->{$row}{species};
     my ($abundance, $coverage);
     my $x = $data->{$row};
@@ -72,92 +75,100 @@ sub entitiesForSampleFunctions {
       $key .= ", $species";
       $displayName .= ", $species";
     }
-    $key =~ s{[^A-Za-z_.0-9]+}{_}g;
-    if(length $key > 255) {
+    $key =~ s{[^A-Za-z_0-9]+}{_}g;
+    if(length $key > $MAX_PROPERTY_NAME_LENGTH) {
       die "Key unexpectedly long: $key";
     }
     if($abundance){
       my $n = $species ? $detailedAbundanceName : $summaryAbundanceName;
-      $result{$n}{$key} = [$displayName, $abundance];
+      $result{$n}{$key} = [$displayName, $abundance] if $n;
     }
-    if($coverage && $summaryCoverageName && $detailedCoverageName){
+    if($coverage){
       my $n = $species ? $detailedCoverageName : $summaryCoverageName;
-      $result{$n}{$key} = [$displayName, $coverage];
+      $result{$n}{$key} = [$displayName, $coverage] if $n;
     }
   }
   return \%result;
 }
+my $levelNamesTxt = <<EOF;
+relative abundance of kingdom data
+relative abundance of phylum data
+relative abundance of class data
+relative abundance of order data
+relative abundance of family data
+relative abundance of genus data
+relative abundance of species data
+EOF
+my $levelNames = [grep {$_} split("\n", $levelNamesTxt)];
 
-sub entitiesForSampleAbundanceCpms {
-  my ($data) = @_;
-  my $levelNames = [map {"abundance_cpms_${_}"} qw/k p c o f g s/];
-  return entitiesForSampleAggregatedAbundance($data, $levelNames, 1);
+
+sub abundanceKeyAndDisplayName {
+  my ($key, $maxLength) = @_;
+  my $displayName;
+  if($key =~m{;$}){
+    $displayName = $key;
+    $displayName =~ s{;*$}{};
+    $displayName =~ s{.*;}{};
+    $displayName = "unclassified $displayName";
+  } else {
+    ($displayName = $key) =~ s{.*;}{};
+  }
+  if ((length $key) > $maxLength){
+    my ($x, $y) = split(";", $key, 2);
+    die $key if not $y;
+    $key = $x .";...".substr($y, (length $y) - ($maxLength - 4), length $y);
+  }
+  $key =~ s{[^A-Za-z_0-9]+}{_}g;
+
+  return $key, $displayName;
 }
 
 sub entitiesForSampleRelativeAbundances {
   my ($data) = @_;
-  my $levelNames = [map {"relative_abundance_${_}"} qw/k p c o f g s/];
-  my $totalCount = sum values %{$data};
-  return entitiesForSampleAggregatedAbundance($data, $levelNames, $totalCount);
-}
-
-sub entitiesForSampleAggregatedAbundance {
-  my ($data, $levelNames, $normalizingFactor) = @_;
   my @rows = keys %{$data};
   my @abundances = values %{$data};
+  my $normalizingFactor= sum values %{$data};
   my %result;
 
   for my $taxonLevel ((0..$#$levelNames)){
+    my $maxKeyLength = $MAX_PROPERTY_NAME_LENGTH - length($levelNames->[$taxonLevel]) - 1;
     my %groups;
     for my $i (0..$#rows){
       my @ls = split ";", $rows[$i];
       my $l = join ";", map {$_ // ""} @ls[0..$taxonLevel];
       push @{$groups{$l}}, $abundances[$i];
     }
-    while(my ($key, $as) = each %groups){
+    while(my ($groupKey, $as) = each %groups){
       my $value = sprintf("%.6f", (sum @{$as} ) / $normalizingFactor);
-      my $displayName;
-      if($key =~m{;$}){
-        $displayName = $key;
-        $displayName =~ s{;*$}{};
-        $displayName =~ s{.*;}{};
-        $displayName = "unclassified $displayName";
-      } else {
-        ($displayName = $key) =~ s{.*;}{};
-      }
-      if ((length $key) + (length $levelNames->[$taxonLevel]) + 1 > 255){
-        my ($x, $y) = split(";", $key, 2);
-        $key = $x .";...".substr($y, (length $y) - (255 - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
-      }
-      $key =~ s{[^A-Za-z_.0-9]+}{_}g;
+      my ($key, $displayName) = abundanceKeyAndDisplayName($groupKey, $maxKeyLength);
       $result{$levelNames->[$taxonLevel]}{$key} = [$displayName, $value];
     }
   }
   return \%result;
 }
-sub alphaDiversityShannon {
-  my ($values) = @_;
-  my $totalCount = sum @{$values};
-  return 0 unless $totalCount;
 
-  my $result = 0;
-  for my $value (@{$values}){
-    my $p = $value / $totalCount;
-    $result += $p * log($p);
-  }
-  return -$result;
+sub parentTermForEuks {
+  my ($kingdom) = @_;
+  return $kingdom eq "Viridiplantae" ? 'plant taxon detected by sequence match'
+    : $kingdom eq "Metazoa" ? 'animal taxon detected by sequence match'
+    : $kingdom eq "Fungi" ? 'fungal taxon detected by sequence match'
+    : "protist taxon detected by sequence match"; 
 }
 
-sub alphaDiversityInverseSimpson {
-  my ($values) = @_;
-  my $totalCount = sum @{$values};
-  return 0 unless $totalCount;
-
-  my $result = 0;
-  for my $value (@{$values}){
-    my $p = $value / $totalCount;
-    $result += $p * $p;
+sub entitiesForSampleGroupedAbundancesEukCpms {
+  my ($data) = @_;
+  my @rows = keys %{$data};
+  my @abundances = values %{$data};
+  my %result;
+  for my $i (0..$#rows){
+    my ($x1, $x2) = split(";", $rows[$i], 2);
+    my $parent = parentTermForEuks($x1);
+    my $maxKeyLength = $MAX_PROPERTY_NAME_LENGTH - length($parent) - 1;
+    my ($key, $displayName) = abundanceKeyAndDisplayName($x2, $maxKeyLength);
+    my $value = $abundances[$i];
+    $result{$parent}{$key} = [$displayName, "Y"];
+    $result{"normalized number of taxon-specific sequence matches"}{$key} = [$displayName, $value];
   }
-  return 1 / $result;
+  return \%result;
 }
 1;

@@ -83,6 +83,7 @@ my (
 &usage("Missing a Required Argument --isfMappingFile") if ($format =~ /embl/i && !$isfMappingFile);
 &usage("Missing a Required Argument --ebiVersion") if ($isEbiGenome =~ /^y/i && !$ebiVersion);
 &usage("Missing a Required Argument --ebi2gusTag") if ($isEbiGenome =~ /^y/i && !$ebi2gusTag);
+&usage("Missing a Required Argument --format --sourceIdRegex --isfMappingFile") if ($isEbiGenome =~ /^n/i && (!$format || !$isfMappingFile || !$sourceIdRegex) );
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
@@ -113,6 +114,13 @@ while (<EXL>) {
   $count++;
 }
 close;
+
+## check if gca number already loaded before
+my $gcaNumber = $excelInfo{$organismAbbrev}{"INSDC accession"};
+my $cmd = "grep $gcaNumber \$PROJECT_HOME\/ApiCommonPresenters\/Model\/lib\/xml\/datasetPresenters\/\*.xml";
+my $out = `$cmd`;
+die "ERROR ...... GCA number, $gcaNumber for $organismAbbrev found at:\n$out\n" if ($out);
+
 
 ## add some constant value
 $excelInfo{$organismAbbrev}{"publicOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"};

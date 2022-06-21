@@ -60,6 +60,11 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+ integerArg({  name           => 'userDatasetId',
+	       descr          => 'For use with Schema=ApidbUserDatasets; this is the user_dataset_id',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
 
 
    booleanArg({name => 'isSimpleConfiguration',
@@ -71,8 +76,8 @@ my $argsDeclaration =
 
 
    booleanArg({name => 'skipDatasetLookup',
-          descr => 'do not require existing nodes for datasets listed in isa files',
-          reqd => 1,
+          descr => 'UNUSED (was: do not require existing nodes for datasets listed in isa filesi)',
+          reqd => 0,
           constraintFunc => undef,
           isList => 0,
          }),
@@ -110,16 +115,9 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
-
-
-   stringArg({name           => 'evalToGetGetAddMoreData',
-            descr          => 'Add more data to InvestigationSimple Reader',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
   ];
 
-my $documentation = { purpose          => "",
+our $documentation = { purpose          => "",
                       purposeBrief     => "",
                       notes            => "",
                       tablesAffected   => "",
@@ -128,24 +126,19 @@ my $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
-our @UNDO_TABLES =qw(
-  ProcessAttributes
-  EntityAttributes
-  AttributeUnit
-  ProcessTypeComponent
-  EntityType
-  Study
-); ## undo is not run on ProcessType
 
-my @REQUIRE_TABLES = qw(
+our @REQUIRE_TABLES = qw(
   Study
-  EntityAttributes
   EntityType
+  EntityAttributes
   AttributeUnit
   ProcessAttributes
   ProcessType
   ProcessTypeComponent
 );
+
+# JohnB/Jay: undo is not run on ProcessType
+our @UNDO_TABLES = grep {$_ ne 'ProcessType' } reverse @REQUIRE_TABLES;
 
 # ----------------------------------------------------------------------
 
@@ -187,13 +180,8 @@ sub run {
   }
   $self->userError("No investigation files") unless @investigationFiles;
 
-  my $getAddMoreData;
-  my $evalToGetGetAddMoreData = $self->getArg('evalToGetGetAddMoreData');
-  if($evalToGetGetAddMoreData){
-    $getAddMoreData = eval $evalToGetGetAddMoreData;
-    $self->error("string eval of $evalToGetGetAddMoreData failed: $@") if $@;
-    $self->error("string eval of $evalToGetGetAddMoreData failed: should return a function") unless ref $getAddMoreData eq 'CODE';
-  }
+  my $schema = $self->getArg('schema');
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
     my $dirname = dirname $investigationFile;
@@ -209,16 +197,32 @@ sub run {
       if ($ontologyMappingOverrideFile && ! -f $ontologyMappingOverrideFile){ ## prepend path
         $ontologyMappingOverrideFile = join("/", $metaDataRoot, $ontologyMappingOverrideFile);
       }
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, undef);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
+    $self->loadInvestigation($investigation, $extDbRlsId, $schema);
+    $investigationCount++;
+  }
+  $self->logRowsInserted() if($self->getArg('commit'));
+
+  $self->log("Processed $investigationCount Investigations.");
+}
+
+# called by the run methods
+# here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
+sub loadInvestigation {
+  my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  do {
     my %errors;
+    my $c = $investigation->{_on_error};
     $investigation->setOnError(sub {
       my ($error) = @_;
+      $c->(@_) if $c;
       $self->log("Error found when parsing:\n$error") unless $errors{$error}++;
     });
+    $investigation->setOnLog(sub { $self->log(@_);});
 
     $investigation->parseInvestigation();
 
@@ -228,36 +232,40 @@ sub run {
     my $nodeToIdMap = {};
     
     foreach my $study (@$studies) {
+      my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
+
+      # add the user_dataset_id if we are in that mode
+      if(uc($schema) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+        $gusStudy->setUserDatasetId($self->getArg("userDatasetId"));
+      }
+
+      unless($gusStudy->retrieveFromDB()){
+        $gusStudy->submit; 
+      }
+
       while($study->hasMoreData()) {
         $investigation->parseStudy($study);
         $investigation->dealWithAllOntologies();
 
-        my $identifier = $study->getIdentifier();
-        my $description = $study->getDescription();
-
         my $nodes = $study->getNodes();
-        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
+        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols(), $schema);
         my $edges = $study->getEdges();
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap)
+        $self->loadBatchOfStudyData($ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudy->getId, $nodes, $protocols, $edges, $nodeToIdMap)
          unless %errors;
       }
+      $self->ifNeededUpdateStudyMaxAttrLength($gusStudy);
     }
 
-    $investigationCount++;
     my $errorCount = scalar keys %errors;
     if($errorCount) {
       $self->error(join("\n","FOUND $errorCount DIFFERENT ERRORS!", keys %errors));
     }
-  }
-
-  $self->logRowsInserted() if($self->getArg('commit'));
-
-  $self->log("Processed $investigationCount Investigations.");
+  };
 }
 
 sub countLines {
@@ -271,9 +279,9 @@ sub countLines {
 
 
 sub protocolsCheckProcessTypesAndSetIds {
-  my ($self, $protocols) = @_;
+  my ($self, $protocols, $schema) = @_;
 
-  my $sql = sprintf("select name, process_type_id from %s.processtype", $self->getArg('schema'));
+  my $sql = "select name, process_type_id from $schema.processtype";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
@@ -297,28 +305,30 @@ sub protocolsCheckProcessTypesAndSetIds {
   return $protocols;
 }
 
-sub loadStudy {
-  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames,
-    $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap) = @_;
-
-  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
-
-  my $internalAbbrev = $identifier;
-  $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
-
-  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
-  $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
-
-  $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap);
-  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
-
-  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
-
-  if($self->{_max_attr_value} > $gusStudy->getMaxAttrLength()) {
+sub createGusStudy {
+  my ($self, $extDbRlsId, $study) = @_;
+  my $identifier = $study->getIdentifier();
+  my $description = $study->getDescription();
+  my $studyInternalAbbrev = $identifier;
+  $studyInternalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
+  return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
+}
+sub ifNeededUpdateStudyMaxAttrLength {
+  my ($self, $gusStudy) = @_;
+  if(! $gusStudy->getMaxAttrLength() || ($self->{_max_attr_value} //0) > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
     $gusStudy->submit();
   }
+}
+
+sub loadBatchOfStudyData {
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudyId,
+   $nodes, $protocols, $edges, $nodeToIdMap) = @_;
+
+  $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap);
+  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
+
 }
 
 
@@ -328,12 +338,18 @@ sub addEntityTypeForNode {
   my $isaClassName = ref($node);
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
 
-  my $materialType = $node->getMaterialType();
+  my $materialOrAssayType;
+  if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay' and $node->getStudyAssay()) {
+    $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
+  }
+  else {
+    $materialOrAssayType = $node->getMaterialType();
+  }
 
   $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId")
-    unless $materialType;
+    unless $materialOrAssayType;
 
-  my $mtKey = join("_", $materialType->getTerm, $isaType);
+  my $mtKey = join("_", $materialOrAssayType->getTerm, $isaType);
 
   if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
@@ -343,15 +359,16 @@ sub addEntityTypeForNode {
   $entityType->setStudyId($gusStudyId);
   $entityType->setIsaType($isaType);
 
-  my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialType, 0);
+  my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialOrAssayType, 0);
   $entityType->setTypeId($gusOntologyTerm->getId());
   $entityType->setName($gusOntologyTerm->getName());
 
-  my $internalAbbrev = $entityType->getName();
-  $internalAbbrev =~ s/([\w']+)/\u$1/g;
-  $internalAbbrev =~ s/\s//g;
+  my $entityTypeInternalAbbrev = $entityType->getName();
+  $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
+  $entityTypeInternalAbbrev =~ s/\W//g;
+  $entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
 
-  $entityType->setInternalAbbrev($internalAbbrev);
+  $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
   $entityType->submit(undef, 1);
 
@@ -373,7 +390,7 @@ sub addAttributeUnit {
   $self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId} = 1;
   
 
-  if(keys %{$self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}} > 1) {
+  if(scalar keys %{$self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}} > 1) {
     $self->error("Multiple Units found for EntityTypeId=$entityTypeId and AttributeOntologyTermId=$attrOntologyTermId");
   }
 
@@ -386,20 +403,27 @@ sub addAttributeUnit {
   $attributeValue->submit(undef, 1);
 }
 
+sub updateMaxAttrValue {
+  my ($self, $charValue) = @_;
+  if( length $charValue > ($self->{_max_attr_value}//0)) {
+    $self->{_max_attr_value} = length $charValue;
+  }
+}
 
 sub loadNodes {
-  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap) = @_;
-
-  my $gusStudyId = $gusStudy->getId();
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap) = @_;
 
   my $nodeCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
 
   foreach my $node (@$nodes) {
     my $charsForLoader = {};
+    my $charsForLoaderUniqueValues = {};
 
     if($nodeToIdMap->{$node->getValue()}) {
       if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
+        # Wojtek: this can happen if parsing study in batches, and a new batch contains a previously seen node
+        #         I worked around it in MBioInsertEntityGraph with a $investigation->setRowLimit(999999999); 
         $self->userError("Cannot append Characteristics to Existing Node". $node->getValue());
       }
       next;
@@ -413,43 +437,58 @@ sub loadNodes {
     my $characteristics = $node->getCharacteristics() // [];
     foreach my $characteristic (@$characteristics) {
 
-      my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
-      my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+      my ($charQualifierSourceId, $charValue);
 
-      if($characteristic->getUnit()) {
-        my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
-        $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
-       }
+      if ($characteristic->getQualifier =~ m{ncbitaxon}i){
+          # taxon id Wojtek: I think we don't want that
+          # $charQualifierSourceId = $ontologyTermToIdentifiers->{QUALIFIER}->{$characteristic->getQualifier};
+          # stable id
+          $charQualifierSourceId = $characteristic->getQualifier;
+          $charValue = $characteristic->getTerm();
+      } else { # usual case
 
-      my ($charValue);
-
-      my $termSourceRef = $characteristic->getTermSourceRef();
-      if($termSourceRef && (lc($termSourceRef) eq 'ncbitaxon')) {
-        my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
-        $charValue = $value;
-      }
-      elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-        my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
-        $charValue = $valueOntologyTerm->getName();
-      }
-      else {
-        $charValue = $characteristic->getTerm();
-      }
-
-      $charValue =~ s/\r//;
-
-      unless( grep(/^$charValue$/, @{$charsForLoader->{$charQualifierSourceId}}) ) {
-        # keep only unique values, no duplicates
-        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
+        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
+  
+        $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+  
+        if($characteristic->getUnit()) {
+          my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
+          $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+        }
+  
+        if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) { #value is ontology term
+          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+          $charValue = $valueOntologyTerm->getName();
+        }
+        else {
+          $charValue = $characteristic->getTerm();
+        }
       }
 
-      if(length $charValue > $self->{_max_attr_value}) {
-        $self->{_max_attr_value} = length $charValue;
-      }
+      if (ref $charValue eq 'HASH'){
+        #MBio children
+        $charsForLoader->{$charQualifierSourceId} = [$charValue];
+        for my $v (values %$charValue){
+           
+          $self->updateMaxAttrValue(ref $v eq 'ARRAY' ? $v->[1] : ref $v ? die "Unexpected ref: " . ref $v :  $v);
+        }
+      } else {
+        die "Unexpected ref type? " . ref $charValue if ref $charValue;
+        $charValue =~ s/\r//;
+        $self->updateMaxAttrValue($charValue);
+        $charsForLoaderUniqueValues->{$charQualifierSourceId}->{$charValue}=1;
 
+      }
+      
+    }
+    # Convert hashref to arrayref
+    # makes sure there is no duplicates
+    while(my ($charQualifierSourceId,$charValuesHashref) = each %$charsForLoaderUniqueValues){
+      my @charValues = keys %$charValuesHashref;
+      $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
-    $self->addGeohash($charsForLoader);
+    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);
 
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts) unless($atts eq '{}');
@@ -464,15 +503,17 @@ sub loadNodes {
 
     if(++$nodeCount % 1000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
+      #$self->log("Loaded $nodeCount nodes");
       $self->getDb()->manageTransaction(0, 'begin');
     }
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
+  #$self->log("Loaded $nodeCount nodes");
 }
 
 sub addGeohash {
-  my ($self, $hash) = @_;
+  my ($self, $hash, $ontologyTermToIdentifiers) = @_;
 
   my $geohashLength = 7;
 
@@ -481,7 +522,7 @@ sub addGeohash {
 
   return unless($hash->{$latitudeSourceId} && $hash->{$longitudeSourceId});
 
-  my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}, $hash->{$longitudeSourceId}, $geohashLength);
+  my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}->[0], $hash->{$longitudeSourceId}->[0], $geohashLength);
 
   my @geohashSourceIds = ('EUPATH_0043203', # GEOHASH 1
                           'EUPATH_0043204', # GEOHASH 2
@@ -495,41 +536,37 @@ sub addGeohash {
   for my $n (1 .. $geohashLength) {
     my $subvalue = substr($geohash, 0, $n);         
     my $geohashSourceId = $geohashSourceIds[$n - 1];
+    next unless $ontologyTermToIdentifiers->{QUALIFIER}->{$geohashSourceId};
     $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
     $hash->{$geohashSourceId} = [$subvalue];
-  }            
+  }           
 }
 
 
 sub encodeGeohash {
-  my ($self, $lat, $lng, $bits) = @_;
-  my $minLat = -90;
-  my $maxLat = 90;
-  my $minLng = -180;
-  my $maxLng = 180;
-  my $result = 0;
-  for (my $i = 0; $i < $bits; ++$i){
-    if ($i % 2 == 0) {                 # even bit: bisect longitude
-      my $midpoint = ($minLng + $maxLng) / 2;
-      if ($lng < $midpoint) {
-        $result <<= 1;                 # push a zero bit
-        $maxLng = $midpoint;            # shrink range downwards
-      } else {
-        $result = $result << 1 | 1;     # push a one bit
-        $minLng = $midpoint;            # shrink range upwards
-      }
-    } else {                          # odd bit: bisect latitude
-      my $midpoint = ($minLat + $maxLat) / 2;
-      if ($lat < $midpoint) {
-        $result <<= 1;                 # push a zero bit
-        $maxLat = $midpoint;            # shrink range downwards
-      } else {
-        $result = $result << 1 | 1;     # push a one bit
-        $minLat = $midpoint;            # shrink range upwards
-      }
-    }
+  my($self, $latitude, $longitude, $precision ) = @_;
+  my @Geo32 = qw/0 1 2 3 4 5 6 7 8 9 b c d e f g h j k m n p q r s t u v w x y z/;
+  my @coord = ($latitude, $longitude);
+  my @range = ([-90, 90], [-180, 180]);
+  my($which,$value) = (1, '');
+  while (length($value) < $precision * 5) {
+      my $tot = 0;
+      $tot += $_ for @{$range[$which]};
+      my $mid = $tot / 2;
+      $value .= my $upper = $coord[$which] <= $mid ? 0 : 1;
+      $range[$which][$upper ? 0 : 1] = $mid;
+      $which = $which ? 0 : 1;
   }
-  return $result;
+  my $enc;
+  my $start = 0;
+  my @valArr = split('', $value);
+  my $end = $#valArr;
+  while($start < $end){
+    my @n = @valArr[$start..$start+4];
+      $enc .= $Geo32[ord pack 'B8', '000' . join '', @n]; # binary to decimal, very specific to the task
+    $start += 5;
+  }
+  return $enc
 }
 
 
@@ -691,9 +728,7 @@ sub getProcessAttributesHash {
         }
       }
       
-      if(length $ppValue > $self->{_max_attr_value}) {
-        $self->{_max_attr_value} = length $ppValue;
-      }
+      $self->updateMaxAttrValue($ppValue);
     }
   }
   return \%rv;
@@ -704,7 +739,7 @@ sub getProcessAttributesHash {
 sub loadProcesses {
   my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
 
-  my $processCount;
+  my $processCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
 
   foreach my $process (@$processes) {
@@ -732,6 +767,7 @@ sub loadProcesses {
 
         if(++$processCount % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
+          # $self->log("Loaded $processCount processes");
           $self->getDb()->manageTransaction(0, 'begin');
         }
       }
@@ -739,6 +775,7 @@ sub loadProcesses {
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
+  $self->log("Loaded $processCount processes");
 }
 
 sub checkOntologyTermsAndFetchIds {
@@ -765,6 +802,7 @@ and tn.name_class = 'scientific name'
 
   my @multipleCounts;
   my @missingTerms;
+
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
 
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
@@ -783,9 +821,9 @@ and tn.name_class = 'scientific name'
         $ontologyTermToNames->{$os}->{$ota} = $ontologyTermName;
       }
       elsif($count > 1) {
-        push @multipleCounts, $accessionOrName;
+        push (@multipleCounts, "$accessionOrName ($ota)");
       } else {
-        push @missingTerms, $accessionOrName;
+        push (@missingTerms, "$accessionOrName ($ota)");
       }
     }
   }
@@ -796,17 +834,6 @@ and tn.name_class = 'scientific name'
     $self->userError($msg);
   }
   return $ontologyTermToIdentifiers, $ontologyTermToNames;
-}
-# FOR EMERGENCY USE
-sub not_undoTables {
-  return qw/
-  EDA.ProcessAttributes
-  EDA.EntityAttributes
-  EDA.AttributeUnit
-  EDA.ProcessTypeComponent
-  EDA.EntityType
-  EDA.Study
-  /;
 }
 
 1;

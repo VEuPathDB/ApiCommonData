@@ -47,6 +47,11 @@ my $argsDeclaration =
 	     reqd            => 0,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
+ stringArg({ name            => 'fileBasename',
+	     descr           => 'basename for output files',
+	     reqd            => 0,
+	     constraintFunc  => undef,
+	     isList          => 0 }),
  stringArg({name           => 'schema',
        descr          => 'GUS::Model schema for entity tables',
        reqd           => 1,
@@ -83,6 +88,7 @@ sub run {
   my ($datasetName,$ver) = split(/\|/, $extDbRlsSpec);
   $datasetName =~ s/\|.*//;
   my $outputDir = $self->getArg('outputDir');
+  my $fileBasename = sprintf("%s_PREFIX_%s", $datasetName, $self->getArg('fileBasename') || $datasetName);
 
   my $ontologySpec = $self->getArg('ontologyExtDbRlsSpec'); # for entity labels
   my $ontologyId = $self->getExtDbRlsId($ontologySpec);
@@ -116,16 +122,16 @@ sub run {
          unless(-d $outputDir){
            mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
          }
-         $outputFile = sprintf("%s/%s_%s.txt", $outputDir, $datasetName, $entityNameForFile);
+         $outputFile = sprintf("%s/%s_%s.txt", $outputDir, $fileBasename, $entityNameForFile);
       }
       else{
-        $outputFile = sprintf("%s_%s.txt", $datasetName, $entityNameForFile);
+        $outputFile = sprintf("%s_%s.txt", $fileBasename, $entityNameForFile);
       }
       $self->log("Making download file $outputFile for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
       $mergeInfo{$outputFile} =  $self->createDownloadFile($entityTypeId, $entityTypeAbbrev, \%entityNames, $studyAbbrev,$outputFile);
     }
     #
-    my $allMergedFile = sprintf("%s%s.txt", $outputDir ? "$outputDir/" : "", $datasetName);
+    my $allMergedFile = sprintf("%s%s.txt", $outputDir ? "$outputDir/" : "", $fileBasename);
     $self->log("Making all data merged file $allMergedFile ");
     my $tempScript = "merge_script.R";
     if($outputDir){$tempScript = join("/", $outputDir,$tempScript)}
@@ -135,21 +141,21 @@ sub run {
     print FH ($code);
     close(FH);
     printf STDERR "Running $tempScript\n";
-    if(system("nice -n40 Rscript $tempScript")){
-      $self->error("$tempScript failed");
-    }
+  # if(system("nice -n40 Rscript $tempScript")){
+  #   $self->error("$tempScript failed");
+  # }
 
     ## ontology file
 
-    my $outputFile = "ontologyMetadata.txt"; 
+    my $outputFile = "OntologyMetadata.txt"; 
     if($outputDir){ 
        unless(-d $outputDir){
          mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
        }
-       $outputFile = sprintf("%s/%s_ontologyMetadata.txt", $outputDir, $datasetName);
+       $outputFile = sprintf("%s/%s_OntologyMetadata.txt", $outputDir, $fileBasename);
     }
     else{
-      $outputFile = sprintf("%s_ontologyMetadata.txt", $datasetName);
+      $outputFile = sprintf("%s_OntologyMetadata.txt", $fileBasename);
     }
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
@@ -174,8 +180,10 @@ sub createDownloadFile {
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
   my $sql = <<SQL_GETLABELS;
 SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL
+and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 UNION
 SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL
+and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
   my @orderedIRIs = sort { $attrNames->{$a} cmp $attrNames->{$b} } keys %$attrNames;
@@ -261,7 +269,7 @@ sub makeOntologyFile {
     my $category = $entityType->{LABEL};
     my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${type}";
     my $sql =  <<ONTOSQL;
-WITH synrep AS 
+WITH replacesIRI AS
 (SELECT o2.SOURCE_ID STABLE_ID, json_value(o.ANNOTATION_PROPERTIES,'\$.replaces[0]') REPLACES FROM sres.ONTOLOGYSYNONYM o
 LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID=o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId
@@ -273,10 +281,11 @@ WHERE o3.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId)
 SELECT ag.stable_id, ag.display_name, ag.data_type, parent.label,
 '$category' category, ag.definition, ag.range_min, ag.range_max,
 ag.mean, ag.median, ag.upper_quartile, ag.lower_quartile,
-ag.distinct_values_count, ag.vocabulary, ag.provider_label, synrep.replaces
+ag.distinct_values_count, ag.vocabulary, ag.provider_label, replacesIRI.replaces
 FROM $tableName ag
-left join synrep ON ag.STABLE_ID = synrep.stable_id
+left join replacesIRI ON ag.STABLE_ID = replacesIRI.stable_id
 LEFT JOIN parent ON ag.parent_stable_id=parent.stable_id
+WHERE (ag.HIDDEN IS NULL OR json_value(ag.hidden,'\$[0]') NOT IN ('everywhere','download'))
 ONTOSQL
 ## print STDERR "Get ontology metadata:\n$sql\n";
     my $dbh = $self->getQueryHandle();
@@ -323,13 +332,13 @@ sub mergeScript {
       $firstFile = 0;
       push(@scriptLines, sprintf('%s <- fread("%s", header=T, sep="\t")', $ALLTAB, $fileName));
       if( $fileInfo->{merge_key} ){
-        push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ALLTAB, $TMK, $ALLTAB, $fileInfo->{merge_key}));
+        push(@scriptLines, sprintf('%s$%s = as.character(%s$"%s")', $ALLTAB, $TMK, $ALLTAB, $fileInfo->{merge_key}));
       }
     }
     else {
       push(@scriptLines, sprintf('%s <- fread("%s", header=T, sep="\t")', $ENTITYTAB, $fileName));
       if( $fileInfo->{merge_key} ){
-        push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ENTITYTAB, $TMK, $ENTITYTAB, $fileInfo->{merge_key}));
+        push(@scriptLines, sprintf('%s$%s = as.character(%s$"%s")', $ENTITYTAB, $TMK, $ENTITYTAB, $fileInfo->{merge_key}));
         if($allMergedCols{$TMK}) { push(@mergeCols, $TMK) }
       }
       foreach my $idCol ( @{ $fileInfo->{id_cols} } ){

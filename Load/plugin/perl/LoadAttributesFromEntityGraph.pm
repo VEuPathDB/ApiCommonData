@@ -1,5 +1,8 @@
 package ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph;
-
+# Load attributes into EDA.attribute and EDA.attributevalue
+# Warning! Only one instance of this plugin should run at a time
+# because values for attribute_value_id are written as SEQUENCE(MAX,1)
+#
 @ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
 use warnings;
@@ -18,7 +21,7 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal);
 
 use JSON;
 
@@ -26,12 +29,24 @@ use Data::Dumper;
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
 
-my $VALUE_COUNT_CUTOFF = 10;
-
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
+
+my $TERMS_WITH_DATASHAPE_ORDINAL = {};
+
+my $ALLOW_VOCABULARY_COUNT = 10; # if the number of distinct values is less, generate vocabulary/ordered_values/ordinal_values
+
+my $FORCED_PRECISION = {
+    ### for studies with lat/long: GEOHASH i => i
+    EUPATH_0043203 => 1, 
+    EUPATH_0043204 => 2, 
+    EUPATH_0043205 => 3, 
+    EUPATH_0043206 => 4, 
+    EUPATH_0043207 => 5, 
+    EUPATH_0043208 => 6,
+  };
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
@@ -100,6 +115,15 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   booleanArg({name => 'runRLocally',
+          descr => 'if true, will assume Rscript and plot.data are installed locally.  otherwise will call singularity',
+          reqd => 1,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+
+
 ];
 
 sub getActiveForkedProcesses {
@@ -159,6 +183,8 @@ sub run {
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
+  my $dbh = $self->getQueryHandle();
+  my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
 
   my $studiesCount;
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
@@ -166,8 +192,9 @@ sub run {
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -198,17 +225,21 @@ sub statsForPlots {
 
   print $rCommandsFh $self->rCommandsForStats();
 
-
-  printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
-  my $numberSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
-  if($numberSysResult) {
-    $self->error("Error Running singularity for numericFile");
+  my $singularity =  "singularity exec docker://veupathdb/rserve";
+  if($self->getArg("runRLocally")) {
+    $singularity = "";
   }
 
-  printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
-  my $dateSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
+  printf STDERR ("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
+  my $numberSysResult = system("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
+  if($numberSysResult) {
+    $self->error("Error Running Rscript for numericFile");
+  }
+
+  printf STDERR ("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
+  my $dateSysResult = system("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
   if($dateSysResult) {
-    $self->error("Error Running singularity for datesFile");
+    $self->error("Error Running Rscript for datesFile");
   }
 
   my $rv = {};
@@ -263,22 +294,25 @@ sub truncateSummaryStat {
 }
 
 sub rCommandsForStats {
-  my $R_script = <<RSCRIPT;
+  my $R_script = <<'RSCRIPT';
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
-if( file.info(fileName)\$size == 0 ){
+if( file.info(fileName)$size == 0 ){
   quit('no')
 }
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
 isDate = 0;
-if(is.character(t\$V3)) {
-  t\$V3 = as.Date(t\$V3);
+if(!is.character(t$V2)) {
+  t$V2 = as.character(t$V2);
+}
+if(is.character(t$V3)) {
+  t$V3 = as.Date(t$V3);
   isDate = 1;
 }
 u = unique(t[,1:2]);
 subsetFxn = function(x, output){
-   v = subset(t, V1==x[1] & V2==x[2])\$V3
+   v = subset(t, V1==x[1] & V2==x[2])$V3
    data.min = min(v);
    data.max = max(v);
    data.mean = mean(v);
@@ -426,11 +460,14 @@ sub valProps {
 
 #  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
-  if($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
+  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
     $dataShape = 'ordinal';
   }
-  elsif($isDate || ($isNumber && $valueCount > $VALUE_COUNT_CUTOFF)) {
-    ## TODO if min or max is set, ignore $VALUE_COUNT_CUTOFF 
+# DEPRECATED - never infer shape = ordinal
+# elsif($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
+#   $dataShape = 'ordinal';
+# }
+  elsif($isDate || $isNumber ){
     $dataShape = 'continuous';
   }
   elsif($valueCount == 2) {
@@ -442,7 +479,7 @@ sub valProps {
   }
 
   my $orderedValues;
-  if($dataShape ne 'continuous') {
+  if($dataShape ne 'continuous' || $valueCount <= $ALLOW_VOCABULARY_COUNT) {
     my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { lc($a) cmp lc($b)} } keys(%{$cs{_VALUES}});
     $orderedValues = encode_json(\@values);
   }
@@ -465,6 +502,9 @@ sub valProps {
 #  }
   else {
     $dataType = 'string';
+  }
+  if(defined ( $FORCED_PRECISION->{$attributeStableId} )){
+    $precision = $FORCED_PRECISION->{$attributeStableId};
   }
   return {
     data_type => $dataType,
@@ -578,7 +618,7 @@ sub loadAttributes {
 ######
 
         my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
-        my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($cs, $value);
+        my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($attributeStableId, $cs, $value);
         $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} = $updatedCs;
 
         if($dateValue) {
@@ -615,11 +655,11 @@ sub annPropsAndValues {
   unless($ontologyTerm) {
     $self->error("No ontology term found for:  $ontologySourceId");
   }
-  my $isMultiValued = (scalar(@$valueArray) > 1);
+  my $isMultiValued = (scalar(@{$valueArray//[]}) > 1);
   my @result;
 
   VALUE:
-  for my $value (@{$valueArray}){
+  for my $value (@{$valueArray//[]}){
     if (ref $value eq 'HASH'){
       # MBio results
       for my $k (keys %{$value}){
@@ -632,7 +672,7 @@ sub annPropsAndValues {
            $displayName = $ontologyTerm->{DISPLAY_NAME}. ": $k";
            $subvalue = $o;
         }
-        push @result, ["$ontologySourceId.$k", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
+        push @result, ["${ontologySourceId}_$k", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
       }
     } else {
       push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId, $isMultiValued), $value];
@@ -642,7 +682,7 @@ sub annPropsAndValues {
 }
 
 sub typedValueForAttribute {
-  my ($self, $counts, $value, $dateValsFh, $numericValsFh) = @_;
+  my ($self, $attributeStableId, $counts, $value) = @_;
 
   my ($stringValue, $numberValue, $dateValue); 
 
@@ -652,6 +692,16 @@ sub typedValueForAttribute {
   $valueNoCommas =~ tr/,//d;
 
   $counts->{_VALUES}->{$value}++;
+
+  #####################################################
+  ## Abort if annotation property forceStringType = yes
+  ## which is loaded into SRes.OntologySynonym.Annotation_Properties
+  ## by the step _updateOntologySynonym_owlAttributes
+  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
+    $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
+    return $counts, $stringValue, $numberValue, $dateValue;
+  }
+  #####################################################
 
   if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
     # looks_like_number() considers these numbers: nan=not a number, inf=infinity 
@@ -817,7 +867,7 @@ sub makeFifo {
   my $login       = $database->getLogin();
   my $password    = $database->getPassword();
   my $dbiDsn      = $database->getDSN();
-  my ($dbi, $type, $db) = split(':', $dbiDsn);
+  my ($dbi, $type, $db) = split(':', $dbiDsn, 3);
 
   my $sqlldr = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                  _password => $password,

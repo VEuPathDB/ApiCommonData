@@ -22,8 +22,12 @@ my ($help, $outputDir, $orgFilter, $replaceExisting);
             'replace_existing' => \$replaceExisting
     );
 
-if($help || ! -d $outputDir) {
+if($help || ! $outputDir) {
   die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]\n";
+}
+
+if(! -d $outputDir) {
+  die "directory not found: $outputDir";
 }
 
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
@@ -45,11 +49,11 @@ my @tracks = keys %{$xml->{track}};
 
 my $organisms = &getOrganismInfo($dbh);
 
-print "ORGFILTER=$orgFilter\n";
-
+print "starting dump at " . `date` . "\n";
 foreach my $o (@$organisms) {
   next if($orgFilter && $o->{abbrev} ne $orgFilter);
 
+  my ($sequenceCount, $printedSequenceCount);
   my $genomicSequences = &getGenomicSequences($dbh, $o);
   my $proteinSequences = &getProteinSequences($dbh, $o);
 
@@ -66,8 +70,12 @@ foreach my $o (@$organisms) {
   mkdir $organismDir unless(-d $organismDir);
   mkdir $outputDir unless(-d $outputDir);
 
+  my $trackCount = 0;
   foreach my $trackName (@tracks) {
     next if($trackName =~ /^\s*#/);
+
+    $trackCount++;
+    my $startTime = time;
 
     my $trackType = $xml->{track}->{$trackName}->{type};
     my $fileSuffix = $xml->{track}->{$trackName}->{fileSuffix};
@@ -75,7 +83,6 @@ foreach my $o (@$organisms) {
     die "track must provide trackType, fileSuffix, and trackName" unless($trackType && $fileSuffix && $trackName);
 
     my $fullFileName = "$outputDir/${trackName}.${fileSuffix}";
-    print "FILE=$fullFileName\n";
 
     my $outFh;
 
@@ -95,18 +102,22 @@ foreach my $o (@$organisms) {
     my $queryParams = &makeQueryParams($dbh, $trackName, $xml);
 
     my @existingFiles = glob "${fullFileName}*";
-    if($replaceExisting) {
-      unlink @existingFiles;
-    }
-    else {
-      print STDERR "SKIPPING Existing file: $fullFileName\n";
-      next;
+    if (scalar @existingFiles) {
+      if($replaceExisting) {
+	print "unlinking existing file(s): " . join(", ", @existingFiles) . "\n";
+	unlink @existingFiles;
+      }
+      else {
+	print STDERR "SKIPPING Existing file: $fullFileName\n";
+	next;
+      }
     }
 
     open($outFh, "|sort -T $outputDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
 
     my $featureCountTotal;
     foreach my $s (@$sequences) {
+      $sequenceCount++;
       my $seqName = $s->{seqname};
       my $seqId = $s->{seqid};
 
@@ -116,7 +127,6 @@ foreach my $o (@$organisms) {
 
         $featureCountTotal += $featureCount;
       }
-
 
     }
     close $outFh;
@@ -132,7 +142,15 @@ foreach my $o (@$organisms) {
       print "WARN: unlink $fullFileName\n";
       unlink $fullFileName;
     }
+    print "organism " . $o->{abbrev} . " $sequenceCount sequences\n"
+      unless $printedSequenceCount;
+    $printedSequenceCount = 1;
+
+    my $duration = time - $startTime;
+    print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
   }
+
+  print "finished $trackCount tracks\n";
 }
 
 
@@ -154,37 +172,37 @@ sub addFeatures {
     $hash->{atts} .= ";ID=$featureId";
     $hash->{atts} .= ";Parent=$parentId" if($parentId);
 
-    print $fh join("\t", ($seqName, 
-                           $hash->{source}, 
-                           $hash->{feature}, 
-                           $hash->{startm}, 
-                           $hash->{end}, 
+    print $fh join("\t", ($seqName,
+                           $hash->{source},
+                           $hash->{feature},
+                           $hash->{startm},
+                           $hash->{end},
                            $hash->{score} || ".",
                            $hash->{strand},
                            $hash->{frame} || ".",
                            $hash->{atts})) . "\n";
-    
+
     if($hash->{tstarts}) {
       my @tstarts = map { s/\s+//g; $_ - 1 } split /,/, $hash->{tstarts};
       my @blocksizes = map { s/\s+//g; $_ } split /,/, $hash->{blocksizes};
       my $counter = 0;
-      
+
       foreach my $start (@tstarts) {
         #TODO check end coords for possible 1 off error
         my $end = $start + $blocksizes[$counter] - 1;
 
         my $subAtts = "ID=" . $featureId . "_$counter;Parent=$featureId";
-        
-        print $fh join("\t", ($seqName, 
-                               $hash->{source}, 
-                               "subfeature", 
+
+        print $fh join("\t", ($seqName,
+                               $hash->{source},
+                               "subfeature",
                                $start,
                                $end,
                                $hash->{score} || ".",
                                $hash->{strand},
                                $hash->{frame} || ".",
                                $subAtts)) . "\n";
-        
+
         $counter = $counter + 1;
       }
     }
@@ -238,7 +256,7 @@ and d.external_database_id = r.external_database_id";
   $sh->execute();
 
   my @rv;
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {  
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
     push @rv, $hash;
   }
   $sh->finish();
@@ -255,13 +273,11 @@ sub getProteinSequences {
   $sh->execute($extDbRlsId);
 
   my @rv;
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) { 
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
     push @rv, $hash;
   }
   $sh->finish();
   return \@rv;
-
-
 }
 
 sub getGenomicSequences {
@@ -273,7 +289,7 @@ sub getGenomicSequences {
   $sh->execute($extDbRlsId);
 
   my @rv;
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) { 
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
     push @rv, $hash;
   }
   $sh->finish();

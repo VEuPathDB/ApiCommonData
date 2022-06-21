@@ -79,8 +79,10 @@ CREATE SEQUENCE &1.EntityType_sq;
 GRANT SELECT ON &1.EntityType_sq TO gus_w;
 GRANT SELECT ON &1.EntityType_sq TO gus_r;
 
-CREATE INDEX &1.entitytype_ix_1 ON &1.entitytype (study_id, entity_type_id) TABLESPACE indx;
-CREATE INDEX &1.entitytype_ix_2 ON &1.entitytype (type_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1.entitytype_ix_1 ON &1.entitytype (study_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1.entitytype_ix_2 ON &1.entitytype (type_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1.entitytype_ix_3 ON &1.entitytype (study_id, internal_abbrev) TABLESPACE indx;
+
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -264,6 +266,8 @@ CREATE TABLE &1.EntityTypeGraph (
  display_name_plural          VARCHAR2(200),
  description                  VARCHAR2(4000),
  internal_abbrev              VARCHAR2(50) NOT NULL,
+ has_attribute_collections    NUMBER(1),
+ is_many_to_one_with_parent   NUMBER(1),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -446,7 +450,20 @@ CREATE SEQUENCE &1.AttributeValue_sq;
 GRANT SELECT ON &1.AttributeValue_sq TO gus_w;
 GRANT SELECT ON &1.AttributeValue_sq TO gus_r;
 
-CREATE INDEX &1.attributevalue_ix_1 ON &1.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX &1.attributevalue_ix_1
+  ON &1.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id,
+                        entity_attributes_id)
+  TABLESPACE indx;
+
+CREATE INDEX &1.attributevalue_ix_2
+  ON &1.attributevalue 
+     (number_value, date_value, attribute_stable_id, entity_type_id, string_value)
+  TABLESPACE indx;
+
+CREATE INDEX &1.attributevalue_ix_3
+  ON &1.attributevalue 
+     (attribute_stable_id, string_value, entity_type_id, number_value, date_value)
+  TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -546,14 +563,16 @@ CREATE TABLE &1.AttributeGraph (
   stable_id                varchar2(255) NOT NULL,
   parent_stable_id              varchar2(255) NOT NULL,
   parent_ontology_term_id       NUMBER(10) NOT NULL,
-  provider_label                varchar(1500),
+  provider_label                varchar(3200),
   display_name                  varchar(1500) not null,
   display_order                number(3),
   definition                   varchar2(4000),
   display_type                    varchar2(20),
+  hidden                   varchar2(64),
   display_range_min            varchar2(16),
   display_range_max            varchar2(16),
   is_merge_key                 number(1),
+  impute_zero                  number(1),
   is_repeated                  number(1),
   bin_width_override           varchar2(16),
   -- is_hidden                    number(1),
