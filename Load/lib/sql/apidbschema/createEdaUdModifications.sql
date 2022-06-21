@@ -54,7 +54,36 @@ WHERE 'datasetattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 -----------------------------------------------------------
+grant select on apidbUserDatasets.DatasetAttributes to eda with grant option;
 
+create or replace view eda.StudyIdDatasetId as
+  select study_stable_id, dataset_id
+  from apidbTuning.StudyIdDatasetId
+union
+  select study_stable_id, dataset_stable_id
+  from apidbUserDatasets.DatasetAttributes
+;
 
+grant select on eda.StudyIdDatasetId to public;
+
+grant references on apidbUserDatasets.EntityTypeGraph to eda;
+grant references on eda.EntityTypeGraph to eda;
+grant select on apidbUserDatasets.EntityTypeGraph to eda with grant option;
+
+create or replace view eda.UnifiedEntityTypeGraph as
+  select study_stable_id, parent_stable_id, stable_id, display_name,
+         display_name_plural, description, internal_abbrev,
+         has_attribute_collections, is_many_to_one_with_parent
+  from eda.EntityTypeGraph
+union
+  select study_stable_id, parent_stable_id, stable_id, display_name,
+         display_name_plural, description, internal_abbrev,
+         has_attribute_collections, is_many_to_one_with_parent
+  from apidbUserDatasets.EntityTypeGraph
+;
+
+grant select on eda.UnifiedEntityTypeGraph to public;
+
+-----------------------------------------------------------
 
 exit;

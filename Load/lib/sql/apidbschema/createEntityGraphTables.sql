@@ -1,5 +1,9 @@
 set CONCAT OFF;
 
+-- so the foreign key constraints are allowed
+grant references on sres.OntologyTerm to &1;
+grant references on sres.ExternalDatabaseRelease to &1;
+
 CREATE TABLE &1.Study (
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
