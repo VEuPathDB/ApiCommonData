@@ -13,7 +13,7 @@ use DBD::Oracle;
 
 use GUS::Supported::GusConfig;
 
-sub getStrandness        { $_[0]->{strand} }
+sub getStrandness        { $_[0]->{strand} } #### Marking for removal - we want to do both or just one always.
 sub getGeneType        { $_[0]->{genetype} } #### Marking for removal - we want to do both or just one always.
 sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organism} }
@@ -62,7 +62,7 @@ sub munge {
 	my $datasetName = $self->getDatasetName();
 
 	print "Excluding pseudogenes";
-	my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
+	my $preprocessedFile = "Preprocessed_excludePseudogene_" . $inputFile;
 	my $sql = "SELECT ga.source_id,
 							ta.length
 						FROM apidbtuning.geneAttributes ga,
@@ -90,11 +90,11 @@ sub munge {
 												group by dataset_name");
 
 
-	#-------- Parse file and create input file for wgcna (called outputFile) ---------#
+	#-------- Parse file and create input file for wgcna (called preprocessedFile) ---------#
 	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	open(OUT,">$mainDirectory/$preprocessedFile") or die "Couldn't open file $mainDirectory/$preprocessedFile for writing, $!";
 	
-	my %inputs; #### ANN find out of these are wgcna inputs or what. I think these are samples.
+	my %inputSamples;
 	# Read through inputFile. Format and apply a floor thresholding if necessary
 	while (my $line = <IN>){
 		# chomp $line; Removed because we actually want that new line char to show up at the end.
@@ -108,7 +108,7 @@ sub munge {
 			foreach(@headers[1 .. $#headers]){
 				# Should the below come before printing?
 				# @headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
-				$inputs{$_} = 1;
+				$inputSamples{$_} = 1;
 			}
 		}else{
 			# Each line describes one gene. First element is gene identifier
@@ -141,8 +141,8 @@ sub munge {
 	mkdir("$mainDirectory/FirstStrandExcludePseudogeneOutputs");
 	my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
 
-	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
-	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	my $inputFileForWGCNA = "$mainDirectory/$preprocessedFile";
+	my $command = "singularity run  docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 	
 	my $results  =  system($command);
@@ -181,7 +181,7 @@ sub munge {
 
 	my %inputProtocolAppNodesHash;
 	foreach(@modules) {
-		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputSamples;
 	}
 		
 	# Sets things for config file. What my instance of this object did (parameters)
