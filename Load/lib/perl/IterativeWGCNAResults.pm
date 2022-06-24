@@ -20,8 +20,7 @@ sub getInputSuffixME              { $_[0]->{inputSuffixME} }
 sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
-sub getReadsThreshold              { $_[0]->{readsThreshold} }
-sub getDatasetName            { $_[0]->{datasetName} } #### Marking for removal. Need to get this info from elsewhere
+sub getThreshold              { $_[0]->{threshold} }
 
 
 #-------------------------------------------------------------------------------
@@ -54,11 +53,10 @@ sub munge {
 	my $power = $self->getPower();
 	my $inputFile = $self->getInputFile();
 	my $organism = $self->getOrganism();
-	my $readsThreshold = $self->getReadsThreshold();
-	my $datasetName = $self->getDatasetName();
+	my $threshold = $self->getThreshold();
 
 	print "Using the first strand and excluding pseudogenes\n";
-	my $preprocessedFile = "Preprocessed_excludePseudogene_" . $inputFile;
+	my $preprocessedFile = "Preprocessed_" . $inputFile;
 	my $sql = "SELECT ga.source_id,
 							ta.length
 						FROM apidbtuning.geneAttributes ga,
@@ -78,12 +76,6 @@ sub munge {
 	}
 		
 	$stmt->finish();
-
-	#--------- Find average unique reads for this dataset ------------#
-	my ($avg_unique_reads) = $dbh->selectrow_array("select avg(avg_unique_reads)
-												from apidbtuning.rnaseqstats
-												where dataset_name = '$datasetName'
-												group by dataset_name");
 
 
 	#-------- Parse file and create input file for wgcna (called preprocessedFile) ---------#
@@ -118,12 +110,12 @@ sub munge {
 			# Picking 90%. Can add to the analysisConfig if necessary but keeping it simple for now.
 			my $countReadsPassingThreshold = 0;
 			foreach(@geneLine[1 .. $#geneLine]){
-				if ($_ > $readsThreshold) {
-					countReadsPassingThreshold++;
+				if ($_ > $threshold) {
+					$countReadsPassingThreshold++;
 				}
 			}
 
-			if ((countReadsPassingThreshold/$#geneLine) > 0.9) {
+			if (($countReadsPassingThreshold/$#geneLine) > 0.9) {
 				$line = join("\t",@geneLine);
 				# Fix for new line troubles
 				chomp $line;
@@ -133,7 +125,7 @@ sub munge {
 					print OUT $line;
 				}
 			} else {
-				print "$geneLine[0] failed to pass the reads threshold and will not be included in the analysis.";
+				print "$geneLine[0] had only $countReadsPassingThreshold of $#geneLine samples passing the given reads threshold, so $geneLine[0] will not be included in the analysis.\n";
 			}
 
 		}
@@ -142,8 +134,8 @@ sub munge {
 	close OUT;
 		
 	#-------------- run IterativeWGCNA docker image -----#
-	mkdir("$mainDirectory/FirstStrandExcludePseudogeneOutputs");
-	my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
+	mkdir("$mainDirectory/FirstStrandOutputs");
+	my $outputDir = $mainDirectory . "/FirstStrandOutputs";
 
 	my $inputFileForWGCNA = "$mainDirectory/$preprocessedFile";
 	my $command = "singularity run  docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -153,8 +145,8 @@ sub munge {
 	print $results;
 	
 	#-------------- parse Module Membership -----#
-	mkdir("$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading");
-	my $outputDirModuleMembership = "$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading/";
+	mkdir("$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading");
+	my $outputDirModuleMembership = "$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading/";
 	
 	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	my %MMHash;
@@ -173,9 +165,9 @@ sub munge {
 	my @allKeys = keys %MMHash;
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; # removes unclassifieds
 	for my $i(@ModuleNames){
-		push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ExcludePseudogene";
-		push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ExcludePseudogene" ;
-		open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st_ExcludePseudogene" . "\.txt") or die $!;
+		push @modules,$i . " " . $self->getInputSuffixMM();
+		push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM();
+		open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st" . "\.txt") or die $!;
 		print MMOUT "geneID\tcorrelation_coefficient\n";
 		for my $ii(@{$MMHash{$i}}){
 				print MMOUT $ii;
@@ -201,12 +193,12 @@ sub munge {
 
 	#-- copy module_egene file to one upper dir and the run doTranscription --#
 	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
-											mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand_ExcludePseudogene.txt ";
+											mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand.txt ";
 	my $CPresults  =  system($CPcommand);
 
 	# Also something like sourceIdType. Default is "gene". In this case should probably be "eigengene" so that the plugin knows.
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand_ExcludePseudogene.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
 	);
 	$egenes ->setTechnologyType("RNASeq");
 	# $egenes->setProtocolName("WGCNAME");
