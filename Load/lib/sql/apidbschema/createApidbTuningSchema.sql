@@ -78,5 +78,15 @@ create or replace synonym apidbTuning.ChangedGeneProduct
   for apidbTuning.ChangedGeneProduct0000;
 
 --------------------------------------------------------------------------------
+create table apidbTuning.StudyIdDatasetId0000 (
+  study_stable_id varchar2(200),
+  dataset_id      varchar2(15)
+  );
+
+grant select on apidbTuning.StudyIdDatasetId0000 to public;
+
+create or replace synonym apidbTuning.StudyIdDatasetId for apidbTuning.StudyIdDatasetId0000;
+
+--------------------------------------------------------------------------------
 
 exit
