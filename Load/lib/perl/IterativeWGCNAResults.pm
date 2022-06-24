@@ -13,8 +13,6 @@ use DBD::Oracle;
 
 use GUS::Supported::GusConfig;
 
-sub getStrandness        { $_[0]->{strand} } #### Marking for removal - we want to do both or just one always.
-sub getGeneType        { $_[0]->{genetype} } #### Marking for removal - we want to do both or just one always.
 sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
@@ -41,7 +39,6 @@ sub new {
 sub munge {
 	my ($self) = @_;
 	#------------- database configuration -----------#
-	my $strand = $self->getStrandness();
 	my $mainDirectory = $self->getMainDirectory();
 	my $technologyType = $self->getTechnologyType();
 	my $profileSetName = $self->getprofileSetName();
@@ -57,11 +54,10 @@ sub munge {
 	my $power = $self->getPower();
 	my $inputFile = $self->getInputFile();
 	my $organism = $self->getOrganism();
-	my $genetype = $self->getGeneType();
 	my $readsThreshold = $self->getReadsThreshold();
 	my $datasetName = $self->getDatasetName();
 
-	print "Excluding pseudogenes";
+	print "Using the first strand and excluding pseudogenes\n";
 	my $preprocessedFile = "Preprocessed_excludePseudogene_" . $inputFile;
 	my $sql = "SELECT ga.source_id,
 							ta.length
@@ -114,22 +110,30 @@ sub munge {
 			# Each line describes one gene. First element is gene identifier
 			my @geneLine = split("\t",$line);
 
-			# Calculate and apply the floor based on the pre-defiend readsThreshold
-			my $hard_floor = $readsThreshold * 1000000 * $geneLengthsHash{$geneLine[0]} / $avg_unique_reads;
+			
+			#### Let's change this to hard threshold that is a configuration in the xml threshold. Have it be in the native units (tpm or log2 ratio)
+			# Will leave it to be set in the analysis config so that it can vary by dataset
+			# Try running with a few cutoffs to see if any difference. Consider the wgcna output stats in optimization
+			# Make sure to document in confluence! Also worth putting in readmes within the workspace directories
+			# Picking 90%. Can add to the analysisConfig if necessary but keeping it simple for now.
+			my $countReadsPassingThreshold = 0;
 			foreach(@geneLine[1 .. $#geneLine]){
-				if ($_ < $hard_floor) {
-					$_ = $hard_floor;
+				if ($_ > $readsThreshold) {
+					countReadsPassingThreshold++;
 				}
 			}
 
-			$line = join("\t",@geneLine);
+			if ((countReadsPassingThreshold/$#geneLine) > 0.9) {
+				$line = join("\t",@geneLine);
+				# Fix for new line troubles
+				chomp $line;
+				$line = "$line\n";
 
-			# Fix for new line troubles
-			chomp $line;
-			$line = "$line\n";
-
-			if ($genesHash{$geneLine[0]}){
-				print OUT $line;
+				if ($genesHash{$geneLine[0]}){
+					print OUT $line;
+				}
+			} else {
+				print "$geneLine[0] failed to pass the reads threshold and will not be included in the analysis.";
 			}
 
 		}
