@@ -108,14 +108,14 @@ sub munge {
 			# Try running with a few cutoffs to see if any difference. Consider the wgcna output stats in optimization
 			# Make sure to document in confluence! Also worth putting in readmes within the workspace directories
 			# Picking 90%. Can add to the analysisConfig if necessary but keeping it simple for now.
-			my $countReadsPassingThreshold = 0;
+			my $countSamplesPassingThreshold = 0;
 			foreach(@geneLine[1 .. $#geneLine]){
 				if ($_ > $threshold) {
 					$countReadsPassingThreshold++;
 				}
 			}
 
-			if (($countReadsPassingThreshold/$#geneLine) > 0.9) {
+			if (($countSamplesPassingThreshold/$#geneLine) > 0.9) {
 				$line = join("\t",@geneLine);
 				# Fix for new line troubles
 				chomp $line;
@@ -125,7 +125,7 @@ sub munge {
 					print OUT $line;
 				}
 			} else {
-				print "$geneLine[0] had only $countReadsPassingThreshold of $#geneLine samples passing the given reads threshold, so $geneLine[0] will not be included in the analysis.\n";
+				print "$geneLine[0] had only $countSamplesPassingThreshold of $#geneLine samples passing the given reads threshold, so $geneLine[0] will not be included in the analysis.\n";
 			}
 
 		}
@@ -134,26 +134,29 @@ sub munge {
 	close OUT;
 		
 	#-------------- run IterativeWGCNA docker image -----#
-	mkdir("$mainDirectory/FirstStrandOutputs");
-	my $outputDir = $mainDirectory . "/FirstStrandOutputs";
+	my $outputDir = "FirstStrandOutputs";
+	my $outputDirFullPath = $mainDirectory . "/" . $outputDir
+	mkdir($outputDirFullPath);
+
 
 	my $inputFileForWGCNA = "$mainDirectory/$preprocessedFile";
-	my $command = "singularity run  docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	my $command = "singularity run  docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDirFullPath  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 	
 	my $results  =  system($command);
 	print $results;
 	
 	#-------------- parse Module Membership -----#
-	mkdir("$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading");
-	my $outputDirModuleMembership = "$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading/";
+	my $outputDirModuleMembership = "FirstStrandMMResultsForLoading"
+	my $outputDirModuleMembershipFullPath = $outputDirFullPath . "/" . $outputDirModuleMembership
+	mkdir($outputDirModuleMembershipFullPath);
+
 	
-	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
+	open(MM, "<", "$outputDirFullPath/merged-0.25-membership.txt") or die "Couldn't open $outputDirFullPath/merged-0.25-membership.txt for reading";
 	my %MMHash;
 	<MM>; # skip header
 	while (my $line = <MM>) {
 		chomp($line);
-		# $line =~ s/\r//g; # consider command line tools for converting from mac to unix #### Marked for removal
 		my @all = split/\t/,$line;
 		push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n"; # also can just exclude Unclassified things
 	}
@@ -166,8 +169,8 @@ sub munge {
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; # removes unclassifieds
 	for my $i(@ModuleNames){
 		push @modules,$i . " " . $self->getInputSuffixMM();
-		push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM();
-		open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st" . "\.txt") or die $!;
+		push @files,"$outputDirModuleMembership" . "$i" . "_1st" . "\.txt";
+		open(MMOUT, ">$outputDirModuleMembershipFullPath/$i" . "_1st" . "\.txt") or die $!;
 		print MMOUT "geneID\tcorrelation_coefficient\n";
 		for my $ii(@{$MMHash{$i}}){
 				print MMOUT $ii;
@@ -177,7 +180,7 @@ sub munge {
 
 	my %inputProtocolAppNodesHash;
 	foreach(@modules) {
-		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputSamples;
+		push @{$inputProtocolAppNodesHash{$_}}, map { $_ } sort keys %inputSamples;
 	}
 		
 	# Sets things for config file. What my instance of this object did (parameters)
@@ -192,7 +195,7 @@ sub munge {
 	#-------------- parse Module Eigengene -----#
 
 	#-- copy module_egene file to one upper dir and the run doTranscription --#
-	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+	my $CPcommand = "cp  $outputDirFullPath/merged-0.25-eigengenes.txt  . ; 
 											mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand.txt ";
 	my $CPresults  =  system($CPcommand);
 
