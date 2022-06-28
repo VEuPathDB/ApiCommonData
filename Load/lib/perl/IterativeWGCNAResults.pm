@@ -111,7 +111,7 @@ sub munge {
 			my $countSamplesPassingThreshold = 0;
 			foreach(@geneLine[1 .. $#geneLine]){
 				if ($_ > $threshold) {
-					$countReadsPassingThreshold++;
+					$countSamplesPassingThreshold++;
 				}
 			}
 
@@ -135,7 +135,7 @@ sub munge {
 		
 	#-------------- run IterativeWGCNA docker image -----#
 	my $outputDir = "FirstStrandOutputs";
-	my $outputDirFullPath = $mainDirectory . "/" . $outputDir
+	my $outputDirFullPath = $mainDirectory . "/" . $outputDir;
 	mkdir($outputDirFullPath);
 
 
@@ -147,8 +147,8 @@ sub munge {
 	print $results;
 	
 	#-------------- parse Module Membership -----#
-	my $outputDirModuleMembership = "FirstStrandMMResultsForLoading"
-	my $outputDirModuleMembershipFullPath = $outputDirFullPath . "/" . $outputDirModuleMembership
+	my $outputDirModuleMembership = "FirstStrandMMResultsForLoading";
+	my $outputDirModuleMembershipFullPath = $outputDirFullPath . "/" . $outputDirModuleMembership;
 	mkdir($outputDirModuleMembershipFullPath);
 
 	
