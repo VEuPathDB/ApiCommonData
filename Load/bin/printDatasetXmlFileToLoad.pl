@@ -41,6 +41,7 @@ my (
     $ebiVersion,
     $ebi2gusTag,
 
+    $ignoreError,
     $help);
 
 &GetOptions(
@@ -73,6 +74,7 @@ my (
 	    'ebiVersion=s' => \$ebiVersion,
 	    'ebi2gusTag=s' => \$ebi2gusTag,
 
+	    'ignoreError=s' => \$ignoreError,
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
@@ -119,7 +121,11 @@ close;
 my $gcaNumber = $excelInfo{$organismAbbrev}{"INSDC accession"};
 my $cmd = "grep $gcaNumber \$PROJECT_HOME\/ApiCommonPresenters\/Model\/lib\/xml\/datasetPresenters\/\*.xml";
 my $out = `$cmd`;
-die "ERROR ...... GCA number, $gcaNumber for $organismAbbrev found at:\n$out\n" if ($out);
+if ($ignoreError =~ /^Y/i) {
+  print STDERR "Warning ...... GCA number, $gcaNumber for $organismAbbrev found at:\n$out\n" if ($out);
+} else {
+  die "ERROR ...... GCA number, $gcaNumber for $organismAbbrev found at:\n$out\n" if ($out);
+}
 
 
 ## add some constant value
@@ -1015,6 +1021,7 @@ where
   --isEbiGenome: optional, Yes|No
   --ebiVersion: required if isEbiGenome=Yes
   --ebi2gusTag: required if isEbiGenome=Yes
+  --ignoreError: optional, only need it if know there is a GCA_ or GCF_ exists already
 
 ";
 }
