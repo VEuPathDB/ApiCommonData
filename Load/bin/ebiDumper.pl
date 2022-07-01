@@ -14,11 +14,12 @@ use CBIL::Util::PropertySet;
 
 my $databaseName = "core";
 
-my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile, $organismAbbrev);
+my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile, $organismAbbrev);
 
 &GetOptions('help|h' => \$help,
             'container_name=s' => \$containerName,
             'init_directory=s' => \$initDir,
+            'socket_directory-s' => \$socketDir, 
             'mysql_directory=s' => \$dataDir,
             'output_directory=s' => \$outputDir,
             'schema_definition_file=s' => \$schemaDefinitionFile,
@@ -63,7 +64,7 @@ my $SO_VERSION = &getDatabaseRelease($dbh, $SO_NAME);
 $dbh->disconnect();
 
 
-foreach($initDir,$dataDir,$outputDir) {
+foreach($initDir,$dataDir,$outputDir,$socketDir) {
   unless(-d $_) {
     &usage();
     die "directory $_ does not exist";
@@ -101,7 +102,7 @@ if($containerExists) {
   die "There is an existing container named $containerName";
 }
 
-my $mysqlServiceCommand = "singularity instance start --bind ${schemaDefinitionFile}:/usr/local/etc/gusSchemaDefinitions.xml --bind ${outputDir}:/tmp --bind ${registryFn}:/usr/local/etc/ensembl_registry.conf --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus:${ebi2gusVersion} $containerName";
+my $mysqlServiceCommand = "singularity instance start --bind ${schemaDefinitionFile}:/usr/local/etc/gusSchemaDefinitions.xml --bind ${outputDir}:/tmp --bind ${registryFn}:/usr/local/etc/ensembl_registry.conf --bind ${socketDir}:/run/mysqld --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus:${ebi2gusVersion} $containerName";
 
 system($mysqlServiceCommand) == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
