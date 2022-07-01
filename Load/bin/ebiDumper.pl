@@ -19,7 +19,7 @@ my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $schemaDe
 &GetOptions('help|h' => \$help,
             'container_name=s' => \$containerName,
             'init_directory=s' => \$initDir,
-            'socket_directory-s' => \$socketDir, 
+            'socket_directory=s' => \$socketDir, 
             'mysql_directory=s' => \$dataDir,
             'output_directory=s' => \$outputDir,
             'schema_definition_file=s' => \$schemaDefinitionFile,
