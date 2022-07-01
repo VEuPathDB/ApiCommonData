@@ -21,6 +21,9 @@ sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
 sub getThreshold              { $_[0]->{threshold} }
+sub getValueType              { $_[0]->{valueType} }
+sub getQuantificationType              { $_[0]->{quantificationType} }
+sub getStrand              { $_[0]->{strand} }
 
 
 #-------------------------------------------------------------------------------
@@ -40,6 +43,9 @@ sub munge {
 	#------------- database configuration -----------#
 	my $mainDirectory = $self->getMainDirectory();
 	my $technologyType = $self->getTechnologyType();
+	my $valueType = $self->getValueType();
+	my $quantificationType = $self->getQuantificationType();
+	my $strand = $self->getStrand();
 	my $profileSetName = $self->getprofileSetName();
 	my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
 	my $dsn = $gusconfig->getDbiDsn();
@@ -95,7 +101,7 @@ sub munge {
 			
 			foreach(@headers[1 .. $#headers]){
 				# Should the below come before printing?
-				# @headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
+				@headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
 				$inputSamples{$_} = 1;
 			}
 		}else{
@@ -144,7 +150,6 @@ sub munge {
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 	
 	my $results  =  system($command);
-	print $results;
 	
 	#-------------- parse Module Membership -----#
 	my $outputDirModuleMembership = "FirstStrandMMResultsForLoading";
@@ -203,9 +208,21 @@ sub munge {
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
 		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
 	);
+        print($egenes);
+        print("hi ann");
+	my @egenesFiles;
+	my @sampleNames;
+        print(keys %inputSamples);
+	foreach my $key (keys %inputSamples){
+		print($key);
+                push @sampleNames,$key . "  " . $self->getInputSuffixMM();
+		push @egenesFiles,"merged-0.25-eigengenes_1stStrand.txt" . "/$key";
+	}
 	$egenes ->setTechnologyType("RNASeq");
-	# $egenes->setProtocolName("WGCNAME");
-	$egenes->setProtocolName("WGCNAModuleEigengenes"); # Will be consumed by the loader (insertAnalysisResults plugin). Also need to change it in the plugin
+        $egenes->setFileNames(\@egenesFiles);
+        $egenes->setDisplaySuffix(" [$quantificationType" . " - $strand" . " - $valueType" . " - unique]");
+        $egenes->setNames(\@sampleNames);
+	$egenes->setProtocolName("wgcna_eigengene"); # Will be consumed by the loader (insertAnalysisResults plugin). Also need to change it in the plugin
 	$egenes->createConfigFile(); # writes the config row
 	
 	$egenes ->munge();
