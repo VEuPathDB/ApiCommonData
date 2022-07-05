@@ -208,24 +208,12 @@ sub munge {
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
 		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
 	);
-        print($egenes);
-        print("hi ann");
-	my @egenesFiles;
-	my @sampleNames;
-        print(keys %inputSamples);
-	foreach my $key (keys %inputSamples){
-		print($key);
-                push @sampleNames,$key . "  " . $self->getInputSuffixMM();
-		push @egenesFiles,"merged-0.25-eigengenes_1stStrand.txt" . "/$key";
-	}
 	$egenes ->setTechnologyType("RNASeq");
-        $egenes->setFileNames(\@egenesFiles);
         $egenes->setDisplaySuffix(" [$quantificationType" . " - $strand" . " - $valueType" . " - unique]");
-        $egenes->setNames(\@sampleNames);
 	$egenes->setProtocolName("wgcna_eigengene"); # Will be consumed by the loader (insertAnalysisResults plugin). Also need to change it in the plugin
-	$egenes->createConfigFile(); # writes the config row
 	
-	$egenes ->munge();
+	# The following writes the appropriate rows in insert_study_results_config.txt
+        $egenes ->munge();
 			
 }
 
