@@ -193,7 +193,7 @@ sub munge {
 	$self->setNames(\@modules);                                                                                           
 	$self->setFileNames(\@files);
 	$self->setProtocolName("WGCNA");
-	$self->setSourceIdType("gene");
+	$self->setSourceIdType("module");
 	$self->createConfigFile();
 		
 		

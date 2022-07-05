@@ -346,15 +346,14 @@ sub addResults {
 	    $start = 1;
 	}
     }
-=head
+
     elsif ($sourceIdType =~ /module/) {
 	if($protocolName eq 'wgcna_eigengene'){
-	    $hash = {sample=>$a[0]};
-	    #$hash = {module_eigengene=>$a[1]};
+	    $hash = {module_eigengene=>$a[0]};
 	    $start = 1;
 	}
     }
-=cut
+
     elsif ($sourceIdType =~ /subject/) {
       $hash = { subject => $a[0] };
       $start = 1;
