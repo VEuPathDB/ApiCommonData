@@ -60,6 +60,7 @@ CREATE TABLE &1.EntityType (
  isa_type                     VARCHAR2(50),
  study_id            NUMBER(12) NOT NULL,
  internal_abbrev              VARCHAR2(50) NOT NULL,
+ count                        NUMBER(38,0),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
