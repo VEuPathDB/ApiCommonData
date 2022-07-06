@@ -349,7 +349,7 @@ sub addResults {
 
     elsif ($sourceIdType =~ /module/) {
 	if($protocolName eq 'wgcna_eigengene'){
-	    $hash = {module_eigengene=>$a[0]};
+	    $hash = {module_name=>$a[0]};
 	    $start = 1;
 	}
     }
