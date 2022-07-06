@@ -23,7 +23,6 @@ sub getTechnologyType              { $_[0]->{technologyType} }
 sub getThreshold              { $_[0]->{threshold} }
 sub getValueType              { $_[0]->{valueType} }
 sub getQuantificationType              { $_[0]->{quantificationType} }
-sub getStrand              { $_[0]->{strand} }
 
 
 #-------------------------------------------------------------------------------
@@ -45,7 +44,7 @@ sub munge {
 	my $technologyType = $self->getTechnologyType();
 	my $valueType = $self->getValueType();
 	my $quantificationType = $self->getQuantificationType();
-	my $strand = $self->getStrand();
+	my $strand = "firststrand"; # Only doing first strand analyses.
 	my $profileSetName = $self->getprofileSetName();
 	my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
 	my $dsn = $gusconfig->getDbiDsn();
