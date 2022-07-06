@@ -276,7 +276,7 @@ sub addResults {
   elsif ($protocolName eq 'WGCNA') {
     $tableString = "ApiDB::NAfeatureWGCNAResults";
   }
-  elsif ($protocolName eq 'WGCNAME') {
+  elsif ($protocolName eq 'wgcna_eigengene') {
     $tableString = "ApiDB::EigengeneWGCNAResults";
   }
   elsif ($protocolName eq "compoundMassSpec") {
@@ -346,15 +346,14 @@ sub addResults {
 	    $start = 1;
 	}
     }
-=head
+
     elsif ($sourceIdType =~ /module/) {
-	if($protocolName eq 'WGCNAME'){
-	    $hash = {sample=>$a[0]};
-	    #$hash = {module_eigengene=>$a[1]};
+	if($protocolName eq 'wgcna_eigengene'){
+	    $hash = {module_name=>$a[0]};
 	    $start = 1;
 	}
     }
-=cut
+
     elsif ($sourceIdType =~ /subject/) {
       $hash = { subject => $a[0] };
       $start = 1;
