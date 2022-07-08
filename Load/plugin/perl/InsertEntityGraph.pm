@@ -214,6 +214,7 @@ sub run {
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
   my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  $self->getQueryHandle()->do("alter session set RELEASE_CURSOR=YES");
   do {
     my %errors;
     my $c = $investigation->{_on_error};
@@ -259,6 +260,7 @@ sub loadInvestigation {
          unless %errors;
       }
       $self->ifNeededUpdateStudyMaxAttrLength($gusStudy);
+      $self->updateEntityCardinality($gusStudy->getId);
     }
 
     my $errorCount = scalar keys %errors;
@@ -834,6 +836,23 @@ and tn.name_class = 'scientific name'
     $self->userError($msg);
   }
   return $ontologyTermToIdentifiers, $ontologyTermToNames;
+}
+
+sub updateEntityCardinality {
+  my ($self, $gusStudyId) = @_;
+  my $gusEntityType = $self->getGusModelClass('EntityType');
+  return unless ($gusEntityType->new()->can('getCardinality'));
+  my $dbh = $self->getQueryHandle();
+  my $sql = "SELECT et.ENTITY_TYPE_ID, COUNT(1) from EDA.EntityType et LEFT JOIN EDA.EntityAttributes ea on et.Entity_Type_Id = ea.Entity_Type_Id where STUDY_ID=? GROUP BY et.ENTITY_TYPE_ID";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($gusStudyId);
+  while(my ($entityTypeId, $count) = $sh->fetchrow_array()) {
+    my $et = $gusEntityType->new({entity_type_id => $entityTypeId});
+    if($et->retrieveFromDB()){
+      $et->setCardinality($count);
+      $et->submit();
+    }
+  }
 }
 
 1;
