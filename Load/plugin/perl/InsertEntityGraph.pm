@@ -161,6 +161,9 @@ sub new {
 
 sub run {
   my ($self) = @_;
+# 2022-07-12 debugging DIY user datasets
+  $self->getDbHandle()->do("alter session set RELEASE_CURSOR=YES");
+  $self->getQueryHandle()->do("alter session set RELEASE_CURSOR=YES");
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   my $metaDataRoot = $self->getArg('metaDataRoot');
@@ -214,7 +217,9 @@ sub run {
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
   my ($self, $investigation, $extDbRlsId, $schema) = @_;
+# 2022-07-12 debugging DIY user datasets
   $self->getQueryHandle()->do("alter session set RELEASE_CURSOR=YES");
+  $self->getDbHandle()->do("alter session set RELEASE_CURSOR=YES");
   do {
     my %errors;
     my $c = $investigation->{_on_error};
