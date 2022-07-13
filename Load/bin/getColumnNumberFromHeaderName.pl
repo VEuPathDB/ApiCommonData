@@ -25,7 +25,7 @@ $exact = 1 if $values;
 
 $delim = $tab ? "\t" : ",";
 
-my $csv = Text::CSV_XS->new({ binary => 1, sep_char => $delim, quote_char => '"' }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
+my $csv = Text::CSV_XS->new({ binary => 1, sep_char => $delim, quote_char => undef }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
 
 
 my($headerName, @files) = @ARGV;
