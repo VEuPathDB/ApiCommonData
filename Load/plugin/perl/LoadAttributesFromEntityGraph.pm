@@ -301,7 +301,7 @@ if( file.info(fileName)$size == 0 ){
   quit('no')
 }
 outputFileName = args[2];
-t = read.table(fileName, header=FALSE);
+t = read.table(fileName, header=FALSE, sep="\t");
 isDate = 0;
 if(!is.character(t$V2)) {
   t$V2 = as.character(t$V2);
