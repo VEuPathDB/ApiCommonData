@@ -146,7 +146,6 @@ my @create = qw(
                createUserDatasetTypeTables.sql
                createDatabaseTableMapping.sql
                createEntityGraphTables.sql
-               createEdaUdSchema.sql
                createEdaUdModifications.sql
                createExternalResourceUrl.sql
                createAGPPiece.sql
@@ -179,7 +178,7 @@ if ($create) {
        $sqlplusParamValues[0] = "EDA";
        &runSql($login, $password, $db, $sql, @sqlplusParamValues);
 
-       $sqlplusParamValues[0] = "EDA_UD";
+       $sqlplusParamValues[0] = "ApidbUserDatasets";
        &runSql($login, $password, $db, $sql, @sqlplusParamValues);
      }
 

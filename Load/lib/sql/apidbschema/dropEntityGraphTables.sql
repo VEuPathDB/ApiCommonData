@@ -6,7 +6,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'studycharacteristic'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 DROP TABLE &1.AttributeGraph;
 DROP SEQUENCE &1.AttributeGraph_sq;
@@ -14,7 +14,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'attributegraph'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 DROP TABLE &1.Attribute;
@@ -23,7 +23,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'attribute'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 DROP TABLE &1.AttributeValue;
 DROP SEQUENCE &1.AttributeValue_sq;
@@ -31,7 +31,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'attributevalue'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 DROP TABLE &1.ProcessAttributes;
 DROP SEQUENCE &1.ProcessAttributes_sq;
@@ -39,7 +39,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'processattributes'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 DROP TABLE &1.EntityAttributes;
@@ -48,7 +48,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'entityattributes'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 DROP TABLE &1.ProcessTypeComponent;
@@ -57,7 +57,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'processtypecomponent'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 
@@ -67,7 +67,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'attributeunit'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 
@@ -77,7 +77,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'processtype'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 
@@ -88,7 +88,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'entitytypegraph'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 
@@ -99,7 +99,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'entitytype'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 DROP TABLE &1.Study;
@@ -108,7 +108,7 @@ DELETE FROM core.TableInfo
 WHERE lower(name) =  'study'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = '&1');
+                      WHERE lower(name) = lower('&1'));
 
 
 SET SERVEROUTPUT ON;

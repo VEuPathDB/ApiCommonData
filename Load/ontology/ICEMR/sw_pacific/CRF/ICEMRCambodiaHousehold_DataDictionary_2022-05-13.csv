@@ -1,0 +1,130 @@
+﻿"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+record_id,household_questionnaire,,text,"Record ID (do not use)",,,,,,,,,,,,,
+invid,household_questionnaire,"<h4 style=""text-align:center;font-weight:bold;"">ICEMR Cambodia 2017</h4>
+<h4 style=""text-align:center;color:blue;font-weight:bold;"">កំរងសំនួរសំរាប់ខ្នងផ្ទះ / HOUSEHOLD QUESTIONNAIRE</h4>",text,"នាមខ្លួននិងនាមត្រកូលអ្នកអង្កេតការសិក្សារឺអ្នកសំភាស
+What is the investigator name?",,,,,,,,y,,,,,
+visdat,household_questionnaire,,text,"កាលបរិច្ឆេទការអង្កេតការសិក្សារឺការសំភាស
+What is the visit date?",,,date_dmy,,,,,y,,,,,
+hhid,household_questionnaire,,text,"លេខកូដខ្នងផ្ទះ?
+What is the household identifier?
+<span style=""font-weight: lighter; font-style:italic;"">[Refer to available list. Do NOT attribute the same identifier to another household once you've allocated it]</span>",,,numeric_id_4d,,,,,y,,,,,
+hh_first_name,household_questionnaire,,text,"នាមខ្លួនមេគ្រួសារ?​​
+What is the given name (first name) of the head of household?",,,,,,y,,,,,,,
+hh_last_name,household_questionnaire,,text,"នាមត្រកូលមេគ្រួសារ?
+What is the surname (family name) of the head of household?",,,,,,y,,,,,,,
+hhq_dummy_text_1,household_questionnaire,,descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">We would first like to ask you some questions about the household head, characteristics of the house and possessions of the household. This information helps us to understand people's standards of living and whether this has an influence on their access to malaria control interventions.</div>",,,,,,,,,,,,,
+hh_school_attend,household_questionnaire,,radio,"តើមេគ្រួសារធ្លាប់បានចូលរៀនទេ?
+Has the head of the household ever attended school?","1, ធ្លាប់បានចូលរៀន (Yes) | 0, មិនធ្លាប់បានចូលរៀនទេ (No)",,,,,,,,RH,,,,
+hh_school_level,household_questionnaire,,radio,"ប្រសិនបើគាត់ធ្លាប់បានចូលរៀនដូច្នេះតើគាត់រៀនបានដល់ថ្នាក់ទីប៉ុន្មាន?
+If YES, what was the highest level of school the head of household completed?","Primary, ចន្លោះថ្នាក់ទី១និង៦ (Grade 1-6) | Secondary, ចន្លោះថ្នាក់ទី៧និង៩ (Grade 7-9) | HighSchool, ចន្លោះថ្នាក់ទី១០និង១២ (Grade 10-12) | TechSchool, សាលាបច្ចេកទេស (Technical School) | Uni, មហាវិទ្យាល័យ (University)",,,,,,"[hh_school_attend] = '1'",,LV,,,,
+income,household_questionnaire,,radio,"តើប្រភពប្រាក់ចំណូលចំបងរបស់គ្រួសារបានមកពីណា?
+[សំនួរនេះមិនមែនសំដៅទៅលើមុខរបរទេគឺសំដៅទៅលើប្រភពប្រាក់ចំណូលចំបងរបស់គ្រួសារទាំងមូល។​មានន័យថាជាប្រភពប្រាក់ចំណូលបស់សមាជិកគ្រួសារទាំងអស់។]
+What is the main source of income of the household?
+<span style=""font-weight:lighter;font-style:italic;"">[Not OCCUPATION but main source of INCOME. This question concerns the entire household: probe for other household members]</span>","1, ធ្វើចំការកៅស៊ូ (Rubber plantation) | 2, ធ្វើកសិកម្ម (Farming) | 3, បរបាញ់ (Hunting) | 4, កាប់ឈើ (Wood logging) | 5, ធ្វើសំណង់​ រឺ​​សាងសង់ផ្លូវ (Construction) | 99, ប្រភពប្រាក់ចំណូលណាមួយផ្សេងទៀត (Other)",,,,,,,,LV,,,,
+income_oth,household_questionnaire,,text,"សូមបញ្ជាក់ប្រភពប្រាក់ចំណូលណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[income] = '99'",,RH,,,,
+water,household_questionnaire,,radio,"ប្រភពទឹកផឹករបស់អ្នក?
+What is the main source of drinking water?","1, ទឹក​​នៅផ្ទៃខាងលើ (ទន្លេ​  ត្រពាំង  ប្រពន្ធ័ធារាសាស្រ្ត  ប្រឡាយរឺព្រែក.....) (Surface water (river, pond, irrigation, channel, etc.)) | 2, ទឹកអណ្តូងមិនមានគំរប (សាធារណះ/ផ្ទាល់ខ្លួន) (Open well (public/private)) | 3, ទឹកអណ្តូងមានគំរប (សាធារណះ/ផ្ទាល់ខ្លួន) (Protected well (public/private)) | 4, ទឹកបាសាំង​ (Water tank) | 5, ទឹករ៉ួប៊ីណេអ្នកជិតខាងរបស់អ្នក/ទឹករ៉ូប៊ីណេសាធារណះ (Piped into neighbourhood/public tap) | 6, ទឹករ៉ូប៊ីណេហូរចូលទៅលំនៅដ្ឋានរបស់អ្នក (Piped into dwelling) | 99, ប្រភពទឹកណាមួយផ្សេងទៀត (Other)",,,,,,,,LV,,,,
+water_oth,household_questionnaire,,text,"សូមបញ្ជាក់ប្រភពទឹកណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[water] = '99'",,RH,,,,
+water_dist,household_questionnaire,,radio,"តើអ្នកចំណាយពេលប៉ុន្មានក្នុងការធ្វើដំណើរទៅកាន់ប្រភពទឹក?
+How long does it take to go to the main source of drinking water?","1, តិចជាង៥នាទី (Less than 5 minutes) | 2, នៅចន្លោះ៥និង​១០នាទី (Between 5 and 10 minutes) | 3, នៅចន្លោះ១០និង៣០នាទី (Between 10 and 30 minutes) | 4, នៅចន្លោះ៣០និង៦០នាទី (Between 30 minutes and 1 hour) | 5, ច្រើនជាង៦០នាទី (More than 1 hour)",,,,,,,,LV,,,,
+toilet,household_questionnaire,,checkbox,"ប្រភេទបង្គន់ដែលអ្នកប្រើប្រាស់ក្នុងផ្ទះរបស់អ្នក?
+[អាចមានចំលើយច្រើនជាង១]
+What type of toilet facility is available to the household?
+<span style=""font-weight:lighter;font-style:italic;"">[Multiple answers possible]</span>","1, គ្មានបង្គន់ទេ/ទៅគុម្ពោតព្រៃ (No facility / bush) | 2, បង្គន់មិនប្រើទឹកប្រើប្រាស់រួមគ្នា (Shared open pit latrine) | 3, បង្គន់មិនប្រើទឹកទឹកផ្ទាល់ខ្លួន (Own open pit latrine) | 4, បង្គន់ចាក់ទឹកប្រើប្រាស់រួមគ្នា (Shared pit latrine with slab) | 5, បង្គន់ចាក់ទឹកផ្ទាល់ខ្លួន (Own pit latrine with slab) | 6, បរិវេញក្បែរទន្លេ បឹង ​ស្ទឹង ព្រែក អូរ (Closet over river) | 7, បង្គន់កាច់ទឹកប្រើប្រាស់រួមគ្នា (Shared flush toilet) | 8, បង្គន់កាច់ទឹកផ្ទាល់ខ្លួន (Own flush toilet) | 99, ប្រភេទបង្គន់ណាមួយផ្សេងទៀត (Other)",,,,,,,,LV,,,,
+toilet_oth,household_questionnaire,,text,"សូមបញ្ជាក់ប្រភេទបង្គន់ណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[toilet(99)] = 1",,RH,,,,
+hhq_dummy_text_2,household_questionnaire,"សត្វចិញ្ចឹម / Pets",descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">In this section, we would like to know about pets or livestock animals that are found in this household.
+
+For each animal listed, please enter the number that can be found in the household. When there are no animals, the value ""0"" should be entered instead of leaving a blank field.</div>
+
+តើនៅផ្ទះរបស់អ្នកមានបសុសត្វ/សត្វចិញ្ចឹមដូចដែលមានរាយឈ្មោះនៅខាងក្រោមនេះទេ?ប្រសិនបើ
+មានតើសត្វនីមួយៗនោះមានចំនួនប៉ុន្មាន?
+[ចំលើយអាចមានច្រើនជាង១]
+Does the household have any of the following livestock/ pet animals, and if yes, how many? 
+<span style=""font-weight:lighter;font-style:italic;"">[Multiple answers possible]</span>",,,,,,,,,,,,,
+animals_chicken,household_questionnaire,,text,"មាន់
+Chicken(s)",,,integer,0,99,,,,,,,,
+animals_dogs,household_questionnaire,,text,"ឆ្កែ
+Dog(s)",,,integer,0,99,,,,,,,,
+animals_pigs,household_questionnaire,,text,"ជ្រូក
+Pig(s)",,,integer,0,99,,,,,,,,
+animals_cows,household_questionnaire,,text,"គោ
+Cow(s)",,,integer,0,99,,,,,,,,
+animals_buffaloes,household_questionnaire,,text,"ក្របី
+Buffaloe(s)",,,integer,0,99,,,,,,,,
+animals_ducks,household_questionnaire,,text,"ទា
+Duck(s)",,,,,,,,,,,,,
+animals_cats,household_questionnaire,,text,"ឆ្មា
+Cat(s)",,,integer,0,99,,,,,,,,
+animals_geese,household_questionnaire,,text,"ក្ងាន
+Geese",,,integer,0,99,,,,,,,,
+animals_goats,household_questionnaire,,text,"ពពែ
+Goat(s)",,,integer,0,99,,,,,,,,
+animals_rabbits,household_questionnaire,,text,"ទន្សាយ
+Rabbit(s)",,,integer,0,99,,,,,,,,
+animals_monkeys,household_questionnaire,,text,"ស្វា
+Monkey(s)",,,integer,0,99,,,,,,,,
+hhq_dummy_text_3,household_questionnaire,"គ្រុនចាញ់ / Malaria",descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">Now we would like to ask you some questions about malaria and malaria control.</div>",,,,,,,,,,,,,
+mal_spray,household_questionnaire,,radio,"តើមានអ្នកណាម្នាក់ប្រើប្រាស់ថ្នាំបាញ់មូសក្នុងផ្ទះរបស់អ្នកទេកាលពី១២ខែរឺ១ឆ្នាំមុន?
+At any time in the past 12 months (1 year), has any one sprayed the interior walls of the house against mosquitoes?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,,,RH,,,,
+mal_info,household_questionnaire,,radio,"កាលពី៣ខែមុនតើមេគ្រួសារមានទទួលបានព៌តមានទាក់ទងទៅនឹងជំងឺគ្រុនចាញ់ទេ?
+In the past 3 months, has the head of household received any information on malaria?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,,,RH,,,,
+mal_info_media,household_questionnaire,,checkbox,"ប្រសិនបើចំលើយថាមានដូច្នេះតើគាត់ទទួលបានព៌តមាននេះពីណាមក?
+ចំលើយអាចមានច្រើនជាង១
+If YES to the previous question, where did the head of household see or hear information about malaria?
+<span style=""font-weight: lighter;font-style:italic;"">[Multiple answers possible]</span>","1, តាមរយះវិទ្យុ (On the radio) | 2, តាមរយះបណ្ណ័ប្រកាស (On poster) | 3, តាមរយះទូរទស្សន៍ (On television) | 4, តាមរយះព៌តមាននៅលើកញ្ចប់មុង (Insert in mosquito net package) | 5, តាមរយះអ្នកគាំពារសុខភាពតាមភូមិ (From health worker) | 6, តាមរយះមិត្តភ័ក្តិ/បងប្អូន (From friends / relatives) | 7, តាមរយះអ្នកធ្វើការអោយអង្គការក្រៅរដ្ឋាភិបាល (From people from NGO) | 8, តាមរយះការប្រជុំក្នុងសហគមន៍ (Community meeting) | 9, ពេលមានការចែកចាយមុង (ផ្តល់ជូនដោយរដ្ឋាភិបាល) (Net distribution event) | 10, តាមរយះភ្នាក់ងារធ្វើការជំងឺគ្រុនចាញ់ចុះទៅផ្ទះរបស់អ្នកផ្ទាល់ (Household visit) | 99, ប្រភពព៌តមានណាមួយផ្សេងទៀត (Other)",,,,,,"[mal_info] = '1'",,LV,,,,
+mal_info_oth,household_questionnaire,,text,"សូមបញ្ជាក់ប្រភពព៌តមានណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[mal_info] = '1' and [mal_info_media(99)] = '1'",,RH,,,,
+mal_prev_measures,household_questionnaire,,checkbox,"តាមរយះការគិតរបស់មេគ្រួសារតើវិធីការពារកុំអោយឆ្លងជំងឺគ្រុនចាញ់ខាងក្រោមនេះណាខ្លះដែលល្អប្រសើរ?
+What does the head of household think is/are the best way(s) to prevent malaria?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","01, ដេកក្នុងមុង (Sleep under mosquito net) | 02, ការពារមិនអោយមូសខាំ (Avoid mosquito bites) | 03, ផឹកថ្នាំស្មៅ/ស្លឹកឈើបុរាណ (Take preventive herbs) | 04, ប្រើប្រាស់ថ្នាំការពារមូសលើខ្លួន (Use insecticide on self) | 05, បាញ់ថ្នាំការពារមូសក្នុងផ្ទះ (Spraying inside of house) | 06, ប្រើប្រាស់ធូបមូស (Use mosquito coils) | 07, ដុតសំបកក្រូច (Burn dry lime skin) | 08, ជក់ថ្នាំជក់ (Smoke tobacco) | 09, ឧបករណ៍អគ្គិសនីសំរាប់សំលាប់មូស (Electric raquette) | 10, បើកកង្ហាល់ (Turn on the fan) | 11, (សំអាតផ្ទះអោយស្អាត (បរិវេណក្នុងផ្ទះ) Keep the household clean (inside)) | 12, សំអាតបរិវេណខាងក្រៅផ្ទះអោយស្អាត/ សំអាតសំរាមអោយអស់ (Keep the outside area around house clean / remove rubbish) | 13, សំអាតទឹកដែលធុំខ្លិនមិនល្អចេញ/ប្រើថ្នាំសំលាប់មូសរឺការពារមិនអោយមានមូសក្នុងទឹកដែលធុំខ្លិនមិនល្អនោះ (Drain / treat stagnant water) | 14, សំអាតស្មៅនៅជុំវិញបរិវេណផ្ទះ (Clear grass around home) | 15, ហូបអោយបានគ្រប់គ្រាន់/ផឹកទឹកអោយបានគ្រប់គ្រាន់/រក្សាសុខភាពអោយបានល្អ (Eat well / drink water / good health) | 16, ស្លៀកពាក់សំលៀកបំពាក់បោកស្អាតនិងសំអាតខ្លួនអោយស្អាត (Keep clothes and body clean) | 98, មិនដឹង (Don't know) | 99, វិធីការពារណាមួយផ្សេងទៀត (Other)",,,,,,,,LV,,,,
+mal_prev_oth,household_questionnaire,,text,"សូមបញ្ជាក់វិធីការពារណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[mal_prev_measures(99)] = '1'",,,,,,
+mosnet_nb,household_questionnaire,"ព័ត៌មានលម្អិតអំពីមុង / Details about mosquito nets",text,"តើមានមុងប៉ុន្មានក្នុងផ្ទះរបស់អ្នក?
+(សរសេរចំនួនមុង)
+How many mosquito nets does the household have? (Number of nets)",,,integer,0,99,,,,RH,,,,
+mosnet_nb_use,household_questionnaire,,text,"​តើមានមុងប៉ុន្មានដែលអ្នកបានប្រើប្រាស់ក្នុងផ្ទះរបស់អ្នក?
+(សរសេរចំនួនមុង)
+How many mosquito nets does the household use? (Number of nets)",,,integer,0,99,,,,RH,,,,
+mosnet_nb_trt,household_questionnaire,,text,"ក្នុងចំណោមមុងដែលអ្នកប្រើប្រាស់នោះតើមានមុងប៉ុន្មានដែលមានប្រើថ្នាំការពារមូស?
+(សរសេរចំនួនមុង)
+Among these, how many are treated? (Number of nets)",,,integer,0,99,,"[mosnet_nb_use] > 0",,,,,,
+hammock_nb,household_questionnaire,,text,"តើមានអង្រឹងប៉ុន្មានក្នុងផ្ទះរបស់អ្នក?
+(សរសេរចំនួនអង្រឹង)
+How many hammocks does the household have? (Number of hammocks)",,,integer,0,99,,,,,,,,
+hammock_nb_use,household_questionnaire,,text,"តើមានអង្រឹងប៉ុន្មានដែលអ្នកបានប្រើប្រាស់ក្នុងផ្ទះរបស់អ្នក
+(សរសេរសចំនួនអង្រឹង)
+How many hammocks does the household use? (Number of hammocks)",,,integer,0,99,,,,,,,,
+hammock_nb_trt,household_questionnaire,,text,"ក្នុងចំណោមអង្រឹងដែលអ្នកប្រើប្រាស់នោះតើមានអង្រឹងប៉ុន្មានដែលមានប្រើថ្នាំការពារមូស?
+(សរសេរសចំនួនអង្រឹង)
+Among these, how many are treated? (Number of hammocks)",,,integer,0,99,,"[mosnet_nb_use] > 0",,,,,,
+mosnet_no_reason,household_questionnaire,,notes,"ហេតុអ្វីបានជាអ្នកមិនមានមុងនៅក្នុងផ្ទះរបស់អ្នក?
+[សរសេរចំលើយ]
+Why does your household not have mosquito nets?
+<span style=""font-weight: lighter; font-style:italic;"">[Record narrative]</span>",,,,,,,"[mosnet_nb] <> '' and [mosnet_nb] = 0",,LH,,,,
+hhq_dummy_text_5,household_questionnaire,,descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">We would like to know more about the net(s) that are found in this household. The following questions will help us understand the origin of each net and how it is installed.
+
+The next questions relate to the <b>most recent net</b> that was installed in the house.</div>",,,,,,,"[mosnet_nb] <> '' and [mosnet_nb] > 0",,,,,,
+net_age,household_questionnaire,,text,"តើអ្នកមានមុងនេះតាំងពីពេលណាមក?
+How long ago did the household obtain this net?",,,integer,0,999,,"[mosnet_nb] > 0",,RH,,,,
+net_ageu,household_questionnaire,,radio,"គូសទៅលើខ្នាតដែលបញ្ជាក់អំពីអាយុកាលរបស់មុង
+What is the unit for the age of the net?","d, Days | m, Months | y, Year",,,,,,"[mosnet_nb] > 0",,RH,,,,
+net_origin,household_questionnaire,,radio,"តើអ្នកបានមុងទាំងនេះពីណាមក?
+Where did the household obtain this mosquito net?","1, តាមរយះការចែកចាយមុងក្នុងភូមិ (Distribution in village) | 2, កន្លែងផ្តល់សេវាសំរាលកូន (Antenatal clinical) | 3, មន្ទីរពេទ្យ/មណ្ឌលសុខភាពផ្តល់អោយ (Hospital / health center) | 4, បងប្អូន/មិត្តភ័ក្តអោយ (Relative / friend) | 5, ទិញ (Purchased in store) | 98, មិនដឹង (Don't know) | 99, បានមកពីកន្លែងណាផ្សេងទៀត (Other)",,,,,,"[mosnet_nb] > 0",,LV,,,,
+net_origin_oth,household_questionnaire,,text,"សូមបញ្ជាក់កន្លែងណាផ្សេងទៀតនោះប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[mosnet_nb] > 0 and [net_origin] = '99'",,RH,,,,
+net_sleptunder,household_questionnaire,,radio,"តើមានអ្នកណាម្នាក់ដេកក្នុងមុងនេះទេកាលពីយប់ម៉ិញ?
+Did anyone sleep under this net last night?","1, មានដេក (Yes) | 0, មិនមានដេក (No)",,,,,,"[mosnet_nb] > 0",,RH,,,,
+net_sleptunder_no_why,household_questionnaire,,checkbox,"ប្រសិនបើមិនមានដេកក្នុងមុងតើហេតុអ្វី?
+[ចំលើយអាចមានច្រើនជាង១]
+If NO, why not?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, គ្មានមូស (There are no mosquitoes) | 2, គ្មានការចំលងជំងឺគ្រុនចាញ់នៅទីនេះ (There is no malaria) | 3, ក្តៅខ្លាំងពេក (Too hot) | 4, មុងរក្សាទុក (Net spared/reserved) | 5, មុងផុតកំណត់ប្រើប្រាស់/មុងរហែក (Net expired/damaged) | 6, ម្ចាស់មុងមិនដេកនៅទីនេះ (User did not sleep here) | 98, មិនដឹង (Don't know) | 99, មូលហេតុផ្សេងទៀត (Other)",,,,,,"[mosnet_nb] > 0 and [net_sleptunder] = '0'",,LV,,,,
+net_sleptunder_no_why_oth,household_questionnaire,,text,"សូមបញ្ជាក់មូលហេតុផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[mosnet_nb] > 0 and [net_sleptunder] = '0' and [net_sleptunder_no_why(99)] = 1",,RH,,,,
+inv_comments,household_questionnaire,Conclusion,notes,"Investigator comments or observations",,,,,,,,,LV,,,,
+hhq_dummy_text_6,household_questionnaire,,descriptive,"<h4 style=""text-align:center;"">Please thank the participant. 
+
+ត្រូវចាំថាត្រូវប្តូរទម្រង់បែបបទកត់ត្រាទិន្នន័យនេះទៅជា ""Unverified"" ហើយបន្ទាប់មកធ្វើការរក្សាទុកទិន្នន័យដោយប្រើប៊ូតុង ""Save Record"" ខាងក្រោម
+Remember to change the form status to <b>""Unverified""</b> and then save the data by using the <b>""Save Record""</b> button below</h4>",,,,,,,,,,,,,

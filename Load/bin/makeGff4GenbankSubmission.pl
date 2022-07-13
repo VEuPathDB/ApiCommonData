@@ -316,8 +316,7 @@ sub getGeneName {
   my ($dbh, $extDbRlsId) = @_;
   my %gNames;
   my $sql = "
-            select gf.SOURCE_ID, gfn.NAME, gfn.IS_PREFERRED from ApiDB.GeneFeatureName gfn, dots.genefeature gf
-where gf.NA_FEATURE_ID=gfn.NA_FEATURE_ID and gfn.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+            select source_id, name from apidbtuning.geneattributes where external_db_rls_id=$extDbRlsId
            ";
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
@@ -365,7 +364,7 @@ sub getGeneProductName {
   my ($dbh, $extDbRlsId) = @_;
   my %products;
   my $sql = "
-            select source_id, product from dots.genefeature where external_database_release_id=$extDbRlsId
+             select source_id, product from apidbtuning.geneattributes where external_db_rls_id=$extDbRlsId
            ";
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
@@ -523,14 +522,14 @@ sub getBioTypeAndUpdatePrimaryTag {
       foreach my $i (1..$#{$geneNames->{$gid}}) {
 	$gn = $gn . "," . $geneNames->{$gid}[$i];
       }
-      $$feat->add_tag_value("gene", $gn);
+      $$feat->add_tag_value("gene", $gn) if ($gn);
     }
     if ($geneSynonyms->{$gid}) {
       my $gs = $geneSynonyms->{$gid}[0];
       foreach my $j (1..$#{$geneSynonyms->{$gid}}) {
 	$gs = $gs . "," . $geneSynonyms->{$gid}[$j];
       }
-      $$feat->add_tag_value("synonym", $gs);
+      $$feat->add_tag_value("synonym", $gs) if ($gs);
     }
 
   } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/i) {

@@ -1,0 +1,193 @@
+﻿"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+record_id,census_form,,text,"Record ID (do not use)",,,,,,,,,,,,,
+invid,census_form,"<h4 style=""text-align:center;font-weight:bold;"">ICEMR Cambodia 2017</h4>
+<h4 style=""text-align:center;color:blue;font-weight:bold;"">ទំរង់ចុះស្ថិតិ / CENSUS FORM</h4>",text,"ឈ្មោះអ្នកធ្វើស្ថិតិ?
+What is the investigator name?",,,,,,,,y,,,,,
+visdat,census_form,,text,"កាលបរិច្ឆេទធ្វើស្ថិតិ?
+What is the visit date?",,,date_dmy,,,,,y,,,,," @TODAY @READONLY"
+hhid,census_form,,text,"លេខកូដខ្នងផ្ទះ?
+What is the household identifier?
+<span style=""font-weight: lighter; font-style:italic;"">[Refer to available list. Do NOT attribute the same identifier to another household once you've allocated it]</span>",,,numeric_id_4d,,,,,y,,,,,
+village,census_form,,radio,"What is the name of the village?","1, ឆ្នែង / Chhnaeng | 2, អូរអាម / Oham | 3, ឡាប៉ាខេ / Lapakhe | 4, អូររណា / Ohrana | 5, ត្រពាំងផ្អេរ / Trapaingphiae | 6, ស្រែល្វីវី / Sraelvy | 7, ស្រែខ្ទុម / Sraektum | 8, ស្រែអំពិល / Sraeampil | 9, ​អូរច្រា / Ohchra | 10, ពូចា / Poucha | 11, ស្រែព្រះ / Sraepreas | 12, ហ្គាទី / Gaty | 99, ភូមិណាមួយផ្សេងទៀត / Other",,,,,,,,LV,,,,
+village_oth,census_form,,text,"សូមបញ្ជាក់ភូមិណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[village] = '99'",,RH,,,,
+hamlet,census_form,,text,"ឈ្មោះភូមិរណបឬឈ្មោះតំបន់នៅក្នុងភូមិ?
+What is the name of the hamlet?",,,,,,,,,,,,,
+dem_dummy_text_1,census_form,"សមាសភាពនៃខ្នងផ្ទះ / Composition of the household",descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;""><u><b>Note for the interviewer</b></u>
+This section relates to the household you are currently conducting the interview in. You will need to fill in data regarding the household head and household composition.
+
+<center>Please start by adding the details of the household head.</center></div>",,,,,,,,,,,,,
+hh_first_name,census_form,,text,"នាមខ្លួនមេគ្រួសារ
+Given name (first name) of the head of the household",,,,,,y,,y,,,,,
+hh_last_name,census_form,,text,"នាមត្រកូលមេគ្រួសារ
+Surname (family name) of the head of the household",,,,,,y,,y,,,,,
+respondent_ishead,census_form,,radio,"តើអ្នកដែលផ្តល់ចំលើយជាមេគ្រួសារ?
+Is the respondent the head of household?","1, ជាមេគ្រួសារ  / Yes | 0, មិនមែនជាមេគ្រួសារ / No",,,,,,,,RH,,,,
+respondent_first_name,census_form,,text,"ប្រសិនបើមិនមែនដូច្នេះតើអ្នកដែលផ្តល់ចំលើយគាត់មាននាមខ្លួនឈ្មាះអ្វី?
+If NO, what is the first name of the respondent?",,,,,,y,"[respondent_ishead] = '0'",,,,,,
+respondent_last_name,census_form,,text,"ប្រសិនបើមិនមែនដូច្នេះតើអ្នកដែលផ្តល់ចំលើយគាត់មាននាមត្រកូលឈ្មាះអ្វី?
+If NO, what is the last name (family name) of the respondent?",,,,,,y,"[respondent_ishead] = '0'",,,,,,
+hh_nb_live,census_form,,text,"ចំនួនសមាជិកគ្រួសារមានប៉ុន្មាននាក់?
+How many people live in this household?",,,integer,1,20,,,,,,,,
+dem_dummy_text_2,census_form,,descriptive,"<h4>Please enter the name, age and gender of each member of the household, starting with the head of the household</h4>",,,,,,,,,,,,,
+hh_sex_01,census_form,,radio,"ភេទរបស់មេគ្រួសារ?
+What is the sex of the head of household?","M, Male | F, Female",,,,,,,,RH,,,,
+hh_age_01,census_form,,text,"អាយុរបស់មេគ្រួសារ?
+What is the head of household's age?",,,integer,0,100,,,,RH,,,,
+hh_name_02,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី២ ក្នុងគ្រួសារ
+What is the 2nd household member's name?",,,,,,y,"[hh_nb_live] >= 2",,RH,,,,
+hh_sex_02,census_form,,radio,"ភេទរបស់សមាជិកទី២ ក្នុងគ្រួសារ?
+What is the sex of the 2nd household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 2",,RH,,,,
+hh_age_02,census_form,,text,"អាយុរបស់សមាជិកទី២ ក្នុងគ្រួសារ?
+What is the 2nd household member's age?",,,integer,0,100,,"[hh_nb_live] >= 2",,RH,,,,
+hh_name_03,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៣ ក្នុងគ្រួសារ?
+What is the 3rd household member's name?",,,,,,y,"[hh_nb_live] >= 3",,RH,,,,
+hh_sex_03,census_form,,radio,"ភេទរបស់សមាជិកទី3 ក្នុងគ្រួសារ?
+What is the sex of the 3rd household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 3",,RH,,,,
+hh_age_03,census_form,,text,"អាយុរបស់សមាជិកទី3 ក្នុងគ្រួសារ?
+What is the 3rd household member's age?",,,integer,0,100,,"[hh_nb_live] >= 3",,RH,,,,
+hh_name_04,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៤ ក្នុងគ្រួសារ?
+What is the 4th household member's name?",,,,,,y,"[hh_nb_live] >= 4",,RH,,,,
+hh_sex_04,census_form,,radio,"ភេទរបស់សមាជិកទី4 ក្នុងគ្រួសារ?
+What is the sex of the 4th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 4",,RH,,,,
+hh_age_04,census_form,,text,"អាយុរបស់សមាជិកទី4 ក្នុងគ្រួសារ?
+What is the 4th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 4",,RH,,,,
+hh_name_05,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៥ ក្នុងគ្រួសា?
+What is the 5th household member's name?",,,,,,y,"[hh_nb_live] >= 5",,RH,,,,
+hh_sex_05,census_form,,radio,"ភេទរបស់សមាជិកទី5 ក្នុងគ្រួសារ?​​
+What is the sex of the 5th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 5",,RH,,,,
+hh_age_05,census_form,,text,"អាយុរបស់សមាជិកទី5 ក្នុងគ្រួសារ?
+What is the 5th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 5",,RH,,,,
+hh_name_06,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៦ ក្នុងគ្រួសារ?
+What is the 6th household member's name?",,,,,,y,"[hh_nb_live] >= 6",,RH,,,,
+hh_sex_06,census_form,,radio,"ភេទរបស់សមាជិកទី6 ក្នុងគ្រួសារ?
+What is the sex of the 6th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 6",,RH,,,,
+hh_age_06,census_form,,text,"អាយុរបស់សមាជិកទី6 ក្នុងគ្រួសារ?
+What is the 6th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 6",,RH,,,,
+hh_name_07,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៧ ក្នុងគ្រួសារ?
+What is the 7th household member's name?",,,,,,y,"[hh_nb_live] >= 7",,RH,,,,
+hh_sex_07,census_form,,radio,"ភេទរបស់សមាជិកទី7 ក្នុងគ្រួសារ?
+What is the sex of the 7th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 7",,RH,,,,
+hh_age_07,census_form,,text,"អាយុរបស់សមាជិកទី7 ក្នុងគ្រួសារ?
+What is the 7th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 7",,RH,,,,
+hh_name_08,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៨ ក្នុងគ្រួសារ?
+What is the 8th household member's name?",,,,,,y,"[hh_nb_live] >= 8",,RH,,,,
+hh_sex_08,census_form,,radio,"ភេទរបស់សមាជិកទី8 ក្នុងគ្រួសារ?
+What is the sex of the 8th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 8",,RH,,,,
+hh_age_08,census_form,,text,"អាយុរបស់សមាជិកទី8 ក្នុងគ្រួសារ?
+What is the 8th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 8",,RH,,,,
+hh_name_09,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី៩ ក្នុងគ្រួសារ?
+What is the 9th household member's name?",,,,,,y,"[hh_nb_live] >= 9",,RH,,,,
+hh_sex_09,census_form,,radio,"ភេទរបស់សមាជិកទី9 ក្នុងគ្រួសារ?
+What is the sex of the 9th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 9",,RH,,,,
+hh_age_09,census_form,,text,"អាយុរបស់សមាជិកទី9 ក្នុងគ្រួសារ?​
+What is the 9th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 9",,RH,,,,
+hh_name_10,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី10 ក្នុងគ្រួសារ?​
+What is the 10th household member's name?",,,,,,y,"[hh_nb_live] >= 10",,RH,,,,
+hh_sex_10,census_form,,radio,"ភេទរបស់សមាជិកទី10 ក្នុងគ្រួសារ?
+What is the sex of the 10th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 10",,RH,,,,
+hh_age_10,census_form,,text,"អាយុរបស់សមាជិកទី10 ក្នុងគ្រួសារ?​
+What is the 10th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 10",,RH,,,,
+hh_name_11,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី11 ក្នុងគ្រួសារ?
+What is the 11th household member's name?",,,,,,y,"[hh_nb_live] >= 11",,RH,,,,
+hh_sex_11,census_form,,radio,"ភេទរបស់សមាជិកទី11 ក្នុងគ្រួសារ?
+What is the sex of the 11th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 11",,RH,,,,
+hh_age_11,census_form,,text,"អាយុរបស់សមាជិកទី11 ក្នុងគ្រួសារ?
+What is the 11th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 11",,RH,,,,
+hh_name_12,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី១២ ក្នុងគ្រួសារ?
+What is the 12th household member's name?",,,,,,y,"[hh_nb_live] >= 12",,RH,,,,
+hh_sex_12,census_form,,radio,"ភេទរបស់សមាជិកទី1២ ក្នុងគ្រួសារ?
+What is the sex of the 12th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 12",,RH,,,,
+hh_age_12,census_form,,text,"អាយុរបស់សមាជិកទី1២ ក្នុងគ្រួសារ?
+What is the 12th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 12",,RH,,,,
+hh_name_13,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី13 ក្នុងគ្រួសារ?
+What is the 13th household member's name?",,,,,,y,"[hh_nb_live] >= 13",,RH,,,,
+hh_sex_13,census_form,,radio,"ភេទរបស់សមាជិកទី13 ក្នុងគ្រួសារ?
+What is the sex of the 13th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 13",,RH,,,,
+hh_age_13,census_form,,text,"អាយុរបស់សមាជិកទី13 ក្នុងគ្រួសារ?
+What is the 13th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 13",,RH,,,,
+hh_name_14,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី14 ក្នុងគ្រួសារ?
+What is the 14th household member's name?",,,,,,y,"[hh_nb_live] >= 14",,RH,,,,
+hh_sex_14,census_form,,radio,"ភេទរបស់សមាជិកទី14 ក្នុងគ្រួសារ?
+What is the sex of the 14th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 14",,RH,,,,
+hh_age_14,census_form,,text,"អាយុរបស់សមាជិកទី14 ក្នុងគ្រួសារ ?
+What is the 14th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 14",,RH,,,,
+hh_name_15,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី15 ក្នុងគ្រួសារ?
+What is the 15th household member's name?",,,,,,y,"[hh_nb_live] >= 15",,RH,,,,
+hh_sex_15,census_form,,radio,"ភេទរបស់សមាជិកទី15 ក្នុងគ្រួសារ?
+What is the sex of the 15th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 15",,RH,,,,
+hh_age_15,census_form,,text,"អាយុរបស់សមាជិកទី15 ក្នុងគ្រួសារ?
+What is the 15th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 15",,RH,,,,
+hh_name_16,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី16 ក្នុងគ្រួសារ?
+What is the 16th household member's name?",,,,,,y,"[hh_nb_live] >= 16",,RH,,,,
+hh_sex_16,census_form,,radio,"ភេទរបស់សមាជិកទី16 ក្នុងគ្រួសារ?
+What is the sex of the 16th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 16",,RH,,,,
+hh_age_16,census_form,,text,"អាយុរបស់សមាជិកទី16 ក្នុងគ្រួសារ?
+What is the 16th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 16",,RH,,,,
+hh_name_17,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី17 ក្នុងគ្រួសារ?
+What is the 17th household member's name?",,,,,,y,"[hh_nb_live] >= 17",,RH,,,,
+hh_sex_17,census_form,,radio,"ភេទរបស់សមាជិកទី17 ក្នុងគ្រួសារ?
+What is the sex of the 17th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 17",,RH,,,,
+hh_age_17,census_form,,text,"អាយុរបស់សមាជិកទី17 ក្នុងគ្រួសារ? 
+What is the 17th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 17",,RH,,,,
+hh_name_18,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី18 ក្នុងគ្រួសារ?
+What is the 18th household member's name?",,,,,,y,"[hh_nb_live] >= 18",,RH,,,,
+hh_sex_18,census_form,,radio,"ភេទរបស់សមាជិកទី18 ក្នុងគ្រួសារ?
+What is the sex of the 18th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 18",,RH,,,,
+hh_age_18,census_form,,text,"អាយុរបស់សមាជិកទី18 ក្នុងគ្រួសារ?
+What is the 18th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 18",,RH,,,,
+hh_name_19,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី19 ក្នុងគ្រួសារ?
+What is the 19th household member's name?",,,,,,y,"[hh_nb_live] >= 19",,RH,,,,
+hh_sex_19,census_form,,radio,"ភេទរបស់សមាជិកទី19 ក្នុងគ្រួសារ?
+What is the sex of the 19th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 19",,RH,,,,
+hh_age_19,census_form,,text,"អាយុរបស់សមាជិកទី19 ក្នុងគ្រួសារ?
+What is the 19th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 19",,RH,,,,
+hh_name_20,census_form,,text,"នាមខ្លួននិងនាមត្រកូលរបស់សមាជិកទី២០ ក្នុងគ្រួសារ?
+What is the 20th household member's name?",,,,,,y,"[hh_nb_live] >= 20",,RH,,,,
+hh_sex_20,census_form,,radio,"ភេទរបស់សមាជិកទី២0 ក្នុងគ្រួសា?
+What is the sex of the 20th household member?","M, Male | F, Female",,,,,,"[hh_nb_live] >= 20",,RH,,,,
+hh_age_20,census_form,,text,"អាយុរបស់សមាជិកទី២0 ក្នុងគ្រួសារ?
+What is the 20th household member's age?",,,integer,0,100,,"[hh_nb_live] >= 20",,RH,,,,
+floor,census_form,"ព៌តមានលំអិតអំពីសំណង់ផ្ទះ / Details about the household construction",radio,"សម្ភារះចំបងនៃសំណង់ជាន់របស់ផ្ទះ?
+What is the main material of the floor?
+<span style=""font-weight: lighter; font-style:italic;"">[Observe]</span>","1, ដី/ខ្សាច់ (Earth / Sand) | 2, រនាបត្នោត/រនាបឫស្សី/ក្រាលស្មៅ (Palm / Bamboo / Grass) | 3, ឈើក្តារបន្ទះធម្មតា (Wood) | 4, ឈើក្តារបន្ទះដែលកែច្នៃនិងលាបថ្នាំរលោង (Polished wood) | 5, ស៊ីម៉ង់/ឥដ្ឋការ៉ូ (Cement / Tiles) | 99, សម្ភារះណាមួយផ្សេងទៀត (Other)",,,,,,,,LV,,,,
+floor_oth,census_form,,text,"សូមបញ្ជាក់សម្ភារះណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[floor] = '99'",,RH,,,,
+walls,census_form,,radio,"សម្ភារះចំបងនៃសំណង់ជញ្ជាំងផ្ទះ
+What is the main material of the exterior walls?
+<span style=""font-weight: lighter; font-style:italic;"">[Observe]</span>","1, ឬស្សី/ថ្ម (Bamboo / Pitpit) | 2, ស្លឹកឈើរឺស្លឹកឈើកែច្នៃជាបន្ទះស្តើងៗ (Sago) | 3, ឈើក្តារបន្ទះធម្មតា (Wood) | 4, កំទេចផ្ទាំងឈើកែច្នៃរឺផ្ទាំងឈើកែច្នៃស្តើងៗ (Plywood) | 5, កំបោរ/ហ្វីប្រូ (Masonite / Fibro) | 6, ស៊ីម៉ង់ រឺ ឥដ្ឋ (Cement or bricks) | 7, សង្ខសី (Iron sheet) | 99, សម្ភារះណាមួយផ្សេងទៀត (Other)",,,,,,,,LV,,,,
+walls_oth,census_form,,text,"សូមបញ្ជាក់សម្ភារះណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[walls] = '99'",,RH,,,,
+roof,census_form,,radio,"សម្ភារះចំបងនៃសំណងដំបូលផ្ទះ
+What is the main material of the roof?
+<span style=""font-weight: lighter; font-style:italic;"">[Observe]</span>","1, ស្បូវ (Thatched grass) | 2, ស្លឹកត្នោត (Sago palm leaves) | 3, សង្ខសី​ រឹ ហ្វីប្រូ (Corrugated iron) | 4, ឈើក្តារបន្ទះ (Wood planks) | 5, ស៊ីម់ង់ (Cement) | 6, ក្បឿង (Tiles) | 99, សម្ភារះណាមួយផ្សេងទៀតប្រសិនបើមាន (Other)",,,,,,,,LV,,,,
+roof_oth,census_form,,text,"សូមបញ្ជាក់សម្ភារះណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[roof] = '99'",,RH,,,,
+window,census_form,,radio,"សំនួរទាក់ទងទៅនឹងបង្អួចនៅក្នុងផ្ទះ​និងសំណាញ់ការពារសត្វល្អិតដាក់នៅជាមួយបង្អួច​
+Does the main house have windows? Are they screened?
+<span style=""font-weight: lighter; font-style:italic;"">[Observe house used for sleeping]</span>","0, គ្មានបង្អួច (No windows) | 1, មានបង្អួច (គ្មានសំណាញ់ការពារសត្វល្អិត) (Windows (not screened)) | 2, មានបង្អួច (សំណាញ់ការពារសត្វល្អិតរហែករឺមិនបិទជិតបង្អួចទាំងស្រុង) (Windows (partly screened)) | 3, មានបង្អួច(មានសំណាញ់ការពារសត្វល្អិតបិទជិតបង្អួចទាំងស្រុង) (Windows (all screened and intact))",,,,,,,,LV,,,,
+elevated_house,census_form,,radio,"ផ្ទះផុតពីដី​?
+Is the house elevated on posts?","1, ផុតពីដី (Yes) | 0, មិនផុតពីដី (No)",,,,,,,,RH,,,,
+dem_dummy_text_3,census_form,"GPS coordinates",descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;""><u><b>Note for the interviewer</b></u>
+This section is filled autmatically using your the tablet GPS system. 
+
+If for any reason the fields are not populated, please take the following steps:
+<ol><li>Use the ""update"" buttons located next to the ""Latitude"" and ""Longitude"" fields. Once you have pressed these buttons, wait up to a minute</li><li>If after a minute the fields are not populated, tick the box next to ""GPS failed to detect current location"" and use the stand-alone GPS device.</li></ol></div>",,,,,,,,,,,,,
+gps_latitude,census_form,,text,Latitude,,"This field is filled automatically",,,,,,,,,,," @LATITUDE"
+gps_longitude,census_form,,text,Longitude,,"This field is filled automatically",,,,,,,,,,," @LONGITUDE"
+gps_nosignal,census_form,,checkbox,"ក្នុងករណីដែល​ GPSពីម៉ាស៊ីនរឺឧបករណ៍តាប្លេមិនដំណើរការសូមចុចប្រអប់នេះដើម្បីវាយតំលៃGPS ពីឧបករណ៍ផ្សេងទៀតចូល
+If GPS coordinates were not properly detected by your tablet, please tick this box","1, GPS failed to detect current location",,,,,,,,,,,,
+gps_latitude_manual,census_form,,text,"Latitude (using stand-alone GPS device)",,,,,,,"[gps_nosignal(1)] = '1'",,,,,,
+gps_longitude_manual,census_form,,text,"Longitude (using stand-alone GPS device)",,,,,,,"[gps_nosignal(1)] = 1",,,,,,
+dem_dummy_text_4,census_form,"Review and confirm data",descriptive,"ទាំងអស់នេះជាទិន្នន័យសង្ខេបដែលបានប្រមូល។សូមត្រួតពិនិត្យឡើងវិញមុននឹងធ្វើការក្សាទិន្នន័យទុក។
+Here is an overview of the data you have collected. Please review your data and confirm it is correct before saving this form.
+
+<div class=""green"" style=""color:green;background-color:#C1FFC1;""><h4><table><tr><td><u>Village</u></td><td>[village]</td></tr><tr><td><u>Hamlet</u></td><td>[hamlet]</td></tr><tr><td><u>First name</u></td><td>[hh_first_name]</td></tr><tr><td><u>Last name</u></td><td>[hh_last_name]</td></tr><tr><td><u>Household size</u></td><td>[hh_nb_live]</td></tr></table></h4></div>
+
+<center>ប្រសិនបើមានទិន្នន័យណាមួយមិនត្រឹមត្រូវដូច្នេះអ្នកត្រលប់ទៅកន្លែងទិន្នន័យនោះនិងធ្វើការកែសំរួលណាមួយដែលត្រូវការ។
+If any of this is incorrect, scroll up in the form and make the necessary adjustments.</center>
+<hr>
+<h4 style=""text-align:center;"">Please thank the participant. 
+
+ត្រូវចាំថាត្រូវប្តូរទម្រង់បែបបទកត់ត្រាទិន្នន័យនេះទៅជា ""Unverified"" ហើយបន្ទាប់មកធ្វើការរក្សាទុកទិន្នន័យដោយប្រើប៊ូតុង""Save Record""  ខាងក្រោម
+Remember to change the form status to <b>""Unverified""</b> and then save the data by using the <b>""Save Record""</b> button below</h4>",,,,,,,,,,,,,

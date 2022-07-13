@@ -11,12 +11,16 @@ GRANT GUS_R TO ApidbUserDatasets;
 GRANT GUS_W TO ApidbUserDatasets;
 GRANT CREATE VIEW TO ApidbUserDatasets;
 GRANT CREATE MATERIALIZED VIEW TO ApidbUserDatasets;
-GRANT CREATE TABLE TO ApidbUserDatasets;
+GRANT CREATE ANY TABLE TO ApidbUserDatasets;
 GRANT CREATE SYNONYM TO ApidbUserDatasets;
 GRANT CREATE SESSION TO ApidbUserDatasets;
 GRANT CREATE ANY INDEX TO ApidbUserDatasets;
 GRANT CREATE TRIGGER TO ApidbUserDatasets;
 GRANT CREATE ANY TRIGGER TO ApidbUserDatasets;
+
+
+GRANT REFERENCES on sres.ontologyterm to ApidbUserDatasets;
+GRANT REFERENCES on sres.ExternalDatabaseRelease to ApidbUserDatasets;
 
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
