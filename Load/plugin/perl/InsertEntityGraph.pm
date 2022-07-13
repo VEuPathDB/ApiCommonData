@@ -214,6 +214,13 @@ sub run {
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
   my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  my $dbh =  $self->getDbHandle();
+  $dbh->do("alter session set session_cached_cursors=50");
+  my $sh = $dbh->prepare("SELECT value FROM V\$PARAMETER WHERE name='session_cached_cursors'");
+  $sh->execute();
+  my ($cached_cursors) = $sh->fetchrow_array();
+  $self->log("CHECK session_cached_cursors = $cached_cursors");
+  $self->getQueryHandle()->do("alter session set session_cached_cursors=50");
   do {
     my %errors;
     my $c = $investigation->{_on_error};
