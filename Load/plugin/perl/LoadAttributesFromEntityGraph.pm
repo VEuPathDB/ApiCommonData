@@ -418,7 +418,6 @@ sub loadAttributeTerms {
       #   and starts with a letter or the dot not followed by a number
       $self->error("Bad attribute stable ID: $attributeStableId")
         unless $attributeStableId =~ m{^(.[A-za-z][A-za-z_.0-9]*|[A-za-z][A-za-z_.0-9]*)$};
-[.A-Za-z]([.A-Za-z][A-Za-z_.0-9]*)?$};
 
       my $attribute = $self->getGusModelClass('Attribute')->new({entity_type_id => $etId,
                                                          entity_type_stable_id => $entityTypeIds->{$etId},
