@@ -181,7 +181,7 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
 
-  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
+  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
 
   my $dbh = $self->getQueryHandle();
   my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
@@ -243,7 +243,7 @@ sub statsForPlots {
   }
 
   my $rv = {};
-  open(FILE, "<", $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
+  open(FILE, "<", $outputStatsFileName) or $self->error("Cannot open $outputStatsFileName for reading: $!");
   
   while(<FILE>) {
     chomp;
@@ -418,7 +418,6 @@ sub loadAttributeTerms {
       #   and starts with a letter or the dot not followed by a number
       $self->error("Bad attribute stable ID: $attributeStableId")
         unless $attributeStableId =~ m{^(.[A-za-z][A-za-z_.0-9]*|[A-za-z][A-za-z_.0-9]*)$};
-[.A-Za-z]([.A-Za-z][A-Za-z_.0-9]*)?$};
 
       my $attribute = $self->getGusModelClass('Attribute')->new({entity_type_id => $etId,
                                                          entity_type_stable_id => $entityTypeIds->{$etId},
