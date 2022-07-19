@@ -242,6 +242,11 @@ sub statsForPlots {
     $self->error("Error Running Rscript for datesFile");
   }
 
+  unless (-e $outputStatsFileName){
+    $self->log("No stats to load");
+    return {};
+  }
+
   my $rv = {};
   open(FILE, "<", $outputStatsFileName) or $self->error("Cannot open $outputStatsFileName for reading: $!");
   
@@ -298,6 +303,7 @@ sub rCommandsForStats {
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
 if( file.info(fileName)$size == 0 ){
+  write("No data for stats", stderr())
   quit('no')
 }
 outputFileName = args[2];
