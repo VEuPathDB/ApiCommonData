@@ -126,9 +126,21 @@ our $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
+our @UNDO_TABLES =qw(
+  ProcessAttributes
+  EntityAttributes
+  EntityClassification
+  AttributeUnit
+  ProcessTypeComponent
+  EntityType
+  Study
+); ## undo is not run on ProcessType
+
 
 our @REQUIRE_TABLES = qw(
   Study
+  EntityAttributes
+  EntityClassification
   EntityType
   EntityAttributes
   AttributeUnit
@@ -433,7 +445,6 @@ sub loadNodes {
     my $entity = $self->getGusModelClass('EntityAttributes')->new({stable_id => $node->getValue()});
 
     my $entityTypeId = $self->addEntityTypeForNode($ontologyTermToIdentifiers, $node, $gusStudyId);
-    $entity->setEntityTypeId($entityTypeId);
 
     my $characteristics = $node->getCharacteristics() // [];
     foreach my $characteristic (@$characteristics) {
@@ -493,10 +504,13 @@ sub loadNodes {
 
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts) unless($atts eq '{}');
-      ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
+    $entity->setEntityTypeId($entityTypeId);
+    ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
+
+    my $entityClassification = $self->getGusModelClass('EntityClassification')->new({entity_type_id => $entityTypeId});
+    $entityClassification->setParent($entity);
 
     $entity->submit(undef, 1);
-
 
     $nodeToIdMap->{$entity->getStableId()} = [$entity->getId(), $entity->getEntityTypeId()];
 

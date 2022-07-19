@@ -42,6 +42,16 @@ WHERE lower(name) =  'processattributes'
                       WHERE lower(name) = lower('&1'));
 
 
+DROP TABLE &1.EntityClassification;
+DROP SEQUENCE &1.EntityClassification_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'entityclassification'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = '&1');
+
+
+
 DROP TABLE &1.EntityAttributes;
 DROP SEQUENCE &1.EntityAttributes_sq;
 DELETE FROM core.TableInfo

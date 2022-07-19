@@ -57,7 +57,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::SRes::OntologyTermType" => ["name"],
                             "GUS::Model::SRes::EnzymeClass" => ["ec_number"],
                             "GUS::Model::SRes::Taxon" => ["ncbi_tax_id"],
-                            "GUS::Model::SRes::TaxonName" => ["taxon_id", "name"],
+                            "GUS::Model::SRes::TaxonName" => ["taxon_id", "name", "name_class"],
                             "GUS::Model::SRes::EnzymeClassAttribute" => ["enzyme_class_id", "attribute_value"],
                             "GUS::Model::SRes::GeneticCode" => ["name"],
                             "GUS::Model::SRes::DbRef" => ["primary_identifier", "secondary_identifier", "external_database_release_id"],
@@ -421,6 +421,9 @@ sub run {
 
   if($mode eq 'load') {
     foreach my $tableName (@$orderedTables) {
+      next if($tableName eq "GUS::Model::ApiDB::SequenceVariation"); 
+      next if($tableName eq "GUS::Model::ApiDB::Snp"); 
+
       $self->loadTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
     }
   }
@@ -902,7 +905,7 @@ sub writeConfigFile {
       unless($datatypeMap->{$col}) {
         my $prec = $att->{'prec'}; 
 
-        my $precFloor = $prec + 10;# add a bit of padding for negative number and decimal points (maybe commas?)
+        my $precFloor = $prec + 2;# add a bit of padding for negative number and decimal points (maybe commas?)
 
         my $precString = $prec ? "($precFloor)" : "";
         my $length = $att->{'length'};
@@ -1027,7 +1030,8 @@ sub loadTable {
     my $dbh = $self->getQueryHandle();  
     my $sequenceName = "${abbreviatedTablePeriod}_sq";
     my $sequenceSql = "select ${sequenceName}.nextval from dual";
-    $sequenceSh = $dbh->prepare($sequenceSql);
+    # TODO
+    #$sequenceSh = $dbh->prepare($sequenceSql);
 
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $sqlldrDat = ApiCommonData::Load::Sqlldr->new({_login => $login,
@@ -1086,8 +1090,8 @@ sub loadTable {
   my $globFifo = ApiCommonData::Load::Fifo->new($sqlldrGlobInfileFn, undef, undef, "LOG:  ". $self->getArg('logDir') . "/" . $sqlldrGlob->getLogFileName());
   my $sqlldrGlobProcessString = $sqlldrGlob->getCommandLine();
 
-  # may add this back if using the sequence is too slow for all cases
-#  my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
+  # TODO may add this back if using the sequence is too slow for all cases
+  my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
@@ -1167,9 +1171,14 @@ sub loadTable {
       $rowCount++;
 
       if($loadDatWithSqlldr) {
-        $sequenceSh->execute();
-        ($primaryKey) = $sequenceSh->fetchrow_array();
-#        $primaryKey = ++$maxPrimaryKey;
+
+
+        # TODO
+        #$sequenceSh->execute();
+        # ($primaryKey) = $sequenceSh->fetchrow_array();
+
+        $primaryKey = ++$maxPrimaryKey;
+
         $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
 
         # If the table is self referencing AND the fk is to the same row
@@ -1261,18 +1270,19 @@ sub loadTable {
   if($loadDatWithSqlldr) {
     $datFifo->cleanup();
 
-    $sequenceSh->finish();
+    #todo
+    #$sequenceSh->finish();
 
     # update the sequence;  may add this back if using sequence for pk is too slow
-    # my $sequenceName = "${abbreviatedTablePeriod}_sq";
-    # my $dbh = $self->getQueryHandle();  
-    # my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
-    # my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-    # if($sequenceDifference > 0) {
-    #   $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
-    #   $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
-    #   $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
-    # }
+    my $sequenceName = "${abbreviatedTablePeriod}_sq";
+    my $dbh = $self->getQueryHandle();  
+    my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
+    my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
+    if($sequenceDifference > 0) {
+      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
+      $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
+      $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
+    }
   }
   else {
     $self->getDb()->manageTransaction(0, 'commit');
@@ -1413,7 +1423,7 @@ sub getTableRelationsSql {
                    from core.tableinfo t, core.databaseinfo d
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
-                    and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
+                    and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb', 'EDA')
                     and t.name not in ('AlgorithmParam','GlobalNaturalKey','DatabaseTableMapping','SnpLinkage', 'CompoundPeaksChebi')
                    minus
                    -- minus Views on tables

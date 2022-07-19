@@ -251,8 +251,8 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
 from (
 select distinct s.study_id, iot.source_id as parent_stable_id, it.ENTITY_TYPE_ID as parent_id, ot.entity_type_id out_entity_type_id
 from $SCHEMA.processattributes p
-   , $SCHEMA.entityattributes i
-   , $SCHEMA.entityattributes o
+   , $SCHEMA.entityclassification i
+   , $SCHEMA.entityclassification o
    , $SCHEMA.entitytype it
    , $SCHEMA.study s
    , $SCHEMA.entitytype ot

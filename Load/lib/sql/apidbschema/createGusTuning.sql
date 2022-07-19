@@ -271,6 +271,7 @@ create index dots.nafeat_scseqfeat_ix on dots.NaFeatureImp
 -- when plugins first run in a workflow on a brand new instance
 ALTER TABLE core.algorithmimplementation
 ADD CONSTRAINT alg_imp_uniq
+
 UNIQUE (executable, cvs_revision, executable_md5);
 
 

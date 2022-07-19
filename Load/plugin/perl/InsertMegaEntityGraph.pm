@@ -59,6 +59,7 @@ my $documentation = { purpose          => "",
 our @UNDO_TABLES =qw(
   ProcessAttributes
   EntityAttributes
+  EntityClassification
   AttributeUnit
   ProcessTypeComponent
   EntityType
@@ -68,6 +69,7 @@ our @UNDO_TABLES =qw(
 my @REQUIRE_TABLES = qw(
   Study
   EntityAttributes
+  EntityClassification
   EntityType
   AttributeUnit
   ProcessAttributes
@@ -117,7 +119,11 @@ sub run {
     my $attsJson = $self->makeStudyAttributes($studyId);
 
     my $gusEntityAttribute = $self->getGusModelClass('EntityAttributes')->new({stable_id => $studyStableId, atts => $attsJson});
-    $gusEntityAttribute->setParent($gusEntityType);
+
+    my $entityClassification = $self->getGusModelClass('EntityClassification')->new();
+    $entityClassification->setParent($gusEntityAattribute);
+    $entityClassification->setParent($gusEntityType);
+
     $gusEntityAttribute->submit();
 
     $self->connectSubStudyToEntityGraph($studyId, $gusEntityAttribute, $gusProcessType);
@@ -143,6 +149,10 @@ sub loadEntityTypesAndAttributeUnits {
     $gusEntityType->setParent($gusStudy);
     $gusEntityType->submit();
 
+    my $subStudyEntityTypeIdsString = join(",", @{$entityTypes->{$typeId}->{internal_entity_type_ids}});
+
+    $self->loadEntityClassificationsFromSubstudy($subStudyEntityTypeIdsString);
+
     foreach my $attOntologyTermId (keys %{$entityTypes->{$typeId}->{units}}) {
       my $unitId = $entityTypes->{$typeId}->{units}->{$attOntologyTermId};
 
@@ -151,10 +161,30 @@ sub loadEntityTypesAndAttributeUnits {
       $gusAttributeUnit->submit();
     }
 
-
-
     $self->undefPointerCache();
   }
+}
+
+sub loadEntityClassificationsFromSubstudy {
+  my ($self, $entityTypeIdsString) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select ec.entity_attributes_id
+                  , ec.entity_type_id
+             from ${SCHEMA}.entityclassification ec
+             where ec.entity_type_id in ($entityTypeIdsString)";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my ($entityAttributesId, $entityTypeId) = $sh->fetchrow_array()) {
+    my $entityClassification = $self->getGusModelClass('EntityClassification')->new();
+    $entityClassification->setEntityTypeId($entityTypeId);
+    $entityClassification->setEntityAttributesId($entityTypeAttributesId);
+    $entityClassification->submit();
+  }
+  $sh->finish();
 }
 
 sub addToEntityTypes {
@@ -162,7 +192,7 @@ sub addToEntityTypes {
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "select etg.PARENT_STABLE_ID, et.name, et.type_id, et.internal_abbrev
+  my $sql = "select etg.PARENT_STABLE_ID, et.name, et.type_id, et.internal_abbrev, et.entity_type_id
              from ${SCHEMA}.entitytypegraph etg
                 , ${SCHEMA}.entitytype et
              where etg.study_id = ?
@@ -171,7 +201,7 @@ sub addToEntityTypes {
   my $sh = $dbh->prepare($sql);
   $sh->execute($studyId);
 
-  while(my ($parentStableId, $name, $typeId, $internalAbbrev) = $sh->fetchrow_array()) {
+  while(my ($parentStableId, $name, $typeId, $internalAbbrev, $entityTypeId) = $sh->fetchrow_array()) {
 
     # if we've seen this entity type before check the parent is the same. 
     # an entity type can only have one parent type
@@ -185,6 +215,7 @@ sub addToEntityTypes {
     $entityTypes->{$typeId}->{parent_stable_id} = $parentStableId if($parentStableId);
     $entityTypes->{$typeId}->{name} = $name;
     $entityTypes->{$typeId}->{internal_abbrev} = $internalAbbrev;
+    push @{$entityTypes->{$typeId}->{internal_entity_type_ids}}, $entityTypeId;
   }
 
   $self->addUnitsToEntityTypes($entityTypes, $studyId);
@@ -225,12 +256,12 @@ sub connectSubStudyToEntityGraph {
   my $inEntityId = $gusEntityAttribute->getId();
   my $processTypeId = $gusProcessType->getId();
 
-  my $sql = "select ea.entity_attributes_id
+  my $sql = "select ec.entity_attributes_id
              from ${SCHEMA}.entitytypegraph etg
-                , ${SCHEMA}.entityattributes ea
+                , ${SCHEMA}.entityclassification ec
              where etg.study_id = ?
              and etg.parent_stable_id is null
-             and etg.entity_type_id = ea.entity_type_id";
+             and etg.entity_type_id = ec.entity_type_id";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute($studyId);

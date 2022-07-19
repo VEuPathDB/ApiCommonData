@@ -196,16 +196,20 @@ sub createWideTable {
 
   my $entitySql = "select ea.stable_id, eaa.*
                    from $SCHEMA.entityattributes ea,
+                        $SCHEMA.entityclassification ec,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
-                   where ea.entity_type_id in ($internalEntityTypeIds)";
+                   where ec.entity_type_id in ($internalEntityTypeIds)
+                    and ea.entity_attributes_id = ec.entity_attributes_id";
 
   my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
                                                 from ${SCHEMA}.processattributes pa,
-                                                     (select entity_attributes_id
-                                                           , stable_id 
-                                                      from ${SCHEMA}.entityattributes 
-                                                      where entity_type_id in ($internalEntityTypeIds)) ea
+                                                     (select ea.entity_attributes_id
+                                                           , ea.stable_id 
+                                                      from ${SCHEMA}.entityattributes ea, 
+                                                           ${SCHEMA}.entityclassification ec 
+                                                      where ec.entity_type_id in ($internalEntityTypeIds)
+                                                       and ec.entity_attributes_id = ea.entity_attributes_id) ea
                                                 where ea.entity_attributes_id = pa.out_entity_id (+)
                                                )
                     select pa.stable_id, paa.*
@@ -228,7 +232,10 @@ sub createWideTable {
     $sql = $processSql;
   }
   else {
-    $sql = "select stable_id from ${SCHEMA}.entityattributes where entity_type_id = $entityTypeId";
+    $sql = "select ea.stable_id 
+            from ${SCHEMA}.entityattributes ea, ${SCHEMA}.entityclassification ec 
+            where ec.entity_type_id = $entityTypeId
+             and ec.entity_attributes_id = ea.entity_attributes_id";
   }
 
   my $dbh = $self->getDbHandle();
@@ -283,18 +290,22 @@ sub populateAncestorsTable {
   with f as 
   (select p.in_entity_id
         , i.stable_id in_stable_id
-        , i.entity_type_id in_type_id
+        , ic.entity_type_id in_type_id
         , p.out_entity_id
-        , o.entity_type_id out_type_id
+        , oc.entity_type_id out_type_id
         , o.stable_id out_stable_id
   from ${SCHEMA}.processattributes p
      , ${SCHEMA}.entityattributes i
      , ${SCHEMA}.entityattributes o
+     , ${SCHEMA}.entityclassification ic
+     , ${SCHEMA}.entityclassification oc
      , ${SCHEMA}.entitytype et
      , ${SCHEMA}.study s
   where p.in_entity_id = i.entity_attributes_id
   and p.out_entity_id = o.entity_attributes_id
-  and i.entity_type_id = et.entity_type_id
+  and o.entity_attributes_id = oc.entity_attributes_id
+  and ic.entity_attributes_id = i.entity_attributes_id
+  and ic.entity_type_id = et.entity_type_id
   and et.study_id = s.study_id
   and s.study_id in (select $studyId from dual 
                      union 
@@ -306,8 +317,10 @@ sub populateAncestorsTable {
   start with f.out_type_id = $entityTypeId
   connect by prior in_entity_id = out_entity_id
   union
-  select stable_id, null, null
-  from ${SCHEMA}.entityattributes where entity_type_id = $entityTypeId
+  select ea.stable_id, null, null
+  from ${SCHEMA}.entityattributes ea,  ${SCHEMA}.entityclassification ec
+  where ec.entity_type_id = $entityTypeId
+   and ec.entity_attributes_id = ea.entity_attributes_id
 ) order by stable_id";
 
   my $dbh = $self->getDbHandle();
@@ -450,7 +463,7 @@ sub mapEntityTypeId {
 sub getEntityTypeInfo {
   my ($self, $entityTypeId, $key) = @_;
 
-  my @allowedKeys = ("internal_abbrev", "type_id", "internal_entity_type_id");
+  my @allowedKeys = ("internal_abbrev", "type_id", "internal_entity_type_ids");
 
   unless(grep(/$key/, @allowedKeys)) {
     $self->error("Invalid hash key:  $key");
@@ -629,12 +642,14 @@ SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
      , date_value
 FROM ${SCHEMA}.attributevalue av
    , ${SCHEMA}.entityattributes ea
+   , ${SCHEMA}.entityclassification ec
    , (SELECT att.stable_id, et.type_id et_type_id, att.unit_ontology_term_id unit_id
       FROM ${SCHEMA}.attribute att, ${SCHEMA}.entitytype et
       WHERE att.entity_type_id = et.entity_type_id 
       AND att.entity_type_id = $entityTypeId) atts
-WHERE ea.entity_type_id in ($internalEntityTypeIds)
-and av.entity_attributes_id = ea.entity_attributes_id
+WHERE ec.entity_type_id in ($internalEntityTypeIds)
+and ec.entity_attributes_id = ea.entity_attributes_id
+and ea.entity_attributes_id = av.entity_attributes_id
 and av.attribute_stable_id = atts.stable_id
 and av.entity_type_ontology_term_id = atts.et_type_id
 and nvl(av.unit_ontology_term_id, -1) = nvl(atts.unit_id, -1)

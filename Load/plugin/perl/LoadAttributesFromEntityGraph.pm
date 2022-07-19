@@ -201,7 +201,6 @@ sub run {
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
     my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory);
 
-
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh);
     my $statsForPlotsByAttributeStableIdAndEntityTypeId = $self->statsForPlots($dateValsFileName, $numericValsFileName, $tempDirectory);
     my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
@@ -565,6 +564,7 @@ and os.external_database_release_id = ?
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
     if($ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID}) {
+      # TODO:  Shouldn't we allow one unit per attribute/entityType?
       $self->userError("The Attribute $sourceId can only have one unit specification per study.  Units can be specified either in the ISA files OR in annotation properties");
     }
 
@@ -614,14 +614,14 @@ sub loadAttributes {
 
   my $clobCount = 0;
 
-
-  while(my ($entityAttributesId, $entityTypeId, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $lobLocator) = $sh->fetchrow_array()) {
+  while(my ($entityAttributesId, $entityTypeId, $entityTypeIdOrig, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $lobLocator) = $sh->fetchrow_array()) {
     my $json = encode('UTF-8', $self->readClob($lobLocator));
-
 
     my $attsHash = decode_json($json);
 
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
+
+      my $unitOntologyTermId = $ontologyTerms->{$ontologySourceId}->{UNIT_ONTOLOGY_TERM_ID};
 
       for my $p ($self->annPropsAndValues($ontologyTerms, $ontologySourceId, $processTypeId, $valueArray)){
         $processTypeId //= "";
@@ -633,6 +633,19 @@ sub loadAttributes {
 #          printf STDERR ("DEBUG: IS_MULTI_VALUED UPDATED!!! %s\n", $attributeStableId);
         }
 ######
+
+        # get original unit;  options are skipPrint,die if units are different, printRow
+        my $unitOntologytermIdOrig;
+        # if this row has units, lookup orig unit;  Handle mismatch or die
+        if($unitOntologyTermId) {
+          $unitOntologytermIdOrig = $self->lookupUnit($entityTypeIdOrig, $attributeStableId);
+
+          if(!$unitOntologytermIdOrig || $unitOntologytermIdOrig != $unitOntologyTermId) {
+            my ($convertedValue) = $self->convertValue($value, $unitOntologytermIdOrig, $unitOntologyTermId);
+            $value = $convertedValue;
+          }
+        }
+
 
         my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
         my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($attributeStableId, $cs, $value);
@@ -653,10 +666,13 @@ sub loadAttributes {
                  $stringValue,
                  $numberValue,
                  $dateValue,
-                 $ontologyTerms->{$attributeStableId}->{UNIT_ONTOLOGY_TERM_ID}
+                 $unitOntologyTermId
               );
 
-        print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
+        # we will only load rows if the entity type is new OR the units are
+        if($entityTypeId == $entityTypeIdOrig || ($unitOntologyTermId && $unitOntologyTermId != $unitOntologytermIdOrig)) {
+          $self->printToFifo(\@a, $fh);
+        }
 
       }
       $self->undefPointerCache();
@@ -667,6 +683,48 @@ sub loadAttributes {
   }
   $self->log("Loaded attribute values for study $studyId: processed $clobCount clobs");
 }
+
+
+sub convertValue {
+  my ($self, $value, $unitIdOrig, $unitIdDesired) = @_;
+
+  $self->error("Unit Mismatch Not yet supported.  VALUE $value found in units [$unitIdOrig] but desired [$unitIdDesired]");
+
+  my $newValue; #TODO
+  return $newValue;
+}
+
+
+sub lookupUnit {
+  my ($self, $entityTypeId, $attributeStableId) = @_;
+
+  if($self->{_unit_map}->{$attributeStableId}->{$entityTypeId}) {
+    return $self->{_unit_map}->{$attributeStableId}->{$entityTypeId};
+  }
+
+  my $sql = "select ot.source_id, au.unit_ontology_term_id
+from SRES.ONTOLOGYTERM ot, eda.attributeunit au
+where au.ATTR_ONTOLOGY_TERM_ID = ot.ONTOLOGY_TERM_ID
+and au.entity_type_id = ?";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($entityTypeId);
+
+  while(my ($sourceId, $unitId) = $sh->fetchrow_array()) {
+    $self->{_unit_map}->{$sourceId}->{$entityTypeId} = $unitId;
+  }
+
+  return $self->{_unit_map}->{$attributeStableId}->{$entityTypeId};
+}
+
+
+sub printToFifo {
+  my ($self, $a, $fh) = @_;
+
+  print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @$a) . $END_OF_RECORD_DELIMITER;
+}
+
 sub annPropsAndValues {
   my ($self, $ontologyTerms, $ontologySourceId, $processTypeId, $valueArray) = @_;
   my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
@@ -784,38 +842,44 @@ sub readClob {
 
 sub loadAttributesFromEntity {
   loadAttributes(@_, "
-select va.entity_attributes_id
-     , vt.entity_type_id
-     , vt.type_id as entity_type_ontology_term_id
+select ea.entity_attributes_id
+     , et.entity_type_id
+     , ea.entity_type_id as orig_entity_type_id
+     , et.type_id as entity_type_ontology_term_id
      , null as process_type_id
      , null as process_type_ontology_term_id
-     , va.atts
-from $SCHEMA.entityattributes va
-   , $SCHEMA.entitytype vt
-where va.atts is not null
-and vt.entity_type_id = va.entity_type_id
-and vt.study_id = ?
+     , ea.atts
+from $SCHEMA.entityattributes ea
+   , $SCHEMA.entityclassification ec
+   , $SCHEMA.entitytype et
+where ea.atts is not null
+and et.entity_type_id = ec.entity_type_id
+and ec.entity_attributes_id = ea.entity_attributes_id
+and et.study_id = ?
 ");
 }
 
 
 sub loadAttributesFromIncomingProcess {
   loadAttributes(@_, "
-select va.entity_attributes_id
-     , vt.entity_type_id
-     , vt.type_id as entity_type_ontology_term_id
-     , et.process_type_id
-     , et.type_id as process_type_ontology_term_id
-     , ea.atts
-from $SCHEMA.processattributes ea
-   , $SCHEMA.entityattributes va
-   , $SCHEMA.entitytype vt
-   , $SCHEMA.processtype et
-where ea.atts is not null
-and vt.entity_type_id = va.entity_type_id
-and va.entity_attributes_id = ea.out_entity_id
-and ea.process_type_id = et.process_type_id
-and vt.study_id = ?
+select ec.entity_attributes_id
+     , et.entity_type_id
+     , ea.entity_type_id as orig_entity_type_id
+     , et.type_id as entity_type_ontology_term_id
+     , pt.process_type_id
+     , pt.type_id as process_type_ontology_term_id
+     , pa.atts
+from $SCHEMA.processattributes pa
+   , $SCHEMA.entitytype et
+   , $SCHEMA.entityclassification ec
+   , $SCHEMA.entityattributes ea
+   , $SCHEMA.processtype pt
+where pa.atts is not null
+and et.entity_type_id = ec.entity_type_id
+and ec.entity_attributes_id = pa.out_entity_id
+and ec.entity_attributes_id = ea.entity_attributes_id
+and pa.process_type_id = pt.process_type_id
+and et.study_id = ?
 ");
 }
 
@@ -901,7 +965,7 @@ sub makeFifo {
                                                  _database => $db,
                                                  _direct => 0,
                                                  _controlFilePrefix => 'sqlldr_AttributeValue',
-                                                 _quiet => 1,
+                                                 _quiet => 0,
                                                  _infile_name => $fifoName,
                                                  _reenable_disabled_constraints => 1,
                                                  _table_name => "$SCHEMA.AttributeValue",

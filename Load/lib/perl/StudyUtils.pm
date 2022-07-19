@@ -14,8 +14,6 @@ use strict;
 use warnings;
 
 use JSON;
-use YAML::Tiny;
-
 use Data::Dumper;
 
 sub queryForOntologyTerms {
@@ -142,25 +140,4 @@ sub getTermsByAnnotationPropertyValue {
   return \%terms;
 }
 
-
-sub parseMegaStudyConfig {
-  my ($yamlFile, $studyStableId) = @_;
-
-  my $yaml = YAML::Tiny->read($yamlFile);
-
-  unless($yaml) {
-    die "Error parsing yaml file:  $yamlFile";
-  }
-
-  foreach my $doc (@$yaml) {
-    if($doc->{stable_id} eq $studyStableId) {
-      return $doc;
-    }
-  }
-
-  die "no configuration for $studyStableId found in yaml file:  $yamlFile";
-}
-
-
 1;
-
