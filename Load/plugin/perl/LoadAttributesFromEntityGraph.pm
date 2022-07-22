@@ -594,6 +594,9 @@ sub loadAttributeValues {
 
 sub loadAttributes {
   my ($self, $studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh, $sql) = @_;
+  # Try to force printing only 8-bit characters
+  binmode( $dateValsFh, ":utf8" );
+  binmode( $numericValsFh, ":utf8" );
 
   my $dbh = $self->getQueryHandle();
 
@@ -803,6 +806,7 @@ and vt.study_id = ?
 
 sub fields {
   my ($self, $maxAttrLength) = @_;
+  $maxAttrLength += $maxAttrLength; # Workaround to prevent Sqlldr from choking on wide characters
   my $database = $self->getDb();
   my $projectId = $database->getDefaultProjectId();
   my $userId = $database->getDefaultUserId();
