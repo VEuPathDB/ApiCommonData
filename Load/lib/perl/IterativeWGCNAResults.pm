@@ -173,7 +173,7 @@ sub munge {
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; # removes unclassifieds
 	for my $i(@ModuleNames){
 		push @modules,$i . " " . $self->getInputSuffixMM();
-		push @files,"$outputDirModuleMembership" . "$i" . "_1st" . "\.txt";
+		push @files,"$outputDir/$outputDirModuleMembership" . "/$i" . "_1st" . "\.txt";
 		open(MMOUT, ">$outputDirModuleMembershipFullPath/$i" . "_1st" . "\.txt") or die $!;
 		print MMOUT "geneID\tcorrelation_coefficient\n";
 		for my $ii(@{$MMHash{$i}}){
