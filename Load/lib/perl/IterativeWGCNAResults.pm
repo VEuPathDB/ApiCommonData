@@ -192,7 +192,7 @@ sub munge {
 	$self->setNames(\@modules);                                                                                           
 	$self->setFileNames(\@files);
 	$self->setProtocolName("WGCNA");
-	$self->setSourceIdType("module");
+	$self->setSourceIdType("gene"); # Each row in this file is a gene, to be looked up with a gene source id
 	$self->createConfigFile();
 		
 		
@@ -210,7 +210,8 @@ sub munge {
 	$egenes ->setTechnologyType("RNASeq");
         $egenes->setDisplaySuffix(" [$quantificationType" . " - $strand" . " - $valueType" . " - unique]");
 	$egenes->setProtocolName("wgcna_eigengene"); # Will be consumed by the loader (insertAnalysisResults plugin). Also need to change it in the plugin
-	
+        $egenes->setSourceIdType("module"); # Each row is a module	
+
 	# The following writes the appropriate rows in insert_study_results_config.txt
         $egenes ->munge();
 			
