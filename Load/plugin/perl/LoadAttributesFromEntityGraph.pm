@@ -24,6 +24,7 @@ use Time::HiRes qw(gettimeofday);
 use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal);
 
 use JSON;
+use Encode qw/encode/;
 
 use Data::Dumper;
 
@@ -253,6 +254,11 @@ sub statsForPlots {
   while(<FILE>) {
     chomp;
     my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
+    # Handle cases where bin_width = 0 because distinct_values_count = 1
+    # For number types only (dates are handled correctly by plot.data)
+    if(($min eq $max) && looks_like_number($binWidth) && $binWidth == 0){
+      $binWidth = 1;
+    }
 
     $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => $self->truncateSummaryStat($min),
                                                    range_max => $self->truncateSummaryStat($max),
@@ -601,6 +607,7 @@ sub loadAttributes {
   my $dbh = $self->getQueryHandle();
 
   my $fh = $fifo->getFileHandle();
+  binmode( $fh, ":utf8" );
 
   $self->log("Loading attribute values for study $studyId from sql:".$sql);
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
@@ -609,7 +616,7 @@ sub loadAttributes {
   my $clobCount = 0;
 
   while(my ($entityAttributesId, $entityTypeId, $processTypeId, $lobLocator) = $sh->fetchrow_array()) {
-    my $json = $self->readClob($lobLocator);
+    my $json = encode('UTF-8', $self->readClob($lobLocator));
 
     my $attsHash = decode_json($json);
 
