@@ -145,7 +145,7 @@ sub munge {
 
 
 	my $inputFileForWGCNA = "$mainDirectory/$preprocessedFile";
-	my $command = "singularity run  docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDirFullPath  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+        my $command = "singularity run -H $mainDirectory docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDirFullPath  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 	
 	my $results  =  system($command);
@@ -173,7 +173,7 @@ sub munge {
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; # removes unclassifieds
 	for my $i(@ModuleNames){
 		push @modules,$i . " " . $self->getInputSuffixMM();
-		push @files,"$outputDirModuleMembership" . "$i" . "_1st" . "\.txt";
+		push @files,"$outputDir/$outputDirModuleMembership" . "/$i" . "_1st" . "\.txt";
 		open(MMOUT, ">$outputDirModuleMembershipFullPath/$i" . "_1st" . "\.txt") or die $!;
 		print MMOUT "geneID\tcorrelation_coefficient\n";
 		for my $ii(@{$MMHash{$i}}){
@@ -192,7 +192,7 @@ sub munge {
 	$self->setNames(\@modules);                                                                                           
 	$self->setFileNames(\@files);
 	$self->setProtocolName("WGCNA");
-	$self->setSourceIdType("module");
+	$self->setSourceIdType("gene"); # Each row in this file is a gene, to be looked up with a gene source id
 	$self->createConfigFile();
 		
 		
@@ -210,7 +210,8 @@ sub munge {
 	$egenes ->setTechnologyType("RNASeq");
         $egenes->setDisplaySuffix(" [$quantificationType" . " - $strand" . " - $valueType" . " - unique]");
 	$egenes->setProtocolName("wgcna_eigengene"); # Will be consumed by the loader (insertAnalysisResults plugin). Also need to change it in the plugin
-	
+        $egenes->setSourceIdType("module"); # Each row is a module	
+
 	# The following writes the appropriate rows in insert_study_results_config.txt
         $egenes ->munge();
 			
