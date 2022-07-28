@@ -205,7 +205,7 @@ sub munge {
 
 	# Also something like sourceIdType. Default is "gene". In this case should probably be "eigengene" so that the plugin knows.
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0,isEigengene => 1, profileSetName => "$profileSetName"}
 	);
 	$egenes ->setTechnologyType("RNASeq");
         $egenes->setDisplaySuffix(" [$quantificationType" . " - $strand" . " - $valueType" . " - unique]");
