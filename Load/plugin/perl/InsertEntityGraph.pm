@@ -214,7 +214,6 @@ sub run {
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
   my ($self, $investigation, $extDbRlsId, $schema) = @_;
-  $self->getQueryHandle()->do("alter session set RELEASE_CURSOR=YES");
   do {
     my %errors;
     my $c = $investigation->{_on_error};
