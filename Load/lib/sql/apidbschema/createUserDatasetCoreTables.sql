@@ -11,6 +11,16 @@ GRANT select ON ApiDBUserDatasets.InstalledUserDataset TO gus_r;
 
 --------------------------------------------------------------------------------
 
+create table ApiDBUserDatasets.UserDatasetProject (
+user_dataset_id number(20) not null,
+project         varchar(20) not null,
+primary key (user_dataset_id, project)
+);
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetProject TO gus_w;
+GRANT select ON ApiDBUserDatasets.UserDatasetProject TO gus_r;
+
+--------------------------------------------------------------------------------
+
 create table ApiDBUserDatasets.UserDatasetOwner (
 user_id number(12) not null,
 user_dataset_id number(20) not null,
