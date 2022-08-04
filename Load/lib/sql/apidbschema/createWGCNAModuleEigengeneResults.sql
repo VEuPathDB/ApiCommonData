@@ -1,7 +1,7 @@
 CREATE TABLE apidb.EigengeneWGCNAResults (
  wgcna_eigene_result_id         NUMBER(12) NOT NULL,
  module_name			VARCHAR2(200) NOT NULL, 
- value			      float(126),
+ eigenegenvalue			float(126),
  protocol_app_node_id         NUMBER(10) NOT NULL,
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
