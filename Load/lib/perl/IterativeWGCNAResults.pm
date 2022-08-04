@@ -17,6 +17,7 @@ sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
 sub getInputSuffixME              { $_[0]->{inputSuffixME} }
+sub getInputSampleSuffix              { $_[0]->{inputSampleSuffix} }
 sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
@@ -88,21 +89,22 @@ sub munge {
 	open(OUT,">$mainDirectory/$preprocessedFile") or die "Couldn't open file $mainDirectory/$preprocessedFile for writing, $!";
 	
 	my %inputSamples;
-        my @headers;
 	# Read through inputFile. Format and apply a floor thresholding if necessary
 	while (my $line = <IN>){
 		# chomp $line; Removed because we actually want that new line char to show up at the end.
 		if ($. == 1){
 			# Handle headers
-			@headers = split("\t",$line);
+			my @headers = split("\t",$line);
 			# chomp @headers; # Causing new line issues
 			print OUT join("\t",@headers);
 			
 		        @headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
 			
                         foreach(@headers){
-				$inputSamples{$_} = 1;
-			}
+			  if($_ =~ /\S/){	
+                            $inputSamples{$_} = 1;
+			  }
+                        }
                         $headers[0] = 'Gene';
 		}else{
 			# Each line describes one gene. First element is gene identifier
@@ -186,7 +188,7 @@ sub munge {
 
 	my %inputProtocolAppNodesHash;
 	foreach(@modules) {
-          push @{$inputProtocolAppNodesHash{$_}}, join(';', map {$_ . " [htseq-union - firststrand - tpm - unique]"} sort @headers[1 .. $#headers]);
+          push @{$inputProtocolAppNodesHash{$_}}, join(';', map {$_ . " " . $self->getInputSampleSuffix()} sort keys %inputSamples);
 	}
 		
 	# Sets things for config file. What my instance of this object did (parameters)
