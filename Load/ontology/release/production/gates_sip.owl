@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_sip.owl">
-        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2022-08-03</owl:versionInfo>
+        <owl:versionInfo>2022-05-09</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -354,7 +354,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variableTree</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village</rdfs:label>
     </owl:Class>
     
@@ -627,6 +626,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
         <obo:EUPATH_0001015 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001015>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation date</rdfs:label>
     </owl:Class>
@@ -668,6 +668,31 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individuals related to participant</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010075 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010075">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a::hlength</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b::hlength</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form04::weeklylengthcm</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long::hlength</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form04</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cm</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000015</obo:EUPATH_0001009>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked of all infants at first exam and repeated weekly for those in the NICU. For infants discharged home with weekly follow-up, asked at face-to-face visits.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Height</rdfs:label>
     </owl:Class>
     
 
@@ -760,31 +785,6 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms by caregiver report</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011918 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011918">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a::hlength</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b::hlength</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form04::weeklylengthcm</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long::hlength</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form04</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cm</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000015</obo:EUPATH_0001009>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked of all infants at first exam and repeated weekly for those in the NICU. For infants discharged home with weekly follow-up, asked at face-to-face visits.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recumbent length</rdfs:label>
     </owl:Class>
     
 
@@ -989,7 +989,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medications provided in the past 24 hours. Assessed daily for infants admitted to the NICU</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medications provided in the past 24 hours</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medication</rdfs:label>
     </owl:Class>
     
@@ -3316,7 +3316,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variableTree</obo:EUPATH_0001013>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Town or woreda, which is the 3rd-level administrative division in Ethiopia. Further subdivided into wards (kebele, here labeled as &quot;Subdistrict&quot;).</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Woreda (town or district) in Ethiopia</rdfs:label>
     </owl:Class>
@@ -5626,7 +5625,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variableTree</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical summary of death</rdfs:label>
     </owl:Class>
     
@@ -7882,7 +7880,6 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variableTree</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cause of death, from autopsy</rdfs:label>
     </owl:Class>
     
@@ -11075,7 +11072,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038594">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0038350"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
@@ -11089,7 +11086,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038595">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0038350"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
@@ -11207,7 +11204,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038602">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0038350"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form09_long::otherorganism</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form09_long</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -12634,7 +12631,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medications that were discontinued in the past 24 hours. Assessed daily for infants admitted to the NICU</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medications that were discontinued in the past 24 hours</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medication discontinued</rdfs:label>
     </owl:Class>
     
@@ -13393,26 +13390,6 @@
         <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at exam recorded in days if more than 3 days old and in hours if less than 3 days old. Assessed once for all infants at either the healthy newborn exam or NICU admission exam</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first exam</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0038734 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038734">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000308"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">26</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form04::enterdayofexam</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form04</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">For infants in the NICU, the number of days since they were first admitted</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Time since hospital admission</rdfs:label>
     </owl:Class>
     
 
@@ -14274,5 +14251,5 @@
 
 
 
-<!-- Generated by the OWL API (version 4.5.6) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 

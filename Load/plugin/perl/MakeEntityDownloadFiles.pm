@@ -113,7 +113,7 @@ sub run {
     my %mergeInfo; # populate with id_cols, merge_key for each file
     while( my ($entityTypeId, $meta) = each %$entityTypeIds) {
       my $entityTypeAbbrev = $meta->{ABBREV};
-      my $entityNameForFile = $meta->{PLURAL} || $entityTypeAbbrev;
+      my $entityNameForFile = $meta->{PLURAL};
       my $entityName = map { ucfirst($_) } split(/\s/, $meta->{LABEL});
       $entityNameForFile =~ tr/ /_/;
       $entityName =~ tr/ /_/;

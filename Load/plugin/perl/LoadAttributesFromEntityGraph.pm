@@ -24,7 +24,6 @@ use Time::HiRes qw(gettimeofday);
 use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal);
 
 use JSON;
-use Encode qw/encode/;
 
 use Data::Dumper;
 
@@ -182,7 +181,7 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
 
-  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
+  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
   my $dbh = $self->getQueryHandle();
   my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
@@ -243,22 +242,12 @@ sub statsForPlots {
     $self->error("Error Running Rscript for datesFile");
   }
 
-  unless (-e $outputStatsFileName){
-    $self->log("No stats to load");
-    return {};
-  }
-
   my $rv = {};
-  open(FILE, "<", $outputStatsFileName) or $self->error("Cannot open $outputStatsFileName for reading: $!");
+  open(FILE, "<", $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
   
   while(<FILE>) {
     chomp;
     my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
-    # Handle cases where bin_width = 0 because distinct_values_count = 1
-    # For number types only (dates are handled correctly by plot.data)
-    if(($min eq $max) && looks_like_number($binWidth) && $binWidth == 0){
-      $binWidth = 1;
-    }
 
     $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => $self->truncateSummaryStat($min),
                                                    range_max => $self->truncateSummaryStat($max),
@@ -309,11 +298,10 @@ sub rCommandsForStats {
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
 if( file.info(fileName)$size == 0 ){
-  write("No data for stats", stderr())
   quit('no')
 }
 outputFileName = args[2];
-t = read.table(fileName, header=FALSE, sep="\t");
+t = read.table(fileName, header=FALSE);
 isDate = 0;
 if(!is.character(t$V2)) {
   t$V2 = as.character(t$V2);
@@ -429,7 +417,7 @@ sub loadAttributeTerms {
       #   consists of letters, numbers and the dot or underline characters
       #   and starts with a letter or the dot not followed by a number
       $self->error("Bad attribute stable ID: $attributeStableId")
-        unless $attributeStableId =~ m{^(.[A-za-z][A-za-z_.0-9]*|[A-za-z][A-za-z_.0-9]*)$};
+        unless $attributeStableId =~ m{^[.A-Za-z]([.A-Za-z][A-Za-z_.0-9]*)?$};
 
       my $attribute = $self->getGusModelClass('Attribute')->new({entity_type_id => $etId,
                                                          entity_type_stable_id => $entityTypeIds->{$etId},
@@ -600,14 +588,10 @@ sub loadAttributeValues {
 
 sub loadAttributes {
   my ($self, $studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh, $sql) = @_;
-  # Try to force printing only 8-bit characters
-  binmode( $dateValsFh, ":utf8" );
-  binmode( $numericValsFh, ":utf8" );
 
   my $dbh = $self->getQueryHandle();
 
   my $fh = $fifo->getFileHandle();
-  binmode( $fh, ":utf8" );
 
   $self->log("Loading attribute values for study $studyId from sql:".$sql);
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
@@ -616,7 +600,7 @@ sub loadAttributes {
   my $clobCount = 0;
 
   while(my ($entityAttributesId, $entityTypeId, $processTypeId, $lobLocator) = $sh->fetchrow_array()) {
-    my $json = encode('UTF-8', $self->readClob($lobLocator));
+    my $json = $self->readClob($lobLocator);
 
     my $attsHash = decode_json($json);
 
@@ -813,7 +797,6 @@ and vt.study_id = ?
 
 sub fields {
   my ($self, $maxAttrLength) = @_;
-  $maxAttrLength += $maxAttrLength; # Workaround to prevent Sqlldr from choking on wide characters
   my $database = $self->getDb();
   my $projectId = $database->getDefaultProjectId();
   my $userId = $database->getDefaultUserId();
