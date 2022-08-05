@@ -29,7 +29,9 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
 #  move($vcf, $oldVcf);
   ### Remove .gz suffix ###
 #  open(OLD,  $oldVcf) or die "Cannot open file $oldVcf for reading: $!";
-  tie (*OLD, 'IO::Zlib', $vcf, "rb") or die "Cannot open file $vcf for reading: $!";
+#  tie (*OLD, 'IO::Zlib', $vcf, "rb") or die "Cannot open file $vcf for reading: $!";
+
+open(OLD, "gunzip -c $vcf |") || die "Can't gunzip and read $vcf\n";
 $vcf = substr($vcf, 0, -3);
 $vcf =~ s/final\///; 
 open(VCF, ">$vcf") or die "Cannot open file $vcf for writing: $!";

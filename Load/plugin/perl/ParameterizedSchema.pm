@@ -30,55 +30,28 @@ sub undoTables {
   return @{ $self->{_undo_tables} }
 }
 
-sub getAlgorithmParam {
-  my ($self, $dbh, $rowAlgInvocationList, $paramKey) = @_;
-  my $pluginName = ref($self);
-  my %paramValues;
-  foreach my $rowAlgInvId (@$rowAlgInvocationList){
-    my $sql  = "SELECT p.STRING_VALUE
-      FROM core.ALGORITHMPARAMKEY k
-      LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
-      LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
-      WHERE a.EXECUTABLE = ? 
-      AND p.ROW_ALG_INVOCATION_ID = ?
-      AND k.ALGORITHM_PARAM_KEY = ?";
-    my $sh = $dbh->prepare($sql);
-    $sh->execute($pluginName,$rowAlgInvId, $paramKey);
-    while(my ($name) = $sh->fetchrow_array){
-      $paramValues{ $name } = 1;
-    }
-    $sh->finish();
-  }
-  my @values = keys %paramValues;
-  return \@values;
-}
-
-
 sub preprocessUndoGetSchemas {
   my($self, $dbh, $rowAlgInvocationList) = @_;
   my $pluginName = ref($self);
- #my %schemaNames;
- #foreach my $rowAlgInvId (@$rowAlgInvocationList){
- #  my $sql  = "SELECT p.STRING_VALUE
- #FROM core.ALGORITHMPARAMKEY k
- #LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
- #LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
- #WHERE a.EXECUTABLE = ? 
- #AND p.ROW_ALG_INVOCATION_ID = ?
- #AND k.ALGORITHM_PARAM_KEY = 'schema'";
- #  my $sh = $dbh->prepare($sql);
- #  $sh->execute($pluginName,$rowAlgInvId);
- #  while(my ($name) = $sh->fetchrow_array){
- #    $schemaNames{ $name } = 1;
- #  }
- #  $sh->finish();
- #}
- #my @schemas = keys %schemaNames;
- #return \@schemas;
-  my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'schema');
-  return $schemas;
+  my %schemaNames;
+  foreach my $rowAlgInvId (@$rowAlgInvocationList){
+    my $sql  = "SELECT p.STRING_VALUE
+  FROM core.ALGORITHMPARAMKEY k
+  LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
+  LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
+  WHERE a.EXECUTABLE = ? 
+  AND p.ROW_ALG_INVOCATION_ID = ?
+  AND k.ALGORITHM_PARAM_KEY = 'schema'";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute($pluginName,$rowAlgInvId);
+    while(my ($name) = $sh->fetchrow_array){
+      $schemaNames{ $name } = 1;
+    }
+    $sh->finish();
+  }
+  my @schemas = keys %schemaNames;
+  return \@schemas;
 }
-
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
   my @allUndoTables;
