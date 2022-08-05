@@ -144,7 +144,7 @@ sub run {
 	my $allele = $a[15];
 	my $chebiAnnotationExtension= $a[16];
 	my $proteinAnnotationExtension = $a[17];
-	my $mutation_desc = $a[18];
+	my $mutation_desc = substr( $a[18], 0, 500 );
 	my $multipleMutations = $a[19];
   $multipleMutations =~ s/^\s$//g; 
 
