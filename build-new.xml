@@ -4,31 +4,49 @@
   <!-- oooooooooooooooooooooooooo  Dependencies  oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
-  <import file="${projectsDir}/FgpUtil/build.xml" />
-  <import file="${projectsDir}/GUS/build.xml" />
-  <import file="${projectsDir}/TuningManager/build.xml" />
-  <import file="${projectsDir}/DoTS/build.xml" />
+  <target name="ApiCommonModel-Installation">
+    <ant antfile="../ApiCommonModel/build.xml"
+         target="ApiCommonModel-Installation">
+      <property name="project" value="ApiCommonModel" />
+      <property name="version" value="??" />
+    </ant>
+  </target>
+
+  <target name="GUS-Installation">
+    <ant antfile="../GUS/build.xml" target="GUS-Installation">
+      <property name="project" value="GUS" />
+      <property name="version" value="2.1.2" />
+    </ant>
+  </target>
+
+  <target name="DJob-Installation">
+    <ant antfile="../DJob/build.xml" target="DJob-Installation">
+      <property name="project" value="DJob" />
+      <property name="version" value="3.0.1" />
+    </ant>
+  </target>
+
+  <target name="DoTS-Installation">
+    <ant antfile="../DoTS/build.xml" target="DoTS-Installation">
+      <property name="project" value="DoTS" />
+      <property name="version" value="3.0.1" />
+    </ant>
+  </target>
+
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Installation  oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
-  <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
-                                            TuningManager-Installation,
-                                            GUS-Installation,
+  <target name="ApiCommonData-Installation" depends="GUS-Installation,
+                                            ApiCommonModel-Installation,
+                                            DJob-Installation,
                                             DoTS-Installation,
-                                            ApiCommonData-MavenInstallation,
                                             ApiCommonData/Load-Installation">
 
     <ant target="defaultProjectInstall" />
   </target>
 
-  <target name="ApiCommonData-MavenInstallation">
-    <ant target="mavenBuildProject">
-      <property name="project" value="ApiCommonData" />
-    </ant>
-    <property name="alreadyBuilt" value="true" />
-  </target>
 
   <!-- oooooooooooooooooo  Installation Postprocess  ooooooooooooooooooooo -->
 
@@ -51,41 +69,6 @@
       <property name="project" value="ApiCommonData" />
       <property name="component" value="Load" />
     </ant>
-  </target>
-
-  <target name="ApiCommonData/Datasources-Installation" depends="ProjectTree">
-    <property name="loadresources" value="${targetDir}/lib/xml/loadresources" />
-    <property name="cache" value="${targetDir}/config/.cache/datasources" />
-    <property name="datasources" value="${targetDir}/lib/xml/datasources" />
-    <mkdir dir="${cache}" />
-    <mkdir dir="${datasources}" />
-    <copy todir="${loadresources}">
-      <fileset dir="${projectsDir}/ApiCommonData/Load/lib/xml">
-        <include name="*Resources.xml" />
-      </fileset>
-    </copy>
-    <echo message="Running updateResourcesWithPubmed" />
-    <apply executable="${targetDir}/bin/updateResourcesWithPubmed"
-           dest="${cache}"
-           verbose="true">
-      <srcfile />
-      <targetfile />
-      <fileset dir="${loadresources}">
-        <include name="*Resources.xml" />
-      </fileset>
-      <mapper type="glob" from="*.xml" to="*-pubmed.xml" />
-    </apply>
-    <copy todir="${datasources}">
-      <fileset dir="${cache}">
-        <include name="*-pubmed.xml" />
-      </fileset>
-    </copy>
-    <delete dir="${loadresources}" />
-
-    <ant target="buildInfo">
-      <property name="component" value="updateResourcesWithPubmed" />
-    </ant>
-
   </target>
 
 
