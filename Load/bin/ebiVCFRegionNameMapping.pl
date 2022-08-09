@@ -29,13 +29,12 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
 #  move($vcf, $oldVcf);
   ### Remove .gz suffix ###
 #  open(OLD,  $oldVcf) or die "Cannot open file $oldVcf for reading: $!";
-#  tie (*OLD, 'IO::Zlib', $vcf, "rb") or die "Cannot open file $vcf for reading: $!";
+  tie (*OLD, 'IO::Zlib', $vcf, "rb") or die "Cannot open file $vcf for reading: $!";
 
-open(OLD, "gunzip -c $vcf |") || die "Can't gunzip and read $vcf\n";
-$vcf = substr($vcf, 0, -3);
-$vcf =~ s/final\///; 
-open(VCF, ">$vcf") or die "Cannot open file $vcf for writing: $!";
+$newVcf = substr($vcf, 0, -3);
+#$vcf =~ s/final\///; 
 
+open(VCF, "|-", "/usr/bin/bgzip >$newVcf") or die "Cannot open file test.vcf for writing: $!";
   while(<OLD>) {
     chomp;
 
@@ -59,14 +58,15 @@ open(VCF, ">$vcf") or die "Cannot open file $vcf for writing: $!";
 #    die "Zipped gff3 file $vcf.gz already exists.\n";
 #} else {
 
-#    my $remove_cmd = "rm -f ".$oldVcf;
-#    &runCmd($remove_cmd);
-    my $zip_cmd = "bgzip -f ".$vcf;
-    &runCmd($zip_cmd);
-    my $index_cmd = "tabix -p vcf ".$vcf."\.gz";
+    my $remove_cmd = "rm -f ".$vcf;
+    &runCmd($remove_cmd);
+    my $rename_cmd = "mv $newVcf $vcf";
+    &runCmd($rename_cmd);
+  #  my $zip_cmd = "bgzip -f ".$newVcf;
+  #  &runCmd($zip_cmd);
+    my $index_cmd = "tabix -p vcf ".$vcf;
     &runCmd($index_cmd);
-
-#}
+}
 
 sub usage {
   die "ebiGFF3RegionNameMapping.pl --VCF_File=FILE --organism_abbrev=s\n";
