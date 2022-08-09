@@ -1,4 +1,4 @@
-<project name="ApiCommonData" default="Installation" basedir=".">
+<project name="ApiCommonData" basedir=".">
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Dependencies  oooooooooooooooooooooooooo -->
@@ -14,46 +14,25 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
-                                            TuningManager-Installation,
-                                            GUS-Installation,
-                                            DoTS-Installation,
-                                            ApiCommonData-MavenInstallation,
-                                            ApiCommonData/Load-Installation">
-
-    <ant target="defaultProjectInstall" />
-  </target>
-
-  <target name="ApiCommonData-MavenInstallation">
-    <ant target="mavenBuildProject">
+                                                     TuningManager-Installation,
+                                                     GUS-Installation,
+                                                     DoTS-Installation,
+                                                     ApiCommonData/Load-Installation">
+    <ant target="defaultProjectInstall">
       <property name="project" value="ApiCommonData" />
     </ant>
-    <property name="alreadyBuilt" value="true" />
   </target>
-
-  <!-- oooooooooooooooooo  Installation Postprocess  ooooooooooooooooooooo -->
-
-  <target name="ApiCommonData-Installation-postprocess">
-    <echo message="Postprocessing the ApiCommonData installation" />
-
-    <replace dir="${targetDir}/bin"
-             propertyFile="${targetDir}/config/replacements.prop">
-      <include name="**/*" />
-      <replacefilter token="@perl@" property="perl" />
-    </replace>
-
-  </target>
-
 
   <!-- ooooooooooooooooooooooo  Install Components  ooooooooooooooooooooooo -->
 
-  <target name="ApiCommonData/Load-Installation" depends="ProjectTree">
+  <target name="ApiCommonData/Load-Installation">
     <ant target="defaultComponentInstall">
       <property name="project" value="ApiCommonData" />
       <property name="component" value="Load" />
     </ant>
   </target>
 
-  <target name="ApiCommonData/Datasources-Installation" depends="ProjectTree">
+  <target name="ApiCommonData/Datasources-Installation">
     <property name="loadresources" value="${targetDir}/lib/xml/loadresources" />
     <property name="cache" value="${targetDir}/config/.cache/datasources" />
     <property name="datasources" value="${targetDir}/lib/xml/datasources" />
@@ -88,29 +67,4 @@
 
   </target>
 
-
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooo  Distributable  ooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-
-  <target name="ApiCommonData-Distributable" depends="ProjectTree">
-
-    <copy todir="${targetDir}">
-      <fileset dir="${projectsDir}">
-        <exclude name="**/CVS/*" />
-      </fileset>
-    </copy>
-  </target>
-
-
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooo  ProjectTree  ooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-
-  <target name="ProjectTree" if="${checkout}">
-    <ant target="projectCheckOut" />
-  </target>
-
 </project>
-
-
