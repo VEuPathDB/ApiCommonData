@@ -31,7 +31,7 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
 #  open(OLD,  $oldVcf) or die "Cannot open file $oldVcf for reading: $!";
   tie (*OLD, 'IO::Zlib', $vcf, "rb") or die "Cannot open file $vcf for reading: $!";
 
-$newVcf = substr($vcf, 0, -3);
+my $newVcf = substr($vcf, 0, -3);
 #$vcf =~ s/final\///; 
 
 open(VCF, "|-", "/usr/bin/bgzip >$newVcf") or die "Cannot open file test.vcf for writing: $!";
@@ -66,7 +66,7 @@ open(VCF, "|-", "/usr/bin/bgzip >$newVcf") or die "Cannot open file test.vcf for
   #  &runCmd($zip_cmd);
     my $index_cmd = "tabix -p vcf ".$vcf;
     &runCmd($index_cmd);
-}
+#}
 
 sub usage {
   die "ebiGFF3RegionNameMapping.pl --VCF_File=FILE --organism_abbrev=s\n";
