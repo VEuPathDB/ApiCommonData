@@ -32,7 +32,7 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
   tie (*OLD, 'IO::Zlib', $vcf, "rb") or die "Cannot open file $vcf for reading: $!";
 
 my $newVcf = substr($vcf, 0, -3);
-#$vcf =~ s/final\///; 
+$newVcf =~ s/final\///; 
 
 open(VCF, "|-", "/usr/bin/bgzip >$newVcf") or die "Cannot open file test.vcf for writing: $!";
   while(<OLD>) {
