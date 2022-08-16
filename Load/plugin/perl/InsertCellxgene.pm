@@ -125,14 +125,14 @@ sub run {
     my $naFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId);
 
     unless($naFeatureId) {
-      $self->log("WARNING:  Could not find na feature id for gene:  $geneSourceId\n");
+      $self->log("WARNING:  Could not find na feature id for gene:  $geneSourceId");
       $skipped++;
       next;
     }
 
     my $cellxgene = GUS::Model::ApiDB::Cellxgene->new({'na_feature_id' => $naFeatureId,
                                                        'source_id' => $otherSourceId,
-                                                       'external_database_release_id' => $extDbReleaseId
+                                                       'external_database_release_id' => $extDbRlsId
                                                       });
 
     $cellxgene->submit();
