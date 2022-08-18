@@ -189,6 +189,7 @@ and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download
 SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
   my @orderedIRIs = sort { $attrNames->{$a} cmp $attrNames->{$b} } keys %$attrNames;
+  my $totalcols = scalar(@orderedIRIs);
   # get Merge Key, if any
   $sql = sprintf("SELECT t1.display_name || ' [' || t1.stable_id || ']' MERGE_KEY,t1.stable_id value FROM %s t1 WHERE t1.IS_MERGE_KEY = 1", $attrTableName);
   my ($mergeKey, $mergeKeyIRI) = each  %{ $self->sqlAsDictionary( Sql => $sql ) };
@@ -224,7 +225,6 @@ SQL_GETLABELS
   my $entityId = "___NOT_SET____";
   my $hash = {};
   my $keycount = 0;
-  my $totalcols = scalar(@orderedIRIs);
   my $totalEntityIds = 0;
   while(my $row = $sh->fetchrow_hashref()) {
     # $entityId ||= $row->{ $stableIdCol };
@@ -243,7 +243,9 @@ SQL_GETLABELS
       $entityId = $row->{ $stableIdCol };
     }
     if( $keycount > $totalcols ){
-      die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last key count $keycount > $totalcols\n");
+      foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
+      printf STDERR ("DEBUG: too many variables found %s\n", Dumper $hash);
+      die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
     }
     unless(defined $hash->{$attrId} ){
       $hash->{$attrId} = [];
