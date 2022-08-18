@@ -176,6 +176,8 @@ sub createDownloadFile {
   # (iri) STABLE_ID, DISPLAY_NAME
  
   my $attrTableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
+  my $multiValueIRIs = $self->sqlAsDictionary( Sql =>
+    "select stable_id, is_multi_valued from $attrTableName where is_multi_valued=1");
 
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
   my $sql = <<SQL_GETLABELS;
@@ -187,32 +189,24 @@ and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download
 SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
   my @orderedIRIs = sort { $attrNames->{$a} cmp $attrNames->{$b} } keys %$attrNames;
- #while(my ($k,$v) = each %$attrNames){
- #  $v = $v . " [$k]";
- #  $attrNames->{$k} = $v;
- #}
-  
+  my $totalcols = scalar(@orderedIRIs);
   # get Merge Key, if any
   $sql = sprintf("SELECT t1.display_name || ' [' || t1.stable_id || ']' MERGE_KEY,t1.stable_id value FROM %s t1 WHERE t1.IS_MERGE_KEY = 1", $attrTableName);
   my ($mergeKey, $mergeKeyIRI) = each  %{ $self->sqlAsDictionary( Sql => $sql ) };
-  # check order
-  # printf STDERR ("ORDER:\n%s...\n", join("\t\n", map { $attrNames->{$_} } @orderedIRIs[0..10]));
 
-  # get everything
-  $sql = "SELECT a.*, e.* FROM $dataTableName e LEFT JOIN $ancestorTableName a ON e.STABLE_ID = a.${entityTypeAbbrev}_STABLE_ID" ;
-  
+  my $valueTableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
+  my $stableIdCol = uc("${entityTypeAbbrev}_STABLE_ID");
+
+  my $sql = "select at.*, vt.attribute_stable_id, vt.string_value from $ancestorTableName at left join $valueTableName vt on at.$stableIdCol=vt.$stableIdCol order by at.$stableIdCol";
   my $dbh = $self->getQueryHandle();
-  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
   my $sh = $dbh->prepare($sql);
-  printf STDERR ("+++++++++++++\nDEBUG: $sql\n");
-  $sh->execute();
-  # set up column headers for ancestor IDs
+  $sh->execute;
   my @cols = @{$sh->{NAME}}; 
   my @entityIdCols; # for creating this file (raw ID from SQL)
   my @mergeIdCols; # for merging with this file (pretty ID from file)
   foreach my $col (@cols){
     # the first columns must be *_STABLE_ID
-    last if($col eq 'STABLE_ID'); # omitted
+    last if($col eq 'ATTRIBUTE_STABLE_ID');
     my ($type) = ($col =~ m/^(.*)_STABLE_ID/i);
     my $name = $entityNames->{uc($type)};
     $name =~ tr/ /_/;
@@ -228,12 +222,54 @@ SQL_GETLABELS
   # print header row
   printf FH ("%s\n", join("\t", map { $attrNames->{$_} } @entityIdCols, @orderedIRIs));
   
+  my $entityId = "___NOT_SET____";
+  my $hash = {};
+  my $keycount = 0;
+  my $totalEntityIds = 0;
   while(my $row = $sh->fetchrow_hashref()) {
-    printf FH ("%s\n", join("\t", map { $row->{$_} } @entityIdCols, @orderedIRIs));
+    # $entityId ||= $row->{ $stableIdCol };
+    my ($attrId, $value) = ($row->{ATTRIBUTE_STABLE_ID}, $row->{STRING_VALUE});
+    if($entityId ne $row->{ $stableIdCol }) {
+      #New row batch (per entityId): print previous and load next entity+ancestor IDs
+      $self->formatValues($hash, \@orderedIRIs, $multiValueIRIs);
+      if(keys %$hash){
+        printf FH ("%s\n", join("\t", map { $hash->{$_} } @entityIdCols, @orderedIRIs));
+      }
+      $hash = $row; 
+      delete $hash->{ATTRIBUTE_STABLE_ID};
+      delete $hash->{STRING_VALUE};
+      $keycount = 0;
+      $totalEntityIds++;
+      $entityId = $row->{ $stableIdCol };
+    }
+    if( $keycount > $totalcols ){
+      foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
+      printf STDERR ("DEBUG: too many variables found %s\n", Dumper $hash);
+      die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
+    }
+    unless(defined $hash->{$attrId} ){
+      $hash->{$attrId} = [];
+      $keycount++;
+    }
+    push(@{ $hash->{ $attrId } }, $value);
   }
+  $self->formatValues($hash, \@orderedIRIs, $multiValueIRIs);
+  printf FH ("%s\n", join("\t", map { $hash->{$_} } @entityIdCols, @orderedIRIs));
   close(FH);
   return { id_cols => \@mergeIdCols, merge_key => $mergeKey };
-  # return info for merging
+}
+
+sub formatValues {
+  my ($self, $hash, $orderedIRIs, $multiValueIRIs) = @_;
+  foreach my $col ( @$orderedIRIs){
+    next unless defined $hash->{$col};
+    if((scalar @{ $hash->{$col} } > 1) || $multiValueIRIs->{$col}){
+      $hash->{$col} = sprintf('[%s]', join(",", map { sprintf('"%s"', $_) } @{$hash->{$col}}));
+    }
+    else {
+      $hash->{$col} = $hash->{$col}->[0];
+    }
+  }
 }
 
 sub entityTypeIdsFromStudyId {
