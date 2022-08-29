@@ -17,6 +17,7 @@ sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
 sub getInputSuffixME              { $_[0]->{inputSuffixME} }
+sub getInputSampleSuffix              { $_[0]->{inputSampleSuffix} }
 sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
@@ -95,14 +96,16 @@ sub munge {
 			# Handle headers
 			my @headers = split("\t",$line);
 			# chomp @headers; # Causing new line issues
-			$headers[0] = 'Gene';
 			print OUT join("\t",@headers);
 			
-			foreach(@headers[1 .. $#headers]){
-				# Should the below come before printing?
-				@headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
-				$inputSamples{$_} = 1;
-			}
+		        @headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
+			
+                        foreach(@headers){
+			  if($_ =~ /\S/){	
+                            $inputSamples{$_} = 1;
+			  }
+                        }
+                        $headers[0] = 'Gene';
 		}else{
 			# Each line describes one gene. First element is gene identifier
 			my @geneLine = split("\t",$line);
@@ -182,9 +185,10 @@ sub munge {
 		close MMOUT;
 	}
 
+
 	my %inputProtocolAppNodesHash;
 	foreach(@modules) {
-		push @{$inputProtocolAppNodesHash{$_}}, map { $_ } sort keys %inputSamples;
+          push @{$inputProtocolAppNodesHash{$_}}, join(';', map {$_ . " " . $self->getInputSampleSuffix()} sort keys %inputSamples);
 	}
 		
 	# Sets things for config file. What my instance of this object did (parameters)
@@ -193,6 +197,7 @@ sub munge {
 	$self->setFileNames(\@files);
 	$self->setProtocolName("WGCNA");
 	$self->setSourceIdType("gene"); # Each row in this file is a gene, to be looked up with a gene source id
+        $self->setProfileSetName("$profileSetName " . $self->getInputSuffixMM());
 	$self->createConfigFile();
 		
 		
@@ -204,7 +209,7 @@ sub munge {
 	my $CPresults  =  system($CPcommand);
 
 	# Also something like sourceIdType. Default is "gene". In this case should probably be "eigengene" so that the plugin knows.
-	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+        my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
 		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0,profileSetName => "$profileSetName"}
 	);
 	$egenes ->setTechnologyType("RNASeq");

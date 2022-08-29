@@ -10,7 +10,6 @@ SELECT ?entity
   (GROUP_CONCAT(DISTINCT ?parent_entity;separator=" | ") AS ?parent_IRI)
   (GROUP_CONCAT(DISTINCT ?desc;separator=" | ") AS ?codebook_description)
   (GROUP_CONCAT(DISTINCT ?vals;separator=" | ") AS ?codebook_values)
-  (GROUP_CONCAT(DISTINCT ?cate;separator=" | ") AS ?category)
 WHERE {
    	?entity a owl:Class .
    	?entity rdfs:label ?slabel . 
@@ -28,17 +27,16 @@ WHERE {
 	OPTIONAL {
 		?entity obo:EUPATH_0001004 ?val .
 	}
-	OPTIONAL {
-		?entity obo:EUPATH_0001002 ?cat .
-	}
 	BIND (str(?slabel) AS ?name) .
 	BIND (str(?var) AS ?var_str) .
-	BIND (REPLACE(?var_str, "_", " ") AS ?vars) .
+	BIND (COALESCE(
+		IF(CONTAINS(?var_str, "::"), STRAFTER(?var_str, "::"), ?c),
+		IF(CONTAINS(?var_str, "_"), REPLACE(?var_str, "_", " "), ?c),
+		?var_str) AS ?vars) .
 	BIND (str(?def) AS ?defs) .
 	BIND (str(?plabel) AS ?parentLabel) .
 	BIND (str(?des) AS ?desc) .
 	BIND (str(?val) AS ?vals) .
-	BIND (str(?cat) AS ?cate) .
 }
 GROUP BY ?entity
-ORDER BY ASC(?entity)
+
