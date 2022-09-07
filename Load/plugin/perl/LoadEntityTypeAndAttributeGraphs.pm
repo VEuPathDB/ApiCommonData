@@ -8,6 +8,8 @@ use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
 
+use YAML::Tiny;
+
 my $purposeBrief = 'Read ontology and study tables and insert tables which store parent child relationships for entitytypes and attributes';
 my $purpose = $purposeBrief;
 
@@ -50,6 +52,15 @@ my $argsDeclaration =
             format         => '',
             constraintFunc => undef,
             isList         => 0, }),
+
+   fileArg({name           => 'collectionsYamlFile',
+            descr          => 'optional file describing collections for this dataset',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
 
  stringArg({ name            => 'extDbRlsSpec',
 	     descr           => 'ExternalDatabaseSpec for the Entity Graph',
@@ -123,6 +134,7 @@ sub run {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
+
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForNonontologicalLeaves($studyId, $ontologyTerms);
 
     $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
@@ -238,41 +250,82 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
 
-  my $sql = "select et.parent_id
-                  , et.parent_stable_id
-                  , nvl(os.ontology_synonym, t.name) display_name
-                  , t.entity_type_id
-                  , t.internal_abbrev
-                  ,  ot.source_id as stable_id
-                  , nvl(os.definition, ot.definition) as description
-                  , s.study_id
-                  , s.stable_id as study_stable_id
-                  , os.plural as display_name_plural
-from (
-select distinct s.study_id, iot.source_id as parent_stable_id, it.ENTITY_TYPE_ID as parent_id, ot.entity_type_id out_entity_type_id
+
+  if(my $collectionsYamlFile = $self->getArg('collectionsYamlFile')) {
+    my $yaml = YAML::Tiny->read();
+    foreach my $collection (@$yaml) {}
+  }
+
+
+
+  my $sql = "
+with process as (
+select s.study_id
+     , iot.source_id as in_stable_type_id
+     , it.ENTITY_TYPE_ID as in_entity_type_id
+     , p.in_entity_id as in_entity_id
+     , p.out_entity_id as out_entity_id
+     , ot.entity_type_id out_entity_type_id
 from $SCHEMA.processattributes p
-   , $SCHEMA.entityclassification i
-   , $SCHEMA.entityclassification o
+   , $SCHEMA.entityattributes i
+   , $SCHEMA.entityattributes o
    , $SCHEMA.entitytype it
    , $SCHEMA.study s
    , $SCHEMA.entitytype ot
    , sres.ontologyterm iot
-where s.study_id = $studyId 
+where s.study_id = $studyId
 and it.STUDY_ID = s.study_id
 and ot.STUDY_ID = s.study_id
 and it.ENTITY_TYPE_ID = i.entity_type_id
 and ot.entity_type_id = o.entity_type_id
 and p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
-and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID 
+and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID
 and it.type_id = iot.ontology_term_id (+)
-) et, $SCHEMA.entitytype t
+),
+processCounts as (select in_entity_type_id
+                       , out_entity_type_id
+                       , in_entity_id
+                       , count(*) as ct
+                  from process
+                  group by in_entity_type_id
+                         , out_entity_type_id
+                         , in_entity_id
+)
+select p.parent_id
+     , p.parent_stable_id
+     , nvl(os.ontology_synonym, t.name) display_name
+     , t.entity_type_id
+     , t.internal_abbrev
+     ,  ot.source_id as stable_id
+     , nvl(os.definition, ot.definition) as description
+     , s.study_id
+     , s.stable_id as study_stable_id
+     , os.plural as display_name_plural
+     , t.cardinality
+     , case when maxProcessCountPerEntity.maxOutputCount is null then null
+            when maxProcessCountPerEntity.maxOutputCount = 0 then null
+            when maxProcessCountPerEntity.maxOutputCount = 1 then 0
+           else 1 end as is_many_to_one_with_parent
+from  (select distinct study_id
+                     , in_stable_type_id as parent_stable_id
+                     , in_entity_type_id as parent_id
+                     , out_entity_type_id as entity_type_id
+       from process) p
+   , (select in_entity_type_id
+                       , out_entity_type_id
+                       , max(ct) as maxOutputCount
+     from processCounts
+     group by in_entity_type_id
+            , out_entity_type_id) maxProcessCountPerEntity
+   , $SCHEMA.entitytype t
    , $SCHEMA.study s
    , sres.ontologyterm ot
    , (select * from sres.ontologysynonym where external_database_release_id = $extDbRlsId) os
 where s.study_id = $studyId 
  and s.study_id = t.study_id
- and t.study_id = et.study_id (+)
- and t.entity_type_id = out_entity_type_id (+)
+ and t.entity_type_id = maxProcessCountPerEntity.out_entity_type_id (+)
+ and t.entity_type_id = p.entity_type_id (+)
+and t.entity_type_id = out_entity_type_id (+)
  and t.type_id = ot.ontology_term_id (+)
  and ot.ontology_term_id = os.ontology_term_id (+)
 ";

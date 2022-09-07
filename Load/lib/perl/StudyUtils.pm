@@ -8,6 +8,7 @@ getSchemaFromRowAlgInvocationId
 getTermsByAnnotationPropertyValue
 getTermsWithDataShapeOrdinal
 parseMegaStudyConfig
+dropTablesLike
 );
 
 use strict;
@@ -139,5 +140,21 @@ sub getTermsByAnnotationPropertyValue {
   }
   return \%terms;
 }
+
+
+sub dropTablesLike {
+  my ($self, $schema, $pattern, $dbh) = @_;
+
+  my $sql = sprintf("SELECT table_name FROM all_tables WHERE upper(OWNER)=upper('${schema}') AND REGEXP_LIKE(upper(table_name), upper('%s'))", $pattern);
+  $self->log("Finding tables to drop with SQL: $sql");
+  my $sth = $dbh->prepare($sql);
+  $sth->execute();
+  while(my ($table_name) = $sth->fetchrow_array()){
+    $self->log("dropping table ${schema}.${table_name}");
+    $dbh->do("drop table ${schema}.${table_name}") or die $dbh->errstr;
+  }
+  $sth->finish();
+}
+
 
 1;

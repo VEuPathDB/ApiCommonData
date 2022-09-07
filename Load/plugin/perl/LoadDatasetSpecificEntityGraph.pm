@@ -6,7 +6,7 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
-
+use ApiCommonData::Load::StudyUtils qw/dropTablesLike/;
 
 use Data::Dumper;
 
@@ -89,10 +89,7 @@ sub run {
   $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
 
-  my @tables;
-
-  my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
-  foreach my $studyId (keys %$studies) {
+    foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
     $self->log("Loading Study: $studyAbbrev");
     my ($entityTypeInfo, $entityTypeIdMap) = $self->setEntityTypeInfoFromStudyId($studyId);
@@ -102,30 +99,17 @@ sub run {
 
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
-
-      my $tallTableName = $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
-      my $ancestorsTableName = $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
-      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
-      my $wideTableName;
-
-#      $self->createTallTable($entityTypeId, $entityTypeAbbrev, $entityTypeOntologyTermId, $internalEntityTypeOntologyTermIds, $studyAbbrev);
-#      $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
-#      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
-
-
-#      $self->createTallTable($entityTypeId, $studyAbbrev);
       $self->createAncestorsTable($studyId, $entityTypeId, $studyAbbrev);
-      $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId);
+      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId);
 
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
-        $wideTableName = $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+        $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       }
-      my ($collectionTableName, $collectionAttributesTableName) = $self->maybeCreateCollectionsForMBioNodes($attributeGraphTableName);
-      push @tables, $tallTableName, $ancestorsTableName, $wideTableName, $collectionTableName, $collectionAttributesTableName; 
+      $self->maybeCreateCollectionsForMBioNodes($attributeGraphTableName);
     }
   }
-  my $numTablesMade = grep {$_} @tables;
-  return("Created $numTablesMade tables");
+
+    return("Created Dataset specific tables");
 }
 
 
@@ -544,6 +528,7 @@ SELECT --  distinct
      , null as is_multi_valued
      , null as data_shape
      , null as unit
+     , null as scale
      , null as precision
 FROM atg, att
 where atg.stable_id = att.stable_id (+) and att.stable_id is null
@@ -584,6 +569,7 @@ SELECT -- distinct
      , att.is_multi_valued
      , att.data_shape
      , att.unit
+     , att.scale
      , att.precision
 FROM atg, att
 where atg.stable_id = att.stable_id
@@ -621,101 +607,29 @@ SQL
 }
 
 
-sub createTallTable {
-  my ($self, $entityTypeId, $studyAbbrev) = @_;
-
-  my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
-  my $entityTypeOntologyTermId = $self->getEntityTypeInfo($entityTypeId, "type_id");
-  my $internalEntityTypeIds = $self->getEntityTypeInfo($entityTypeId, "internal_entity_type_ids");
-
-  my $tableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
-
-  $self->log("Creating TABLE: $tableName");
-
-  my $sql = <<CREATETABLE;
-CREATE TABLE $tableName 
-nologging as
-SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
-     , av.attribute_stable_id
-     , string_value
-     , number_value
-     , date_value
-FROM ${SCHEMA}.attributevalue av
-   , ${SCHEMA}.entityattributes ea
-   , ${SCHEMA}.entityclassification ec
-   , (SELECT att.stable_id, et.type_id et_type_id, att.unit_ontology_term_id unit_id
-      FROM ${SCHEMA}.attribute att, ${SCHEMA}.entitytype et
-      WHERE att.entity_type_id = et.entity_type_id 
-      AND att.entity_type_id = $entityTypeId) atts
-WHERE ec.entity_type_id in ($internalEntityTypeIds)
-and ec.entity_attributes_id = ea.entity_attributes_id
-and ea.entity_attributes_id = av.entity_attributes_id
-and av.attribute_stable_id = atts.stable_id
-and av.entity_type_ontology_term_id = atts.et_type_id
-and nvl(av.unit_ontology_term_id, -1) = nvl(atts.unit_id, -1)
-CREATETABLE
-
-  my $dbh = $self->getDbHandle();
-
-  $dbh->do($sql) or die $dbh->errstr;
-
-
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
-  return $tableName;
-}
-
-sub dropTablesLike {
-  my ($self, $pattern) = @_;
-  my $dbh = $self->getDbHandle();
-  my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '%s')", $pattern);
-  $self->log("Finding tables to drop with SQL: $sql");
-  my $sth = $dbh->prepare($sql);
-  $sth->execute();
-  while(my ($table_name) = $sth->fetchrow_array()){
-    $self->log("dropping table ${SCHEMA}.${table_name}");
-    $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
-  }
-  $sth->finish();
-}
-
 sub dropTables {
   my ($self, $extDbRlsSpec) = @_;
   my $dbh = $self->getDbHandle();
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
-  
+
   my $sql1 = "select distinct s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s
  where d.external_database_id = r.external_database_id
-and d.name = '$dbName' and r.version = '$dbVersion' 
+and d.name = '$dbName' and r.version = '$dbVersion'
 and r.external_database_release_id = s.external_database_release_id";
   $self->log("Looking for tables belonging to $extDbRlsSpec :\n$sql1");
   my $sh = $dbh->prepare($sql1);
   $sh->execute();
 
-  while(my ($studyAbbrev) = $sh->fetchrow_array()) {
-
-    my $s = uc $studyAbbrev;
+  while(my ($s) = $sh->fetchrow_array()) {
     # collection tables have foreign keys - drop them first
-    $self->dropTablesLike("COLLECTIONATTRIBUTE_${s}");
-    $self->dropTablesLike("COLLECTION_${s}");
-    $self->dropTablesLike("(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_${s}");
+    &dropTablesLike($schema, "COLLECTIONATTRIBUTE_${s}", $dbh);
+    &dropTablesLike($schema, "COLLECTION_${s}", $dbh);
+    &dropTablesLike($schema, "(ATTRIBUTES|ANCESTORS|ATTRIBUTEGRAPH)_${s}", $dbh);
 
-    # Some tables do not exist, get a list and drop them
-    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER=upper('$SCHEMA') AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s')",uc(${studyAbbrev}));
-    $self->log("Finding tables to drop with SQL: $sql");
-    my $sh2 = $dbh->prepare($sql);
-    $sh2->execute();
-    while(my ($table_name) = $sh2->fetchrow_array()){
-      $self->log("dropping table ${SCHEMA}.${table_name}");
-      $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
-    }
-    $sh2->finish();
 
+    &dropTablesLike($schema, "ATTRIBUTES_${s}", $dbh);
+    &dropTablesLike($schema, "ANCESTORS_${s}", $dbh);
+    &dropTablesLike($schema, "ATTRIBUTEGRAPH_${s}", $dbh);
   }
   $sh->finish();
 }

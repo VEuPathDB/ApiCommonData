@@ -82,7 +82,12 @@ my $argsDeclaration =
           isList => 0,
          }),
 
-
+      booleanArg({name => 'loadProtocolTypeAsVariable',
+          descr => 'should we add protocol types in processattributes',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
 
    fileArg({name           => 'ontologyMappingFile',
             descr          => 'For InvestigationSimple Reader',
@@ -139,10 +144,9 @@ our @UNDO_TABLES =qw(
 
 our @REQUIRE_TABLES = qw(
   Study
-  EntityAttributes
-  EntityClassification
   EntityType
   EntityAttributes
+  EntityClassification
   AttributeUnit
   ProcessAttributes
   ProcessType
@@ -437,7 +441,7 @@ sub loadNodes {
       if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
         # Wojtek: this can happen if parsing study in batches, and a new batch contains a previously seen node
         #         I worked around it in MBioInsertEntityGraph with a $investigation->setRowLimit(999999999); 
-        $self->userError("Cannot append Characteristics to Existing Node". $node->getValue());
+        $self->log("Characteristics for node ". $node->getValue() . " were defined on multiple rows.  Only loading the first");
       }
       next;
     }
@@ -729,6 +733,13 @@ sub getProcessAttributesHash {
     my $protocol = $protocolApp->getProtocol();
     my $protocolName = $protocol->getProtocolName();
 
+    if($self->getArg('loadProtocolTypeAsVariable')) {
+      my $protocolType = $protocol->getProtocolType();
+      my $protocolTypeSourceId = $protocolType->getTermAccessionNumber();
+      my $protocolTypeValue = $protocolType->getTerm();
+      push @{$rv{$protocolTypeSourceId}}, $protocolTypeValue;
+    }
+
     foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
       my $ppValue = $parameterValue->getTerm();
       my $ppQualifier = $parameterValue->getQualifier();
@@ -799,7 +810,7 @@ sub checkOntologyTermsAndFetchIds {
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where ot.source_id = ?
-and lower(ot.source_id) not like 'ncbitaxon%'
+--and lower(ot.source_id) not like 'ncbitaxon%'
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
 from sres.taxon t, sres.taxonname tn
