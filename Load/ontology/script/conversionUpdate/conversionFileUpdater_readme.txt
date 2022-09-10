@@ -35,3 +35,17 @@ java -jar script/conversionUpdate/conversionFileUpdater.jar \
   -messageFilename script/conversionUpdate/message.txt \
   -overwrite true
 
+java -jar script/conversionUpdate/conversionFileUpdater.jar \
+  -path Gates/ \
+  -input script/conversionUpdate/replace_IRI.csv \
+  -messageFilename script/conversionUpdate/message.txt \
+  -overwrite true
+
+java -jar script/conversionUpdate/conversionFileUpdater.jar \
+  -path ICEMR/ \
+  -input script/conversionUpdate/replace_IRI.csv \
+  -messageFilename script/conversionUpdate/message.txt \
+  -overwrite true
+
+
+
