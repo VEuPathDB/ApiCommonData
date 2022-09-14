@@ -134,8 +134,8 @@ sub run {
  	$qualityTerm = $a[1];
 	$qualityTerm =~ s/^\s$//g;
  	$entityTerm = $a[2];
- 	$note = ''; ## $a[3];
- 	$pubmedId = $a[5];
+ 	$note = $a[3];
+ 	$pubmedId = $a[4];
 
  	$modelSourceId = '';
  	$name = '';
