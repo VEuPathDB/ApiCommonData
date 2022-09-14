@@ -9,10 +9,11 @@ use GUS::Model::ApiDB::PhenotypeResult;
 use GUS::Model::ApiDB::NaFeaturePhenotypeModel;
 use GUS::Model::SRes::OntologyTerm;
 use Data::Dumper;
+
 sub getArgsDeclaration {
     my $argsDeclaration  =
 	[
-	 
+	
 	 stringArg({ name => 'inputFile',
 		     descr => 'TAB file that the plugin has to be run on',
 		     constraintFunc=> undef,
@@ -32,22 +33,25 @@ sub getArgsDeclaration {
 		     reqd  => 1,
 		     isList => 0
 		   }),
-	 
 	 stringArg({name => 'organismAbbrev',
 		    descr => 'if supplied, use a prefix to use for tuning manager tables',
 		    reqd => 0,
 		    constraintFunc => undef,
 		    isList => 0,
 		   }),
-	 
+	 stringArg({name => 'dataset',
+		    descr => 'magnagene for MagnaGenes, else ignore',
+		    reqd => 0,
+		    constraintFunc => undef,
+		    isList => 0,
+		   }),
 	];
-    
+
     return $argsDeclaration;
 }
 
 
 sub getDocumentation {
-    
     my $description = <<NOTES;
 NOTES
 	
@@ -76,7 +80,7 @@ RESTART
 FAIL
 	
 	my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
-    
+
     return ($documentation);
 }
 
@@ -86,11 +90,11 @@ sub new {
     my $class = shift;
     my $self = {};
     bless($self, $class);
-    
+
     my $documentation = &getDocumentation();
-    
+
     my $args = &getArgsDeclaration();
-    
+
     $self->initialize({requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision$',
 		       name => ref($self),
@@ -102,11 +106,10 @@ sub new {
 
 sub run {
     my $self = shift;
-    
+
     my $extDbReleaseId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbVer'))
 	|| $self->error("Cannot find external_database_release_id for the data source");
-    
-    
+
     my $file = $self->getArg('inputFile');
     my $notOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name=>'NOT',source_id=>'EuPathUserDefined_NOT'});
     $notOntologyTerm->retrieveFromDB();
@@ -114,39 +117,69 @@ sub run {
     my $ontologyTermIds = $self->queryForOntologyTermIds();
 #  my $chebiTermIds = $self->queryForChebiTermIds();
     open(FILE, $file) or die "Cannot open file $file for reading: $!";
-    
+
     my $count;
+    my $dataset = $self->getArg('dataset'); ##BB
     my @naFeatureArray;
-    
+
     while(<FILE>) {
-	chomp;
-	my @a = split(/\t/, $_);
+      chomp;
+      my @a = split(/\t/, $_);
+      my ($geneSourceId,$modelSourceId,$name,$pubmedId,$modType,$isSuccessful,$organism,$qualityTerm,
+	  $entityTerm,$timing,$lifeCycleTerm,$phenotypeString,$evidenceTerm,$note,$experimentType,
+	  $allele,$chebiAnnotationExtension,$proteinAnnotationExtension,$mutation_desc,$multipleMutations);
+
+      if ($dataset eq 'magnagene'){
+ 	$geneSourceId = $a[0];
+ 	$qualityTerm = $a[1];
+	$qualityTerm =~ s/^\s$//g;
+ 	$entityTerm = $a[2];
+ 	$note = $a[3];
+ 	$pubmedId = $a[4];
+
+ 	$modelSourceId = '';
+ 	$name = '';
+ 	$modType = '';
+ 	$isSuccessful = 1;
+ 	$organism = '';
+ 	$timing = '';
+ 	$lifeCycleTerm = '';
+ 	$phenotypeString = '';
+ 	$evidenceTerm = '';
+ 	$experimentType = '';
+ 	$allele = '';
+ 	$chebiAnnotationExtension= '';
+ 	$proteinAnnotationExtension = '';
+ 	$mutation_desc = '';
+ 	$multipleMutations = 0;
+
+      } else {
+	$geneSourceId = $a[0];
+	$modelSourceId = $a[1];
+	$name = $a[2];
+	$pubmedId = $a[3];
+	$modType = $a[4];
 	
-	my $geneSourceId = $a[0];
-	my $modelSourceId = $a[1];
-	my $name = $a[2];
-	my $pubmedId = $a[3];
-	my $modType = $a[4];
-	
-	my $isSuccessful = $a[5] eq 'yes'? 1 : 0;
-	my $organism = $a[6];
-	my $qualityTerm = $a[7];
-    $qualityTerm =~ s/^\s$//g;
-	my $entityTerm = $a[8];
-	my $timing = $a[9];
-	my $lifeCycleTerm = $a[10];
+	$isSuccessful = $a[5] eq 'yes'? 1 : 0;
+	$organism = $a[6];
+	$qualityTerm = $a[7];
+	$qualityTerm =~ s/^\s$//g;
+	$entityTerm = $a[8];
+	$timing = $a[9];
+	$lifeCycleTerm = $a[10];
 	$lifeCycleTerm =~ s/^\s+//;
 	$lifeCycleTerm =~ s/\s+$//;
-	my $phenotypeString = $a[11];
-	my $evidenceTerm = $a[12];
-	my $note = $a[13];
-	my $experimentType = $a[14];
-	my $allele = $a[15];
-	my $chebiAnnotationExtension= $a[16];
-	my $proteinAnnotationExtension = $a[17];
-	my $mutation_desc = substr( $a[18], 0, 500 );
-	my $multipleMutations = $a[19];
-  $multipleMutations =~ s/^\s$//g; 
+	$phenotypeString = $a[11];
+	$evidenceTerm = $a[12];
+	$note = $a[13];
+	$experimentType = $a[14];
+	$allele = $a[15];
+	$chebiAnnotationExtension= $a[16];
+	$proteinAnnotationExtension = $a[17];
+	$mutation_desc = substr( $a[18], 0, 500 );
+	$multipleMutations = $a[19];
+	$multipleMutations =~ s/^\s$//g;
+      }
 
 	my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId, 0, $self->getArg('organismAbbrev')) ;
 #    my $ontologyProteinExtensionNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $proteinAnnotationExtension, 0, $self->getArg('organismAbbrev')) ;
