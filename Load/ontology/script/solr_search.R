@@ -8,7 +8,7 @@ library(solrium)
 
 
 # location of ontology term list csv file
-csvFile <- "/Users/jiezheng/Documents/ontology/eupath/ontology/query_results/solr_collection.csv" 
+csvFile <- "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/solr_collection.csv" 
 
 # read collection csv file
 x <- read.csv(file=csvFile, head=TRUE, sep=",")
@@ -29,8 +29,8 @@ add(x, cli, "clinEpiOntology")
 ##################################################
 
 # read data dictionary for search
-dataDictionaryFilename<-"/Users/jiezheng/Documents/R/Code/Solr/dataDictionary_SouthAfrica.csv"
-dataDictionaryFilename<-"/Users/jiezheng/Documents/R/Code/Solr/dataDictionary_HUAS.csv"
+dataDictionaryFilename<-"/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/dataDictionary_SouthAfrica.csv"
+dataDictionaryFilename<-"/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/dataDictionary_HUAS.csv"
 dataDic <- read.csv(file = dataDictionaryFilename, head=TRUE, sep=",")
 
 ##################################################
@@ -40,15 +40,12 @@ dataDic <- read.csv(file = dataDictionaryFilename, head=TRUE, sep=",")
 # go through the list, search in clinEpiOntology, and get top 10 found terms
 rank <- 10
 
-results <- cbind("variable", "dataFile","codebookDescription","suggested_IRI","suggested_label", "parent_in_ontology", "parent_IRI", "score")
+results <- cbind("variable","codebookDescription","suggested_IRI","suggested_label", "parent_in_ontology", "parent_IRI", "score")
 
 for(i in 1:nrow(dataDic)) {
 	var<-toString(dataDic$variable[i])
-	datafile<-toString(dataDic$dataFile[i])
-	desc<-toString(dataDic$codebookDescription[i])
-	
+	desc<-toString(dataDic$codebookDescription[i])	
 	var_str<-gsub("_", " ", trimws(var))
-	
 	term<-paste(trimws(var), trimws(desc))
 	term<-gsub("_", " ", term)
 	term<-gsub(":", " ", term)
@@ -56,25 +53,25 @@ for(i in 1:nrow(dataDic)) {
 	term<-gsub("\\\"","", term)
 
 	# search label, definition and variable fields
-    #searchStr <- (paste("label:(", term,") OR variables:", var_str, " OR definition:(", term,")", varsep=""))
+    	#searchStr <- (paste("label:(", term,") OR variable:", var_str, " OR definition:(", term,")", varsep=""))
  
  	# search label, and variable fields 
-    searchStr <- (paste0("label:(", trimws(term),") OR variables:", var_str))      
-    print (searchStr)
+    	searchStr <- (paste0("label:(", trimws(term),") OR variable:", var_str))      
+    	# print (searchStr)
 	
 	b <- cli$search(name = "clinEpiOntology", params = list(q = searchStr, fl=c('entity','label','score','parent_label','parent_IRI'), sort='score desc'), parsetype = "df", rows=rank)	
 	a<- as.data.frame(b)
 	
 	if (nrow(a) != 0) {
 		for (j in 1:nrow(a)) {
-			if (!is.na(a[j,1])) results <- rbind(results, cbind(var, datafile, desc, a[j,1], a[j,2], a[j,3], a[j,4], a[j,5]))
+			if (!is.na(a[j,1])) results <- rbind(results, cbind(var, desc, a[j,1], a[j,2], a[j,3], a[j,4], a[j,5]))
 		}
 	} else {
-		results <- rbind(results, cbind(var, datafile, desc, "", "","","",""))
+		results <- rbind(results, cbind(var, desc, "", "","","",""))
 	}	
 }
 
 results<-as.data.frame(results)
 
 # write results
-write.table(results, file = "/Users/jiezheng/Documents/R/Code/Solr/searchResults.csv", sep=",", col.names = FALSE, row.names=FALSE)
+write.table(results, file = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/searchResults.csv", sep=",", col.names = FALSE, row.names=FALSE)
