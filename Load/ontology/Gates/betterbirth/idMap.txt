@@ -10,7 +10,7 @@ dim_fada_single_row	community	site_id
 dim_mom_outcomes	participant	case_id
 dim_mom_outcomes	community	site_id
 merged_work_sample_01   	community	facility
-merged_work_sample_01   	community_repeated_measures	facility+ba_code
+merged_work_sample_01   	community_repeated_measures	facility+ba_code+time
 raw_cati_remote_home_visit	participant	case_id
 raw_cati_remote_home_visit	community	site_id
 raw_cati_tl_follow_up	participant	case_id
@@ -30,14 +30,14 @@ raw_fida_tl_home_visit	community	site_id
 raw_otis_process_tl	community	site_id
 raw_otis_process_tl	community_repeated_measures	site_id+otis_pt_observation_date
 raw_otis_visit	community	site_id
-raw_otis_visit	community_repeated_measures	site_id+otis_pt_observation_date+otis_ba_code
+raw_otis_visit	community_repeated_measures	site_id+otis_observation_date+otis_ba_code
 xls_ba_characteristics	community	site_id
 xls_ba_characteristics	community_repeated_measures	site_id+ba_code
 xls_baseline_mortality	community	site_id
 xls_checklist_utilization	community	site_id
-xls_checklist_utilization	community_repeated_measures	site_id+survey_date+role_at_facility
+xls_checklist_utilization	community_repeated_measures	site_id+survey_date+cleaning_pk
 xls_safety_attitudes	community	site_id
-xls_safety_attitudes	community_repeated_measures	site_id+survey_date+role_at_facility
+xls_safety_attitudes	community_repeated_measures	site_id+survey_date+cleaning_pk
 xls_sbr_demographics	participant	case_id
 xls_sbr_demographics	community	site_id
 xls_site_attributes	community	site_id
