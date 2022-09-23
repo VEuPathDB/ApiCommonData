@@ -12,6 +12,7 @@ use CBIL::ISA::InvestigationSimple;
 use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
+use GUS::Model::SRes::TaxonName;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
@@ -131,15 +132,15 @@ our $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
-our @UNDO_TABLES =qw(
-  ProcessAttributes
-  EntityAttributes
-  EntityClassification
-  AttributeUnit
-  ProcessTypeComponent
-  EntityType
-  Study
-); ## undo is not run on ProcessType
+# our @UNDO_TABLES =qw(
+#   ProcessAttributes
+#   EntityAttributes
+#   EntityClassification
+#   AttributeUnit
+#   ProcessTypeComponent
+#   EntityType
+#   Study
+# ); ## undo is not run on ProcessType
 
 
 our @REQUIRE_TABLES = qw(
@@ -473,8 +474,15 @@ sub loadNodes {
         }
   
         if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) { #value is ontology term
-          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
-          $charValue = $valueOntologyTerm->getName();
+
+          if($characteristic->getTermSourceRef() eq 'NCBITaxon') {
+            my $valueTaxonName = $self->getTaxonNameGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+            $charValue = $valueTaxonName->getName();
+          }
+          else {
+            my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+            $charValue = $valueOntologyTerm->getName();
+          }
         }
         else {
           $charValue = $characteristic->getTerm();
@@ -588,7 +596,33 @@ sub encodeGeohash {
   return $enc
 }
 
+sub getTaxonNameGusObj {
+  my ($self, $ontologyTermToIdentifiers, $ontologyTerm) = @_;
 
+  my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber() || "";
+  my $ontologyTermSourceRef = $ontologyTerm->getTermSourceRef() || "";
+
+  unless($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
+    $self->error("OntologyTermAccessionNumber is required for NCBI Taxon Id Lookup");
+  }
+
+  my $taxonId = $ontologyTermToIdentifiers->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
+
+  $self->error("No Taxon ID for $ontologyTermAccessionNumber|$ontologyTermSourceRef") unless $taxonId;
+
+  if(my $gusObj = $self->{_gus_taxonname_objects}->{$taxonId}) {
+    return $gusObj;
+  }
+
+  my $gusTaxonName = GUS::Model::SRes::TaxonName->new({taxon_id => $taxonId, name_class => 'scientific name'});
+
+  unless($gusTaxonName->retrieveFromDB()) {
+    $self->error("ERROR:  Could not fine taxonname for taxon_id $taxonId; $ontologyTermAccessionNumber");
+  }
+
+  $self->{_gus_taxonname_objects}->{$taxonId} = $gusTaxonName;
+  return $gusTaxonName;
+}
 
 sub getOntologyTermGusObj {
     my ($self, $ontologyTermToIdentifiers, $ontologyTerm, $useQualifier) = @_;
@@ -621,6 +655,8 @@ sub getOntologyTermGusObj {
 
     my $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
     unless($gusOntologyTerm->retrieveFromDB()) {
+      print Dumper $ontologyTerm;
+
       $self->error("ERROR:  Found TaxonID ($ontologyTermId).  Was expecting OntologyTerm ID");
     }
 
@@ -810,7 +846,7 @@ sub checkOntologyTermsAndFetchIds {
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where ot.source_id = ?
---and lower(ot.source_id) not like 'ncbitaxon%'
+and lower(ot.source_id) not like 'ncbitaxon%'
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
 from sres.taxon t, sres.taxonname tn

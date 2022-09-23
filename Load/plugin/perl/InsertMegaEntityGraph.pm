@@ -119,9 +119,10 @@ sub run {
     my $attsJson = $self->makeStudyAttributes($studyId);
 
     my $gusEntityAttribute = $self->getGusModelClass('EntityAttributes')->new({stable_id => $studyStableId, atts => $attsJson});
+    $gusEntityAttribute->setParent($gusEntityType);
 
     my $entityClassification = $self->getGusModelClass('EntityClassification')->new();
-    $entityClassification->setParent($gusEntityAattribute);
+    $entityClassification->setParent($gusEntityAttribute);
     $entityClassification->setParent($gusEntityType);
 
     $gusEntityAttribute->submit();
@@ -181,7 +182,7 @@ sub loadEntityClassificationsFromSubstudy {
   while(my ($entityAttributesId, $entityTypeId) = $sh->fetchrow_array()) {
     my $entityClassification = $self->getGusModelClass('EntityClassification')->new();
     $entityClassification->setEntityTypeId($entityTypeId);
-    $entityClassification->setEntityAttributesId($entityTypeAttributesId);
+    $entityClassification->setEntityAttributesId($entityAttributesId);
     $entityClassification->submit();
   }
   $sh->finish();

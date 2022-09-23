@@ -92,7 +92,7 @@ sub setEntityTypeInfoFromStudyId {
     }
     if(my $substudies = $megaStudyConfig->{studies}) {
       my $substudiesString = join(",", map { "'" . $_ . "'" } @$substudies);
-      
+
       $subquery = $subquery . "\nUNION\nselect et.type_id, et.entity_type_id from ${SCHEMA}.entitytype et, ${SCHEMA}.study s where et.study_id = s.study_id and s.stable_id in ($substudiesString)";
     }
   }

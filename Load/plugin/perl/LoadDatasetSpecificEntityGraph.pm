@@ -494,7 +494,7 @@ sub createAttributeGraphTable {
    FROM ${SCHEMA}.attributegraph atg
    WHERE study_id = $studyId
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
-    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
+    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing' and study_id = $studyId
   )
 -- this bit gets the internal nodes
 SELECT --  distinct
@@ -622,14 +622,14 @@ and r.external_database_release_id = s.external_database_release_id";
 
   while(my ($s) = $sh->fetchrow_array()) {
     # collection tables have foreign keys - drop them first
-    &dropTablesLike($schema, "COLLECTIONATTRIBUTE_${s}", $dbh);
-    &dropTablesLike($schema, "COLLECTION_${s}", $dbh);
-    &dropTablesLike($schema, "(ATTRIBUTES|ANCESTORS|ATTRIBUTEGRAPH)_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "COLLECTIONATTRIBUTE_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "COLLECTION_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "(ATTRIBUTES|ANCESTORS|ATTRIBUTEGRAPH)_${s}", $dbh);
 
 
-    &dropTablesLike($schema, "ATTRIBUTES_${s}", $dbh);
-    &dropTablesLike($schema, "ANCESTORS_${s}", $dbh);
-    &dropTablesLike($schema, "ATTRIBUTEGRAPH_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "ATTRIBUTES_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "ANCESTORS_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "ATTRIBUTEGRAPH_${s}", $dbh);
   }
   $sh->finish();
 }

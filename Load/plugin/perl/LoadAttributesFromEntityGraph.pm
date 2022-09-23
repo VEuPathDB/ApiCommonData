@@ -177,8 +177,7 @@ sub run {
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
 
-
-  $self->dropTables();
+  $self->dropTables($extDbRlsId);
 
   #my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from $SCHEMA.study where external_database_release_id = $extDbRlsId");
 
@@ -421,7 +420,7 @@ sub annPropsFromOntologyTerm {
     parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
     unit => $ontologyTerm->{UNIT_NAME},
     unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-    scale => $parentOntologyTerm->{SCALE},
+    scale => $ontologyTerm->{SCALE},
     display_name => $ontologyTerm->{DISPLAY_NAME},
     process_type_id => $processTypeId,
     is_multi_valued => $isMultiValued,
@@ -600,7 +599,7 @@ and os.external_database_release_id = ?
 }
 
 
-sub addScaleOntologyTerms {
+sub addScaleToOntologyTerms {
   my ($self, $ontologyTerms, $ontologyExtDbRlsId) = @_;
 
   my $dbh = $self->getQueryHandle();
@@ -671,15 +670,14 @@ sub loadAttributeValues {
 }
 
 sub loadAttributes {
-  my ($self, $studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh, $sql) = @_;
+  my ($self, $studyId, $fifos, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh, $sql) = @_;
   # Try to force printing only 8-bit characters
   binmode( $dateValsFh, ":utf8" );
   binmode( $numericValsFh, ":utf8" );
 
   my $dbh = $self->getQueryHandle();
 
-  my $fh = $fifo->getFileHandle();
-  binmode( $fh, ":utf8" );
+
 
   #$self->log("Loading attribute values for study $studyId from sql:".$sql);
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
@@ -741,6 +739,7 @@ sub loadAttributes {
 
 
         my $fh = $fifos->{$entityTypeId}->getFileHandle();
+        binmode( $fh, ":utf8" );
         $self->printToFifo(\@a, $fh);
 
       }
@@ -1063,7 +1062,7 @@ sub dropTables {
   my ($self, $extDbRlsId) = @_;
 
   my $dbh = $self->getDbHandle();
-  my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
+#  my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
 
   my $sql = "select distinct s.internal_abbrev from ${SCHEMA}.study s where s.external_database_release_id = $extDbRlsId";
   $self->log("Looking for tables belonging to this study :\n$sql");
@@ -1071,7 +1070,7 @@ sub dropTables {
   $sh->execute();
 
   while(my ($s) = $sh->fetchrow_array()) {
-    &dropTablesLike($schema, "ATTRIBUTEVALUE_${s}", $dbh);
+    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${s}", $dbh);
   }
   $sh->finish();
 }
