@@ -8,7 +8,7 @@ use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $allowFailures, $verbose);
+my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $dbVendor, $allowFailures, $verbose);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
            "dropApiDB!" => \$dropApiDB,
@@ -55,6 +55,7 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
+my $dbVendor = $gusconfig->getDatabaseVendor();
 
 
 # PLEASE READ BEFORE ADDING TO @create
