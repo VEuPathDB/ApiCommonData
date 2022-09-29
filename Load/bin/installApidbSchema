@@ -56,6 +56,7 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
 my $dbVendor = $gusconfig->getDatabaseVendor();
+my $dbiDsn = $gusconfig->getDbiDsn();
 
 
 # PLEASE READ BEFORE ADDING TO @create
@@ -171,6 +172,33 @@ my @delete = qw(
     dropExternalResourceUrl.sql
 );
 
+my @gusSchemas = qw(
+  CORE
+  DOTS
+  MODEL
+  PLATFORM
+  RESULTS
+  SRES
+  STUDY
+  COREVER
+  DOTSVER
+  MODELVER
+  PLATFORMVER
+  RESULTSVER
+  SRESVER
+  STUDYVER
+);
+
+my @apiDbSchemas = qw(
+  APIDB
+  APIDBTUNING
+  APIDBUSERDATASETS
+  CHEBI
+  HMDB
+  EDA
+  EDA_UD
+);
+
 if ($create) {
   for my $sql (@create) {
      print STDOUT "\n==============================================================\n";
@@ -180,31 +208,53 @@ if ($create) {
      my $schema_prefix;
      if($sql eq 'createEntityGraphTables.sql') {
        $schema_prefix = "EDA";
-       &runSql($login, $password, $db, $sql, $schema_prefix);
+       &runSql($login, $password, $db, $sql, $schema_prefix, $dbVendor);
 
        $schema_prefix = "ApidbUserDatasets";
-       &runSql($login, $password, $db, $sql, $schema_prefix);
+       &runSql($login, $password, $db, $sql, $schema_prefix, $dbVendor);
      }
 
      else {
-       &runSql($login, $password, $db, $sql, $schema_prefix);
+       &runSql($login, $password, $db, $sql, $schema_prefix, $dbVendor);
      }
-
-
   }
-
 } elsif ($dropApiDB) {
-  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB', 'EDA', 'EDA_UD'");
-
+  # &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB', 'EDA', 'EDA_UD'");
+    if (lc $dbVendor eq 'oracle') {
+      my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
+      &dropSchemaSetTables($login, $password, $db, $schemaSetStr);
+    } elsif (lc $dbVendor eq 'postgres') {
+      &dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @apiDbSchemas);
+    } else {
+      die "Unsupported dbVendor:$dbVendor.";
+    }
 } elsif ($dropGUS) {
-  &dropSchemaSet($login, $password, $db,
-                 "'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY','COREVER','DOTSVER','MODELVER','PLATFORMVER','RESULTSVER','SRESVER','STUDYVER'");
-
+  # &dropSchemaSet($login, $password, $db,"'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY','COREVER','DOTSVER','MODELVER','PLATFORMVER','RESULTSVER','SRESVER','STUDYVER'");
+  if (lc $dbVendor eq 'oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @gusSchemas;
+    &dropSchemaSetOracle($login, $password, $db, $schemaSetStr);
+  } elsif (lc $dbVendor eq 'postgres') {
+    &dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @gusSchemas);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
 }
 
 print STDERR "\nDone.\n";
 
 sub runSql {
+  my ($login, $password, $db, $file, $schema_prefix, $dbVendor) = @_;
+
+  if (lc $dbVendor eq 'oracle') {
+    &runSqlOracle($login, $password, $db, $file, $schema_prefix);
+  } elsif (lc $dbVendor eq 'postgres') {
+    &runSqlPostgres($login, $password, $db, $file, $schema_prefix);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
+}
+
+sub runSqlOracle {
   my ($login, $password, $db, $file, $schema_prefix) = @_;
 
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
@@ -232,6 +282,32 @@ sub runSql {
 
   runCmd($cmd, $tmpFile);
   unlink($tmpFile);
+}
+
+sub runSqlPostgres {
+  my ($login, $password, $db, $file, $schema_prefix) = @_;
+
+  my $folder_prefix = "pgsql";
+  my $psql_params = "";
+  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
+  my $hostname = $2;
+  my $connectionString = "postgresql://$login:$password\@$hostname/$db";
+
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$folder_prefix/$file";
+  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
+
+  my $cmd;
+  if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
+
+  if ($schema_prefix) { $psql_params = "$psql_params -v schema_prefix=$schema_prefix"; }
+
+  $cmd = "psql --echo-all -f $fullFile $psql_params $connectionString";
+  print STDOUT "\n==============================================================\n";
+  print STDOUT "Running $fullFile\n";
+  print STDOUT "Running $cmd\n"; # REMOVE THIS LATER
+  print STDOUT "==============================================================\n";
+
+  runCmd($cmd, $fullFile);
 }
 
 sub runCmd {
@@ -270,8 +346,7 @@ SQL
   my $objectsToDrop = 1;
 
   while ($objectsToDrop) {
-    $stmt->execute()
-      or addErrorLog("\n" . $dbh->errstr . "\n");
+    $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
     if (my ($dropStmtSql) = $stmt->fetchrow_array()) {
       print STDERR "running statement: $dropStmtSql\n" if $verbose;
@@ -283,7 +358,7 @@ SQL
 
 }
 
-sub dropSchemaSet {
+sub dropSchemaSetOracle {
   my ($login, $password, $db, $schemaSet) = @_;
 
   my $dsn = "dbi:Oracle:" . $db;
@@ -302,12 +377,36 @@ sub dropSchemaSet {
     where username in ($schemaSet)
 SQL
 
-  $stmt->execute()
-    or addErrorLog("\n" . $dbh->errstr . "\n");
+  $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
   while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
     print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
     $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
   }
+}
 
+sub dropSchemaSetPostgres {
+  my ($dbiDsn, $login, $password, $db, @schemaSet) = @_;
+
+  my $dbh = DBI->connect(
+                $dbiDsn,
+                $login,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n" if $verbose;
+
+  for my $schema (@schemaSet) {
+    my $stmt = $dbh->prepare(<<SQL);
+    DROP SCHEMA $schema CASCADE;
+SQL
+
+    $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
+
+    while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
+      print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
+      $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+    }
+  }
 }
