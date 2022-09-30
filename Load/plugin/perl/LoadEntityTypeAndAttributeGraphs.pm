@@ -267,8 +267,8 @@ select s.study_id
      , p.out_entity_id as out_entity_id
      , ot.entity_type_id out_entity_type_id
 from $SCHEMA.processattributes p
-   , $SCHEMA.entityattributes i
-   , $SCHEMA.entityattributes o
+   , $SCHEMA.entityclassification i
+   , $SCHEMA.entityclassification o
    , $SCHEMA.entitytype it
    , $SCHEMA.study s
    , $SCHEMA.entitytype ot

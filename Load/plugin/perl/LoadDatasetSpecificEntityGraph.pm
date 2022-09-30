@@ -92,7 +92,7 @@ sub run {
     foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
     $self->log("Loading Study: $studyAbbrev");
-    my ($entityTypeInfo, $entityTypeIdMap) = $self->setEntityTypeInfoFromStudyId($studyId);
+    my $entityTypeInfo = $self->setEntityTypeInfoFromStudyId($studyId);
 
     foreach my $entityTypeId (keys %$entityTypeInfo) {
       my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
@@ -170,8 +170,6 @@ sub createWideTable {
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
   $self->log("Creating TABLE:  $tableName");
 
-  my $internalEntityTypeIds = $self->getEntityTypeInfo($entityTypeId, "internal_entity_type_ids");
-
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
   my $entityColumns = join("\n,", map { sprintf(qq/"%s"/, $_) } @$entityColumnStrings);
@@ -183,7 +181,7 @@ sub createWideTable {
                         $SCHEMA.entityclassification ec,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
-                   where ec.entity_type_id in ($internalEntityTypeIds)
+                   where ec.entity_type_id = $entityTypeId
                     and ea.entity_attributes_id = ec.entity_attributes_id";
 
   my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
@@ -192,7 +190,7 @@ sub createWideTable {
                                                            , ea.stable_id 
                                                       from ${SCHEMA}.entityattributes ea, 
                                                            ${SCHEMA}.entityclassification ec 
-                                                      where ec.entity_type_id in ($internalEntityTypeIds)
+                                                      where ec.entity_type_id = $entityTypeId
                                                        and ec.entity_attributes_id = ea.entity_attributes_id) ea
                                                 where ea.entity_attributes_id = pa.out_entity_id (+)
                                                )
@@ -255,13 +253,8 @@ sub createAncestorsTable {
 
   my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix);
 
-  my $internalEntityTypeIdsString = $self->getEntityTypeInfo($entityTypeId, "internal_entity_type_ids");
-  
-  my @internalEntityTypeIds = split(',', $internalEntityTypeIdsString);
-  foreach my $internalEntityTypeId (@internalEntityTypeIds) {
-    $self->populateAncestorsTable($tableName, $internalEntityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId);
-  }
-    
+  $self->populateAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId);
+
 
 }
 
@@ -339,8 +332,9 @@ sub populateAncestorsTable {
     if ($parentId) {
       # for mega study, the query above will return the internal entity type which needs to be mapped
       # for the standard study, use the identity mapping
-      my $mappedParentTypeId = $self->mapEntityTypeId($parentTypeId); 
-      $entities{$mappedParentTypeId} = $parentId;
+      #my $mappedParentTypeId = $self->mapEntityTypeId($parentTypeId);
+      #$entities{$mappedParentTypeId} = $parentId;
+      $entities{$parentTypeId} = $parentId;
     }
     $prevId = $entityId;
 
@@ -363,6 +357,7 @@ sub insertAncestorRow {
 
 sub createEmptyAncestorsTable {
   my ($self, $tableName, $entityTypeId, $fieldSuffix) = @_;
+
 
   my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
@@ -416,38 +411,34 @@ sub setEntityTypeInfoFromStudyId {
   $sh->execute();
 
   my $entityTypeInfo = {};
-  my $entityTypeIdMap = {};
+
   while(my ($entityTypeId, $internalAbbrev, $typeId, $internalEntityTypeIds) = $sh->fetchrow_array()) {
     $entityTypeInfo->{$entityTypeId}->{internal_abbrev} = $internalAbbrev;
     $entityTypeInfo->{$entityTypeId}->{type_id} = $typeId;
-    $entityTypeInfo->{$entityTypeId}->{internal_entity_type_ids} = $entityTypeId;
-
-    $entityTypeIdMap->{$entityTypeId} = $entityTypeId; # ONLY identity mapping for standard /  non mega study
   }
   $sh->finish();
 
   $self->{_entity_type_info} = $entityTypeInfo;
-  $self->{_entity_type_id_map} = $entityTypeIdMap;
 
-  return $entityTypeInfo, $entityTypeIdMap
+  return $entityTypeInfo;
 }
 
-sub mapEntityTypeId {
-  my ($self, $entityTypeId) = @_;
+# sub mapEntityTypeId {
+#   my ($self, $entityTypeId) = @_;
 
-  my $mappedId = $self->{_entity_type_id_map}->{$entityTypeId};
+#   my $mappedId = $self->{_entity_type_id_map}->{$entityTypeId};
 
-  unless($mappedId) {
-    $self->error("Could not map entityTypeId: $entityTypeId");
-  }
+#   unless($mappedId) {
+#     $self->error("Could not map entityTypeId: $entityTypeId");
+#   }
 
-  return $mappedId
-}
+#   return $mappedId
+# }
 
 sub getEntityTypeInfo {
   my ($self, $entityTypeId, $key) = @_;
 
-  my @allowedKeys = ("internal_abbrev", "type_id", "internal_entity_type_ids");
+  my @allowedKeys = ("internal_abbrev", "type_id");
 
   unless(grep(/$key/, @allowedKeys)) {
     $self->error("Invalid hash key:  $key");

@@ -58,8 +58,8 @@ my $documentation = { purpose          => "",
 # ----------------------------------------------------------------------
 our @UNDO_TABLES =qw(
   ProcessAttributes
-  EntityAttributes
   EntityClassification
+  EntityAttributes
   AttributeUnit
   ProcessTypeComponent
   EntityType
@@ -105,33 +105,33 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
 
-  my $gusStudy = $self->loadStudy();
-  my $gusEntityType = $self->loadEntityType($gusStudy);
-  my $gusProcessType = $self->loadProcessType();
-  $gusProcessType->submit();
+  my ($subStudies, $maxAttrLength) = $self->getSubStudiesAndMaxAttributeLength();
 
-  my $subStudies = $self->getSubStudies();
+  my $megaStudy = $self->createStudy($maxAttrLength);
+  my $megaStudyEntityType = $self->loadEntityType($megaStudy);
+  my $megaProcessType = $self->loadProcessType();
+  $megaProcessType->submit();
 
   my $entityTypes = {};
 
-  foreach my $studyId (keys %$subStudies) {
-    my $studyStableId = $subStudies->{$studyId};
-    my $attsJson = $self->makeStudyAttributes($studyId);
+  foreach my $subStudyId (keys %$subStudies) {
+    my $subStudyStableId = $subStudies->{$subStudyId};
+    my $attsJson = $self->makeStudyAttributes($subStudyId);
 
-    my $gusEntityAttribute = $self->getGusModelClass('EntityAttributes')->new({stable_id => $studyStableId, atts => $attsJson});
-    $gusEntityAttribute->setParent($gusEntityType);
+    my $subStudyEntityAttribute = $self->getGusModelClass('EntityAttributes')->new({stable_id => $subStudyStableId, atts => $attsJson});
+    $subStudyEntityAttribute->setParent($megaStudyEntityType);
 
-    my $entityClassification = $self->getGusModelClass('EntityClassification')->new();
-    $entityClassification->setParent($gusEntityAttribute);
-    $entityClassification->setParent($gusEntityType);
+    my $subStudyEntityClassification = $self->getGusModelClass('EntityClassification')->new();
+    $subStudyEntityClassification->setParent($subStudyEntityAttribute);
+    $subStudyEntityClassification->setParent($megaStudyEntityType);
 
-    $gusEntityAttribute->submit();
+    $subStudyEntityAttribute->submit();
 
-    $self->connectSubStudyToEntityGraph($studyId, $gusEntityAttribute, $gusProcessType);
-    $self->addToEntityTypes($entityTypes, $studyId);
+    $self->connectSubStudyToEntityGraph($subStudyId, $subStudyEntityAttribute, $megaProcessType);
+    $self->addToEntityTypes($entityTypes, $subStudyId);
   }
 
-  $self->loadEntityTypesAndAttributeUnits($gusStudy, $entityTypes);
+  $self->loadEntityTypesAndAttributeUnits($megaStudy, $entityTypes);
 
   $self->logRowsInserted() if($self->getArg('commit'));
 
@@ -140,19 +140,19 @@ sub run {
 }
 
 sub loadEntityTypesAndAttributeUnits {
-  my ($self, $gusStudy, $entityTypes) = @_;
+  my ($self, $megaStudy, $entityTypes) = @_;
 
   foreach my $typeId (keys %$entityTypes) {
     my $name = $entityTypes->{$typeId}->{name};
     my $internalAbbrev = $entityTypes->{$typeId}->{internal_abbrev};
 
     my $gusEntityType = $self->getGusModelClass('EntityType')->new({type_id => $typeId, name => $name, internal_abbrev => $internalAbbrev});
-    $gusEntityType->setParent($gusStudy);
+    $gusEntityType->setParent($megaStudy);
     $gusEntityType->submit();
 
     my $subStudyEntityTypeIdsString = join(",", @{$entityTypes->{$typeId}->{internal_entity_type_ids}});
 
-    $self->loadEntityClassificationsFromSubstudy($subStudyEntityTypeIdsString);
+    $self->loadEntityClassificationsFromSubstudy($subStudyEntityTypeIdsString, $gusEntityType->getId());
 
     foreach my $attOntologyTermId (keys %{$entityTypes->{$typeId}->{units}}) {
       my $unitId = $entityTypes->{$typeId}->{units}->{$attOntologyTermId};
@@ -167,29 +167,28 @@ sub loadEntityTypesAndAttributeUnits {
 }
 
 sub loadEntityClassificationsFromSubstudy {
-  my ($self, $entityTypeIdsString) = @_;
+  my ($self, $entityTypeIdsString, $megaEntityTypeId) = @_;
 
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select ec.entity_attributes_id
-                  , ec.entity_type_id
              from ${SCHEMA}.entityclassification ec
              where ec.entity_type_id in ($entityTypeIdsString)";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  while(my ($entityAttributesId, $entityTypeId) = $sh->fetchrow_array()) {
-    my $entityClassification = $self->getGusModelClass('EntityClassification')->new();
-    $entityClassification->setEntityTypeId($entityTypeId);
-    $entityClassification->setEntityAttributesId($entityAttributesId);
-    $entityClassification->submit();
+  while(my ($entityAttributesId) = $sh->fetchrow_array()) {
+    my $subStudyEntityClassification = $self->getGusModelClass('EntityClassification')->new();
+    $subStudyEntityClassification->setEntityTypeId($megaEntityTypeId);
+    $subStudyEntityClassification->setEntityAttributesId($entityAttributesId);
+    $subStudyEntityClassification->submit();
   }
   $sh->finish();
 }
 
 sub addToEntityTypes {
-  my ($self, $entityTypes, $studyId) = @_;
+  my ($self, $entityTypes, $subStudyId) = @_;
 
   my $dbh = $self->getQueryHandle();
 
@@ -200,7 +199,7 @@ sub addToEntityTypes {
              and etg.entity_type_id = et.entity_type_id";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId);
+  $sh->execute($subStudyId);
 
   while(my ($parentStableId, $name, $typeId, $internalAbbrev, $entityTypeId) = $sh->fetchrow_array()) {
 
@@ -219,13 +218,13 @@ sub addToEntityTypes {
     push @{$entityTypes->{$typeId}->{internal_entity_type_ids}}, $entityTypeId;
   }
 
-  $self->addUnitsToEntityTypes($entityTypes, $studyId);
+  $self->addUnitsToEntityTypes($entityTypes, $subStudyId);
 
   return $entityTypes;
 }
 
 sub addUnitsToEntityTypes {
-  my ($self, $entityTypes, $studyId) = @_;
+  my ($self, $entityTypes, $subStudyId) = @_;
 
   my $dbh = $self->getQueryHandle();
 
@@ -236,13 +235,17 @@ sub addUnitsToEntityTypes {
              and et.entity_type_id = au.entity_type_id (+)";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId);
+  $sh->execute($subStudyId);
 
   while(my ($typeId, $attOntologyTermId, $attUnitId) = $sh->fetchrow_array()) {
     next unless($attOntologyTermId);
 
-    # if there are multiple, this will take one by random
-    # TODO:  Maybe add a mechanism to pick a base unit where there are conflicts
+    # TODO:   add a mechanism to pick a base unit where there are conflicts
+    my $existingAttUnitId = $entityTypes->{$typeId}->{units}->{$attOntologyTermId};
+
+    if($existingAttUnitId && $existingAttUnitId != $attUnitId) {
+      $self->error("More than one unit found for typeId=$typeId and attribute ontology term id=$attOntologyTermId");
+    }
     $entityTypes->{$typeId}->{units}->{$attOntologyTermId} = $attUnitId;
   }
 
@@ -250,12 +253,12 @@ sub addUnitsToEntityTypes {
 
 
 sub connectSubStudyToEntityGraph {
-  my ($self, $studyId, $gusEntityAttribute, $gusProcessType) = @_;
+  my ($self, $subStudyId, $subStudyEntityAttribute, $megaProcessType) = @_;
 
   my $dbh = $self->getQueryHandle();
 
-  my $inEntityId = $gusEntityAttribute->getId();
-  my $processTypeId = $gusProcessType->getId();
+  my $inEntityId = $subStudyEntityAttribute->getId();
+  my $processTypeId = $megaProcessType->getId();
 
   my $sql = "select ec.entity_attributes_id
              from ${SCHEMA}.entitytypegraph etg
@@ -265,7 +268,7 @@ sub connectSubStudyToEntityGraph {
              and etg.entity_type_id = ec.entity_type_id";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId);
+  $sh->execute($subStudyId);
 
   while(my ($outEntityId) = $sh->fetchrow_array()) {
     
@@ -279,7 +282,7 @@ sub connectSubStudyToEntityGraph {
 
 
 sub makeStudyAttributes {
-  my ($self, $studyId) = @_;
+  my ($self, $subStudyId) = @_;
 
   my $sql = "select ot.source_id, sc.value
 from ${SCHEMA}.studycharacteristic sc
@@ -291,7 +294,7 @@ order by ot.source_id, sc.value";
   my $dbh = $self->getQueryHandle();
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId);
+  $sh->execute($subStudyId);
 
 
   my $atts = {};
@@ -303,27 +306,36 @@ order by ot.source_id, sc.value";
 }
 
 
-sub getSubStudies {
+sub getSubStudiesAndMaxAttributeLength {
   my ($self) = @_;
 
   my $megaStudyStableId = $self->getArg('studyStableId');
   my $megaStudyYaml = $self->getArg('megaStudyYaml');
   my $megaStudyConfig = ApiCommonData::Load::StudyUtils::parseMegaStudyConfig($megaStudyYaml, $megaStudyStableId);
 
-  my $subquery = "select s.study_id, s.stable_id from ${SCHEMA}.study s where s.study_id is null";
+  my $subquery = "select s.study_id, s.stable_id, s.max_attr_length from ${SCHEMA}.study s where s.study_id is null";
 
   if(my $project = $megaStudyConfig->{project}) {
-    $subquery = $subquery . "\nUNION\nselect s.study_id, s.stable_id from ${SCHEMA}.study s, core.projectinfo p where s.row_project_id = p.project_id and p.name = '$project'";
+    $subquery = $subquery . "\nUNION\nselect s.study_id, s.stable_id, s.max_attr_length from ${SCHEMA}.study s, core.projectinfo p where s.row_project_id = p.project_id and p.name = '$project'";
   }
   if(my $substudies = $megaStudyConfig->{studies}) {
     my $substudiesString = join(",", map { "'" . $_ . "'" } @$substudies);
       
-    $subquery = $subquery . "\nUNION\nselect s.study_id, s.stable_id from ${SCHEMA}.study s where s.stable_id in ($substudiesString)";
+    $subquery = $subquery . "\nUNION\nselect s.study_id, s.stable_id, s.max_attr_length from ${SCHEMA}.study s where s.stable_id in ($substudiesString)";
   }
 
-  my $sql = "select * from ($subquery)";
+  my $maxAttLengthSql = "select max(max_attr_length) from ($subquery)";
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($maxAttLengthSql);
+  $sh->execute();
+  my ($maxAttrLength) = $sh->fetchrow_array();
+  $sh->finish();
 
-  return $self->sqlAsDictionary( Sql  => $sql );
+  my $sql = "select study_id, stable_id from ($subquery)";
+
+  my $subStudies  = $self->sqlAsDictionary( Sql  => $sql );
+
+  return($subStudies, $maxAttrLength);
 }
 
 sub loadProcessType {
@@ -345,7 +357,7 @@ sub loadProcessType {
 
 
 sub loadEntityType {
-  my ($self, $gusStudy) = @_;
+  my ($self, $megaStudy) = @_;
 
   my $name = "Study";
   my $typeStableId = "EUPATH_0000605"; # summary information of investigation
@@ -357,15 +369,15 @@ sub loadEntityType {
     $self->error("Could not find ontologyterm for source_id: $typeStableId");
   }
   
-  my $gusEntityType = $self->getGusModelClass('EntityType')->new({name => $name, type_id => $typeId, internal_abbrev => $name});
+  my $megaStudyEntityType = $self->getGusModelClass('EntityType')->new({name => $name, type_id => $typeId, internal_abbrev => $name});
 
-  $gusEntityType->setParent($gusStudy);
+  $megaStudyEntityType->setParent($megaStudy);
 
-  return $gusEntityType;
+  return $megaStudyEntityType;
 }
 
-sub loadStudy {
-  my ($self) = @_;
+sub createStudy {
+  my ($self, $maxAttrLength) = @_;
 
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
@@ -374,9 +386,13 @@ sub loadStudy {
   my $internalAbbrev = $studyStableId;
   $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
 
-  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $studyStableId, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
+  my $megaStudy = $self->getGusModelClass('Study')->new({stable_id => $studyStableId,
+                                                         external_database_release_id => $extDbRlsId,
+                                                         internal_abbrev => $internalAbbrev,
+                                                         max_attr_length => $maxAttrLength
+                                                        });
 
-  return $gusStudy;
+  return $megaStudy;
 }
 
 
