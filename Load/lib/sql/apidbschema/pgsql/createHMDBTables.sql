@@ -87,7 +87,7 @@ CREATE TABLE hmdb.names (
     PRIMARY KEY (ID),
     FOREIGN KEY (COMPOUND_ID) REFERENCES hmdb.compounds(ID)
 );
-CREATE INDEX hmdb.names_revix0 ON hmdb.names(compound_id) TABLESPACE indx;
+CREATE INDEX names_revix0 ON hmdb.names(compound_id) TABLESPACE indx;
 
 CREATE TABLE hmdb.structures (
     ID              NUMERIC(12)      NOT NULL,
@@ -128,7 +128,7 @@ CREATE TABLE hmdb.default_structures (
     PRIMARY KEY (ID),
     FOREIGN KEY (STRUCTURE_ID) REFERENCES hmdb.structures(ID)
 );
-CREATE INDEX hmdb.ds_revix0 ON hmdb.default_structures(structure_id) TABLESPACE indx;
+CREATE INDEX ds_revix0 ON hmdb.default_structures(structure_id) TABLESPACE indx;
 
 CREATE TABLE hmdb.autogen_structures (
     ID              NUMERIC(12)      NOT NULL,

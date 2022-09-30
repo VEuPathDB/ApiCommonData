@@ -777,7 +777,7 @@ ALTER TABLE apidb.GroupTaxonMatrix
 ADD CONSTRAINT gtm_fk1 FOREIGN KEY (ortholog_group_id)
 REFERENCES apidb.OrthologGroup (ortholog_group_id);
 
-CREATE UNIQUE INDEX apidb.gtm_group_id 
+CREATE UNIQUE INDEX gtm_group_id
     ON apidb.GroupTaxonMatrix (ortholog_group_id) tablespace indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GroupTaxonMatrix TO gus_w;

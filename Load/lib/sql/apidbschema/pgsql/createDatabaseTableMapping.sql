@@ -41,7 +41,7 @@ SELECT NEXTVAL('core.tableinfo_sq'), 'DatabaseTableMapping',
        'Standard', 'database_table_mapping_id',
        d.database_id, 0, 0, NULL, NULL, 1, localtimestamp, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
-FROM dual,
+FROM
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
 WHERE 'databasetablemapping' NOT IN (SELECT lower(name) FROM core.TableInfo

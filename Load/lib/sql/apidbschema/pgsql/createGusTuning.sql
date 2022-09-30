@@ -341,7 +341,7 @@ WHERE 'nafeaturehostresponse' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 --------------------------------------------------------------------------------
 
-GRANT REFERENCES on sres.taxon to results;
+--GRANT REFERENCES on sres.taxon to results;
 
 --------------------------------------------------------------------------------
 
