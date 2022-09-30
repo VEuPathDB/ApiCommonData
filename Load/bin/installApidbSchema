@@ -298,7 +298,7 @@ sub runSqlPostgres {
   my $cmd;
   if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
   
-  if ($schema_prefix) { $psql_params = "$psql_params -v schema_prefix=$schema_prefix"; }
+  if ($schema_prefix) { $psql_params = "$psql_params -v SCHEMA_PREFIX=$schema_prefix"; }
 
   $cmd = "psql --echo-all -f $fullFile $psql_params $connectionString";
   print STDOUT "\n==============================================================\n";
@@ -314,7 +314,7 @@ sub runCmd {
     system($cmd);
     my $status = $? >> 8;
     if ($status) {
-      unlink($tmpFile);
+      unlink($tmpFile) if $cmd =~ /^sqlplus/;
       die "Failed with status '$status running cmd: \n$cmd'\n";
     }
 }
