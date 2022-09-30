@@ -303,7 +303,6 @@ sub runSqlPostgres {
   $cmd = "psql --echo-all -f $fullFile $psql_params $connectionString";
   print STDOUT "\n==============================================================\n";
   print STDOUT "Running $fullFile\n";
-  print STDOUT "Running $cmd\n"; # REMOVE THIS LATER
   print STDOUT "==============================================================\n";
 
   runCmd($cmd, $fullFile);
