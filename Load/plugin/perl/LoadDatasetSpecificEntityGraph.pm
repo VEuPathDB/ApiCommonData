@@ -176,7 +176,7 @@ sub createWideTable {
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
-  my $entityColumns = join("\n,", @$entityColumnStrings);
+  my $entityColumns = join("\n,", map { sprintf(qq/"%s"/, $_) } @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
   my $entitySql = "select ea.stable_id, eaa.*

@@ -1,3 +1,9 @@
+##################################################
+# Created date:	Aug 11, 2018
+# Last modified:	Sept 25, 2022
+# Author: 	Jie Zheng
+##################################################
+
 # Solr need to start as cloud mode
 
 library(solrium)
@@ -6,9 +12,11 @@ library(solrium)
 # Solr client connection and collection generation
 ##################################################
 
+# change the path to where ApiCommonData/Load/ontology/script/ located in your machine
+path <- "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/"
 
 # location of ontology term list csv file
-csvFile <- "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/solr_collection.csv" 
+csvFile <- paste0(path,"test/solr_search/solr_collection.csv") 
 
 # read collection csv file
 x <- read.csv(file=csvFile, head=TRUE, sep=",")
@@ -29,8 +37,10 @@ add(x, cli, "clinEpiOntology")
 ##################################################
 
 # read data dictionary for search
-dataDictionaryFilename<-"/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/dataDictionary_SouthAfrica.csv"
-dataDictionaryFilename<-"/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/dataDictionary_HUAS.csv"
+# dataDictionaryFilename<-"/Users/swever/Desktop/clinEpi/solrSandbook/data/SHINE_conversion.csv"
+
+dataDictionaryFilename <- paste0(path,"test/solr_search/dataDictionary_HUAS.csv")
+
 dataDic <- read.csv(file = dataDictionaryFilename, head=TRUE, sep=",")
 
 ##################################################
@@ -53,7 +63,7 @@ for(i in 1:nrow(dataDic)) {
 	term<-gsub("\\\"","", term)
 
 	# search label, definition and variable fields
-    	#searchStr <- (paste("label:(", term,") OR variable:", var_str, " OR definition:(", term,")", varsep=""))
+    	# searchStr <- (paste("label:(", term,") OR variable:", var_str, " OR definition:(", term,")", varsep=""))
  
  	# search label, and variable fields 
     	searchStr <- (paste0("label:(", trimws(term),") OR variable:", var_str))      
@@ -73,5 +83,7 @@ for(i in 1:nrow(dataDic)) {
 
 results<-as.data.frame(results)
 
-# write results
-write.table(results, file = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/script/test/solr_search/searchResults.csv", sep=",", col.names = FALSE, row.names=FALSE)
+# write results in a file
+outputFilename <- paste0(path,"test/solr_search/searchResults.csv") 
+
+write.table(results, file = outputFilename, sep=",", col.names = FALSE, row.names=FALSE)
