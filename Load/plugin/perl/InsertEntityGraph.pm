@@ -1,10 +1,10 @@
 package ApiCommonData::Load::Plugin::InsertEntityGraph;
+use base qw(ApiCommonData::Load::Plugin::ParameterizedSchema);
 
-@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
-use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Plugin::ParameterizedSchema;
 use strict;
 use warnings;
+
+use GUS::PluginMgr::Plugin;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
@@ -161,8 +161,7 @@ our @UNDO_TABLES = grep {$_ ne 'ProcessType' } reverse @REQUIRE_TABLES;
 
 sub new {
   my ($class) = @_;
-  my $self = {};
-  bless($self,$class);
+  my $self = bless({},$class);
 
   $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
@@ -171,6 +170,7 @@ sub new {
                       documentation     => $documentation});
   $self->{_require_tables} = \@REQUIRE_TABLES;
   $self->{_undo_tables} = \@UNDO_TABLES;
+
   return $self;
 }
 
@@ -563,7 +563,10 @@ sub addGeohash {
   for my $n (1 .. $geohashLength) {
     my $subvalue = substr($geohash, 0, $n);         
     my $geohashSourceId = $geohashSourceIds[$n - 1];
+
+    # TODO remove this line
     next unless $ontologyTermToIdentifiers->{QUALIFIER}->{$geohashSourceId};
+
     $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
     $hash->{$geohashSourceId} = [$subvalue];
   }           
@@ -855,6 +858,10 @@ and lower(?) like  'ncbitaxon%'
 and t.taxon_id = tn.taxon_id
 and tn.name_class = 'scientific name'
 ";
+
+
+  # TODO Check Geohash variables and add to obj
+  # fail if geohash variables are not in db
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);

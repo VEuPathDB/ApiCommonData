@@ -3,7 +3,7 @@ package ApiCommonData::Load::Plugin::InsertMegaEntityGraph;
 use base qw(ApiCommonData::Load::Plugin::InsertEntityGraph);
 
 use GUS::PluginMgr::Plugin;
-
+use ApiCommonData::Load::Plugin::InsertEntityGraph;
 use strict;
 use warnings;
 
@@ -56,43 +56,21 @@ my $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
-our @UNDO_TABLES =qw(
-  ProcessAttributes
-  EntityClassification
-  EntityAttributes
-  AttributeUnit
-  ProcessTypeComponent
-  EntityType
-  Study
-); ## undo is not run on ProcessType
-
-my @REQUIRE_TABLES = qw(
-  Study
-  EntityAttributes
-  EntityClassification
-  EntityType
-  AttributeUnit
-  ProcessAttributes
-  ProcessType
-  ProcessTypeComponent
-);
-
-# ----------------------------------------------------------------------
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
 
 sub new {
   my ($class) = @_;
-  my $self = {};
-  bless($self,$class);
+  my $self = bless({},$class);
 
   $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
                       documentation     => $documentation});
-  $self->{_require_tables} = \@REQUIRE_TABLES;
-  $self->{_undo_tables} = \@UNDO_TABLES;
+  $self->{_require_tables} = \@ApiCommonData::Load::Plugin::InsertEntityGraph::REQUIRE_TABLES;
+  $self->{_undo_tables} = \@ApiCommonData::Load::Plugin::InsertEntityGraph::UNDO_TABLES;
+
   return $self;
 }
 
