@@ -136,6 +136,7 @@ where entity_type_id = $entityTypeId";
 
   my (@entityColumnStrings, @processColumnStrings);
   while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
+    $stableId = qq/"$stableId"/;
     my $path = "\$.${stableId}[0]";
     $dataType = lc($dataType) eq 'string' ? "VARCHAR2" : uc($dataType);
 # TODO Is this the right way to handle longitude?
@@ -176,7 +177,7 @@ sub createWideTable {
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
-  my $entityColumns = join("\n,", map { sprintf(qq/"%s"/, $_) } @$entityColumnStrings);
+  my $entityColumns = join("\n,", @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
   my $entitySql = "select ea.stable_id, eaa.*
