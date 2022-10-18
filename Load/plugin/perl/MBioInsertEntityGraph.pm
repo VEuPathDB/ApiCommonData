@@ -69,6 +69,21 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
+
+   fileArg({name           => 'valueMappingFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+        mustExist      => 0,
+        format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+
+   stringArg({name           => 'ontologyMappingOverrideFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
   ];
 
 sub new {
@@ -97,8 +112,10 @@ sub run {
   my $investigationFile = $self->getArg('investigationFile');
   my $namesPrefixForOwl = basename $self->getArg('sampleDetailsFile');
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
-  my $ontologyMappingOverrideFile = undef;
-  my $valueMappingFile = undef;
+  my $ontologyMappingOverrideFile = $self->getArg('ontologyMappingOverrideFile');
+  unless( -e $ontologyMappingOverrideFile ){ $ontologyMappingOverrideFile = undef }
+  my $valueMappingFile = $self->getArg('valueMappingFile');
+  unless( -e $valueMappingFile ){ $valueMappingFile = undef }
   my $onError = $self->getArg('dieOnFirstError') ? sub {confess @_}: undef;
   my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
