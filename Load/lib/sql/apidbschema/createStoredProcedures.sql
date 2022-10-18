@@ -440,7 +440,7 @@ begin
       execute immediate
          'select max(project_id) ' ||
          'from ApidbTuning.' || prefix || 'ProjectTaxon pt ' ||
-         'where pt.taxon = substr(lower('''
+         'where pt.taxon like substr(lower('''
          || replace(replace(regexp_replace(
                              replace(organism, '''', ''),
                              '^\[', ''),

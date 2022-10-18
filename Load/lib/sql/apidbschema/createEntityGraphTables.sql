@@ -568,7 +568,7 @@ CREATE TABLE &1.AttributeGraph (
   stable_id                varchar2(255) NOT NULL,
   parent_stable_id              varchar2(255) NOT NULL,
   parent_ontology_term_id       NUMBER(10) NOT NULL,
-  provider_label                varchar(3200),
+  provider_label                varchar(4000),
   display_name                  varchar(1500) not null,
   display_order                number(3),
   definition                   varchar2(4000),
