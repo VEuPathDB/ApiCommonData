@@ -4,15 +4,17 @@ use strict;
 
 sub getDatabase {$_[0]->{_database}}
 sub getDatabaseDirectory {$_[0]->{_database_directory}}
+sub getGusConfigFile {$_[0]->{_gus_config_file}}
 
 sub new {
-  my ($class, $database, $forceSkipDatasetFile, $forceLoadDatasetFile, $optionalDatabaseDirectory) = @_;
+  my ($class, $database, $forceSkipDatasetFile, $forceLoadDatasetFile, $optionalDatabaseDirectory, $optionalGusConfigFile) = @_;
 
 	my $obj = {
-		_database => $database,
-		_database_directory =>  $optionalDatabaseDirectory &&  -d $optionalDatabaseDirectory ? $optionalDatabaseDirectory : undef,
+		_database            => $database,
+		_database_directory  => $optionalDatabaseDirectory && -d $optionalDatabaseDirectory ? $optionalDatabaseDirectory : undef,
 		_force_skip_datasets => &readListFromFile($forceSkipDatasetFile),
 		_force_load_datasets => &readListFromFile($forceLoadDatasetFile),
+		_gus_config_file     => $optionalGusConfigFile ? $optionalGusConfigFile : "$ENV{GUS_HOME}/config/gus.config"
 	};
   return bless $obj, $class;
 }

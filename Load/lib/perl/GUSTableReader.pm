@@ -143,9 +143,7 @@ sub connectDatabase {
 
   my $database = $self->getDatabase();
 
-  my $configFile = "$ENV{GUS_HOME}/config/gus.config";
-
-  my $config = GUS::Supported::GusConfig->new($configFile);
+  my $config = GUS::Supported::GusConfig->new($self->getGusConfigFile());
 
   my $login       = $config->getDatabaseLogin();
   my $password    = $config->getDatabasePassword();
