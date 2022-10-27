@@ -121,6 +121,15 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $ontologyOverride = &queryForOntologyTerms($self->getQueryHandle(), $extDbRlsId, 1);
+    printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
+    while(my ($termIRI, $properties) = each %$ontologyOverride){
+      while(my ($prop, $value) = each %$properties){
+        next unless(defined($value) && $value ne "");
+        $ontologyTerms->{$termIRI}->{$prop} = $value;
+        printf STDERR ("Overriding: $termIRI $prop = $value\n");
+      }
+    }
 
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForNonontologicalLeaves($studyId, $ontologyTerms);
