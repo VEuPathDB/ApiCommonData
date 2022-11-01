@@ -91,13 +91,13 @@ sub entitiesForSampleFunctions {
   return \%result;
 }
 my $levelNamesTxt = <<EOF;
-relative abundance of kingdom data
-relative abundance of phylum data
-relative abundance of class data
-relative abundance of order data
-relative abundance of family data
-relative abundance of genus data
-relative abundance of species data
+kingdom
+phylum
+class
+order
+family
+genus
+species
 EOF
 my $levelNames = [grep {$_} split("\n", $levelNamesTxt)];
 
