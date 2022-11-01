@@ -245,7 +245,7 @@ SQL_GETLABELS
     if( $keycount > $totalcols ){
       foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
       printf STDERR ("DEBUG: too many variables found %s\n", Dumper $hash);
-      die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
+      #die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
     }
     unless(defined $hash->{$attrId} ){
       $hash->{$attrId} = [];
