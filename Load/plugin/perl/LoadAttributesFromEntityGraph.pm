@@ -194,8 +194,19 @@ sub run {
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
     my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
+    my $ontologyOverride = &queryForOntologyTerms($dbh, $extDbRlsId, 1);
+    printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
+    while(my ($termIRI, $properties) = each %$ontologyOverride){
+      while(my ($prop, $value) = each %$properties){
+        next unless(defined($value) && $value ne "");
+        $ontologyTerms->{$termIRI}->{$prop} = $value;
+        printf STDERR ("Overriding: $termIRI $prop = $value\n");
+      }
+    }
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
     $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
+    my $overrides = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
+    foreach my $termIRI (keys %$overrides){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);

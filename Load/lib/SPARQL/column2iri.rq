@@ -6,11 +6,12 @@ PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
 
 select * {
   {
-    SELECT distinct ?col ?sid ?category
+    SELECT distinct ?col ?sid ?category ?parent
       WHERE { 
         ?entity a owl:Class .
         ?entity obo:EUPATH_0000755 ?column . 
         ?entity obo:EUPATH_0001002 ?scategory . 
+        ?entity obo:ISA_2 ?sparent . 
           BIND (str(?entity) AS ?uri) .
           BIND(
             REPLACE(
@@ -21,14 +22,16 @@ select * {
              AS ?sid) .
           BIND (str(?column) AS ?col) .
 	        BIND (str(?scategory) AS ?category) .
+	        BIND (str(?sparent) AS ?parent) .
       }
   }
     UNION
   {
-    SELECT distinct ?col ?sid ?category
+    SELECT distinct ?col ?sid ?category ?parent
       WHERE { 
         ?entity a owl:Class .
         ?entity obo:EUPATH_0000755 ?column . 
+        ?entity obo:ISA_2 ?sparent . 
         filter not exists { 
           ?entity obo:EUPATH_0001002 ?scategory . 
         }
@@ -42,6 +45,30 @@ select * {
              AS ?sid) .
           BIND (str(?column) AS ?col) .
 	        BIND ("" AS ?category) .
+	        BIND (str(?sparent) AS ?parent) .
+      }
+  }
+    UNION
+  {
+    SELECT distinct ?col ?sid ?category ?parent
+      WHERE { 
+        ?entity a owl:Class .
+        ?entity obo:EUPATH_0000755 ?column . 
+        filter not exists { 
+          ?entity obo:EUPATH_0001002 ?scategory . 
+          ?entity obo:ISA_2 ?sparent . 
+        }
+          BIND (str(?entity) AS ?uri) .
+          BIND(
+            REPLACE(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), ""),
+            str(sno:), "SNOMEDCT_")
+             AS ?sid) .
+          BIND (str(?column) AS ?col) .
+	        BIND ("" AS ?category) .
+	        BIND ("" AS ?parent ) .
       }
   }
 }

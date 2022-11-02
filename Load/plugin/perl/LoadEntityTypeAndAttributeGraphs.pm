@@ -121,6 +121,15 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $ontologyOverride = &queryForOntologyTerms($self->getQueryHandle(), $extDbRlsId, 1);
+    printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
+    while(my ($termIRI, $properties) = each %$ontologyOverride){
+      while(my ($prop, $value) = each %$properties){
+        next unless(defined($value) && $value ne "");
+        $ontologyTerms->{$termIRI}->{$prop} = $value;
+        printf STDERR ("Overriding: $termIRI $prop = $value\n");
+      }
+    }
 
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForNonontologicalLeaves($studyId, $ontologyTerms);
@@ -205,7 +214,12 @@ sub createAttributeGraphForTerm {
 }
 sub createAttributeGraphForNonontologicalLeaf {
   my ($self, $studyId, $sourceId, $displayName, $parentOntologyTerm) = @_;
-  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentOntologyTerm->{SOURCE_ID}, $parentOntologyTerm->{ONTOLOGY_TERM_ID}, $displayName, $parentOntologyTerm);
+  my %parentCopy = %$parentOntologyTerm;
+  if(defined($parentCopy{DISPLAY_TYPE}) && ($parentCopy{DISPLAY_TYPE} eq 'multifilter')){
+    delete($parentCopy{DISPLAY_TYPE}); 
+    printf STDERR ("DEBUG: removed multifilter from $sourceId\n");
+  }
+  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentCopy{SOURCE_ID}, $parentCopy{ONTOLOGY_TERM_ID}, $displayName, \%parentCopy);
 }
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
   my ($self, $studyId, $ontologyTerms) = @_;

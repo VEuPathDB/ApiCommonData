@@ -134,8 +134,8 @@ sub getGoEvidenceCode {
   } elsif ($string =~ /NOT RECORDED/i) {
     print STDERR "'$string' is referred to NR, but NR is an obsolete evidence code, replace it with empty in TriTryp and FungiDB\nPlease change the code to replace it with IDA if PlamooDB\n";
 #    return "IDA";  ## confirmed with Uli it should be "IDA"
-    return "";  ## Achchuthan wants it to be empty 
-#    return "NR";  ## return NR for now to catch all issues
+#    return "";  ## Achchuthan wants it to be empty 
+    return "NR";  ## return NR for now to catch all issues
   } elsif ($string =~ /INFERRED FROM DIRECT ASSAY/i) {
     return "IDA";
   } elsif ($string =~ /No biological Data available/i) {
@@ -190,7 +190,7 @@ sub usage {
 "
 Extract product name from GeneDB GFF3 file when GFF3-encoded
 
-Usage:  extractQualifiersFromBioperlTree --geneDBGffFile --outputFile
+Usage: extractProductFromGeneDBGff3 --geneDBGffFile Pberghei.gff --outputFile product.txt
 
 where
   --geneDBGffFile:	geneDB GFF3 file name
