@@ -133,6 +133,8 @@ sub run {
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
+    $self->updateDisplayTypesForGeoVariables($ontologyTerms);
+
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
 
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForNonontologicalLeaves($studyId, $ontologyTerms);
@@ -143,6 +145,32 @@ sub run {
   return "Loaded $attributeGraphCount rows into $SCHEMA.AttributeGraph and $entityTypeGraphCount rows into $SCHEMA.EntityTypeGraph";
 }
 
+sub updateDisplayTypesForGeoVariables {
+  my ($self, $ontologyTerms) = @_;
+
+  my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
+  my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
+  my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
+
+  my $hiddenEverywhere = '[ "everywhere" ]';
+
+  if(my $ontologyTerm = $ontologyTerms->{$latitudeSourceId}) {
+    $ontologyTerm->{DISPLAY_TYPE} = 'latitude';
+    $ontologyTerm->{HIDDEN} = $hiddenEverywhere;
+  }
+  if(my $ontologyTerm = $ontologyTerms->{$longitudeSourceId}) {
+    $ontologyTerm->{DISPLAY_TYPE} = 'longitude';
+    $ontologyTerm->{HIDDEN} = $hiddenEverywhere;
+  }
+
+  foreach(keys %$GEOHASH_PRECISION) {
+    if(my $ontologyTerm = $ontologyTerms->{$_}) {
+      $ontologyTerm->{DISPLAY_TYPE} = 'geoaggregator';
+      $ontologyTerm->{HIDDEN} = $hiddenEverywhere;
+    }
+  }
+
+}
 
 sub constructAndSubmitAttributeGraphsForNonontologicalLeaves {
   my ($self, $studyId, $ontologyTerms) = @_;

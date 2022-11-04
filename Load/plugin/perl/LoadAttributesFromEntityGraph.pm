@@ -39,15 +39,7 @@ my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
 my $ALLOW_VOCABULARY_COUNT = 10; # if the number of distinct values is less, generate vocabulary/ordered_values/ordinal_values
 
-my $FORCED_PRECISION = {
-    ### for studies with lat/long: GEOHASH i => i
-    EUPATH_0043203 => 1, 
-    EUPATH_0043204 => 2, 
-    EUPATH_0043205 => 3, 
-    EUPATH_0043206 => 4, 
-    EUPATH_0043207 => 5, 
-    EUPATH_0043208 => 6,
-  };
+my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
@@ -519,7 +511,7 @@ sub valProps {
 
   # OBI term here is for longitude
   if($attributeStableId eq 'OBI_0001621') {
-    $dataType = 'longitude'
+    $dataType = 'longitude';
   }
   elsif($isDate) {
     $dataType = 'date';
@@ -536,8 +528,8 @@ sub valProps {
   else {
     $dataType = 'string';
   }
-  if(defined ( $FORCED_PRECISION->{$attributeStableId} )){
-    $precision = $FORCED_PRECISION->{$attributeStableId};
+  if(defined ( $GEOHASH_PRECISION->{$attributeStableId} )){
+    $precision = $GEOHASH_PRECISION->{$attributeStableId};
   }
   return {
     data_type => $dataType,

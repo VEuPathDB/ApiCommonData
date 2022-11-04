@@ -17,7 +17,7 @@ use GUS::Model::SRes::TaxonName;
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
 
-# use ApiCommonData::Load::StudyUtils qw/getSchemaFromRowAlgInvocationId/;
+use ApiCommonData::Load::StudyUtils;
 
 use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
@@ -25,6 +25,8 @@ use POSIX qw/strftime/;
 use JSON;
 
 use Data::Dumper;
+my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
+my @GEOHASH_SOURCE_IDS = sort { $GEOHASH_PRECISION->{$a} <=> $GEOHASH_PRECISION->{$b} } keys %$GEOHASH_PRECISION;
 
 my $argsDeclaration =
   [
@@ -542,32 +544,27 @@ sub loadNodes {
 sub addGeohash {
   my ($self, $hash, $ontologyTermToIdentifiers) = @_;
 
-  my $geohashLength = 7;
+  my $geohashLength = scalar @GEOHASH_SOURCE_IDS;
 
-  my $latitudeSourceId = "OBI_0001620";
-  my $longitudeSourceId = "OBI_0001621";
+  my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
+  my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
 
-  return unless($hash->{$latitudeSourceId} && $hash->{$longitudeSourceId});
+  return unless(defined($hash->{$latitudeSourceId}) && defined($hash->{$longitudeSourceId}));
 
   my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}->[0], $hash->{$longitudeSourceId}->[0], $geohashLength);
 
-  my @geohashSourceIds = ('EUPATH_0043203', # GEOHASH 1
-                          'EUPATH_0043204', # GEOHASH 2
-                          'EUPATH_0043205', # GEOHASH 3
-                          'EUPATH_0043206', # GEOHASH 4
-                          'EUPATH_0043207', # GEOHASH 5
-                          'EUPATH_0043208', # GEOHASH 6
-                          'EUPATH_0043209', # GEOHASH 7
-      );
-
   for my $n (1 .. $geohashLength) {
     my $subvalue = substr($geohash, 0, $n);         
-    my $geohashSourceId = $geohashSourceIds[$n - 1];
+    my $geohashSourceId = $GEOHASH_SOURCE_IDS[$n - 1];
 
-    # TODO remove this line
-    next unless $ontologyTermToIdentifiers->{QUALIFIER}->{$geohashSourceId};
 
-    $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
+    unless($geohashSourceId) {
+      print Dumper \@GEOHASH_SOURCE_IDS;
+      print Dumper $GEOHASH_PRECISION;
+      $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n")
+    }
+
+
     $hash->{$geohashSourceId} = [$subvalue];
   }           
 }
@@ -860,8 +857,10 @@ and tn.name_class = 'scientific name'
 ";
 
 
-  # TODO Check Geohash variables and add to obj
-  # fail if geohash variables are not in db
+  # ensure the database has the geo hash ids
+  foreach(@GEOHASH_SOURCE_IDS) {
+    $iOntologyTermAccessionsHash->{"QUALIFIER"}->{$_}++;
+  }
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);

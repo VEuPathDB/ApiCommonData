@@ -19,6 +19,20 @@ use Data::Dumper;
 
 use YAML::Tiny;
 
+our $GEOHASH_PRECISION = {
+    EUPATH_0043203 => 1,
+    EUPATH_0043204 => 2,
+    EUPATH_0043205 => 3,
+    EUPATH_0043206 => 4,
+    EUPATH_0043207 => 5,
+    EUPATH_0043208 => 6,
+#    EUPATH_0043209 => 7,
+  };
+
+
+our $latitudeSourceId = "OBI_0001620";
+our $longitudeSourceId = "OBI_0001621";
+
 sub queryForOntologyTerms {
   my ($dbh, $extDbRlsId) = @_;
 
