@@ -904,19 +904,15 @@ sub loadAttributesFromEntity {
   loadAttributes(@_, "
 select ea.entity_attributes_id
      , ea.stable_id
-     , et.entity_type_id
-     , ea.entity_type_id as orig_entity_type_id
-     , et.type_id as entity_type_ontology_term_id
+     , ea.entity_type_id
+     , ea.orig_entity_type_id
+     , ea.type_id as entity_type_ontology_term_id
      , null as process_type_id
      , null as process_type_ontology_term_id
      , ea.atts
-from $SCHEMA.entityattributes ea
-   , $SCHEMA.entityclassification ec
-   , $SCHEMA.entitytype et
+from $SCHEMA.entityattributes_bfv ea
 where ea.atts is not null
-and et.entity_type_id = ec.entity_type_id
-and ec.entity_attributes_id = ea.entity_attributes_id
-and et.study_id = ?
+and ea.study_id = ?
 ");
 }
 
@@ -925,23 +921,19 @@ sub loadAttributesFromIncomingProcess {
   loadAttributes(@_, "
 select ea.entity_attributes_id
      , ea.stable_id
-     , et.entity_type_id
+     , ea.entity_type_id
      , ea.entity_type_id as orig_entity_type_id
-     , et.type_id as entity_type_ontology_term_id
+     , ea.type_id as entity_type_ontology_term_id
      , pt.process_type_id
      , pt.type_id as process_type_ontology_term_id
      , pa.atts
 from $SCHEMA.processattributes pa
-   , $SCHEMA.entitytype et
-   , $SCHEMA.entityclassification ec
-   , $SCHEMA.entityattributes ea
+   , $SCHEMA.entityattributes_bfv ea
    , $SCHEMA.processtype pt
 where pa.atts is not null
-and et.entity_type_id = ec.entity_type_id
-and ec.entity_attributes_id = pa.out_entity_id
-and ec.entity_attributes_id = ea.entity_attributes_id
+and ea.entity_attributes_id = pa.out_entity_id
 and pa.process_type_id = pt.process_type_id
-and et.study_id = ?
+and ea.study_id = ?
 ");
 }
 

@@ -177,22 +177,16 @@ sub createWideTable {
 
 
   my $entitySql = "select ea.stable_id, eaa.*
-                   from $SCHEMA.entityattributes ea,
-                        $SCHEMA.entityclassification ec,
+                   from $SCHEMA.entityattributes_bfv ea,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
-                   where ec.entity_type_id = $entityTypeId
-                    and ea.entity_attributes_id = ec.entity_attributes_id";
+                   where ea.entity_type_id = $entityTypeId";
 
-  my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
-                                                from ${SCHEMA}.processattributes pa,
-                                                     (select ea.entity_attributes_id
-                                                           , ea.stable_id 
-                                                      from ${SCHEMA}.entityattributes ea, 
-                                                           ${SCHEMA}.entityclassification ec 
-                                                      where ec.entity_type_id = $entityTypeId
-                                                       and ec.entity_attributes_id = ea.entity_attributes_id) ea
-                                                where ea.entity_attributes_id = pa.out_entity_id (+)
+  my $processSql = "with process_attributes as (select ea.stable_id, nvl(pa.atts, '{}') as atts
+                                                from ${SCHEMA}.processattributes pa
+                                                   , ${SCHEMA}.entityattributes_bfv ea,
+                                                where ea.entity_type_id = $entityTypeId
+                                                 and ea.entity_attributes_id = pa.out_entity_id (+)
                                                )
                     select pa.stable_id, paa.*
                     from process_attributes pa,
@@ -215,9 +209,9 @@ sub createWideTable {
   }
   else {
     $sql = "select ea.stable_id 
-            from ${SCHEMA}.entityattributes ea, ${SCHEMA}.entityclassification ec 
-            where ec.entity_type_id = $entityTypeId
-             and ec.entity_attributes_id = ea.entity_attributes_id";
+            from ${SCHEMA}.entityattributes_bfv ea
+            where ea.entity_type_id = $entityTypeId
+             ";
   }
 
   my $dbh = $self->getDbHandle();
@@ -267,27 +261,17 @@ sub populateAncestorsTable {
   with f as 
   (select p.in_entity_id
         , i.stable_id in_stable_id
-        , ic.entity_type_id in_type_id
+        , i.entity_type_id in_type_id
         , p.out_entity_id
-        , oc.entity_type_id out_type_id
+        , o.entity_type_id out_type_id
         , o.stable_id out_stable_id
   from ${SCHEMA}.processattributes p
-     , ${SCHEMA}.entityattributes i
-     , ${SCHEMA}.entityattributes o
-     , ${SCHEMA}.entityclassification ic
-     , ${SCHEMA}.entityclassification oc
-     , ${SCHEMA}.entitytype et
-     , ${SCHEMA}.study s
-  where p.in_entity_id = i.entity_attributes_id
+     , ${SCHEMA}.entityattributes_bfv i
+     , ${SCHEMA}.entityattributes_bfv o
+where p.in_entity_id = i.entity_attributes_id
   and p.out_entity_id = o.entity_attributes_id
-  and o.entity_attributes_id = oc.entity_attributes_id
-  and ic.entity_attributes_id = i.entity_attributes_id
-  and ic.entity_type_id = et.entity_type_id
-  and et.study_id = s.study_id
-  and s.study_id in (select $studyId from dual 
-                     union 
-                     select study_id from ${SCHEMA}.entitytype where entity_type_id = $entityTypeId
-                    )
+  and o.study_id = $studyId
+  and i.study_id = $studyId
   )
   select connect_by_root out_stable_id stable_id,  in_stable_id, in_type_id
   from f
@@ -295,9 +279,8 @@ sub populateAncestorsTable {
   connect by prior in_entity_id = out_entity_id
   union
   select ea.stable_id, null, null
-  from ${SCHEMA}.entityattributes ea,  ${SCHEMA}.entityclassification ec
-  where ec.entity_type_id = $entityTypeId
-   and ec.entity_attributes_id = ea.entity_attributes_id
+  from ${SCHEMA}.entityattributes_bfv ea
+  where ea.entity_type_id = $entityTypeId
 ) order by stable_id";
 
   my $dbh = $self->getDbHandle();
