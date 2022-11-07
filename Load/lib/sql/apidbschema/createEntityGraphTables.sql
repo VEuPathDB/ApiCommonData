@@ -662,5 +662,22 @@ WHERE 'study_characteristic_id' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 
+-- for mega study, we need to prefix the stable id with the study stable id
+create or replace view &1.entityattributeswithstudyprefix as
+select ea.entity_attributes_id
+     , case when ec.entity_type_id = ea.entity_type_id
+            then ea.stable_id
+            else orig_s.stable_id || '|' || ea.stable_id
+        end as stable_id
+     , ea.entity_type_id
+     , ea.atts
+     , ea.row_project_id
+from &1.entityclassification ec
+   , &1.entityattributes ea
+   , &1.entitytype orig_et
+   , &1.study orig_s
+ where ec.entity_attributes_id = ea.entity_attributes_id
+and ea.entity_type_id = orig_et.entity_type_id
+and orig_et.study_id = orig_s.study_id
 
 exit;
