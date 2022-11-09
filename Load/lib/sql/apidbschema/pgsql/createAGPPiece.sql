@@ -3,7 +3,7 @@ CREATE TABLE ApiDB.AGPPiece (
  source_id varchar(80) not null,
  start_min NUMERIC(12) not null,
  end_max NUMERIC(12) not null,
- part_NUMERIC NUMERIC(5) not null,
+ part_number NUMERIC(5) not null,
  part_type varchar(1) not null,
  piece_id varchar(80),
  piece_start  NUMERIC(12),
