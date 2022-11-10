@@ -299,6 +299,9 @@ where s.study_id = $studyId
   while(my $row= $sh->fetchrow_hashref()) {
     $row->{'study_id'} = $studyId;
 
+    # set to false/0 by default; this field will be updated by later steps
+    $row->{'has_attribute_collections'} = 0;
+
     my $etg = $self->getGusModelClass('EntityTypeGraph')->new($row);
 
     $etg->submit();
