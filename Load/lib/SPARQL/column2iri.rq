@@ -79,6 +79,8 @@ select * {
         ?entity obo:EUPATH_0000755 ?column . 
         filter not exists { 
           ?entity obo:EUPATH_0001002 ?scategory . 
+        }
+        filter not exists { 
           ?entity obo:ISA_2 ?sparent . 
         }
           BIND (str(?entity) AS ?uri) .
