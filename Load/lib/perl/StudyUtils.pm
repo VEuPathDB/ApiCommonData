@@ -190,5 +190,24 @@ sub parseMegaStudyConfig {
 }
 
 
+sub parseCollectionsConfig {
+  my ($collectionsYaml) = @_;
+
+  my %rv;
+
+  my $yaml = YAML::Tiny->read($collectionsYaml);
+  unless($yaml) {
+    die "Error parsing yaml file for collections:  $collectionsYaml";
+  }
+
+  foreach my $doc (@$yaml) {
+    my $stableId = $doc->{stable_id};
+    $rv{$stableId} = $doc;
+  }
+
+  return \%rv;
+}
+
+
 
 1;

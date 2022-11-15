@@ -42,7 +42,15 @@ my $argsDeclaration =
             descr          => 'GUS::Model schema for entity tables',
             reqd           => 1,
             constraintFunc => undef,
+              isList         => 0, }),
+    fileArg({name           => 'collectionsYaml',
+            descr          => 'optional yaml file which defines collection ontology terms (and optionally children + ranges)',
+            reqd           => 0,
+        mustExist      => 1,
+        format         => '',
+            constraintFunc => undef,
             isList         => 0, }),
+
 
 ];
 
@@ -83,6 +91,9 @@ sub run {
 
   $self->dropTables($extDbRlsSpec);
 
+  my $collectionsYamlFile = $self->getArg('collectionsYaml');
+  my $collections = ApiCommonData::Load::StudyUtils::parseCollectionsConfig($collectionsYamlFile);
+
   my $dbh = $self->getDbHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel query") or die $self->getDbHandle()->errstr;
@@ -105,7 +116,12 @@ sub run {
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
         $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       }
-      $self->maybeCreateCollectionsForMBioNodes($attributeGraphTableName);
+
+      if(scalar(keys(%$collections)) > 0) {
+        if($self->maybeCreateCollections($attributeGraphTableName, $collections)) {
+          $dbh->do("update ${SCHEMA}.EntityTypeGraph set has_attribute_collections = 1 where entity_type_id = $entityTypeId");
+        }
+      }
     }
   }
 
@@ -608,32 +624,53 @@ and r.external_database_release_id = s.external_database_release_id";
   $sh->finish();
 }
 
-sub maybeCreateCollectionsForMBioNodes {
 
-  my ($self, $attributeGraphTableName) = @_;
+sub makeCollectionsFromWhereSql {
+  my ($self, $attributeGraphTableName, $collections) = @_;
+
+  my @collectionsWithTBDVariables;
+
+  my $collectionsWithVariablesString;
+
+  foreach my $stableId (keys %$collections) {
+    if($collections->{variables}) {
+      foreach my $variable (@{$collections->{variables}}) {
+        $collectionsWithVariablesString .= " OR (child.parent_stable_id = '$stableId' and child.stable_id = '$variable')";
+      }
+    }
+    else {
+      push @collectionsWithTBDVariables, $stableId;
+    }
+  }
+
+  my $collectionsWithTBDVariablesString = join(',', map { "'" . $_ . "'" } @collectionsWithTBDVariables);
+
+  my $fromWhereSql = <<"EOF";
+FROM   $attributeGraphTableName child, $attributeGraphTableName parent
+WHERE child.parent_stable_id = parent.stable_id
+and (child.parent_stable_id IN ( '_DUMMY_', $collectionsWithTBDVariablesString)
+     $collectionsWithVariablesString
+    )
+EOF
+
+  return $fromWhereSql;
+}
+
+sub maybeCreateCollections {
+  my ($self, $attributeGraphTableName, $collections) = @_;
+
   my $dbh = $self->getDbHandle();
-
 
   my ($collectionTableName, $collectionAttributesTableName) = collectionTableNames($attributeGraphTableName);
 
   my $sth;
 
-  my $fromWhereSql = <<"EOF";
-FROM   $attributeGraphTableName child, $attributeGraphTableName parent
-WHERE  child.parent_stable_id IN ( 'EUPATH_0009247', 'EUPATH_0009248',
-                             'EUPATH_0009249',
-                             'EUPATH_0009252', 'EUPATH_0009253',
-                             'EUPATH_0009254', 'EUPATH_0009255',
-                             'EUPATH_0009256', 'EUPATH_0009257',
-                             'EUPATH_0009269')
-and child.parent_stable_id = parent.stable_id
-EOF
+  my $fromWhereSql = $self->makeCollectionsFromWhereSql($attributeGraphTableName, $collections);
 
   $sth = $dbh->prepare("select 1 $fromWhereSql fetch next 1 row only");
   $sth->execute();
   return unless $sth->fetchrow_arrayref();
 
-  
   $self->log("Creating TABLE: $collectionTableName");
   my $getCollectionsSql = <<"EOF";
 SELECT parent.stable_id       as stable_id,
@@ -666,6 +703,16 @@ EOF
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
+
+  # display_range_min and display_range_max may ge specified in the yaml;  update those here
+  foreach my $stableId (keys %$collections) {
+    if(my $rangeMin = $collections->{$stableId}->{range_min}) {
+      $dbh->do("update $collectionAttributesTableName set display_range_min = $rangeMin");
+    }
+    if(my $rangeMax = $collections->{$stableId}->{range_max}) {
+      $dbh->do("update $collectionAttributesTableName set display_range_max = $rangeMax");
+    }
+  }
 
   $self->log("Creating TABLE: $collectionAttributesTableName");
 
