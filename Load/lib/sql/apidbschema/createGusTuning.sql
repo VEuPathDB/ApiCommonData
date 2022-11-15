@@ -121,6 +121,10 @@ create index dots.lwrSrcId_ix
 on dots.AaSequenceImp(lower(source_id), aa_sequence_id, string1)
 tablespace indx;
 
+create index dots.ns_subclass_so
+  on dots.NaSequenceImp (subclass_view, na_sequence_id, sequence_ontology_id)
+  tablespace indx;
+
 create index sres.lwrRefPrim_ix
 on sres.DbRef(lower(primary_identifier), db_ref_id, external_database_release_id)
 tablespace indx;
