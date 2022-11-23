@@ -1,0 +1,901 @@
+colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,codebookValues,termType,notesForOnt,notesForProvider,notesForDL,uniqueVar,dataSet,variable_dataFile,type,example,dateTime,formatCode,values,uniqueValueCount,percentMissing,flag
+1,starttime,bednet level data baseline survey,discard,,,Date/time of start of interview,NA,,,,Datetime stamp - automatically generated,bednet level data baseline survey::starttime,LLINEUP2,starttime,chr,17:58.0,NA,NA,>10 unique values,1629,0,duplicated variable
+2,date,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::date,LLINEUP2,date,chr,4/11/21,date?,%Y-%m-%d,>10 unique values,27,0,duplicated variable
+3,hhid,bednet level data baseline survey,discard,,,Household ID,NA,,,,"9-digit number generated at the time of the first HH visit, composed of the following:
+
+Survey: 1 digit
+MRC: 2 digits [01-70]
+village code: 2 digits [01-99]
+Household number: 4 digits [0001-_ _]
+",bednet level data baseline survey::hhid,LLINEUP2,hhid,int,115010040,NA,NA,106010004 to 163070043,610,0,duplicated variable
+4,mrccode,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::mrccode,LLINEUP2,mrccode,int,15,NA,NA,6 to 63,12,0,duplicated variable
+5,region,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::region,LLINEUP2,Region,int,3,NA,NA,1 to 7,6,0,duplicated variable
+6,llinarm,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::llinarm,LLINEUP2,LLINarm,int,1,NA,NA,1 to 2,2,0,duplicated variable
+7,llindistmonth,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::llindistmonth,LLINEUP2,LLINdistmonth,int,731,NA,NA,731 to 734,2,0,duplicated variable
+8,netnum,bednet level data baseline survey,discard,,,Net Number,NA,,,,Consecutive number starting with 1 and continuing for all nets in the house,bednet level data baseline survey::netnum,LLINEUP2,netnum,int,1,NA,NA,1 to 9,9,0,NA
+9,uniquebnid,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::uniquebnid,LLINEUP2,uniqueBNid,int,1150100401,NA,NA,1060100041 to 1630700433,1631,0,NA
+10,obs,bednet level data baseline survey,discard,,,May I have a look at net number [[netnum]] to establish the brand?,"1 - Observed
+0 - Not observed
+-9: Skipped",,,,NA,bednet level data baseline survey::obs,LLINEUP2,obs,chr,Observed,NA,NA,"Not observed, Observed",2,0,NA
+11,labelobs,bednet level data baseline survey,discard,,,Was the label observed?,"1 - Yes
+0 - No
+-9: Skipped",,,,NA,bednet level data baseline survey::labelobs,LLINEUP2,labelobs,chr,Yes,NA,NA,"No, Yes",2,0,NA
+12,brandnet,bednet level data baseline survey,discard,,,What is the brand of net number [[netnum]] ?,"1 - Royal Guard 
+2 - PermaNet 2.0
+3 - PermaNet 3.0
+4 - Olyset Net
+5- Olyset Net Plus
+6 - Duranet
+7 - Interceptor
+8 - Netprotect
+9 - KO net 
+11 - Iconet
+12 - Safi net
+13 - B52
+14 - Bamboo hut
+15 - Century
+16 - Lucky net
+17 - Victoria
+18 - Homemade net
+19 - Dawa net
+20 - Iconlife
+21 - Yorkool
+22 - Safe Net
+23 - DK
+24- Kooper net
+25 - Royal Sentry Net
+26 - LLIN NOS (long lasting)
+27 - Untreated LLIN NOS
+28 - No label
+29 - Not observed
+96 - Other brand
+-7 - Don't  Know
+-8- Refused to Answer",,,,skip removed,bednet level data baseline survey::brandnet,LLINEUP2,brandnet,chr,PermaNet 3.0,NA,NA,>10 unique values,13,0,NA
+13,otherb,bednet level data baseline survey,discard,,,Specify other brands or types of mosquito net,NA,,,,NA,bednet level data baseline survey::otherb,LLINEUP2,otherb,chr,-9,NA,NA,"-9, MAG-NET, MAGNET, NOT OBSERVED",4,0,NA
+14,netbrandhow,bednet level data baseline survey,discard,,,How was brand of the net determined?,"1 <U+2013>Saw net + label
+2 <U+2013>Saw net but not label so guessed
+3 <U+2013>Didn<U+2019>t see net but was told net type by household resident
+4 <U+2013>Guessed based on nets distributed in this cluster
+96<U+2013> Other (Specify)",,,,NA,bednet level data baseline survey::netbrandhow,LLINEUP2,netbrandhow,int,1,NA,NA,-7 to 3,4,0,NA
+15,othbrandhow,bednet level data baseline survey,discard,,,Please specify other way you determined the net brand,NA,,,,NA,bednet level data baseline survey::othbrandhow,LLINEUP2,othbrandhow,chr,-9,NA,NA,"-9, HAD NO LABEL, NO LABEL, NOT OBSERVED WAS JUST TOLD",4,0,NA
+16,nethung,bednet level data baseline survey,discard,,,"If observed, was the net hanging?","1 <U+2013> Yes 
+0 <U+2013> No
+-9: Skipped",,,,NA,bednet level data baseline survey::nethung,LLINEUP2,nethung,int,1,NA,NA,-9 to 1,3,0,NA
+17,everhung,bednet level data baseline survey,discard,,,"If not hanging, was this net ever hung?","1 <U+2013> Yes 
+0 <U+2013> No
+-9: Skipped",,,,NA,bednet level data baseline survey::everhung,LLINEUP2,everhung,int,-9,NA,NA,-9 to 1,3,0,NA
+18,everhung1,bednet level data baseline survey,discard,,,"If not observed, was this net ever hung?","1 <U+2013> Yes 
+0 <U+2013> No
+-9: Skipped",,,,NA,bednet level data baseline survey::everhung1,LLINEUP2,everhung1,int,-9,NA,NA,-9 to 1,3,0,NA
+19,nethungcat,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::nethungcat,LLINEUP2,nethungcat,int,1,NA,NA,1 to 3,3,0,NA
+20,howoldnet,bednet level data baseline survey,discard,,,"How many months ago did your household obtain net number [[netnum]]?
+
+IF LESS THAN ONE MONTH, WRITE '0'.
+IF MORE THAN 36 MONTHS AGO RECORD 37",-7: Don't know,,,,NA,bednet level data baseline survey::howoldnet,LLINEUP2,howoldnet,int,5,NA,NA,-7 to 37,20,0,NA
+21,howoldnetcat,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::howoldnetcat,LLINEUP2,howoldnetcat,int,3,NA,NA,1 to 5,5,0.001226242,NA
+22,uccnet,bednet level data baseline survey,discard,,,Did you receive this net in the 2020-2021 UCC?,"1 <U+2013> Yes 
+0 <U+2013> No",,,,NA,bednet level data baseline survey::uccnet,LLINEUP2,uccnet,chr,Yes,NA,NA,"No, Yes",2,0,NA
+23,wherenet,bednet level data baseline survey,discard,,,"If not, where did you get net [[netnum]] from?","1 <U+2013> Prior UCC
+2 -- Gov't hospital
+3 <U+2013> Gov't health center
+4 <U+2013> Private hospital/clinic
+5 <U+2013> Private pharmacy
+6 <U+2013> Shop
+7 <U+2013> Open market
+8 <U+2013> Hawker
+9 <U+2013> Project/NGO
+10 <U+2013> Campaign/VHT (Community, school, etc.)
+11 <U+2013> Church
+12 <U+2013> Friend/Relative
+96 <U+2013> Other 
+-7: Don't know
+-8: Refused to answer
+",,,,"Added in option '0' for the MOH UCC, and deleted option '12' for village leader",bednet level data baseline survey::wherenet,LLINEUP2,wherenet,chr,Most recent UCC,NA,NA,"Church, Don't know, Gov't hospital, Hawker, Most recent UCC, Open market, Prior UCC, Private pharmacy, Project/NGO/Non-health facility, Shop",10,0,NA
+24,spcfro,bednet level data baseline survey,discard,,,Specify other source of net [[netnum]],NA,,,,NA,bednet level data baseline survey::spcfro,LLINEUP2,spcfro,chr,-9,NA,NA,"-9, GOVERNMENT IN PARISHES, MILITARY GROUP, PREVIOUS CAMPAIGN, UCC 2017, UCC 2019, UCC2017",7,0,NA
+25,free,bednet level data baseline survey,discard,,,Was net number [[netnum]] given to you free of charge?  Or did you or someone in your household pay for this net?,"1 <U+2013> Free 
+2 <U+2013> Paid for
+-7: Don't know
+-8: Refused to answer
+",,,,NA,bednet level data baseline survey::free,LLINEUP2,free,chr,Free,NA,NA,"Free, Paid for",2,0,NA
+26,slpnet,bednet level data baseline survey,discard,,,Did anyone sleep under net number [[netnum]] last night?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,net washed,bednet level data baseline survey::slpnet,LLINEUP2,slpnet,chr,Yes,NA,NA,"No, Yes",2,0,NA
+27,sleptunder,bednet level data baseline survey,discard,,,Who slept under net number [[netnum]] last night?,-6: N/A,,,,"Multiple response question; Comma separated list of each linenum of the people who slept under the net
+
+Logic check: Person cannot sleep under more than 1 net",bednet level data baseline survey::sleptunder,LLINEUP2,sleptunder,chr,1,NA,NA,>10 unique values,95,0,NA
+28,anynet,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::anynet,LLINEUP2,ANYnet,int,1,NA,NA,1 to 1,1,0,NA
+29,anyllin,bednet level data baseline survey,discard,,,NA,NA,,,,NA,bednet level data baseline survey::anyllin,LLINEUP2,ANYLLIN,int,1,NA,NA,0 to 1,2,0,NA
+1,intnum,clinical survey level data baseline survey,discard,,,Interviewer's Number,NA,,,,Each census worker will be assigned a unique ID,clinical survey level data baseline survey::intnum,LLINEUP2,intnum,int,18,NA,NA,11 to 21,10,0,duplicated variable
+2,starttime,clinical survey level data baseline survey,discard,,,Date/time of start of interview,NA,,,,Datetime stamp - automatically generated,clinical survey level data baseline survey::starttime,LLINEUP2,starttime,chr,18:31.0,NA,NA,>10 unique values,1162,0,duplicated variable
+3,date,clinical survey level data baseline survey,keep,,,NA,NA,,,,NA,clinical survey level data baseline survey::date,LLINEUP2,date,chr,4/11/21,date?,%Y-%m-%d,>10 unique values,27,0,duplicated variable
+4,hhid,clinical survey level data baseline survey,discard,,,Household ID,NA,,,,"9-digit number generated at the time of the first HH visit, composed of the following:
+
+Survey: 1 digit
+MRC: 2 digits [01-70]
+village code: 2 digits [01-99]
+Household number: 4 digits [0001-_ _]
+",clinical survey level data baseline survey::hhid,LLINEUP2,HHID,int,115010040,NA,NA,106010004 to 163070043,607,0,duplicated variable
+5,linenum,clinical survey level data baseline survey,discard,,,Household member's line number (head of household=1),NA,,,,NA,clinical survey level data baseline survey::linenum,LLINEUP2,LINENUM,int,3,NA,NA,2 to 14,13,0,duplicated variable
+6,uniqueid,clinical survey level data baseline survey,discard,,,NA,NA,,,,NA,clinical survey level data baseline survey::uniqueid,LLINEUP2,uniqueid,dbl,11501004003,NA,NA,10601000403 to 16307004310,1164,0,duplicated variable
+7,age,clinical survey level data baseline survey,keep,,,Age in years,NA,,,,NA,clinical survey level data baseline survey::age,LLINEUP2,age,int,10,NA,NA,2 to 10,9,0,duplicated variable
+8,consent,clinical survey level data baseline survey,keep,,,"Does [[participantsname]] consent to laboratory testing?
+
+(Adult consents if it is a child)","1 - Yes
+0 - No
+2 - Not at home",,,,NA,clinical survey level data baseline survey::consent,LLINEUP2,consent,chr,Yes,NA,NA,"No, Not at home, Yes",3,0,duplicated variable
+9,consent2,clinical survey level data baseline survey,keep,,,Does [[participantsname]] consent to future use of biological specimens?,"1 - Yes
+0 - No",,,,NA,clinical survey level data baseline survey::consent2,LLINEUP2,consent2,chr,Yes,NA,NA,"No, Skipped, Yes",3,0,duplicated variable
+10,fpbarcode1,clinical survey level data baseline survey,keep,,,Barcode for Filter paper,-9: Skipped,,,,NA,clinical survey level data baseline survey::fpbarcode1,LLINEUP2,fpbarcode1,chr,C106,NA,NA,>10 unique values,838,0,duplicated variable
+11,fpbarcode2,clinical survey level data baseline survey,discard,,,Re-enter Barcode for Filter paper,-9: Skipped,,,,Barcodes must be the same,clinical survey level data baseline survey::fpbarcode2,LLINEUP2,fpbarcode2,chr,C106,NA,NA,>10 unique values,838,0,duplicated variable
+12,bsbarcode1,clinical survey level data baseline survey,keep,,,Barcode for blood smear,-9: Skipped,,,,NA,clinical survey level data baseline survey::bsbarcode1,LLINEUP2,bsbarcode1,chr,C106,NA,NA,>10 unique values,838,0,duplicated variable
+13,bsbarcode2,clinical survey level data baseline survey,discard,,,Re-enter Barcode for blood smear,-9: Skipped,,,,Barcodes must be the same,clinical survey level data baseline survey::bsbarcode2,LLINEUP2,bsbarcode2,chr,C106,NA,NA,>10 unique values,838,0,duplicated variable
+14,age2to4,clinical survey level data baseline survey,discard,,,NA,NA,,,,NA,clinical survey level data baseline survey::age2to4,LLINEUP2,age2to4,int,0,NA,NA,0 to 1,2,0.280927835,duplicated variable
+15,hemocue,clinical survey level data baseline survey,keep,,,Result code of hemocue test.,"1 - Tested
+2 - Not enough blood drawn
+3 - Test Failed
+-9: Skipped",,,,NA,clinical survey level data baseline survey::hemocue,LLINEUP2,hemocue,chr,Skipped,NA,NA,"Skipped, Tested",2,0,duplicated variable
+16,hemoglobin,clinical survey level data baseline survey,keep,,,Record hemoglobin level,-9: Skipped,,,,NA,clinical survey level data baseline survey::hemoglobin,LLINEUP2,hemoglobin,dbl,10.80000019,NA,NA,7.09999990463257 to 14.5,52,0.721649485,duplicated variable
+17,hbdone,clinical survey level data baseline survey,keep,,,NA,NA,,,,NA,clinical survey level data baseline survey::hbdone,LLINEUP2,hbdone,int,1,NA,NA,0 to 1,2,0.720790378,duplicated variable
+18,anemia11,clinical survey level data baseline survey,keep,,,NA,NA,,,,NA,clinical survey level data baseline survey::anemia11,LLINEUP2,anemia11,int,1,NA,NA,0 to 1,2,0.721649485,duplicated variable
+19,anemia10,clinical survey level data baseline survey,keep,,,NA,NA,,,,NA,clinical survey level data baseline survey::anemia10,LLINEUP2,anemia10,int,0,NA,NA,0 to 1,2,0.721649485,duplicated variable
+20,anemia8,clinical survey level data baseline survey,keep,,,NA,NA,,,,NA,clinical survey level data baseline survey::anemia8,LLINEUP2,anemia8,int,0,NA,NA,0 to 1,2,0.721649485,duplicated variable
+21,fever,clinical survey level data baseline survey,keep,,,Did [[participantsname]] have a fever in the last 48 hours?,"1 - Yes
+0 - No
+-7: Don't know",,,,NA,clinical survey level data baseline survey::fever,LLINEUP2,fever,int,0,NA,NA,-9 to 1,3,0,duplicated variable
+22,temperature,clinical survey level data baseline survey,keep,,,Temperature of [[participantsname]]?,-8 Refused,,,,NA,clinical survey level data baseline survey::temperature,LLINEUP2,temperature,dbl,35.20000076,NA,NA,-9 to 38.7000007629395,42,0,duplicated variable
+23,elevatedtemp,clinical survey level data baseline survey,discard,,,Temperature >= 38,NA,,,,NA,clinical survey level data baseline survey::elevatedtemp,LLINEUP2,elevatedtemp,int,0,date?,NA,0 to 1,2,0.280927835,duplicated variable
+24,febrile,clinical survey level data baseline survey,keep,,,NA,NA,,,,NA,clinical survey level data baseline survey::febrile,LLINEUP2,febrile,int,0,NA,NA,0 to 1,2,0.280927835,duplicated variable
+25,rdtdone,clinical survey level data baseline survey,keep,,,RDT Done?,"1 - Yes
+0 - No",,,,NA,clinical survey level data baseline survey::rdtdone,LLINEUP2,rdtdone,int,0,date?,NA,-9 to 1,3,0,duplicated variable
+26,rdtiffebrile,clinical survey level data baseline survey,discard,,,NA,NA,,,,NA,clinical survey level data baseline survey::rdtiffebrile,LLINEUP2,RDTiffebrile,int,1,date?,NA,0 to 1,2,0.64604811,duplicated variable
+27,rdtrslt,clinical survey level data baseline survey,keep,,,Result of RDT,"1 - Positive
+2 - Negative
+-9: Skipped",,,,NA,clinical survey level data baseline survey::rdtrslt,LLINEUP2,rdtrslt,chr,Skipped,date?,NA,"Negative, Positive, Skipped",3,0,duplicated variable
+28,requireweight,clinical survey level data baseline survey,discard,,,NA,NA,,,,NA,clinical survey level data baseline survey::requireweight,LLINEUP2,requireweight,chr,No,NA,NA,"No, Skipped, Yes",3,0,duplicated variable
+29,weight,clinical survey level data baseline survey,keep,,,Weight,NA,,,,NA,clinical survey level data baseline survey::weight,LLINEUP2,weight,dbl,-9,NA,NA,-9 to 31,26,0,duplicated variable
+30,meds,clinical survey level data baseline survey,keep,,,Any medication prescribed to [[participantsname]]?,"1 - Yes
+0 - No",,,,NA,clinical survey level data baseline survey::meds,LLINEUP2,meds,int,0,NA,NA,-9 to 1,3,0,duplicated variable
+31,whichmeds,clinical survey level data baseline survey,keep,,,Which medication was prescribed?,"1 - AL
+2 - Panadol
+9 - Other
+-9: Skipped",,,,"Multiple response question; Comma separated list of each item selected
+For example if 'Panadol' and 'Other' were both selected, 
+the response would be: ""2,9""",clinical survey level data baseline survey::whichmeds,LLINEUP2,whichmeds,chr,None,NA,NA,"AL + pandadol, None, Only panadol",3,0,duplicated variable
+32,al,clinical survey level data baseline survey,discard,,,<U+2026>AL,"1 - Yes
+0 - No",,,,"Individual responses for the 'whichmeds' question.  For example, if 'Panadol' and 'Other' were both selected, the response would be:
+al = 0
+panadol = 1
+other = 1",clinical survey level data baseline survey::al,LLINEUP2,al,int,-9,NA,NA,-9 to 1,3,0,duplicated variable
+33,panadol,clinical survey level data baseline survey,discard,,,<U+2026>Panadol,"1 - Yes
+0 - No",,,,NA,clinical survey level data baseline survey::panadol,LLINEUP2,panadol,int,-9,NA,NA,-9 to 1,2,0,duplicated variable
+34,other,clinical survey level data baseline survey,discard,,,<U+2026>Other,"1 - Yes
+0 - No",,,,NA,clinical survey level data baseline survey::other,LLINEUP2,other,int,-9,NA,NA,-9 to 0,2,0,duplicated variable
+35,descothermed,clinical survey level data baseline survey,keep,,,Which 'other' medication was used?,NA,,,,NA,clinical survey level data baseline survey::descothermed,LLINEUP2,descothermed,int,-9,NA,NA,-9 to -9,1,0,duplicated variable
+36,referred,clinical survey level data baseline survey,keep,,,Was [[participantsname]] referred for additional care?,"1 - Yes
+0 - No",,,,NA,clinical survey level data baseline survey::referred,LLINEUP2,referred,int,0,NA,NA,-9 to 1,3,0,duplicated variable
+37,whyreferred,clinical survey level data baseline survey,keep,,,Why was [[participantsname]] referred for additional care?,NA,,,,NA,clinical survey level data baseline survey::whyreferred,LLINEUP2,whyreferred,chr,-9,NA,NA,"-9, FOR FURTHER MANAGEMENT, FOR FUTHER MANAGEMNET, FURTHER MANAGEMENT, FURTHER MANAGENT, HB IS TOO LOW",6,0,duplicated variable
+38,stoptime,clinical survey level data baseline survey,discard,,,End time of interview,NA,,,,automatically generated,clinical survey level data baseline survey::stoptime,LLINEUP2,stoptime,chr,19:12.0,NA,NA,>10 unique values,1161,0,duplicated variable
+1,mrccode,clusterarm final,keep,,,NA,NA,,,,NA,clusterarm final::mrccode,LLINEUP2,mrccode,int,1,NA,NA,1 to 64,64,0,duplicated variable
+2,region,clusterarm final,keep,,,NA,NA,,,,NA,clusterarm final::region,LLINEUP2,Region,int,1,NA,NA,1 to 7,7,0,duplicated variable
+3,llinarm,clusterarm final,keep,,,NA,NA,,,,NA,clusterarm final::llinarm,LLINEUP2,LLINarm,int,1,NA,NA,1 to 2,2,0,duplicated variable
+4,llindistmonth,clusterarm final,keep,,,NA,NA,,,,NA,clusterarm final::llindistmonth,LLINEUP2,LLINdistmonth,int,731,NA,NA,730 to 734,3,0,duplicated variable
+1,intnum,household level data baseline survey,discard,,,Interviewer's Number,NA,,,,Each census worker will be assigned a unique ID,household level data baseline survey::intnum,LLINEUP2,intnum,int,11,NA,NA,10 to 21,10,0,duplicated variable
+2,starttime,household level data baseline survey,discard,,,Date/time of start of interview,NA,,,,Datetime stamp - automatically generated,household level data baseline survey::starttime,LLINEUP2,starttime,chr,09:19.0,NA,NA,>10 unique values,992,0,duplicated variable
+3,date,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::date,LLINEUP2,date,chr,4/11/21,date?,%Y-%m-%d,>10 unique values,26,0,duplicated variable
+4,survey,household level data baseline survey,keep,,,Survey round,"1 - Baseline
+2 <U+2013> 12-month
+3 <U+2013> 24-month
+4 - 36-month",,,,automatically generated,household level data baseline survey::survey,LLINEUP2,survey,chr,Baseline,NA,NA,Baseline,1,0,NA
+5,mrccode,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::mrccode,LLINEUP2,mrccode,int,15,NA,NA,6 to 63,12,0,duplicated variable
+6,mrcname,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::mrcname,LLINEUP2,mrcname,chr,OPIA HCIII,NA,NA,>10 unique values,12,0,NA
+7,village,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::village,LLINEUP2,village,int,110280805,NA,NA,108030101 to 223030105,37,0,NA
+8,vcode,household level data baseline survey,discard,,,Village,NA,,,,Dropdown of Village - From UMSP database,household level data baseline survey::vcode,LLINEUP2,vcode,int,1,NA,NA,1 to 7,7,0,NA
+9,region,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::region,LLINEUP2,Region,int,3,NA,NA,1 to 7,6,0,duplicated variable
+10,llinarm,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::llinarm,LLINEUP2,LLINarm,int,1,NA,NA,1 to 2,2,0,duplicated variable
+11,llindistmonth,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::llindistmonth,LLINEUP2,LLINdistmonth,int,731,NA,NA,731 to 734,2,0,duplicated variable
+12,hhnum,household level data baseline survey,discard,,,Household number,NA,,,,4 digits,household level data baseline survey::hhnum,LLINEUP2,hhnum,int,40,NA,NA,1 to 721,398,0,NA
+13,hhid,household level data baseline survey,discard,,,Household ID,NA,,,,"9-digit number generated at the time of the first HH visit, composed of the following:
+
+Survey: 1 digit
+MRC: 2 digits [01-70]
+village code: 2 digits [01-99]
+Household number: 4 digits [0001-_ _]
+",household level data baseline survey::hhid,LLINEUP2,hhid,int,115010040,NA,NA,106010004 to 163070043,993,0,duplicated variable
+14,hhid2,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::hhid2,LLINEUP2,hhid2,int,115010040,NA,NA,106010004 to 163070043,992,0,NA
+15,enrolled,household level data baseline survey,discard,,,Household enrolled in the survey?,"1 - Yes
+0 - No",,,,"All criteria for enrollment met?  If yes, skip next question. If no, proceed to next question.",household level data baseline survey::enrolled,LLINEUP2,enrolled,chr,Yes,NA,NA,"No, Yes",2,0,NA
+16,conducting_survey,household level data baseline survey,discard,,,NA,NA,,,,"Used for programing logic, can be ignored for analysis",household level data baseline survey::conducting_survey,LLINEUP2,conducting_survey,chr,Yes,NA,NA,"No, Yes",2,0,NA
+17,exclreason,household level data baseline survey,discard,,,"If not enrolled, reason for exclusion?","1 - Dwelling destroyed or not found
+2 - Household vacant
+3 - Unable to locate adult x 3 attempts 
+4 - No Adult resident aged 18 or older present 
+5-  Adult is not a usual resident, present on the previous night
+6- Adult resident not willing to provide informed consent
+ 
+",,,,From screening form,household level data baseline survey::exclreason,LLINEUP2,exclreason,int,-9,NA,NA,-9 to 4,5,0,NA
+18,npeople,household level data baseline survey,keep,,,How many people live in this household (permanent residents)?,NA,,,,NA,household level data baseline survey::npeople,LLINEUP2,npeople,int,4,NA,NA,-9 to 14,15,0,NA
+19,numpeop,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::numpeop,LLINEUP2,NUMPEOP,int,4,NA,NA,1 to 14,14,0.361530715,NA
+20,approachclinical,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::approachclinical,LLINEUP2,approachclinical,int,2,NA,NA,0 to 7,8,0.361530715,NA
+21,clinicaldone,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::clinicaldone,LLINEUP2,clinicaldone,int,2,NA,NA,0 to 6,7,0.361530715,NA
+22,approachhb,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::approachhb,LLINEUP2,approachHb,int,0,NA,NA,0 to 3,4,0.361530715,NA
+23,hbdone,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::hbdone,LLINEUP2,Hbdone,int,0,NA,NA,0 to 3,4,0.361530715,duplicated variable
+24,swater,household level data baseline survey,keep,,,What is the main source of drinking water for members of your household?,"10 - borehole
+11 - pipe into dwelling
+12 - piped into yard/compound
+13 - public tap
+21 - open well in yard/compound
+22 - open public well
+31 - protected well in yard/compound
+32 - protected public well
+41 - protected spring
+42 - unprotected spring
+43 - river/stream
+44 - pond/lake
+45 - dam
+51 - rainwater
+61 - water truck
+71 - bottled water
+96 - other
+-8: Refused to answer",,,,NA,household level data baseline survey::swater,LLINEUP2,swater,int,41,NA,NA,-9 to 42,11,0,NA
+25,swatercol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::swatercol,LLINEUP2,swaterCOL,int,3,NA,NA,-9 to 3,4,0,NA
+26,otherscs,household level data baseline survey,keep,,,Specify other source of water,NA,,,,NA,household level data baseline survey::otherscs,LLINEUP2,otherscs,int,-9,NA,NA,-9 to -9,1,0,NA
+27,tfaclty,household level data baseline survey,keep,,,What kind of toilet facility do members of your household usually use?,"1 - flush toilet
+2 - vip latrine
+3 - covered pit latrine no slab
+4 - covered pit latrine w/slab
+5 - uncovered pit latrine no slab
+6 - uncovered pit latrine w/slab
+7 - composting  toilet
+8 - no facility/bush/field
+96 - other
+-8: Refused to answer",,,,NA,household level data baseline survey::tfaclty,LLINEUP2,tfaclty,int,6,NA,NA,-9 to 8,9,0,NA
+28,tfacltycol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::tfacltycol,LLINEUP2,tfacltyCOL,int,3,NA,NA,-9 to 4,5,0,NA
+29,sanitationcat,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::sanitationcat,LLINEUP2,sanitationcat,int,0,NA,NA,-9 to 1,3,0,NA
+30,otherfcy,household level data baseline survey,keep,,,Specify other kind of toilet facilities,NA,,,,NA,household level data baseline survey::otherfcy,LLINEUP2,otherfcy,int,-9,NA,NA,-9 to -9,1,0,NA
+31,fueltype,household level data baseline survey,keep,,,What type of fuel does your household mainly use for cooking?,"1 - electricity
+2 - lpg/natural gas
+3 - biogas
+4 - paraffin/kerosene
+5 - charcoal
+6 - firewood
+7 - straw/shrubs/grass
+8 - animal dung
+95 - no food cooked in household
+96 - other
+-8: Refused to answer",,,,NA,household level data baseline survey::fueltype,LLINEUP2,fueltype,int,6,NA,NA,-9 to 7,6,0,NA
+32,fueltypecol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::fueltypecol,LLINEUP2,fueltypeCOL,int,3,NA,NA,-9 to 3,4,0,NA
+33,otherfuel,household level data baseline survey,keep,,,Specify other type of fuel used,NA,,,,NA,household level data baseline survey::otherfuel,LLINEUP2,otherfuel,int,-9,NA,NA,-9 to -9,1,0,NA
+34,senergy,household level data baseline survey,keep,,,What is the main source of energy for lighting in the household?,"1 - electricity
+2 - solar
+3 - gas
+4 - paraffin - hurricane lamp
+5 - paraffin - pressure lamp
+6 - paraffin - wick lamp
+7 - firewood
+8 - candles
+9 - torch/battery powered lamp
+96 - other
+-8: Refused to answer",,,,NA,household level data baseline survey::senergy,LLINEUP2,senergy,int,6,NA,NA,-9 to 9,9,0,NA
+35,senergycol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::senergycol,LLINEUP2,senergyCOL,int,2,NA,NA,-9 to 3,4,0,NA
+36,othereng,household level data baseline survey,keep,,,Specify other source of energy for lighting,NA,,,,NA,household level data baseline survey::othereng,LLINEUP2,othereng,int,-9,NA,NA,-9 to -9,1,0,NA
+37,mmfloor,household level data baseline survey,keep,,,"MAIN MATERIAL OF THE FLOOR 
+ 
+RECORD OBSERVATION.","11 - earth or sand
+12 - earth and dung
+31 - parquet or polished wood
+33 - mosaic or tiles
+34 - bricks
+35 - cement/concrete
+36 - stones
+96 - other
+-9: Skipped",,,,NA,household level data baseline survey::mmfloor,LLINEUP2,mmfloor,chr,earth and dung,NA,NA,"Skipped, bricks, cement/concrete, earth and dung, earth or sand",5,0,NA
+38,mmfloorcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::mmfloorcol,LLINEUP2,mmfloorCOL,int,0,NA,NA,-9 to 1,3,0,NA
+39,othermmf,household level data baseline survey,keep,,,Specify other material of the floor,NA,,,,NA,household level data baseline survey::othermmf,LLINEUP2,othermmf,int,-9,NA,NA,-9 to -9,1,0,NA
+40,mmroof,household level data baseline survey,keep,,,"MAIN MATERIAL OF THE ROOF.
+  
+RECORD OBSERVATION.","11 - thatched (including papyrus)
+12 - mud
+21 - wood/planks
+22 - iron sheets
+23 - asbestos
+24 - tiles
+25 - tin
+26 - cement
+96 - other
+-9: Skipped",,,,NA,household level data baseline survey::mmroof,LLINEUP2,mmroof,chr,thatched (including papyrus),NA,NA,"Skipped, cement, iron sheets, mud, thatched (including papyrus)",5,0,NA
+41,mmroofcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::mmroofcol,LLINEUP2,mmroofCOL,int,0,NA,NA,-9 to 1,3,0,NA
+42,othermmr,household level data baseline survey,keep,,,Specify other material of the roof,NA,,,,NA,household level data baseline survey::othermmr,LLINEUP2,othermmr,int,-9,NA,NA,-9 to -9,1,0,NA
+43,mmewalls,household level data baseline survey,keep,,,"MAIN MATERIAL OF THE EXTERIOR WALLS.
+  
+RECORD OBSERVATION.","11 - thatched/straw
+21 - mud and poles
+22 - un-burnt bricks
+23 - un-burnt bricks with plaster/cement
+24 - burnt bricks with mud
+31 - cement blocks
+32 - stone
+33 - timber
+34 - burnt bricks with plaster/cement
+35 - iron sheets
+96 - other
+-9: Skipped",,,,NA,household level data baseline survey::mmewalls,LLINEUP2,mmewalls,chr,mud and poles,NA,NA,"Skipped, burnt bricks with mud, burnt bricks with plaster/cement, cement blocks, mud and poles, thatched/straw, un-burnt bricks, un-burnt bricks with plaster/cement",8,0,NA
+44,mmewallscol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::mmewallscol,LLINEUP2,mmewallsCOL,int,0,NA,NA,-9 to 1,3,0,NA
+45,othermme,household level data baseline survey,keep,,,Specify other material of the exterior walls,NA,,,,NA,household level data baseline survey::othermme,LLINEUP2,othermme,int,-9,NA,NA,-9 to -9,1,0,NA
+46,eaves,household level data baseline survey,keep,,,Does the household have eaves?,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::eaves,LLINEUP2,eaves,int,0,NA,NA,-9 to 1,3,0,NA
+47,eavetype,household level data baseline survey,keep,,,"TYPE OF EAVES.
+  
+RECORD OBSERVATION.","1 - Open
+2 - Closed",,,,NA,household level data baseline survey::eavetype,LLINEUP2,eavetype,int,-9,NA,NA,-9 to 2,3,0,NA
+48,eavecol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::eavecol,LLINEUP2,eaveCOL,int,1,NA,NA,1 to 3,3,0.361530715,NA
+49,housetype,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::housetype,LLINEUP2,housetype,int,0,NA,NA,0 to 1,2,0.361530715,NA
+50,windows,household level data baseline survey,keep,,,Does the household have windows?,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::windows,LLINEUP2,windows,int,0,NA,NA,-9 to 1,3,0,NA
+51,covered,household level data baseline survey,keep,,,"Are any of the windows covered?
+
+Glass, screening, other material, etc.","1 - Yes
+0 - No",,,,NA,household level data baseline survey::covered,LLINEUP2,covered,int,-9,NA,NA,-9 to 1,3,0,NA
+52,screened,household level data baseline survey,keep,,,Are any of the windows screened?,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::screened,LLINEUP2,screened,chr,No,NA,NA,No,1,0,NA
+53,hhrooms,household level data baseline survey,keep,,,"How many rooms in your household  are used for sleeping?
+
+(INCLUDING ROOMS OUTSIDE THE MAIN DWELLING)
+
+If there are 15 or more rooms, enter 15","-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::hhrooms,LLINEUP2,hhrooms,int,2,NA,NA,-9 to 8,9,0,NA
+54,crowding,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::crowding,LLINEUP2,crowding,dbl,2,NA,NA,0.5 to 8,38,0.361530715,NA
+55,crowdingcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::crowdingcol,LLINEUP2,crowdingCOL,int,1,NA,NA,0 to 1,2,0.361530715,NA
+56,hhspaces,household level data baseline survey,keep,,,"How many sleeping spaces like mats, mattresses,  or beds are available in your household?
+
+If there are 25 or more sleeping places, enter 25","-7: Don't know
+-8: Refused to answer",,,,cannot be less than hhrooms,household level data baseline survey::hhspaces,LLINEUP2,hhspaces,int,2,NA,NA,-9 to 10,10,0,NA
+57,electricity,household level data baseline survey,keep,,,"Does your household have...
+
+...Electricity?","1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::electricity,LLINEUP2,electricity,int,0,NA,NA,-9 to 1,3,0,NA
+58,radio,household level data baseline survey,keep,,,...Radio?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::radio,LLINEUP2,radio,int,0,NA,NA,-9 to 1,3,0,NA
+59,cassette,household level data baseline survey,keep,,,<U+2026>Cassette player?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::cassette,LLINEUP2,cassette,int,0,NA,NA,-9 to 1,3,0,NA
+60,tv,household level data baseline survey,keep,,,<U+2026>Television?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::tv,LLINEUP2,tv,int,0,NA,NA,-9 to 1,3,0,NA
+61,fridge,household level data baseline survey,keep,,,<U+2026>Refrigerator?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::fridge,LLINEUP2,fridge,int,0,NA,NA,-9 to 1,3,0,NA
+62,tble,household level data baseline survey,keep,,,<U+2026>Table?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::tble,LLINEUP2,tble,int,1,NA,NA,-9 to 1,3,0,NA
+63,chair,household level data baseline survey,keep,,,<U+2026>Chairs?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::chair,LLINEUP2,chair,int,1,NA,NA,-9 to 1,3,0,NA
+64,sofa,household level data baseline survey,keep,,,<U+2026>Sofa set?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::sofa,LLINEUP2,sofa,int,0,NA,NA,-9 to 1,3,0,NA
+65,bed,household level data baseline survey,keep,,,<U+2026>Bed?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::bed,LLINEUP2,bed,int,0,NA,NA,-9 to 1,3,0,NA
+66,cupboard,household level data baseline survey,keep,,,<U+2026>Cupboard?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::cupboard,LLINEUP2,cupboard,int,0,NA,NA,-9 to 1,3,0,NA
+67,clock,household level data baseline survey,keep,,,<U+2026>Clock?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::clock,LLINEUP2,clock,int,0,NA,NA,-9 to 1,3,0,NA
+68,mobile,household level data baseline survey,keep,,,"Does any member of your household own or have<U+2026>
+
+ <U+2026>Mobile phone?","1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::mobile,LLINEUP2,mobile,int,0,NA,NA,-9 to 1,3,0,NA
+69,watch,household level data baseline survey,keep,,,<U+2026>A watch?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::watch,LLINEUP2,watch,int,0,NA,NA,-9 to 1,3,0,NA
+70,bicycle,household level data baseline survey,keep,,,<U+2026>.A bicycle?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::bicycle,LLINEUP2,bicycle,int,0,NA,NA,-9 to 1,3,0,NA
+71,scooter,household level data baseline survey,keep,,,<U+2026>A motorcycle or motor scooter?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::scooter,LLINEUP2,scooter,int,0,NA,NA,-9 to 1,3,0,NA
+72,car,household level data baseline survey,keep,,,<U+2026>A car or truck?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::car,LLINEUP2,car,int,0,NA,NA,-9 to 1,3,0,NA
+73,mboat,household level data baseline survey,keep,,,<U+2026>A boat with a motor?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::mboat,LLINEUP2,mboat,int,0,NA,NA,-9 to 0,2,0,NA
+74,nomboat,household level data baseline survey,keep,,,<U+2026>A boat without a  motor?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::nomboat,LLINEUP2,nomboat,int,0,NA,NA,-9 to 0,2,0,NA
+75,bankacco,household level data baseline survey,keep,,,<U+2026>A bank account?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::bankacco,LLINEUP2,bankacco,int,0,NA,NA,-9 to 1,3,0,NA
+76,internet,household level data baseline survey,keep,,,<U+2026>A device that can be used to access the internet?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::internet,LLINEUP2,internet,int,0,NA,NA,-9 to 1,4,0,NA
+77,device,household level data baseline survey,keep,,,"<U+2026>If yes, what type of device?","1 <U+2013> Smartphone
+2 <U+2013> Tablet 
+3 <U+2013> Laptop computer
+4 <U+2013> Desktop computer 
+-7: Don't know",,,,"Multiple response question; Comma separated list of each item selected
+For example if 'Tablet' and 'Laptop computer' were both selected, 
+the response would be: ""2,3""",household level data baseline survey::device,LLINEUP2,device,int,-9,NA,NA,-9 to 6,4,0,NA
+78,devicecol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::devicecol,LLINEUP2,deviceCOL,int,-9,NA,NA,-9 to 2,3,0,NA
+79,smartphone,household level data baseline survey,keep,,,<U+2026>Smartphone,"1 - Yes
+0 - No",,,,"Individual responses for the 'decice' question.  For example, if 'Tablet' and 'Laptop computer' were both selected, the responses would be:
+smartphone = 0
+tablet = 1
+laptop = 1
+desktop = 0",household level data baseline survey::smartphone,LLINEUP2,smartphone,int,-9,NA,NA,-9 to 1,2,0,NA
+80,tablet,household level data baseline survey,keep,,,<U+2026>Tablet,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::tablet,LLINEUP2,tablet,int,-9,NA,NA,-9 to 1,3,0,NA
+81,laptop,household level data baseline survey,keep,,,<U+2026>laptop,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::laptop,LLINEUP2,laptop,int,-9,NA,NA,-9 to 1,3,0,NA
+82,desktop,household level data baseline survey,keep,,,<U+2026>desktop,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::desktop,LLINEUP2,desktop,int,-9,NA,NA,-9 to 0,2,0,NA
+83,numaland,household level data baseline survey,keep,,,"How many acres of agricultural land do members of this household own?
+
+IF NONE, ENTER '0'
+IF 10,000 OR MORE, ENTER 10,000","-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::numaland,LLINEUP2,numaland,dbl,1,NA,NA,-9 to 10000,37,0,NA
+84,numalandcol,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::numalandcol,LLINEUP2,numalandCOL,int,2,NA,NA,1 to 4,4,0.361530715,NA
+85,numalanddich,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::numalanddich,LLINEUP2,numalanddich,int,0,NA,NA,0 to 1,2,0.361530715,NA
+86,wealthindex,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::wealthindex,LLINEUP2,wealthindex,dbl,-2.302829981,NA,NA,-3.59363579750061 to 6.20769500732422,311,0.361530715,NA
+87,wealthcat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::wealthcat,LLINEUP2,wealthcat,chr,Poorest,NA,NA,"Least poor, Middle, Poorest, NA",3,0.361530715,NA
+88,dmarkt,household level data baseline survey,keep,,,How far is it to the nearest market place?,"-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::dmarkt,LLINEUP2,dmarkt,dbl,1,NA,NA,-9 to 8,30,0,NA
+89,dmarktcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::dmarktcol,LLINEUP2,dmarktCOL,int,1,NA,NA,-9 to 1,3,0,NA
+90,hhmeals,household level data baseline survey,keep,,,"Now I would like to ask you about the food your household eats.
+How many meals does your household usually have per day?",-8: Refused to answer,,,,NA,household level data baseline survey::hhmeals,LLINEUP2,hhmeals,int,2,NA,NA,-9 to 6,7,0,NA
+91,hhmealscat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::hhmealscat,LLINEUP2,hhmealscat,int,2,NA,NA,-9 to 4,5,0,NA
+92,hhnumt,household level data baseline survey,keep,,,"In the past week, on how many days did the household eat meat?",-8: Refused to answer,,,,NA,household level data baseline survey::hhnumt,LLINEUP2,hhnumt,int,1,NA,NA,-9 to 7,10,0,NA
+93,hhnumtcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::hhnumtcol,LLINEUP2,hhnumtCOL,int,1,NA,NA,-9 to 1,4,0,NA
+94,hhnumtcat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::hhnumtcat,LLINEUP2,hhnumtcat,int,1,NA,NA,0 to 3,4,0.362537764,NA
+95,hhpsf,household level data baseline survey,keep,,,How often in the last year did you have problems in  satisfying the  food needs of the household?,"1 - never
+2 - seldom
+3 - sometimes
+4 - often
+5 - always
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::hhpsf,LLINEUP2,hhpsf,int,4,NA,NA,-9 to 5,6,0,NA
+96,hhpsfcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::hhpsfcol,LLINEUP2,hhpsfCOL,int,0,NA,NA,-9 to 2,4,0,NA
+97,dhfcty,household level data baseline survey,keep,,,"How far is it to the nearest health facility?
+
+If less than 1 km, enter 0
+If more than 100 km, enter 100","-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::dhfcty,LLINEUP2,dhfcty,dbl,1,NA,NA,-9 to 8,30,0,NA
+98,dhfctycat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::dhfctycat,LLINEUP2,dhfctycat,int,1,NA,NA,0 to 4,5,0,NA
+99,mthfcty,household level data baseline survey,keep,,,"If you were to go this facility,how would you most likely go there?","1 - car/motorcycle
+2 - public transport(bus,taxi)
+3 - animal/animal cart
+4 - walking
+5 - bicycle
+7 - boat
+96 - other
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::mthfcty,LLINEUP2,mthfcty,int,5,NA,NA,-9 to 5,4,0,NA
+100,mthfctycol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::mthfctycol,LLINEUP2,mthfctyCOL,int,1,NA,NA,-9 to 1,3,0,NA
+101,othermth,household level data baseline survey,keep,,,Specify other means of transport to the health facility,NA,,,,NA,household level data baseline survey::othermth,LLINEUP2,othermth,int,-9,NA,NA,-9 to -9,1,0,NA
+102,ahwker,household level data baseline survey,keep,,,"Is there a community health worker (community medicine distributor/CMD, village health team/VHT, community own resource person/CORP) who distributes malaria medicines in your village or community?","1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::ahwker,LLINEUP2,ahwker,int,1,NA,NA,-9 to 1,4,0,NA
+103,amchwker,household level data baseline survey,keep,,,Does the community health worker currently have malaria medicines available?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::amchwker,LLINEUP2,amchwker,int,1,NA,NA,-9 to 1,4,0,NA
+104,pspray,household level data baseline survey,keep,,,"At any time in the past 12 months, has anyone asked permission to come into your dwelling to spray the interior walls against mosquitoes?","1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::pspray,LLINEUP2,pspray,int,0,NA,NA,-9 to 1,4,0,NA
+105,gpspray,household level data baseline survey,keep,,,Did you grant them permission to spray the interior walls of your dwelling?,"1 - Yes
+0 - No",,,,NA,household level data baseline survey::gpspray,LLINEUP2,gpspray,chr,No,NA,NA,"No, Yes",2,0,NA
+106,rgspray,household level data baseline survey,keep,,,"What was the primary reason that you did not grant permission to spray the interior walls of your dwelling against mosquitoes?
+
+DO NOT PROMPT.","1 - had a sick person/baby
+2 - spraying not effective against mosquitoes
+3 - spraying chemicals are harmful
+4 - someone in the house was pregnant
+96 - other
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::rgspray,LLINEUP2,rgspray,int,-9,NA,NA,-9 to 96,2,0,NA
+107,otherrgs,household level data baseline survey,keep,,,Specify other reasons for not granting permission to spray the interior walls of your dwelling against mosquitoes,NA,,,,NA,household level data baseline survey::otherrgs,LLINEUP2,otherrgs,chr,-9,NA,NA,"-9, WAS AWAY IN THE FARM LAND OUTSIDE STUDY AREA",2,0,NA
+108,cov_spray,household level data baseline survey,keep,,,Would you be less likely to allow someone into your house to spray the interior walls of your dwelling against mosquitoes during this period of the Coronavirus pandemic?,"1-	yes 
+0-	no 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_spray,LLINEUP2,cov_spray,int,1,NA,NA,-9 to 1,5,0,NA
+109,tspray,household level data baseline survey,keep,,,"How many months ago was the dwelling last sprayed?
+
+If less than 1 month, enter 0",-8: Refused to answer,,,,NA,household level data baseline survey::tspray,LLINEUP2,tspray,int,-9,NA,NA,-9 to 12,3,0,NA
+110,receivenet,household level data baseline survey,keep,,,Bednets were distributed in your community on <<Dates >> (programmed to know MRC date of distribution)  Did you receive one or more bednets in the recent net campaign (Universal Coverage Campaign) led by the Ministry of Health?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::receivenet,LLINEUP2,receivenet,int,1,NA,NA,-9 to 1,3,0,NA
+111,manynet,household level data baseline survey,keep,,,"If yes <U+2013> 
+How many nets did you receive? 
+",NA,,,,NA,household level data baseline survey::manynet,LLINEUP2,manynet,int,1,NA,NA,-9 to 8,8,0,NA
+112,manynetcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::manynetcol,LLINEUP2,manynetCOL,int,1,NA,NA,0 to 4,5,0.361530715,NA
+113,manynow,household level data baseline survey,keep,,,How many nets from the campaign do you still have?,NA,,,,NA,household level data baseline survey::manynow,LLINEUP2,manynow,int,1,NA,NA,-9 to 8,9,0,NA
+114,manynowcol,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::manynowcol,LLINEUP2,manynowCOL,int,1,NA,NA,0 to 4,5,0.361530715,NA
+115,nettype,household level data baseline survey,keep,,,What type of nets did you receive,"1 : Royal Guard
+2 :  Permanet 3.0
+3:  Other
+-7: Don<U+2019>t Know
+-8: Refused to answer",,,,NA,household level data baseline survey::nettype,LLINEUP2,nettype,chr,Permanet 3.0,NA,NA,"No nets recieved, Permanet 3.0, Royal Guard, NA",3,0.361530715,NA
+116,othernet,household level data baseline survey,keep,,,Please specify other net type,NA,,,,NA,household level data baseline survey::othernet,LLINEUP2,othernet,int,-9,NA,NA,-9 to -9,1,0,NA
+117,neteduc,household level data baseline survey,keep,,,Did you receive any education on how to hang(or use) the bednets prior to or during distribution?,"1 - Yes
+0 - No
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::neteduc,LLINEUP2,neteduc,int,0,NA,NA,-9 to 1,4,0,NA
+118,whynonet,household level data baseline survey,keep,,,"If no, why did you not receive nets?","1 <U+2013> No nets were delivered to the area (village or parish) 
+2 <U+2013> We did not go to collect the nets
+3 <U+2013> We were never told to collect the nets 
+4 <U+2013>We were told our household did not need nets
+5 <U+2013>We were away when the nets were distributed 
+6 <U+2013>The local leaders refused to accept the nets 
+7 <U+2013> Given to a child to take to boarding school 
+8 <U+2013> Other
+-7: Don't know
+-8: Refused to answer",,,,NA,household level data baseline survey::whynonet,LLINEUP2,whynonet,int,-9,NA,NA,-9 to 10,7,0,NA
+119,whyother,household level data baseline survey,keep,,,Please specify other reason,NA,,,,NA,household level data baseline survey::whyother,LLINEUP2,whyother,chr,-9,NA,NA,>10 unique values,11,0,NA
+120,havenets,household level data baseline survey,keep,,,Does your household have any mosquito nets that can be used while sleeping?,"1-	yes 
+0-	no 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::havenets,LLINEUP2,havenets,int,1,NA,NA,-9 to 1,3,0,NA
+121,nnets,household level data baseline survey,keep,,,How many bednets do you currently have in your household?,NA,,,,Consecutive number starting with 1 and continuing for all nets in the house,household level data baseline survey::nnets,LLINEUP2,nnets,int,1,NA,NA,-9 to 9,11,0,NA
+122,totalnet,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalnet,LLINEUP2,totalnet,int,1,NA,NA,0 to 9,10,0.361530715,NA
+123,totalnetcat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalnetcat,LLINEUP2,totalnetcat,int,1,NA,NA,0 to 4,5,0.361530715,NA
+124,totalllin,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalllin,LLINEUP2,totalLLIN,int,1,NA,NA,0 to 9,10,0.361530715,NA
+125,totalllincat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalllincat,LLINEUP2,totalLLINcat,int,1,NA,NA,0 to 4,5,0.361530715,NA
+126,totalpermanet,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalpermanet,LLINEUP2,totalPermaNet,int,1,NA,NA,0 to 8,8,0.361530715,NA
+127,totalpermanetcat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalpermanetcat,LLINEUP2,totalPermaNetcat,int,1,NA,NA,0 to 4,5,0.361530715,NA
+128,totalroyalguard,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalroyalguard,LLINEUP2,totalRoyalGuard,int,0,NA,NA,0 to 8,8,0.361530715,NA
+129,totalroyalguardcat,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::totalroyalguardcat,LLINEUP2,totalRoyalGuardcat,int,0,NA,NA,0 to 4,5,0.361530715,NA
+130,anynetdich,household level data baseline survey,discard,,,NA,NA,,duplicates the variable havenets,,NA,household level data baseline survey::anynetdich,LLINEUP2,ANYnetdich,int,1,NA,NA,0 to 1,2,0.361530715,NA
+131,anyllindich,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::anyllindich,LLINEUP2,ANYLLINdich,int,1,NA,NA,0 to 1,2,0.361530715,NA
+132,anypndich,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::anypndich,LLINEUP2,ANYPNdich,int,1,NA,NA,0 to 1,2,0.361530715,NA
+133,anyrgdich,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::anyrgdich,LLINEUP2,ANYRGdich,int,0,NA,NA,0 to 1,2,0.361530715,NA
+134,netsperperson,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::netsperperson,LLINEUP2,NETSPERPERSON,dbl,0.25,NA,NA,0 to 4,44,0.361530715,NA
+135,llinsperperson,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::llinsperperson,LLINEUP2,LLINSPERPERSON,dbl,0.25,NA,NA,0 to 4,44,0.361530715,NA
+136,pnperperson,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::pnperperson,LLINEUP2,PNPERPERSON,dbl,0.25,NA,NA,0 to 2,30,0.361530715,NA
+137,rgperperson,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::rgperperson,LLINEUP2,RGPERPERSON,dbl,0,NA,NA,0 to 2,32,0.361530715,NA
+138,adequatenets,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::adequatenets,LLINEUP2,ADEQUATENETS,int,0,NA,NA,0 to 1,2,0.361530715,NA
+139,adequatellins,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::adequatellins,LLINEUP2,ADEQUATELLINS,int,0,NA,NA,0 to 1,2,0.361530715,NA
+140,adequatepn,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::adequatepn,LLINEUP2,ADEQUATEPN,int,0,NA,NA,0 to 1,2,0.361530715,NA
+141,adequaterg,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::adequaterg,LLINEUP2,ADEQUATERG,int,0,NA,NA,0 to 1,2,0.361530715,NA
+142,cov_hear,household level data baseline survey,keep,,,"Have you heard of the coronavirus (Covid-19, ""Corona"", SARS-COV-2)?
+","1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer
+
+",,,,NA,household level data baseline survey::cov_hear,LLINEUP2,cov_hear,int,1,NA,NA,-9 to 1,3,0,NA
+143,cov_spread,household level data baseline survey,keep,,,How can the coronavirus be spread?,"1 <U+2013> cough/sneeze
+2 <U+2013> face to face talking 
+3- handshakes/hugs/touch
+4 <U+2013> indirect hand contact (touching an item someone else has touched)
+5- food
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer
+",,,,NA,household level data baseline survey::cov_spread,LLINEUP2,cov_spread,chr,"1,2,4",NA,NA,>10 unique values,18,0,NA
+144,cov_sx,household level data baseline survey,keep,,,"If you had symptoms like cough, fever, and sore throat, what would you do?","1 <U+2013> Stay at home and wait to get better 
+2 <U+2013> Use stored medicine at home 
+3 <U+2013> Contact health worker 
+4 <U+2013> Seek antibiotics 
+5 <U+2013> Visit health facility
+6 <U+2013> Visit a pharmacy 
+7 <U+2013> Visit private hospital 
+8 <U+2013> Visit traditional medicine practioner 
+9 - Go for a test
+10 - Call the ministry of health helpline 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_sx,LLINEUP2,cov_sx,chr,"3,5",NA,NA,>10 unique values,48,0,NA
+145,cov_daily,household level data baseline survey,keep,,,Has your daily life been changed/disturbed by the coronavirus?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer
+",,,,NA,household level data baseline survey::cov_daily,LLINEUP2,cov_daily,int,0,NA,NA,-9 to 1,5,0,NA
+146,cov_daily1,household level data baseline survey,keep,,,"If yes to the above, how has your daily life changed?","1 - Lost income
+2 - Transport is more expensive
+3 - Schools are closed 
+4 - Visiting friends/family not allowed
+5 - Unable to provide food for family
+6- Fear of COVID
+7 - Higher prices at the market 
+8 - Church is closed 
+9 - Unable to access needed medication",,,,NA,household level data baseline survey::cov_daily1,LLINEUP2,cov_daily1,chr,-9,NA,NA,>10 unique values,221,0,NA
+147,cov_work,household level data baseline survey,keep,,,Has your work been affected/disrupted by the coronavirus?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer
+",,,,NA,household level data baseline survey::cov_work,LLINEUP2,cov_work,int,0,NA,NA,-9 to 1,3,0,NA
+148,hwcov_work,household level data baseline survey,keep,,,If yes - How has your work been affected/disrupted?,"1 <U+2013> I have had to reduce my work
+2 <U+2013> I am unable to find work
+3 - I am physically unable to work 
+4 - Lost income 
+5 - Fear of getting COVID
+6 - Children at home (schools closed) 
+7 - Unable to garden with group 
+8 - Increased use of mask/SOPs
+-7 <U+2013>  Other                                                                                                                                                                                                            
+-8 <U+2013> refused to answer
+",,,,NA,household level data baseline survey::hwcov_work,LLINEUP2,hwcov_work,int,-9,NA,NA,-9 to 4,6,0,NA
+149,cov_workothr,household level data baseline survey,keep,,,"Other , please specify how your work been affected/disrupted?",NA,,,,NA,household level data baseline survey::cov_workothr,LLINEUP2,cov_workothr,chr,-9,NA,NA,>10 unique values,39,0,NA
+150,cov_cont,household level data baseline survey,keep,,,Do you worry about you or your family contracting the coronavirus?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_cont,LLINEUP2,cov_cont,int,1,NA,NA,-9 to 1,4,0,NA
+151,cov_crowd,household level data baseline survey,keep,,,"Since the news of the coronavirus<U+2026>
+Do you avoid crowded places?","1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_crowd,LLINEUP2,cov_crowd,int,1,NA,NA,-9 to 1,3,0,NA
+152,cov_handwash,household level data baseline survey,keep,,,Do you wash your hands more frequently?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_handwash,LLINEUP2,cov_handwash,int,1,NA,NA,-9 to 1,3,0,NA
+153,cov_sanit,household level data baseline survey,keep,,,Do you have access to hand sanitizer?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_sanit,LLINEUP2,cov_sanit,int,0,NA,NA,-9 to 1,3,0,NA
+154,cov_mask,household level data baseline survey,keep,,,Do you wear a mask outside of the home now because of the coronavirus?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_mask,LLINEUP2,cov_mask,int,1,NA,NA,-9 to 1,3,0,NA
+155,cov_masktype,household level data baseline survey,keep,,,What type of mask do you wear?,"1 <U+2013> bandana/cloth
+2 <U+2013> surgical
+3 <U+2013> N95
+4 - Govt provided mask
+5 - face shield 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_masktype,LLINEUP2,cov_masktype,chr,1,NA,NA,"-7, -9, 1, 1,2, 1,2,3, 2",6,0,NA
+156,othmask,household level data baseline survey,keep,,,Any other type of mask mentioned,NA,,,,NA,household level data baseline survey::othmask,LLINEUP2,othmask,chr,NO,NA,NA,>10 unique values,30,0,NA
+157,cov_nomask,household level data baseline survey,keep,,,"If no, why don't you wear a mask in public?
+","1 <U+2013> I do not have one
+2<U+2014> too expensive
+3 <U+2013> gave to family member
+4 <U+2013> too hot to wear                                                                                                            5 <U+2013> Uncomfortable/cannot breathe well
+6 <U+2013> I don<U+2019>t think it helps 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_nomask,LLINEUP2,cov_nomask,int,-9,NA,NA,-9 to 1245,15,0,NA
+158,oth_nomask,household level data baseline survey,keep,,,Any other reason for not wearing a mask,NA,,,,NA,household level data baseline survey::oth_nomask,LLINEUP2,oth_nomask,chr,-9,NA,NA,>10 unique values,19,0,NA
+159,cov_flu,household level data baseline survey,keep,,,Do you keep physical distance from people with flu-like symptoms or cough?,"1 <U+2013> yes
+2 <U+2013> no
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_flu,LLINEUP2,cov_flu,int,1,NA,NA,-9 to 1,4,0,NA
+160,cov_know,household level data baseline survey,keep,,,Where do you learn/stay up to date about the new coronavirus?,"1 <U+2013> TV (news)
+2 <U+2013> Radio 
+3 <U+2013> Social media
+4 <U+2013> Internet (webpages)
+5 - Friends, relatives or neighbors
+6 <U+2013> Govt officals (local, healthcare workers)
+7 <U+2013>Annoucements at work
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer
+
+",,,,NA,household level data baseline survey::cov_know,LLINEUP2,cov_know,chr,"2,5",NA,NA,>10 unique values,46,0,NA
+161,cov_protect,household level data baseline survey,keep,,,How can you protect yourself against the coronavirus?,"1 <U+2013> Hand washing
+2 <U+2013> Face masks
+3 <U+2013> Hand sanitizer
+4 <U+2013> Social distancing
+5 <U+2013> Vitamins, herbal remedies
+6 <U+2013> Avoiding crowds/public transit
+7 <U+2013>Drinking alcohol 
+8 <U+2013> Changing clothes after coming home
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::cov_protect,LLINEUP2,cov_protect,chr,"1,2,3,4,5",NA,NA,>10 unique values,41,0,NA
+162,hhpsf_covid,household level data baseline survey,keep,,,Have you had additional problems satisifying the food needs of the household since the coronavirus pandemic?,"1 <U+2013> never
+2 <U+2013> seldom
+3 <U+2013> sometimes 
+4 <U+2013> often
+5 <U+2013> always
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::hhpsf_covid,LLINEUP2,hhpsf_covid,int,4,NA,NA,-9 to 5,6,0,NA
+163,hfcty_covid1,household level data baseline survey,keep,,,Did the prior national lockdown due to coronavirus make it more difficult to travel to the nearest health facility?,"1-	Yes
+2-	No
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::hfcty_covid1,LLINEUP2,hfcty_covid1,int,0,NA,NA,-9 to 1,3,0,NA
+164,hfcty_covid2,household level data baseline survey,keep,,,Is public transport to the nearest health facility readily available now?,"1-	yes 
+2-	no 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer
+",,,,NA,household level data baseline survey::hfcty_covid2,LLINEUP2,hfcty_covid2,int,1,NA,NA,-9 to 1,3,0,NA
+165,other_hfcty_cov2,household level data baseline survey,keep,,,Have there been any other effects of the coronavirus pandemic on your ability to access health facilities?,"1 - Do not have masks and masks required to attend HF
+2 - Social distancing protocols make accessing care difficult 
+3 - Staff are fearful of patients 
+4 - I have fear of traveling to HF or of patients at HF 
+5 - Children at home 
+6 - Transport limited
+-7 - Don't know  
+",,,,Free text field,household level data baseline survey::other_hfcty_cov2,LLINEUP2,other_hfcty_cov2,chr,NO,NA,NA,>10 unique values,94,0,NA
+166,hfcty_covid3,household level data baseline survey,keep,,,Have there been any changes you have noticed regarding the care available at your local health facility?,"1 <U+2013> No (or less) medication available
+2 <U+2013> No malaria tests available
+3 <U+2013> Fewer staff present at clinic 
+4 -Masks/SOPs make accessing care more difficult 
+5- Staff are fearful 
+6 -More hand washing 
+7 - Quality of care has worsened
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::hfcty_covid3,LLINEUP2,hfcty_covid3,chr,"1,3",NA,NA,>10 unique values,14,0,NA
+167,other_hfcty_cov3,household level data baseline survey,keep,,,NA,NA,,,,NA,household level data baseline survey::other_hfcty_cov3,LLINEUP2,other_hfcty_cov3,chr,-9,NA,NA,>10 unique values,101,0,NA
+168,travel_cov,household level data baseline survey,keep,,,Has the coronavirus made you less likely to travel?,"1-	yes 
+2-	no 
+-7 <U+2013> don<U+2019>t know
+-8 <U+2013> refused to answer",,,,NA,household level data baseline survey::travel_cov,LLINEUP2,travel_cov,int,1,NA,NA,-9 to 1,3,0,NA
+169,totvisit,household level data baseline survey,discard,,,How many visits have you made to this household?,NA,,,,NA,household level data baseline survey::totvisit,LLINEUP2,totvisit,int,1,NA,NA,1 to 3,3,0,NA
+170,sw_ver,household level data baseline survey,discard,,,NA,NA,,,,NA,household level data baseline survey::sw_ver,LLINEUP2,sw_ver,chr,LLINEUP2 ver.2021.03.23,NA,NA,LLINEUP2 ver.2021.03.23,1,0,NA
+171,stoptime,household level data baseline survey,discard,,,End time of interview,NA,,,,automatically generated,household level data baseline survey::stoptime,LLINEUP2,stoptime,chr,14:29.0,NA,NA,>10 unique values,992,0,duplicated variable
+1,starttime,household member level data baseline survey,discard,,,Date/time of start of interview,NA,,,,Datetime stamp - automatically generated,household member level data baseline survey::starttime,LLINEUP2,starttime,chr,33:15.0,NA,NA,>10 unique values,3338,0,duplicated variable
+2,date,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::date,LLINEUP2,date,chr,5/1/21,date?,%Y-%m-%d,>10 unique values,26,0,duplicated variable
+3,mrccode,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::mrccode,LLINEUP2,mrccode,int,60,NA,NA,6 to 63,12,0,duplicated variable
+4,region,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::region,LLINEUP2,Region,int,7,NA,NA,1 to 7,6,0,duplicated variable
+5,llinarm,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::llinarm,LLINEUP2,LLINarm,int,2,NA,NA,1 to 2,2,0,duplicated variable
+6,llindistmonth,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::llindistmonth,LLINEUP2,LLINdistmonth,int,734,NA,NA,731 to 734,2,0,duplicated variable
+7,hhid,household member level data baseline survey,discard,,,Household ID,NA,,,,"9-digit number generated at the time of the first HH visit, composed of the following:
+
+Survey: 1 digit
+MRC: 2 digits [01-70]
+village code: 2 digits [01-99]
+Household number: 4 digits [0001-_ _]
+",household member level data baseline survey::hhid,LLINEUP2,hhid,int,160010089,NA,NA,106010004 to 163070043,634,0,duplicated variable
+8,linenum,household member level data baseline survey,discard,,,Household member's line number (person answering the survey=1),NA,,,,Consecutive number starting with 1 and continuing for all household members.  (person answering the survey must be 1) Will be used to generate a unique HH member ID number,household member level data baseline survey::linenum,LLINEUP2,linenum,int,5,NA,NA,1 to 14,14,0,duplicated variable
+9,uniqueid,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::uniqueid,LLINEUP2,uniqueid,dbl,16001008905,NA,NA,10601000401 to 16307004310,3342,0,duplicated variable
+10,gender,household member level data baseline survey,keep,,,Gender of [[participantsname]]?,"1 - Male
+2 - Female",,,,Note that I've changed this variable name from 'sex' to 'gender',household member level data baseline survey::gender,LLINEUP2,gender,chr,Male,NA,NA,"Female, Male",2,0,NA
+11,gender01,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::gender01,LLINEUP2,gender01,int,0,NA,NA,0 to 1,2,0,NA
+12,hoh,household member level data baseline survey,discard,,,NA,NA,,,,"Used for programing logic, can be ignored for analysis",household member level data baseline survey::hoh,LLINEUP2,hoh,chr,Not head of household,NA,NA,"Head of household, Not head of household",2,0,NA
+13,relation,household member level data baseline survey,keep,,,What is [[participantsname]]'s relationship to the household head?,"0: Head of household (self)
+1: husband/wife
+2: son/daughter
+3: father/mother
+4: grandson/granddaughter/great-grandson/great-granddaughter
+5: grandmother/grandfather/great-grandmother/great-grandfather
+6: Brother/Sister
+7: Aunt/Uncle 
+8: Cousin
+9: Niece/Nephew
+10: Stepchild
+11: Foster child
+12: Girlfriend
+13: Boyfriend
+14: House helper
+15: Employee
+16: Renter
+17: Student-boarder
+18: Other",,,,NA,household member level data baseline survey::relation,LLINEUP2,relation,chr,son/daughter,NA,NA,>10 unique values,12,0,NA
+14,relation_oth,household member level data baseline survey,keep,,,Enter [[participantsname]]'s relationship to the household head,NA,,,,NA,household member level data baseline survey::relation_oth,LLINEUP2,relation_oth,chr,-9,NA,NA,"-9, DAUGHTER IN LAW, FATHER -IN- LAW, SON IN LAW",4,0,NA
+15,relationcat,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::relationcat,LLINEUP2,relationCAT,int,2,NA,NA,1 to 4,4,0,NA
+16,lessthantwo,household member level data baseline survey,keep,,,Is [[participantsname]] less than 2 years old?,"1 - Yes
+0 - No
+-9: Skipped (fof HoH)",,,,NA,household member level data baseline survey::lessthantwo,LLINEUP2,lessthantwo,chr,No,NA,NA,"No, Yes",2,0,NA
+17,age,household member level data baseline survey,discard,,,"If 2 years or older, record age in years
+",-9 skipped,,,,NA,household member level data baseline survey::age,LLINEUP2,age,int,14,NA,NA,-9 to 90,87,0,duplicated variable
+18,agemonths,household member level data baseline survey,discard,,,"If less than 2 years, record age in months
+",-9 skipped,,,,NA,household member level data baseline survey::agemonths,LLINEUP2,agemonths,dbl,-9,NA,NA,-9 to 23,24,0,NA
+19,ageforlogic,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::ageforlogic,LLINEUP2,ageforlogic,int,14,NA,NA,0 to 90,87,0,NA
+20,ageyrs,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::ageyrs,LLINEUP2,ageyrs,dbl,14,NA,NA,0.0416666679084301 to 90,109,0,NA
+21,agecat,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::agecat,LLINEUP2,agecat,int,2,NA,NA,1 to 3,3,0,NA
+22,agecat2,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::agecat2,LLINEUP2,agecat2,int,1,NA,NA,1 to 3,3,0,NA
+23,hm_malaria,household member level data baseline survey,keep,,,In the past 6 months has this household member been treated for malaria?,"1 - Yes
+0 - No
+-7 - Don't know",,,,NA,household member level data baseline survey::hm_malaria,LLINEUP2,hm_malaria,chr,No,NA,NA,"Don't know, No, Yes",3,0,NA
+24,hm_malaria_mrc,household member level data baseline survey,keep,,,"If so, were they diagnosed with malaria at [specific UMSP MRC]? (if treated more than once, only focus on last treatment for malaria)","1 - Yes
+0 - No",,,,NA,household member level data baseline survey::hm_malaria_mrc,LLINEUP2,hm_malaria_mrc,int,-9,NA,NA,-9 to 1,3,0,NA
+25,hm_seekcare,household member level data baseline survey,keep,,,"If no to the above,  who provided their treatment for malaria (again, just focus on the last treatment for malaria) - tick only one","1-Other public health facility  
+2-Traditional healer
+3-Private pharmacy
+4-Private health facility
+5-Community Health Worker 
+6-Self-treatment  with none of the above involved
+7-Other, specify 
+-7 - Don't know",,,,NA,household member level data baseline survey::hm_seekcare,LLINEUP2,hm_seekcare,int,-9,NA,NA,-9 to 8,7,0,NA
+26,seekcare_oth,household member level data baseline survey,keep,,,Specify other place where household member was treated for malaria,NA,,,,NA,household member level data baseline survey::seekcare_oth,LLINEUP2,seekcare_oth,chr,-9,NA,NA,"-9, ADJUMANI HOSPITAL, DRUG SHOP, OUTREACH, SCHOOL CLINIC, SCHOOL DISPENSARY",6,0,NA
+27,fever2wks,household member level data baseline survey,keep,,,"In the past two weeks, did this household member have fever related illness?","1 - Yes
+0 - No
+-7 - Don't know",,,,NA,household member level data baseline survey::fever2wks,LLINEUP2,fever2wks,chr,No,NA,NA,"No, Yes",2,0,NA
+28,fever2wks_act,household member level data baseline survey,keep,,,"If yes to the above, where did the household member seek care? (tick all that apply)","OLD CODES FROM BASELINE
+0-[specific UMSP MRC]
+1-Other public health facility  
+2-Traditional healer
+3-Private pharmacy
+4-Private health facility
+5-Community Health Worker 
+6-Self-treatment  with none of the above involved
+7-Other, specify 
+-7 - Don<U+2019>t know",,,,NA,household member level data baseline survey::fever2wks_act,LLINEUP2,fever2wks_act,int,-9,NA,NA,-9 to 9,9,0,NA
+29,fever2wks_oth,household member level data baseline survey,keep,,,Specify other place where household member sought care for fever,NA,,,,preskip here,household member level data baseline survey::fever2wks_oth,LLINEUP2,fever2wks_oth,chr,-9,NA,NA,"-9, DRUG SHOP, HAD NOT YET GOT TREATMENT, N/A, NEVER WENT FOR TREATMENT, NO TREATMENT GIVEN, NOT APPLICABLE, NOT TAKEN FOR CARE, NOT YET TAKEN TO THE HEALTH FACILITY, SCHOOL  DISPENSARY",10,0,NA
+30,fever2wks_dich,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::fever2wks_dich,LLINEUP2,fever2wks_dich,int,1,NA,NA,0 to 1,2,0.910233393,NA
+31,feverandmrc,household member level data baseline survey,discard,,,NA,NA,,combo of fever2wks and fever2wks_act if they were treated at the MRC,,NA,household member level data baseline survey::feverandmrc,LLINEUP2,feverandMRC,int,0,NA,NA,0 to 1,2,0,NA
+32,hm_covid,household member level data baseline survey,keep,,,In the past 9 months has this household member had an illness you suspect was caused by the coronavirus?,"1 - Yes
+0 - No
+-7 - Don't know",,,,NA,household member level data baseline survey::hm_covid,LLINEUP2,hm_covid,chr,No,NA,NA,"No, Yes",2,0,NA
+33,hm_covidtest,household member level data baseline survey,keep,,,"In the past 9 months, has this household member tested positive for the coronavirus?","1 - Yes
+0 - No
+-7 - Don't know",,,,"entered as Yes , No, Skipped options  instead of line number",household member level data baseline survey::hm_covidtest,LLINEUP2,hm_covidtest,chr,No,date?,NA,"No, Yes",2,0,NA
+34,hm_datecovid,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::hm_datecovid,LLINEUP2,hm_datecovid,chr,-9,date?,NA,"-9, 2-10-2020",2,0,NA
+35,netlastnight,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::netlastnight,LLINEUP2,netlastnight,int,1,NA,NA,0 to 1,2,0,NA
+36,llinlastnight,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::llinlastnight,LLINEUP2,LLINlastnight,int,1,NA,NA,0 to 1,2,0,NA
+37,intnum,household member level data baseline survey,discard,,,Interviewer's Number,NA,,,,Each census worker will be assigned a unique ID,household member level data baseline survey::intnum,LLINEUP2,intnum,int,19,NA,NA,11 to 21,10,0.651705566,duplicated variable
+38,age2to10,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::age2to10,LLINEUP2,age2to10,int,0,NA,NA,0 to 1,2,0,NA
+39,inclusion_criteria,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::inclusion_criteria,LLINEUP2,inclusion_criteria,chr,No,NA,NA,"No, Yes",2,0,NA
+40,consent,household member level data baseline survey,keep,,,"Does [[participantsname]] consent to laboratory testing?
+
+(Adult consents if it is a child)","1 - Yes
+0 - No
+2 - Not at home",,,,NA,household member level data baseline survey::consent,LLINEUP2,consent,chr,Not at home,NA,NA,"No, Not at home, Yes, NA",3,0.651705566,duplicated variable
+41,consent2,household member level data baseline survey,keep,,,Does [[participantsname]] consent to future use of biological specimens?,"1 - Yes
+0 - No",,,,NA,household member level data baseline survey::consent2,LLINEUP2,consent2,chr,Skipped,NA,NA,"No, Skipped, Yes, NA",3,0.651705566,duplicated variable
+42,fpbarcode1,household member level data baseline survey,keep,,,Barcode for Filter paper,-9: Skipped,,,,NA,household member level data baseline survey::fpbarcode1,LLINEUP2,fpbarcode1,chr,-9,NA,NA,>10 unique values,838,0.651705566,duplicated variable
+43,fpbarcode2,household member level data baseline survey,discard,,,Re-enter Barcode for Filter paper,-9: Skipped,,,,Barcodes must be the same,household member level data baseline survey::fpbarcode2,LLINEUP2,fpbarcode2,chr,-9,NA,NA,>10 unique values,838,0.651705566,duplicated variable
+44,bsbarcode1,household member level data baseline survey,keep,,,Barcode for blood smear,-9: Skipped,,,,NA,household member level data baseline survey::bsbarcode1,LLINEUP2,bsbarcode1,chr,-9,NA,NA,>10 unique values,838,0.651705566,duplicated variable
+45,bsbarcode2,household member level data baseline survey,discard,,,Re-enter Barcode for blood smear,-9: Skipped,,,,Barcodes must be the same,household member level data baseline survey::bsbarcode2,LLINEUP2,bsbarcode2,chr,-9,NA,NA,>10 unique values,838,0.651705566,duplicated variable
+46,fever,household member level data baseline survey,keep,,,Did [[participantsname]] have a fever in the last 48 hours?,"1 - Yes
+0 - No
+-7: Don't know",,,,NA,household member level data baseline survey::fever,LLINEUP2,fever,int,-9,NA,NA,-9 to 1,3,0.651705566,duplicated variable
+47,temperature,household member level data baseline survey,keep,,,Temperature of [[participantsname]]?,-8 Refused,,,,NA,household member level data baseline survey::temperature,LLINEUP2,temperature,dbl,-9,NA,NA,-9 to 38.7000007629395,42,0.651705566,duplicated variable
+48,elevatedtemp,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::elevatedtemp,LLINEUP2,elevatedtemp,int,0,date?,NA,0 to 1,2,0.749551167,duplicated variable
+49,febrile,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::febrile,LLINEUP2,febrile,int,0,NA,NA,0 to 1,2,0.749551167,duplicated variable
+50,rdtdone,household member level data baseline survey,keep,,,RDT Done?,"1 - Yes
+0 - No",,,,NA,household member level data baseline survey::rdtdone,LLINEUP2,rdtdone,int,-9,date?,NA,-9 to 1,3,0.651705566,duplicated variable
+51,rdtiffebrile,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::rdtiffebrile,LLINEUP2,RDTiffebrile,int,1,date?,NA,0 to 1,2,0.876720527,duplicated variable
+52,rdtrslt,household member level data baseline survey,keep,,,Result of RDT,"1 - Positive
+2 - Negative
+-9: Skipped",,,,NA,household member level data baseline survey::rdtrslt,LLINEUP2,rdtrslt,chr,Skipped,date?,NA,"Negative, Positive, Skipped, NA",3,0.651705566,duplicated variable
+53,requireweight,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::requireweight,LLINEUP2,requireweight,chr,Skipped,NA,NA,"No, Skipped, Yes, NA",3,0.651705566,duplicated variable
+54,weight,household member level data baseline survey,keep,,,Weight,NA,,,,NA,household member level data baseline survey::weight,LLINEUP2,weight,dbl,-9,NA,NA,-9 to 31,26,0.651705566,duplicated variable
+55,meds,household member level data baseline survey,keep,,,Any medication prescribed to [[participantsname]]?,"1 - Yes
+0 - No",,,,NA,household member level data baseline survey::meds,LLINEUP2,meds,int,-9,NA,NA,-9 to 1,3,0.651705566,duplicated variable
+56,whichmeds,household member level data baseline survey,keep,,,Which medication was prescribed?,"1 - AL
+2 - Panadol
+9 - Other
+-9: Skipped",,,,"Multiple response question; Comma separated list of each item selected
+For example if 'Panadol' and 'Other' were both selected, 
+the response would be: ""2,9""",household member level data baseline survey::whichmeds,LLINEUP2,whichmeds,chr,None,NA,NA,", AL + pandadol, None, Only panadol",3,0.651705566,duplicated variable
+57,al,household member level data baseline survey,discard,,,<U+2026>AL,"1 - Yes
+0 - No",,,,"Individual responses for the 'whichmeds' question.  For example, if 'Panadol' and 'Other' were both selected, the response would be:
+al = 0
+panadol = 1
+other = 1",household member level data baseline survey::al,LLINEUP2,al,int,-9,NA,NA,-9 to 1,3,0.651705566,duplicated variable
+58,panadol,household member level data baseline survey,discard,,,<U+2026>Panadol,"1 - Yes
+0 - No",,,,NA,household member level data baseline survey::panadol,LLINEUP2,panadol,int,-9,NA,NA,-9 to 1,2,0.651705566,duplicated variable
+59,other,household member level data baseline survey,discard,,,<U+2026>Other,"1 - Yes
+0 - No",,,,NA,household member level data baseline survey::other,LLINEUP2,other,int,-9,NA,NA,-9 to 0,2,0.651705566,duplicated variable
+60,descothermed,household member level data baseline survey,keep,,,Which 'other' medication was used?,NA,,,,NA,household member level data baseline survey::descothermed,LLINEUP2,descothermed,int,-9,NA,NA,-9 to -9,1,0.651705566,duplicated variable
+61,referred,household member level data baseline survey,keep,,,Was [[participantsname]] referred for additional care?,"1 - Yes
+0 - No",,,,NA,household member level data baseline survey::referred,LLINEUP2,referred,int,-9,NA,NA,-9 to 1,3,0.651705566,duplicated variable
+62,whyreferred,household member level data baseline survey,keep,,,Why was [[participantsname]] referred for additional care?,NA,,,,NA,household member level data baseline survey::whyreferred,LLINEUP2,whyreferred,chr,-9,NA,NA,", -9, FOR FURTHER MANAGEMENT, FOR FUTHER MANAGEMNET, FURTHER MANAGEMENT, FURTHER MANAGENT, HB IS TOO LOW",6,0.651705566,duplicated variable
+63,age2to4,household member level data baseline survey,discard,,,NA,NA,,,,NA,household member level data baseline survey::age2to4,LLINEUP2,age2to4,int,0,NA,NA,0 to 1,2,0.749551167,duplicated variable
+64,hemocue,household member level data baseline survey,keep,,,Result code of hemocue test.,"1 - Tested
+2 - Not enough blood drawn
+3 - Test Failed
+-9: Skipped",,,,NA,household member level data baseline survey::hemocue,LLINEUP2,hemocue,chr,Skipped,NA,NA,"Skipped, Tested, NA",2,0.651705566,duplicated variable
+65,hbdone,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::hbdone,LLINEUP2,hbdone,int,1,NA,NA,0 to 1,2,0.902752843,duplicated variable
+66,hemoglobin,household member level data baseline survey,keep,,,Record hemoglobin level,-9: Skipped,,,,NA,household member level data baseline survey::hemoglobin,LLINEUP2,hemoglobin,dbl,12.80000019,NA,NA,7.09999990463257 to 14.5,52,0.903052065,duplicated variable
+67,anemia11,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::anemia11,LLINEUP2,anemia11,int,0,NA,NA,0 to 1,2,0.903052065,duplicated variable
+68,anemia10,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::anemia10,LLINEUP2,anemia10,int,0,NA,NA,0 to 1,2,0.903052065,duplicated variable
+69,anemia8,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::anemia8,LLINEUP2,anemia8,int,0,NA,NA,0 to 1,2,0.903052065,duplicated variable
+70,stoptime,household member level data baseline survey,discard,,,End time of interview,NA,,,,automatically generated,household member level data baseline survey::stoptime,LLINEUP2,stoptime,chr,28:10.0,NA,NA,>10 unique values,1161,0.651705566,duplicated variable
+71,parasitedensity,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::parasitedensity,LLINEUP2,parasitedensity,int,0,NA,NA,0 to 144280,146,0.749850389,NA
+72,bsdich,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::bsdich,LLINEUP2,BSdich,int,0,NA,NA,0 to 1,2,0.749850389,NA
+73,gametocytes,household member level data baseline survey,keep,,,NA,NA,,,,NA,household member level data baseline survey::gametocytes,LLINEUP2,gametocytes,chr,Gametocytes not detected,NA,NA,"Gametocytes detected, Gametocytes not detected, NA",2,0.749850389,NA
