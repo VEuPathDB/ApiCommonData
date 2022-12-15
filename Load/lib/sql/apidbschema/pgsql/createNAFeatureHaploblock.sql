@@ -7,7 +7,7 @@ CREATE TABLE ApiDB.NAFeatureHaploblock (
  LOD_SCORE_MANT                       FLOAT8,
  LOD_SCORE_EXP                        NUMERIC(8),
  EXTERNAL_DATABASE_RELEASE_ID         NUMERIC(10),
- MODIFICATION_DATE                    DATE,
+ MODIFICATION_DATE                    TIMESTAMP,
  USER_READ                            NUMERIC(1),
  USER_WRITE                           NUMERIC(1),
  GROUP_READ                           NUMERIC(1),

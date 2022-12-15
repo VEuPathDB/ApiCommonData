@@ -9,7 +9,7 @@ CREATE TABLE apidb.PolyAGenes (
   within_cds                    NUMERIC(1),
   is_dominant                   NUMERIC(1),
   percent_fraction              NUMERIC(3),
-  MODIFICATION_DATE            DATE,
+  MODIFICATION_DATE            TIMESTAMP,
   USER_READ                    NUMERIC(1),
   USER_WRITE                   NUMERIC(1),
   GROUP_READ                   NUMERIC(1),

@@ -5,7 +5,7 @@ CREATE TABLE apidb.NAFeatureMetaCycle (
  period			      	        FLOAT8,
  amplitude		      	        FLOAT8,
  pvalue              		    FLOAT8,
- modification_date            	  date NOT NULL,
+ modification_date            	  TIMESTAMP NOT NULL,
  user_read                    	  NUMERIC(1) NOT NULL,
  user_write                   	  NUMERIC(1) NOT NULL,
  group_read                   	  NUMERIC(1) NOT NULL,

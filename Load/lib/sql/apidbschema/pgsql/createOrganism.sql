@@ -16,7 +16,7 @@ CREATE TABLE apidb.Organism (
  family_ncbi_taxon_ids        VARCHAR(200),
  family_name_for_files        VARCHAR(200),
  has_temporary_ncbi_taxon_id  NUMERIC(1) NOT NULL,
- modification_date            DATE NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

@@ -7,7 +7,7 @@ CREATE TABLE apidb.Datasource (
  type                         VARCHAR(50),
  subtype                      VARCHAR(50),
  external_database_name       VARCHAR(200),
- modification_date            DATE NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

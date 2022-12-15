@@ -4,7 +4,7 @@ CREATE TABLE apidb.OldAnnotation (
  type                         VARCHAR(10) NOT NULL,
  value                        VARCHAR(400) NOT NULL,
  external_database_release_id NUMERIC(12) NOT NULL,
- MODIFICATION_DATE            DATE,
+ MODIFICATION_DATE            TIMESTAMP,
  USER_READ                    NUMERIC(1),
  USER_WRITE                   NUMERIC(1),
  GROUP_READ                   NUMERIC(1),

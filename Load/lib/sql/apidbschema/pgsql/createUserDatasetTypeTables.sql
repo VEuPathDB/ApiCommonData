@@ -187,7 +187,7 @@ create table apidbUserDatasets.ud_SampleDetail (
  user_dataset_id NUMERIC(20) not null,
   sample_id                      NUMERIC(10) NOT NULL,
   PROPERTY_ID                                        NUMERIC(10) not null,
-  DATE_VALUE                                         DATE,
+  DATE_VALUE                                         TIMESTAMP,
   NUMBER_VALUE                                       NUMERIC,
   STRING_VALUE                                       VARCHAR(1000),
   FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset,

@@ -25,7 +25,7 @@ create table apidb.Snp (
     positions_in_cds_full        varchar(2500),
     positions_in_protein_full    varchar(2500),
     reference_aa_full            varchar(2500),
-    modification_date            date,
+    modification_date            TIMESTAMP,
     PRIMARY KEY (snp_id)
 );
 
@@ -57,7 +57,7 @@ create table apidb.SequenceVariation (
     protocol_app_node_id         NUMERIC(10) NOT NULL,
     products_full                varchar(2500),
     diff_from_adjacent_snp       NUMERIC(1),
-    modification_date            date,
+    modification_date            TIMESTAMP,
     PRIMARY KEY (sequence_variation_id)
 );
 

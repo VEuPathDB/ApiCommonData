@@ -5,7 +5,7 @@ create table apidb.GeneDetail (
       FIELD_TITLE VARCHAR(1000),
       ROW_COUNT NUMERIC,
       CONTENT TEXT,
-      MODIFICATION_DATE DATE
+      MODIFICATION_DATE TIMESTAMP
 );
 
 CREATE UNIQUE INDEX genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name) tablespace indx;
@@ -44,7 +44,7 @@ create table apidb.IsolateDetail (
       FIELD_TITLE VARCHAR(1000),
       ROW_COUNT numeric,
       CONTENT text,
-      MODIFICATION_DATE DATE
+      MODIFICATION_DATE TIMESTAMP
 );
 
 CREATE INDEX isolatedtl_idx01 ON apidb.IsolateDetail(source_id, project_id, field_name);
@@ -73,7 +73,7 @@ create table apidb.SequenceDetail (
       FIELD_TITLE VARCHAR(1000),
       ROW_COUNT NUMERIC,
       CONTENT TEXT,
-      MODIFICATION_DATE DATE
+      MODIFICATION_DATE TIMESTAMP
 );
 
 CREATE INDEX sequencedtl_idx01 ON apidb.SequenceDetail(source_id, project_id, field_name);
@@ -96,7 +96,7 @@ create table apidb.OrthomclSequenceDetail (
       FIELD_TITLE VARCHAR(1000),
       ROW_COUNT numeric,
       CONTENT text,
-      MODIFICATION_DATE DATE
+      MODIFICATION_DATE TIMESTAMP
 );
 
 -- TODO
@@ -121,7 +121,7 @@ create table apidb.GroupDetail (
       FIELD_TITLE VARCHAR(1000),
       ROW_COUNT numeric,
       CONTENT text,
-      MODIFICATION_DATE DATE
+      MODIFICATION_DATE TIMESTAMP
 );
 
 -- TODO
@@ -146,7 +146,7 @@ CREATE TABLE apidb.GeneGff (
  table_name VARCHAR(80),
  row_count  numeric(4),
  content    text,
- modification_date date,
+ modification_date TIMESTAMP,
  USER_READ             numeric(1),
  USER_WRITE            numeric(1),
  GROUP_READ            numeric(1),
@@ -202,7 +202,7 @@ create table apidb.CompoundDetail (
       FIELD_TITLE VARCHAR(1000),
       ROW_COUNT numeric,
       CONTENT text,
-      MODIFICATION_DATE DATE
+      MODIFICATION_DATE TIMESTAMP
 );
 
 CREATE INDEX compounddtl_idx01 ON apidb.CompoundDetail(source_id, project_id, field_name);

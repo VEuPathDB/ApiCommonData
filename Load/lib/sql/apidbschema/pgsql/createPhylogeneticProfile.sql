@@ -2,7 +2,7 @@ CREATE TABLE ApiDB.PhylogeneticProfile (
  phylo_profile_id      NUMERIC(10),
  source_id             VARCHAR(50) NOT NULL,
  profile_string        TEXT NOT NULL,
- MODIFICATION_DATE     DATE,
+ MODIFICATION_DATE     TIMESTAMP,
  USER_READ             NUMERIC(1),
  USER_WRITE            NUMERIC(1),
  GROUP_READ            NUMERIC(1),

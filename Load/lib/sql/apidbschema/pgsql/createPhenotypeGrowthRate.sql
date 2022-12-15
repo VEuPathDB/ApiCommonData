@@ -11,7 +11,7 @@ create table ApiDB.PhenotypeGrowthRate (
  times_analyzed               NUMERIC(2),
  construct                    VARCHAR(50),
  notes                        VARCHAR(250),
- modification_date              DATE,
+ modification_date              TIMESTAMP,
  user_read                      NUMERIC(1),
  user_write                     NUMERIC(1),
  group_read                     NUMERIC(1),

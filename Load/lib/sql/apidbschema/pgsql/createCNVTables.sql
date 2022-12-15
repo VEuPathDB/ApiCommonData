@@ -3,7 +3,7 @@ CREATE TABLE ApiDB.ChrCopyNumber (
   PROTOCOL_APP_NODE_ID          NUMERIC(10)    NOT NULL,
   NA_SEQUENCE_ID                NUMERIC(12)    NOT NULL,
   CHR_COPY_NUMBER               NUMERIC(10),
-  MODIFICATION_DATE             DATE,
+  MODIFICATION_DATE             TIMESTAMP,
   USER_READ                     NUMERIC(1),
   USER_WRITE                    NUMERIC(1),
   GROUP_READ                    NUMERIC(10),

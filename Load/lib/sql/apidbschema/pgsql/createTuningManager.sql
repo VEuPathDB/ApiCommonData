@@ -1,9 +1,9 @@
 create table apidb.TuningTable (
    name          varchar(65) primary key,
-   timestamp     date not null,
+   timestamp     timestamp not null,
    definition    text not null,
    status        varchar(20),
-   last_check    date,
+   last_check    timestamp,
    check_os_user varchar(20)
   );
 
@@ -24,8 +24,8 @@ grant select on apidb.TuningManager_sq to gus_w;
 
 create table apidb.TuningMgrExternalDependency (
    name         varchar(65) primary key,
-   max_mod_date date,
-   timestamp    date not null,
+   max_mod_date timestamp,
+   timestamp    timestamp not null,
    row_count    numeric not null);
 
 grant select on apidb.TuningMgrExternalDependency to gus_r;

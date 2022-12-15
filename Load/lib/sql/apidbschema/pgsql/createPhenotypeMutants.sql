@@ -17,7 +17,7 @@ create table ApiDB.PhenotypeMutants (
  perithecia_morphology          VARCHAR(50),
  ascospore_number	        VARCHAR(50),
  ascospore_morphology           VARCHAR(50),
- modification_date              DATE,
+ modification_date              TIMESTAMP,
  user_read                    	NUMERIC(1),
  user_write                   	NUMERIC(1),
  group_read                  	NUMERIC(1),

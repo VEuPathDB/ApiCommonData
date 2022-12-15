@@ -10,7 +10,7 @@ CREATE TABLE :SCHEMA_PREFIX.Study (
  external_database_release_id NUMERIC(10) NOT NULL,
  internal_abbrev              VARCHAR(50),
  max_attr_length              NUMERIC(4),
- modification_date            DATE NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

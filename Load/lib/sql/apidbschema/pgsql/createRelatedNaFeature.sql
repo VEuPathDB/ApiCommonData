@@ -6,7 +6,7 @@ CREATE TABLE apidb.RelatedNaFeature (
  associated_na_feature_id  NUMERIC(10) NOT NULL,	
  external_database_release_id NUMERIC(10),
  value NUMERIC(10),
- MODIFICATION_DATE     DATE,
+ MODIFICATION_DATE     TIMESTAMP,
  USER_READ             NUMERIC(1),
  USER_WRITE            NUMERIC(1),
  GROUP_READ            NUMERIC(1),

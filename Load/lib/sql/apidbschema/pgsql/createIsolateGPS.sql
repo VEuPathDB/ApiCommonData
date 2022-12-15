@@ -4,7 +4,7 @@ CREATE TABLE ApiDB.IsolateGPS (
  country               VARCHAR(250) NOT NULL,
  lat                   FLOAT        NOT NULL,
  lng                   FLOAT        NOT NULL,
- MODIFICATION_DATE     DATE,
+ MODIFICATION_DATE     TIMESTAMP,
  USER_READ             NUMERIC(1),
  USER_WRITE            NUMERIC(1),
  GROUP_READ            NUMERIC(1),

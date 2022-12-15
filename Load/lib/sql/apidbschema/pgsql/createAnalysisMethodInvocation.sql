@@ -3,7 +3,7 @@ CREATE TABLE apidb.AnalysisMethodInvocation (
  name                       VARCHAR(200) NOT NULL,
  version                    VARCHAR(30),
  parameters                 VARCHAR(200),
- modification_date            date NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

@@ -50,7 +50,7 @@ CREATE TABLE apidbTuning.AnnotationChange0000
   gene        varchar(60),
   mrnaid      varchar(80),
   change      varchar(400),
-  change_date date,
+  change_date timestamp,
   name        varchar(60),
   product     varchar(800)
 );

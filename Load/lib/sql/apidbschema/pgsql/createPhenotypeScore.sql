@@ -4,7 +4,7 @@ create table ApiDB.PhenotypeScore (
  protocol_app_node_id         NUMERIC(10) NOT NULL,
  score                        NUMERIC(10,4),
  score_type                   VARCHAR(100),
- modification_date              DATE,
+ modification_date              TIMESTAMP,
  user_read                      NUMERIC(1),
  user_write                     NUMERIC(1),
  group_read                     NUMERIC(1),

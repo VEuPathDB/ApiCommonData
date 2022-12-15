@@ -8,7 +8,7 @@ CREATE TABLE apidb.MassSpecSummary (
  sequence_count               NUMERIC(12),
  spectrum_count               NUMERIC(12),
  aa_seq_percent_covered       FLOAT8,
- modification_date            date NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

@@ -10,7 +10,7 @@ CREATE TABLE apidb.SpliceSiteGenes (
   dist_to_first_atg             NUMERIC(10),
   annot_atg_location            NUMERIC(10),
   dist_to_annot_atg             NUMERIC(10),
-  MODIFICATION_DATE            DATE,
+  MODIFICATION_DATE            TIMESTAMP,
   USER_READ                    NUMERIC(1),
   USER_WRITE                   NUMERIC(1),
   GROUP_READ                   NUMERIC(1),

@@ -7,7 +7,7 @@ CREATE TABLE apidb.TranscriptProduct (
  publication                  VARCHAR(20),           -- e.g. "PMID:18534909"
  evidence_code                NUMERIC(10),             -- foreign key to sres.OntologyTerm 
  with_from                    VARCHAR(500),           -- e.g. "UniProtKB:RL2A_YEAST"
- modification_date            DATE NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

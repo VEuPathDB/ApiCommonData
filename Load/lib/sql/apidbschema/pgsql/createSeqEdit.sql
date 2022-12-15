@@ -10,7 +10,7 @@ CREATE TABLE ApiDB.SeqEdit (
    SEQUENCE                     TEXT  NOT NULL,
    ORIG_SEQUENCE                TEXT  NOT NULL,
    LENGTH_DIFF                  NUMERIC(10),
-   MODIFICATION_DATE            DATE,
+   MODIFICATION_DATE            TIMESTAMP,
    USER_READ                    NUMERIC(1),
    USER_WRITE                   NUMERIC(1),
    GROUP_READ                   NUMERIC(1),

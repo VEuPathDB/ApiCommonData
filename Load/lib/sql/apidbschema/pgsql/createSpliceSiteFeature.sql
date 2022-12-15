@@ -10,7 +10,7 @@ CREATE TABLE apidb.SpliceSiteFeature (
  is_unique                    NUMERIC(1) NOT NULL,
  avg_mismatches               FLOAT,
  count_per_million            FLOAT,
- MODIFICATION_DATE            DATE,
+ MODIFICATION_DATE            TIMESTAMP,
  USER_READ                    NUMERIC(1),
  USER_WRITE                   NUMERIC(1),
  GROUP_READ                   NUMERIC(1),

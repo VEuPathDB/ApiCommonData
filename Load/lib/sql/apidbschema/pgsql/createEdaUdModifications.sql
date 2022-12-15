@@ -13,7 +13,7 @@ CREATE TABLE ApidbUserDatasets.DatasetAttributes (
  dataset_stable_id varchar(200) NOT NULL,
  name              varchar(100),
  description              varchar(4000),
- modification_date            DATE NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

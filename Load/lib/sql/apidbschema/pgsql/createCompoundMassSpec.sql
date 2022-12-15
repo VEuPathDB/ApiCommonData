@@ -5,7 +5,7 @@ CREATE TABLE ApiDB.CompoundPeaks (
    MASS                         NUMERIC(12,6),
    RETENTION_TIME               NUMERIC(12,6),
    MS_POLARITY                  CHAR(1),
-   MODIFICATION_DATE            DATE            NOT NULL,
+   MODIFICATION_DATE            TIMESTAMP        NOT NULL,
    USER_READ                    NUMERIC(1)       NOT NULL,
    USER_WRITE                   NUMERIC(1)       NOT NULL,
    GROUP_READ                   NUMERIC(1)       NOT NULL,

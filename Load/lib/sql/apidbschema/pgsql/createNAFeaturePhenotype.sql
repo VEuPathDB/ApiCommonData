@@ -7,7 +7,7 @@ create table ApiDB.NAFeaturePhenotype (
  value                          VARCHAR(2000), 
  value_id                       NUMERIC(10),
  value_clob                     TEXT,
- modification_date              DATE,
+ modification_date              TIMESTAMP,
  user_read                      NUMERIC(1),
  user_write                     NUMERIC(1),
  group_read                     NUMERIC(1),

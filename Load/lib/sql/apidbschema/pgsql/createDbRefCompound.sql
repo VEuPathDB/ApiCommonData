@@ -2,7 +2,7 @@ CREATE TABLE apidb.DbRefCompound (
  db_ref_compound_id 		 NUMERIC(10) NOT NULL,
  compound_id 			 NUMERIC(10) NOT NULL,
  db_ref_id			 NUMERIC(10) NOT NULL,
- MODIFICATION_DATE             	 DATE,
+ MODIFICATION_DATE             	 TIMESTAMP,
  USER_READ                     	 NUMERIC(1),
  USER_WRITE                    	 NUMERIC(1),
  GROUP_READ			 NUMERIC(1),

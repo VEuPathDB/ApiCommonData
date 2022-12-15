@@ -7,7 +7,7 @@ create table ApiDB.CrisprPhenotype (
  gene_fdr                     float8,
  sg_fdr                       float8,
  rank                         NUMERIC(8),
- MODIFICATION_DATE            DATE,
+ MODIFICATION_DATE            TIMESTAMP,
  USER_READ                    NUMERIC(1),
  USER_WRITE                   NUMERIC(1),
  GROUP_READ                   NUMERIC(1),

@@ -3,7 +3,7 @@ CREATE TABLE apidb.EigengeneWGCNAResults (
  module_name			VARCHAR(200) NOT NULL, 
  value			      float8,
  protocol_app_node_id         NUMERIC(10) NOT NULL,
- modification_date            date NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

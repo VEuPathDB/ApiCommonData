@@ -6,7 +6,7 @@ CREATE TABLE ApiDB.AlphaFold (
   SOURCE_ID                     VARCHAR(20)  NOT NULL,
   ALPHAFOLD_VERSION             NUMERIC(5)   NOT NULL,
   EXTERNAL_DATABASE_RELEASE_ID  NUMERIC(10)  NOT NULL,
-  MODIFICATION_DATE             DATE,
+  MODIFICATION_DATE             TIMESTAMP,
   USER_READ                     NUMERIC(1),
   USER_WRITE                    NUMERIC(1),
   GROUP_READ                    NUMERIC(10),

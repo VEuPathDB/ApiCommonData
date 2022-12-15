@@ -2,7 +2,7 @@ CREATE TABLE ApiDB.EcNumberGenus (
   EC_NUMBER_GENUS_ID	  NUMERIC(12)   NOT NULL,
   EC_NUMBER               VARCHAR(50)  NOT NULL,
   GENUS                   VARCHAR(50)  NOT NULL,
-  MODIFICATION_DATE       DATE,
+  MODIFICATION_DATE       TIMESTAMP,
   USER_READ               NUMERIC(1),
   USER_WRITE              NUMERIC(1),
   GROUP_READ              NUMERIC(1),

@@ -34,7 +34,7 @@ create table apidb.BlatProteinAlignment (
     blocksizes                    varchar(1600) not null,
     qstarts                       varchar(1600) not null,
     tstarts                       varchar(1600) not null,
-    modification_date             date          not null,
+    modification_date             timestamp     not null,
     user_read                     NUMERIC       not null,
     user_write                    NUMERIC       not null,
     group_read                    NUMERIC       not null,

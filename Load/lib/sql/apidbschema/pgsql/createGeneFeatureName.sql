@@ -4,7 +4,7 @@ CREATE TABLE apidb.GeneFeatureName (
  external_database_release_id NUMERIC(12) NOT NULL,
  name                         VARCHAR(60) NOT NULL,
  is_preferred                 NUMERIC(1) NOT NULL,
- modification_date            DATE NOT NULL,
+ modification_date            TIMESTAMP NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
  group_read                   NUMERIC(1) NOT NULL,

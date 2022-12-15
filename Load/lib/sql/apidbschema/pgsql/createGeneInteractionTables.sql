@@ -12,7 +12,7 @@ CREATE TABLE apidb.GeneInteraction (
  number_of_searches NUMERIC(8),
  prey_number_of_baits NUMERIC(8),
  bait_number_of_preys NUMERIC(8),
- MODIFICATION_DATE     DATE,
+ MODIFICATION_DATE     TIMESTAMP,
  USER_READ             NUMERIC(1),
  USER_WRITE            NUMERIC(1),
  GROUP_READ            NUMERIC(1),
