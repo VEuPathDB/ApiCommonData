@@ -371,6 +371,22 @@ sub readConfigFromCsv {
   return \%data;
 }
 
+sub undoPreprocess {
+  my($self, $dbh, $rowAlgInvocationList) = @_;
+  $self->SUPER::undoPreprocess($dbh, $rowAlgInvocationList);
+  my $datasetNames = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'datasetName');
+  my ($schema) = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'schema');
+  my $sql = sprintf("delete from %s.%s where STUDY_ID in (SELECT s.STUDY_ID FROM eda.STUDY s 
+LEFT JOIN sres.EXTERNALDATABASERELEASE e ON s.EXTERNAL_DATABASE_RELEASE_ID =e.EXTERNAL_DATABASE_RELEASE_ID 
+LEFT JOIN sres.EXTERNALDATABASE e2 ON e.EXTERNAL_DATABASE_ID =e2.EXTERNAL_DATABASE_ID 
+WHERE e2.name=?)", $schema, $UNDO_TABLES[0]) ;
+  my $sh = $dbh->prepare($sql);
+  foreach my $datasetName (@$datasetNames){
+    $sh->execute($datasetName);
+  }
+}
+    
+
 # sub undoTables {
 #   my ($self) = @_;
 # 
