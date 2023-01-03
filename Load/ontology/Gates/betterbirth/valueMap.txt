@@ -6,7 +6,7 @@ agg_follow_up::data_source	agg_follow_up::data_source	cati_tl_remote_home_visit	
 agg_follow_up::data_source	agg_follow_up::data_source	fida_follow_up	Field based home visit	
 agg_follow_up::data_source	agg_follow_up::data_source	fida_tl_home_visit	Field based team leader home visit	
 agg_follow_up::data_source	agg_follow_up::data_source	multiple	Multiple	
-agg_follow_up::response_person	EUPATH_0010123	-1		
+agg_follow_up::response_person	EUPATH_0010123	-1	:::UNDEF:::	
 agg_follow_up::response_person	EUPATH_0010123	0	Participant	
 agg_follow_up::response_person	EUPATH_0010123	1	Husband	
 agg_follow_up::response_person	EUPATH_0010123	3	Other immediate family member	
@@ -197,13 +197,13 @@ dim_baby_outcomes_noconflict_var::baby_dead_day_7_3	dim_baby_outcomes_noconflict
 dim_baby_outcomes_noconflict_var::baby_dead_day_7_3	dim_baby_outcomes_noconflict_var::baby_dead_day_7_3	1	Yes
 dim_baby_outcomes_noconflict_var::baby_dead_day_7_3	dim_baby_outcomes_noconflict_var::baby_dead_day_7_3	NA	:::UNDEF:::
 dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	dead after	Death after delivery
-dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	stillborn	Stillborn
+dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	stillborn	Stillbirth
 dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_1	NA	:::UNDEF:::	
 dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	dead after	Death after delivery
-dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	stillborn	Stillborn
+dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	stillborn	Stillbirth
 dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_2	NA	:::UNDEF:::	
 dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	dead after	Death after delivery
-dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	stillborn	Stillborn
+dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	stillborn	Stillbirth
 dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_type_3	NA	:::UNDEF:::	
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_1	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_1	BB Facility	BetterBirth facility
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_1	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_1	Referral Facility	Referral facility
@@ -2146,9 +2146,9 @@ raw_coach_tl_sbs::coach_tl_fp_female_steril	raw_coach_tl_sbs::coach_tl_fp_female
 raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	0	No	
 raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	1	Yes		
 raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	0	No	
-raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	1	Yes, participant	
-raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	2	Not taken	
-raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	3	Yes, surrogate	
+raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	1	Yes	
+raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	2	No
+raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	3	Yes	
 raw_fida_birth_registration::sbr_leadership_consent_code	raw_fida_birth_registration::sbr_leadership_consent_code	0	No	
 raw_fida_birth_registration::sbr_leadership_consent_code	raw_fida_birth_registration::sbr_leadership_consent_code	1	Yes	
 raw_fida_birth_registration::sbr_leadership_consent_code	raw_fida_birth_registration::sbr_leadership_consent_code	2	Not taken	
@@ -2174,8 +2174,8 @@ raw_fida_birth_registration::sbr_gender_single	raw_fida_birth_registration::sbr_
 raw_fida_birth_registration::sbr_gender_single	raw_fida_birth_registration::sbr_gender_single	3	Unknown	
 raw_fida_birth_registration::sbr_gender_single	raw_fida_birth_registration::sbr_gender_single	NA	:::UNDEF:::	
 raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	1	Alive at discharge	
-raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	2	Stillborn	
-raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	3	Dead after delivery	
+raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	2	Stillbirth	
+raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	3	Death after delivery	
 raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	4	Unknown	
 raw_fida_birth_registration::sbr_outcomes_single	raw_fida_birth_registration::sbr_outcomes_single	NA	:::UNDEF:::	
 raw_fida_birth_registration::sbr_baby_weight	raw_fida_birth_registration::sbr_baby_weight	NA	:::UNDEF:::	
@@ -3440,7 +3440,7 @@ raw_otis_visit::otis_hl_bb_team_lead	raw_otis_visit::otis_hl_bb_team_lead	0	No
 raw_otis_visit::otis_hl_bb_team_lead	raw_otis_visit::otis_hl_bb_team_lead	1	Yes	
 raw_otis_visit::otis_hl_bb_team_lead	raw_otis_visit::otis_hl_bb_team_lead	NA	:::UNDEF:::	
 xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	ANM	Auxiliary nurse midwife	
-xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	LMO		
+xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	LMO	Lady medical officer	
 xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	Staff Nurse	Staff nurse		
 xls_ba_characteristics::age	xls_ba_characteristics::age	NA	:::UNDEF:::	
 xls_ba_characteristics::highest_education	xls_ba_characteristics::highest_education	Bachelor Degree	Bachelors degree	3
@@ -3496,7 +3496,7 @@ xls_baseline_mortality::tp2_ref_qualifier	xls_baseline_mortality::tp2_ref_qualif
 xls_baseline_mortality::average_hours_num	xls_baseline_mortality::average_hours_num	NA	:::UNDEF:::	
 xls_checklist_utilization::role_at_facility	xls_checklist_utilization::role_at_facility	A.N.M	Auxiliary nurse midwife	
 xls_checklist_utilization::role_at_facility	xls_checklist_utilization::role_at_facility	Doctor	Doctor	
-xls_checklist_utilization::role_at_facility	xls_checklist_utilization::role_at_facility	L.H.V	L.H.V	
+xls_checklist_utilization::role_at_facility	xls_checklist_utilization::role_at_facility	L.H.V	Lady health visitor	
 xls_checklist_utilization::role_at_facility	xls_checklist_utilization::role_at_facility	Staff Nurse	Staff nurse	
 xls_checklist_utilization::checklist_ease_of_use	xls_checklist_utilization::checklist_ease_of_use	1. Strongly Disagree	Strongly disagree	1
 xls_checklist_utilization::checklist_ease_of_use	xls_checklist_utilization::checklist_ease_of_use	2. Disagree	Disagree	2
@@ -3541,7 +3541,7 @@ xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	12 m
 xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	6 mo	6 months	
 xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	Baseline	Baseline	
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	1.Doctor	Doctor	
-xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	2. L.H.V	L.H.V	
+xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	2. L.H.V	Lady health visitor	
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	3. A.N.M	Auxiliary nurse midwife	
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	4. Staff Nurse	Staff nurse	
 xls_safety_attitudes::antibiotics_confident	xls_safety_attitudes::antibiotics_confident	1. Always confident	Always confident	1
