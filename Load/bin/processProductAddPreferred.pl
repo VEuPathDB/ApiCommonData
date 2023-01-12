@@ -4,12 +4,13 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 use Getopt::Long;
 
-my ($inputFile, $outputFile, $help);
+my ($inputFile, $outputFile, $assignedBy, $help);
 
 &GetOptions(
             'help|h' => \$help,
             'inputFile=s' => \$inputFile,
             'outputFile=s' => \$outputFile,
+            'assignedBy=s' => \$assignedBy,
            );
 
 &usage() if($help);
@@ -58,7 +59,14 @@ foreach my $k (sort keys %products) {
     }
 #    print OUT "$k\t$products{$k}[$i]\t$is_preferred\n";
     my @pValue = split (/;/, $products{$k}[$i]);
-    print OUT "$k\t$pValue[0]\t$is_preferred\t$pValue[1]\t$pValue[2]\t$pValue[3]\n";
+    print OUT "$k\t$pValue[0]\t$is_preferred\t$pValue[1]\t$pValue[2]\t$pValue[3]\t";
+
+    ## assign source as assigned_by only when there is no assigned_by available in input file
+    if ($#pValue < 4) {
+      print OUT "$assignedBy\n";
+    } else {
+      print OUT "$pValue[4]\n";
+    }
   }
 }
 close IN;
@@ -77,6 +85,7 @@ Usage:  perl processProductAddPreferred.pl --inputFile product.txt --outputFile 
 where
   --inputFile:   the input file, two or three column 
   --outputFile: the output file with the 3nd column always has value
+  --assignedBy: optional, only need when there is no assigned_by value available in product.txt file
 ";
 }
 
