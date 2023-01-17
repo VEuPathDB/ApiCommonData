@@ -265,6 +265,7 @@ sub getGeneticCodeFromOrganismAbbrev {
 		) {
       $projectName = "AmoebaDB";
     } elsif ( $organismAbbrev eq "bdiv1802A"
+	|| $organismAbbrev eq "cfelWinnie"
 		) {
       $projectName = "PiroplasmaDB";
     } elsif ( $organismAbbrev eq "cvelCCMP2878"
@@ -279,6 +280,7 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "rlauRL4"
 	|| $organismAbbrev eq "hvasRaceXXXIII"
 	|| $organismAbbrev eq "rirrC2"
+	|| $organismAbbrev eq "spalSPA8"
 		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
