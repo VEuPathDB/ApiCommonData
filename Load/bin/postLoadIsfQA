@@ -521,6 +521,11 @@ where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by 
       if ($strand != $preStrand) {
 	print STDERR "      but at different strands.\n";
       }
+    } elsif ($nlStartMin < $preEnd && $nlStartMin > $preStart) {
+      print STDERR "In sequence $naSourceId, gene $gfSourceId and $preSourceId are overlapped at position $nlStartMin \.\. $nlEndMax, with another gene at $preStart \.\. $preEnd \n";
+      if ($strand != $preStrand) {
+	print STDERR "      but at different strands.\n";
+      }
     }
 
     $preSourceId = $gfSourceId;
