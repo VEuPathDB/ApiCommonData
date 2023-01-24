@@ -547,7 +547,7 @@ sub addUnitsToOntologyTerms {
   my $dbh = $self->getQueryHandle();
 
   my $excludeStr = "";
-  if($overrideUnits){
+  if(ref($overrideUnits) && 0 < keys %$overrideUnits){
     $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
   }
 
