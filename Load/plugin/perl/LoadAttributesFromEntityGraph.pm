@@ -203,10 +203,11 @@ sub run {
         printf STDERR ("Overriding: $termIRI $prop = $value\n");
       }
     }
-    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $overrideUnits = $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $extDbRlsId);
+    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')),$overrideUnits);
     $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
-    my $overrides = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
-    foreach my $termIRI (keys %$overrides){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
+    my $overrideOrdinals = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
+    foreach my $termIRI (keys %$overrideOrdinals){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -541,9 +542,14 @@ sub valProps {
 
 
 sub addUnitsToOntologyTerms {
-  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId) = @_;
+  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId, $overrideUnits) = @_;
 
   my $dbh = $self->getQueryHandle();
+
+  my $excludeStr = "";
+  if($overrideUnits){
+    $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
+  }
 
   my $sql = "select * from (
 select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
@@ -569,22 +575,29 @@ where os.ontology_term_id = ot.ontology_term_id
 and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
 and json_value(annotation_properties, '\$.unitLabel[0]') is not null
 and os.external_database_release_id = ?
-) order by priority
+)
+$excludeStr
+ order by priority
 ";
 
+
+  $overrideUnits //= {};
   my $sh = $dbh->prepare($sql);
   $sh->execute($studyId, $ontologyExtDbRlsId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
+    next if defined($overrideUnits->{$sourceId});
     if($ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID}) {
       $self->userError("The Attribute $sourceId can only have one unit specification per study.  Units can be specified either in the ISA files OR in annotation properties");
     }
 
     $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
     $ontologyTerms->{$sourceId}->{UNIT_NAME} = $unitName;
+    $overrideUnits->{$sourceId} = 1;
   }
 
   $sh->finish();
+  return $overrideUnits;
 }
 
 
