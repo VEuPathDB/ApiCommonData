@@ -64,6 +64,14 @@ sub pathways {
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsPathways($pathA, $pathC);
 }
 
+sub massSpec {
+  my ($self, $datasetName, $suffix) = @_;
+  my $path = $self->mbioResultTablePath($datasetName, $suffix, 'massSpec');
+  say STDERR "MBioResultsDir: Does $datasetName have massSpec for $suffix? -f $path = " . (-f $path ? 1 : 0);
+  return unless -f $path;
+  return ApiCommonData::Load::MBioResultsTable::AsEntities->massSpec('massSpec', $path);
+}
+
 sub mbioResultTablesForSuffix {
   my ($self, $datasetName, $suffix) = @_;
   my @maybeTables = (
@@ -72,6 +80,7 @@ sub mbioResultTablesForSuffix {
       $self->wgsTaxa($datasetName, $suffix),
       $self->level4ECs($datasetName, $suffix),
       $self->pathways($datasetName, $suffix),
+    # $self->massSpec($datasetName, $suffix),
       );
   return [grep {$_} @maybeTables];
 }

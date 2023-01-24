@@ -40,7 +40,13 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
       my ($self, $sample) = @_;
       return entitiesForSampleGroupedAbundancesEukCpms($self->{data}{$sample});
     }
-  }
+  },
+  massSpec => {
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "mass spectrometry assay", undef, undef, undef); 
+    }
+  },
 };
 
 sub entitiesForSample {
