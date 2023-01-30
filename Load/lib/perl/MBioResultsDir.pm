@@ -80,7 +80,7 @@ sub mbioResultTablesForSuffix {
       $self->wgsTaxa($datasetName, $suffix),
       $self->level4ECs($datasetName, $suffix),
       $self->pathways($datasetName, $suffix),
-    # $self->massSpec($datasetName, $suffix),
+      $self->massSpec($datasetName, $suffix),
       );
   return [grep {$_} @maybeTables];
 }

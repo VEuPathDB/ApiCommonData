@@ -97,13 +97,13 @@ sub entitiesForSampleFunctions {
   return \%result;
 }
 my $levelNamesTxt = <<EOF;
-kingdom
-phylum
-class
-order
-family
-genus
-species
+eupath_0009251
+eupath_0009252
+eupath_0009253
+eupath_0009254
+eupath_0009255
+eupath_0009256
+eupath_0009257
 EOF
 my $levelNames = [grep {$_} split("\n", $levelNamesTxt)];
 
