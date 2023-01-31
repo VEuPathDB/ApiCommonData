@@ -1,10 +1,11 @@
 file	category	id
 enrollment_form_labkey_correctid	household	{{h}}+participant_id
 enrollment_form_labkey_correctid	participant	{{p}}+participant_id
+enrollment_form_labkey_correctid	participant_repeated_measures	{{p}}+participant_id+enrollment
 Diagnostics Assay	household	{{h}}+Participant_ID
 Diagnostics Assay	participant	{{p}}+Participant_ID
-Diagnostics Assay	participant_repeated_measures	{{pr}}+participant_id+date+{{0000}}
-Diagnostics Assay	sample	{{s}}+participant_id+date+{{0000}}
+Diagnostics Assay	participant_repeated_measures	{{pr}}+participant_id+enrollment
+Diagnostics Assay	sample	{{s}}+participant_id+enrollment
 inpatient_care_chart_review	household	{{h}}+Participant_ID
 inpatient_care_chart_review	participant	{{p}}+Participant_ID
 inpatient_care_chart_review	participant_repeated_measures	{{pr}}+participant_id+x68._date_of_observation_collection+x69._time_of_observation
@@ -32,20 +33,20 @@ questionnaire_form_3	household	{{h}}+Participant_ID
 questionnaire_form_3	participant	{{p}}+Participant_ID
 samp_coll_form_3	household	{{h}}+Participant_ID
 samp_coll_form_3	participant	{{p}}+Participant_ID
-samp_coll_form_3	participant_repeated_measures	{{pr}}+participant_id+x30._antimalarial_therapy_initiation_at_gmc_date+x31._antimalarial_therapy_initiation_at_gmc_time
-samp_coll_form_3	Sample	{{s}}+participant_id+x30._antimalarial_therapy_initiation_at_gmc_date+x31._antimalarial_therapy_initiation_at_gmc_time
+samp_coll_form_3	participant_repeated_measures	{{pr}}+participant_id+enrollment
+samp_coll_form_3	sample	{{s}}+participant_id+enrollment
 sample_collection_form	household	{{h}}+Participant_ID
 sample_collection_form	participant	{{p}}+Participant_ID
-sample_collection_form	participant_repeated_measures	{{pr}}+participant_id+x12._temperature_reading_date+x11._temperature_reading_time_.24h.
-sample_collection_form	sample	{{s}}+participant_id+x16._collection_date+x15._collection_time_.24h.+{{scf}}
-
-x26._hospital_rdt_.._species_of_malaria.
-rdt_scan
-x27._hospital_smear_.._species_of_malaria
-smear_report
-x28._hospital_hb_.g.dl.
-hemocue_report
-x29._antimalarial_therapy_initiation_at_gmc.
-x30._antimalarial_therapy_initiation_at_gmc_date
-x31._antimalarial_therapy_initiation_at_gmc_time
-x32._inpatient
+sample_collection_form	participant_repeated_measures	{{pr}}+participant_id+enrollment
+sample_collection_form	sample	{{s}}+participant_id+enrollment
+		
+x26._hospital_rdt_.._species_of_malaria.		
+rdt_scan		
+x27._hospital_smear_.._species_of_malaria		
+smear_report		
+x28._hospital_hb_.g.dl.		
+hemocue_report		
+x29._antimalarial_therapy_initiation_at_gmc.		
+x30._antimalarial_therapy_initiation_at_gmc_date		
+x31._antimalarial_therapy_initiation_at_gmc_time		
+x32._inpatient		
