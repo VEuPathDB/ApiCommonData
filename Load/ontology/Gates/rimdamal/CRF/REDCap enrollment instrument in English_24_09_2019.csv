@@ -1,0 +1,53 @@
+Variable / Field Name,Form Name,Section Header,Field Type,Field Label,"Choices, Calculations, OR Slider Labels",Field Note,Text Validation Type OR Show Slider Number,Text Validation Min,Text Validation Max,Identifier?,Branching Logic (Show field only if...),Required Field?,Custom Alignment,Question Number (surveys only),Matrix Group Name,Matrix Ranking?,Field Annotation
+record_id,formulaire_denrlement,,text,Registration ID,,,,,,y,,,,,,,
+date_enroll,formulaire_denrlement,,text,Date of enrollment,,Day-Month-Year,date_dmy,,,y,,y,,,,,
+participant_surname,formulaire_denrlement,,text,Family (Last) name of participant,,"Unique Family name (all in uppercase, for exemple ""DABIRE"")",,,,y,,y,,,,,
+participant_firstname,formulaire_denrlement,,text,First name of the participant,,unique first name,,,,y,,y,,,,,
+part_photo,formulaire_denrlement,,file,Photo of the participant,,,,,,y,,,LV,,,, @SYNC-APP
+household_name,formulaire_denrlement,,text,Name of the household,,"Name of the head of household (all in uppercase, for exemple: ""DABIRE"")",,,,y,,y,LV,,,,
+household_number,formulaire_denrlement,,text,Household number,,Code written on the household cluster in which the participant lives,,,,,,y,LV,,,,
+inclusion_crit_1,formulaire_denrlement,,radio,Does the participant live in the study village?,"1, Oui | 0, Non","For yes, s/he must sleep at least 4 nights per week in the this village ",,,,,,y,,,,,
+not_eligible_1,formulaire_denrlement,,descriptive,This person IS NOT eligible for the study,,,,,,,[inclusion_crit_1] = '0',,,,,,
+inclusion_crit_2,formulaire_denrlement,,radio,The participant is capable of understanding the information and able to give his/her consent (if age >= 18 years old) or give his/her assent (12 to 17 years old) and/or the consent of the parent or guardian is obtained if the participant is less than 18 years old?  ,"1, Oui | 0, Non",,,,,,[inclusion_crit_1] = '1',y,,,,,
+not_eligible_2,formulaire_denrlement,,descriptive,This person IS NOT eligible for the study,,,,,,,[inclusion_crit_2] = '0',,,,,,
+gender,formulaire_denrlement,,radio,sex,"1, male | 2, female",,,,,,[inclusion_crit_1] = '1' and [inclusion_crit_2] = '1',y,,,,,
+date_birth,formulaire_denrlement,,text,Date of birth of the participant,,"If the precise day is not known, select the 15th of the month",date_dmy,,,,[inclusion_crit_1] = '1' and [inclusion_crit_2] = '1',y,,,,,
+age,formulaire_denrlement,,text,Age in years,,"For children less than 1 year old, enter ""0"" ",number,0,110,,[inclusion_crit_1] = '1' and [inclusion_crit_2]=1,y,LV,,,,
+age_child_months,formulaire_denrlement,,text,Age of the infant in months,,Enter a unique number: enter 0-11 if 0 years old; enter 12-23 if 1 year old; enter 24-35 if 2 years old; enter 36-47 if 3 years old; enter 48-59 if 4 years old; and enter 60-71 if 5 years old,number,0,59,,[age] <> '' and [age] <= 5,y,,,,,
+child_age_elig_smc,formulaire_denrlement,,radio,"This person is eligible for seasonal malaria chemoprevention (SMC)
+
+Will they take SMC?","1, Oui | 0, Non",,,,,,([age] > 0 and [age] < 5) or ([age_child_months] >= 3),y,,,,,
+not_eligible_0_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[age] > 0 and [age] <> '' and [child_age_elig_smc] = '1',,,,,,
+height,formulaire_denrlement,,radio,Height,"1, < 90 cm | 2, 90-119 cm | 3, 120-140 cm | 4, 141-158 cm | 5, >158 cm",,,,,,[inclusion_crit_1] = '1' and [inclusion_crit_2] = '1',y,,,,,
+not_eligible_0_mda_3,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,([age] >= 0 and [age] <> '' and [child_age_elig_smc] = '0' and [height] = '1') or ([age] >= 0 and [age] <> '' and [height] = '1'),,,,,,
+exclusion_crit_1_mda,formulaire_denrlement,,radio,Does the participant have a permanent disability or a serious illness that impairs their ability to participate in the study or their comprehension of the study in order to give consent/assent?,"1, Oui | 0, Non",,,,,,(([child_age_elig_smc] = '0') and ([height] = '2' or [height] = '3' or [height] = '4' or [height] = '5')) or (([age] >= 5) and ([height] = '2' or [height] = '3' or [height] = '4' or [height] = '5')),y,,,,,
+not_eligible_1_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[exclusion_crit_1_mda] = '1',,,,,,
+exclusion_crit_4_mda,formulaire_denrlement,,radio,Does this person have a known allergy to ivermectin?,"1, Oui | 0, Non",,,,,,[exclusion_crit_1_mda] = '0',y,,,,,
+not_eligible_4_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[exclusion_crit_4_mda] = '1',,,,,,
+exclusion_crit_5_mda,formulaire_denrlement,,radio,"Has this person traveled to Angola, Cameroon, Chad, Central African Republic, Congo, Democratic Republic of Congo, Equatorial Guinee, Ethiopia, Gabon, Nigeria or Sudan?","1, Oui | 0, Non",,,,,,[exclusion_crit_4_mda] = '0',y,,,,,
+not_eligible_5_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[exclusion_crit_5_mda] = '1',,,,,,
+exclusion_crit_6_mda,formulaire_denrlement,,radio,Is this person enrolled in another active clinical trial?,"1, Oui | 0, Non",,,,,,[exclusion_crit_5_mda] = '0',y,,,,,
+not_eligible_6_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[exclusion_crit_6_mda] = '1',,,,,,
+exclusion_crit_2_mda,formulaire_denrlement,,radio,Is this person pregnant?,"1, Oui | 0, Non",,,,,,(([gender] = '2' and [exclusion_crit_6_mda] = '0' and [age] >= 12 and [age] <= 45 and [age] <> '')) or (([gender] = '2' and [age] >= 12 and [age] <= 45 and [age] <> '') and ([exclusion_crit_1_mda] = '1' or [exclusion_crit_4_mda] = '1' or [exclusion_crit_5_mda] = '1' or [exclusion_crit_6_mda] = '1')),y,,,,,
+preg_form_notif,formulaire_denrlement,,descriptive,The pregnancy form must be filled out for this participant,,,,,,,[exclusion_crit_2_mda] = '1',,,,,,
+not_eligible_2_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[exclusion_crit_2_mda] = '1',,,,,,
+exclusion_crit_3_mda,formulaire_denrlement,,radio,Is this person breastfeeding a baby less than 1 week of age?,"1, Oui | 0, Non",,,,,,[exclusion_crit_2_mda] = '0',y,,,,,
+not_eligible_3_mda,formulaire_denrlement,,descriptive,This person IS NOT eligible to receive the MDA treatment (ivermectin / placebo),,,,,,,[exclusion_crit_3_mda]=1,,,,,,
+menopause,formulaire_denrlement,,radio,Is this participant having menstruation cycles or is she in menopause? ,"1, She is menstruating | 2, She is in menopause",,,,,,[gender] = '2' and [exclusion_crit_6_mda] = '0' and [age] >= 46 and [age] <> '',y,,,,,
+eligible_mda,formulaire_denrlement,,radio,Does the participant agree to take the treatment drug (ivermectin / placebo) ,"1, Oui | 0, Non",,,,,,([gender] = '1' and [exclusion_crit_6_mda] = '0') or ([gender] = '2' and [age] < 12 and [age] <> '' and [exclusion_crit_6_mda] = '0') or ([gender] = '2' and [age] > 45 and [age] <> '' and [exclusion_crit_6_mda] = '0') or ([gender] = '2' and [age] >= 12 and [age] <= 45 and [age] <> '' and [exclusion_crit_3_mda] = '0'),y,,,,,
+eligible_pregtest,formulaire_denrlement,,radio,"Check ""Yes"" if the participant a female and an age betweeen 12 and 45 year old.
+
+This partcipant must have a urine pregnancy test 1 week prior to each MDA.","1, Oui | 0, Non",,,,,,[age] > 11 and [age] < 46 and ([age] <> '') and [gender] = '2' and [eligible_mda] = '1',y,,,,,
+eligible_pregtest2,formulaire_denrlement,,radio,"Check ""Yes"" if the participant is a female 46 years old or older, but continues to have mentrual cycles.
+
+This participant must take urine pregnancy tests.
+urinaire 1 semaine avant chaque TM","1, Oui | 0, Non",,,,,,[menopause] = '1' and [eligible_mda] = '1',y,,,,,
+eligible_acd,formulaire_denrlement,,radio,"Check ""Yes"", if the age of this participant is equal to or less than 10 year old (<= 10 years old)
+
+The participant is eligible for the Active Case Detetion (ACD) cohort.","1, Oui | 0, Non",,,,,y,([age] <= 10 AND [age] <> '') OR ([age_child_months] <> ''),y,,,,,
+cross_sec_cohort,formulaire_denrlement,,radio,"Check ""Yes"" if this participant is lives in a household that was selected to be part of the cross-sectional cohort.
+
+The participant is part of the cross-sectional cohort.","1, Oui | 0, Non",,,,,,[inclusion_crit_1]=1 and [inclusion_crit_2]=1,y,,,,,
+pkpd_cohort,formulaire_denrlement,,radio,"Check ""Yes"" if this participant was selected to be part of the pharmacokinetic-dynamic (PKPD) ivermectin cohort.
+
+This participant is part of the PKPD cohort.","1, Oui | 0, Non",This cohort will not start until year 2.,,,,,[eligible_mda] = '1',,,,,,
