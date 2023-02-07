@@ -1,24 +1,4 @@
 #!/usr/bin/perl
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | reviewed
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## July 11, 2012
 ## Sufen Hu
@@ -36,10 +16,11 @@ my ($output, $query, $id_list, $outputFormat, $help);
             'query=s' => \$query,
             'id_list=s' => \$id_list,
             'outputFormat=s' => \$outputFormat,
+            'apiKey=s' => \$apiKey,
            );
 
 &usage() if($help);
-&usage("Missing a Required Argument") unless(defined $output && ($query || $id_list) );
+&usage("Missing a Required Argument") unless(defined $output && ($query || $id_list) && $apiKey);
 
 $outputFormat = "gbwithparts" unless (defined $outputFormat);
 
@@ -81,7 +62,7 @@ for (my $retstart = 0; $retstart < $count; $retstart += $retmax) {
 }
 
 if ($id_list) {
-	my $url = "$utils/efetch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&id=$id_list&rettype=$outputFormat&retmode=text";
+	my $url = "$utils/efetch.fcgi?api_key=$apiKey&db=$db&id=$id_list&rettype=$outputFormat&retmode=text";
 	my $gb_result = get($url);
 	print FILE "$gb_result";
 }
@@ -94,10 +75,11 @@ sub usage {
 Use NCBI eutil to batch download genbank records
 Retrieve Genbank (full) format for genome feature
 
-Usage:  wgetFromGenbank --output [--query | --id_list ] [--outputFormat ]
+Usage:  wgetFromGenbank --output --apiKey [--query | --id_list ] [--outputFormat ]
 
 where
   --output:       output file
+  --apiKey:       NCBI E-Utility API key
   --query:        such as 49901[BioProject]+AND+chromosome, 
                   or science[journal]+AND+breast+cancer+AND+2008[pdat]
   --id_list:      comma delimited id list, such as DF157093,DF157094,DF157106
