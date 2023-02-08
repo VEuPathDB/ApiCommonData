@@ -8,7 +8,7 @@ SELECT ?sid
   (GROUP_CONCAT(DISTINCT ?label;separator=" | ") AS ?labels)
   (GROUP_CONCAT(DISTINCT ?dataset;separator=" | ") AS ?datasets)
 WHERE {
-  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
+  <http://purl.obolibrary.org/obo/clinEpi_eda.owl> owl:imports ?file .
   GRAPH ?file {?entity rdfs:label ?org_label} .
   ?entity a owl:Class .
   BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
