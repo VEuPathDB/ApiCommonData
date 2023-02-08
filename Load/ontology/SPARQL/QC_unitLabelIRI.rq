@@ -8,12 +8,9 @@ SELECT ?unitLabel
   (COUNT(DISTINCT ?unitIRI_str) AS ?unit_count)
   (GROUP_CONCAT(DISTINCT ?unitIRI_str;separator="|") AS ?unitIRI)
 WHERE {
-  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
-  GRAPH ?file {
-    ?entity obo:EUPATH_0001008 ?unitLabel .
-    OPTIONAL {
-    	?entity obo:EUPATH_0001009 ?uIRI . 
-    }
+  ?entity obo:EUPATH_0001008 ?unitLabel .
+  OPTIONAL {
+	?entity obo:EUPATH_0001009 ?uIRI . 
   }
   BIND(IF(bound(?uIRI), ?uIRI, "NO_IRI") AS ?unitIRI_str)
 }
