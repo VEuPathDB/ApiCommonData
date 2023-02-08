@@ -12,7 +12,8 @@ grant insert, update, delete on apidb.TuningTable to gus_w;
 
 create table apidb.ObsoleteTuningTable (
    name      varchar(65) primary key,
-   timestamp date not null);
+   timestamp timestamp not null)
+;
 
 grant select on apidb.ObsoleteTuningTable to gus_r;
 grant insert, update, delete on apidb.ObsoleteTuningTable to gus_w;
@@ -33,13 +34,14 @@ grant insert, update, delete on apidb.TuningMgrExternalDependency to gus_w;
 
 -- TODO There's no direct equivalent of service_name in pgsql. We can get the server ip address with inet_server_addr()
 -- TODO but not the host name. Also, maybe this may be irrelevant in pgsql context.
--- create table apidb.InstanceMetaInfo as
+create table apidb.InstanceMetaInfo as
 -- select sys_context ('USERENV', 'SERVICE_NAME') as instance_nickname,
---        cast(null as varchar2(50)) as current_updater,
---        cast(null as date) as update_start,
---        cast(null as varchar2(20)) as project_id,
---        cast(null as varchar2(12)) as version
--- from dual;
+select cast(null as varchar(50)) as instance_nickname,
+       cast(null as varchar(50)) as current_updater,
+       cast(null as timestamp) as update_start,
+       cast(null as varchar(20)) as project_id,
+       cast(null as varchar(12)) as version
+;
 
--- grant select on apidb.InstanceMetaInfo to gus_r;
--- grant insert, update, delete on apidb.InstanceMetaInfo to gus_w;
+grant select on apidb.InstanceMetaInfo to gus_r;
+grant insert, update, delete on apidb.InstanceMetaInfo to gus_w;
