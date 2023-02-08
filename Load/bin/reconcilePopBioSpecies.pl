@@ -90,7 +90,8 @@ FOO
 my $sample_and_organism_id_assays_stmt = $dbh->prepare($sample_and_organism_id_assays_sql, { ora_auto_lob => 0 });
 $sample_and_organism_id_assays_stmt->execute($study_id);
 
-# we need to read in the whole lot because there can be multiple assays/rows of data per sample
+# we need to read the relevant data from the whole study into memory because
+# the SQL above returns multiple rows of assay data per sample
 # build some hashes
 my %sample2atts_json;    # sample_id => atts (raw JSON string)
 my %sample2sample_name;  # sample_id => sample_name (just in case we need it)
