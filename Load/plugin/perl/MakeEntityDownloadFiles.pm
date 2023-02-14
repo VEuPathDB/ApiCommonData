@@ -197,7 +197,7 @@ SQL_GETLABELS
   my $valueTableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
   my $stableIdCol = uc("${entityTypeAbbrev}_STABLE_ID");
 
-  my $sql = "select at.*, vt.attribute_stable_id, vt.string_value from $ancestorTableName at left join $valueTableName vt on at.$stableIdCol=vt.$stableIdCol order by at.$stableIdCol";
+  my $sql = "select DISTINCT at.*, vt.attribute_stable_id, vt.string_value from $ancestorTableName at left join $valueTableName vt on at.$stableIdCol=vt.$stableIdCol where vt.string_value is not NULL order by at.$stableIdCol";
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute;
@@ -233,7 +233,7 @@ SQL_GETLABELS
       #New row batch (per entityId): print previous and load next entity+ancestor IDs
       $self->formatValues($hash, \@orderedIRIs, $multiValueIRIs);
       if(keys %$hash){
-        printf FH ("%s\n", join("\t", map { $hash->{$_} } @entityIdCols, @orderedIRIs));
+        printf FH ("%s\n", join("\t", map { ref($hash->{$_}) eq 'ARRAY' ? join("|",@{$hash->{$_}}) : $hash->{$_} } @entityIdCols, @orderedIRIs));
       }
       $hash = $row; 
       delete $hash->{ATTRIBUTE_STABLE_ID};
@@ -254,7 +254,7 @@ SQL_GETLABELS
     push(@{ $hash->{ $attrId } }, $value);
   }
   $self->formatValues($hash, \@orderedIRIs, $multiValueIRIs);
-  printf FH ("%s\n", join("\t", map { $hash->{$_} } @entityIdCols, @orderedIRIs));
+  printf FH ("%s\n", join("\t", map { ref($hash->{$_}) eq 'ARRAY' ? join("|",@{$hash->{$_}}) : $hash->{$_} } @entityIdCols, @orderedIRIs));
   close(FH);
   return { id_cols => \@mergeIdCols, merge_key => $mergeKey };
 }
@@ -262,7 +262,7 @@ SQL_GETLABELS
 sub formatValues {
   my ($self, $hash, $orderedIRIs, $multiValueIRIs) = @_;
   foreach my $col ( @$orderedIRIs){
-    next unless defined $hash->{$col};
+    if(!defined($hash->{$col}) || scalar @{$hash->{$col}} < 1 ){ next }
     if((scalar @{ $hash->{$col} } > 1) || $multiValueIRIs->{$col}){
       $hash->{$col} = sprintf('[%s]', join(",", map { sprintf('"%s"', $_) } @{$hash->{$col}}));
     }
