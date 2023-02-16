@@ -24,6 +24,10 @@ use POSIX qw/strftime/;
 
 use JSON;
 
+use Geo::ShapeFile;
+use Encode qw/decode/;
+use Encode::Detect::Detector qw/detect/;
+
 use Data::Dumper;
 my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
 my @GEOHASH_SOURCE_IDS = sort { $GEOHASH_PRECISION->{$a} <=> $GEOHASH_PRECISION->{$b} } keys %$GEOHASH_PRECISION;
@@ -123,6 +127,23 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
+
+   # for testing you can use /home/bmaccallum/gadm on yew
+   directoryArg({name           => 'shapeFilesDirectory',
+            descr          => 'Location of GADM shape files for geocoding placename look-up. Optional. No look-up if omitted.',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+   stringArg({name         => 'shapeFilePrefix',
+	      descr        => "Prefix before the '_[012].shp', defaults to 'gadm36_'",
+	      default      => 'gadm36_',
+	      reqd         => 0,
+	      constraintFunc => undef,
+	      isList       => 0,
+	     }),
   ];
 
 our $documentation = { purpose          => "",
@@ -182,6 +203,11 @@ sub run {
   my ($self) = @_;
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
+
+  if (my $shapeFileDirectory = $self->getArg('shapeFileDirectory')) {
+    $self->loadShapeFiles($shapeFileDirectory);
+  }
+
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -514,7 +540,11 @@ sub loadNodes {
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
-    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);
+    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);  # TO DO: $ontologyTermToIdentifiers not used, remove?
+
+    if (my $shapeFileDirectory = $self->getArg('shapeFileDirectory')) {
+      $self->addLookedUpPlacenames($charsForLoader);
+    }
 
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts) unless($atts eq '{}');
@@ -566,9 +596,8 @@ sub addGeohash {
 
 
     $hash->{$geohashSourceId} = [$subvalue];
-  }           
+  }
 }
-
 
 sub encodeGeohash {
   my($self, $latitude, $longitude, $precision ) = @_;
@@ -594,6 +623,106 @@ sub encodeGeohash {
     $start += 5;
   }
   return $enc
+}
+
+
+
+#
+# loads into $self->_shapeFiles
+#
+sub loadShapeFiles {
+  my ($self, $shapeFileDirectory) = @_;
+  my $prefix = $self->getArg('shapeFilePrefix');
+
+  $self->_shapeFiles = [];
+  foreach my $level (0 .. 2) {
+    $self->_shapeFiles->[$level] = Geo::ShapeFile->new(join '', $shapeFileDirectory, '/', $prefix, $level);
+  }
+}
+
+#
+# does GADM shapefile lookup at three levels and loads the string results (place names)
+# into the $hash of attributes
+#
+sub addLookedUpPlacenames {
+  my ($self, $hash) = @_;
+
+  # find $lat and $long from $hash
+
+  my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
+  my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
+  my ($lat, $long) = ($hash->{$latitudeSourceId}, $hash->{$longitudeSourceId});
+  return unless(defined $lat && defined $long);
+
+  # some default parameters that we may choose to add as command-line options later
+  my $max_radius_degrees = 0.025; # max distance in degrees to search around points that don't geocode (around 2.5 km)
+  my $radius_steps = 10; # how many steps to take expanding the search around the center point
+
+  my $got_geo_term;
+  my $pi = 3.14159265358979;
+ RADIUS:
+  for (my $radius=0; $radius<$max_radius_degrees; $radius += $max_radius_degrees/$radius_steps) {
+    for (my $angle = 0; $radius==0 ? $angle<=0 : $angle<2*$pi; $angle += 2*$pi/8) { # try N, NE, E, SE, S etc
+      # do the geocoding lookup
+      my $query_point = Geo::ShapeFile::Point->new(X => $long + cos($angle)*$radius,
+						   Y => $lat + sin($angle)*$radius);
+      my $parent_id; # the ID, e.g. AFG of the higher level term that was geocoded
+
+      foreach my $level (0 .. 2) {
+	last if ($level > 0 && !defined $parent_id);
+	# print "Scanning level $level\n" if $verbose;
+	my $shapefile = $self->_shapeFiles->[$level];
+	my $num_shapes = $shapefile->shapes;
+	my @found_indices;
+	foreach my $index (1 .. $num_shapes) {
+	  if ($level == 0 || is_child_of_previous($index, $shapefile, $parent_id, $level-1)) {
+	    my $shape = $shapefile->get_shp_record($index);
+	    if ($shape->contains_point($query_point)) {
+	      push @found_indices, $index;
+	    }
+	  }
+	}
+	if (@found_indices == 1) {
+	  my $index = shift @found_indices;
+	  my $dbf = $shapefile->get_dbf_record($index);
+	  my $gadm_id = $dbf->{"GID_$level"};
+	  my $gadm_name = cleanup($dbf->{"NAME_$level"});
+
+	  $parent_id = $gadm_id;
+	  $got_geo_term = $gadm_id;
+
+	  my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
+	  $hash->{$variable_iri} = [ $gadm_name ];
+
+	} elsif (@found_indices > 0) {
+	  warn "Warning: multiple polygons matched for ($lat, $long)\n";
+	}
+      }
+      last RADIUS if ($got_geo_term);
+    }
+  }
+}
+
+sub is_child_of_previous {
+  my ($index, $shapefile, $parent_id, $level) = @_;
+  my $dbf = $shapefile->get_dbf_record($index);
+  return $dbf->{"GID_$level"} eq $parent_id;
+}
+
+# fix some issues with encodings and whitespace in place names
+sub cleanup {
+  my $string = shift;
+  my $charset = detect($string);
+  if ($charset) {
+    # if anything non-standard, use UTF-8
+    $string = decode("UTF-8", $string);
+  }
+  # remove leading and trailing whitespace
+  $string =~ s/^\s+//;
+  $string =~ s/\s+$//;
+  # fix any newlines or tabs with this
+  $string =~ s/\s+/ /g;
+  return $string;
 }
 
 sub getTaxonNameGusObj {
@@ -861,6 +990,12 @@ and tn.name_class = 'scientific name'
   foreach(@GEOHASH_SOURCE_IDS) {
     $iOntologyTermAccessionsHash->{"QUALIFIER"}->{$_}++;
   }
+  # TO DO?
+  # check that $latitudeSourceId, $longitudeSourceId
+  # and @adminLevelSourceIds
+  # are in the database?
+  # presumably these are only needed if geohashing
+  # or geocoding is needed (if $shapeFilesDirectory is defined)
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
