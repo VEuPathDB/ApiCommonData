@@ -23,15 +23,18 @@ map { memoize($_) } qw/termNameToId termIdToName isAchildofB commonAncestor/;
 # 2. needs more sophisticated error handling?
 #
 # 3. integration into nextflow and reflow
+#
+# 4. usage function!
 
 
-my ($gusConfigFile, $extDbRlsSpec, $veupathOntologySpec, $fallbackSpecies, $verbose);
+my ($gusConfigFile, $extDbRlsSpec, $veupathOntologySpec, $fallbackSpecies, $verbose, $testFunctions);
 
 &GetOptions("gusConfigFile=s"         => \$gusConfigFile,
 	    "extDbRlsSpec=s"          => \$extDbRlsSpec,
             "veupathOntologySpec=s"   => \$veupathOntologySpec,
 	    "fallbackSpecies=s"       => \$fallbackSpecies,
-            "verbose!"                => \$verbose );
+            "verbose!"                => \$verbose,
+	    "testFunctions"           => \$testFunctions);  # test isAchildofB and commonAncestor functions with some hardcoded species names and quit
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
@@ -78,6 +81,14 @@ my ($study_id, $studyInternalAbbrev) = $sa_stmt->fetchrow_array();
 $sa_stmt->finish();
 die "FATAL ERROR: unexpected problem" unless (defined $study_id && defined $studyInternalAbbrev);
 # print "yay $extDbRlsSpec has study_id $study_id and internal abbrev $studyInternalAbbrev\n";
+
+if ($testFunctions) {
+  printf "'Anopheles arabiensis' is a child of 'gambiae species complex' %s (should be yes)\n",
+    isAchildofB(termNameToId('Anopheles arabiensis'), termNameToId('gambiae species complex'), $veupathOntologyId) ? 'yes' : 'no';
+
+
+  die "finished tests, quitting...\n";
+}
 
 
 my $sample_and_organism_id_assays_sql = <<FOO;
@@ -150,7 +161,7 @@ foreach my $sample_id (keys %sample2atts_json) {
 
   foreach my $species_name (keys %{$sample2species{$sample_id}}) {
 
-    my $speciesTermId = termNameToId($species_name, $veupathOntologyId);
+    my $speciesTermId = termNameToId($species_name);
 
     if (!defined $result) {
       $result = $speciesTermId;
@@ -170,7 +181,7 @@ foreach my $sample_id (keys %sample2atts_json) {
   $qualifier = 'fallback' unless defined $result;
   my $reconciled_species_name =
     defined $result
-      ? termIdToName($result, $veupathOntologyId)
+      ? termIdToName($result)
       : $fallbackSpecies;
 
   if (!defined $reconciled_species_name) {
@@ -257,23 +268,23 @@ sub externalDbReleaseSpecToId {
 #
 # termNameToId
 #
-# looks up on name and external_database_release_id and returns the ontology_term_id
+# looks up on name returns the ontology_term_id
 #
 # warning: global $dbh used (won't be memoized unless we provide it as an argument)
 #
 sub termNameToId {
-  my ($term_name, $external_database_release_id) = @_;
+  my ($term_name) = @_;
 
   my $stmt = $dbh->prepare("
     SELECT ontology_term_id
     FROM sres.ontologyterm
     WHERE
-      name = ? AND external_database_release_id = ?
+      name = ?
   ");
-  $stmt->execute($term_name, $external_database_release_id);
+  $stmt->execute($term_name);
   my ($term_id) = $stmt->fetchrow_array();
   $stmt->finish();
-  die "FATAL ERROR: Could not find term named '$term_name' in sres.ontologyterm extDbRlsId=$external_database_release_id\n"
+  die "FATAL ERROR: Could not find term named '$term_name' in sres.ontologyterm\n"
     unless (defined $term_id);
 
   return $term_id;
@@ -283,18 +294,18 @@ sub termNameToId {
 # termIdToName (the inverse of the above)
 #
 sub termIdToName {
-  my ($term_id, $external_database_release_id) = @_;
+  my ($term_id) = @_;
 
   my $stmt = $dbh->prepare("
     SELECT name
     FROM sres.ontologyterm
     WHERE
-      ontology_term_id = ? AND external_database_release_id = ?
+      ontology_term_id = ?
   ");
-  $stmt->execute($term_id, $external_database_release_id);
+  $stmt->execute($term_id);
   my ($name) = $stmt->fetchrow_array();
   $stmt->finish();
-  die "FATAL ERROR: Could not find term with id '$term_id' in sres.ontologyterm extDbRlsId=$external_database_release_id\n"
+  die "FATAL ERROR: Could not find term with id '$term_id' in sres.ontologyterm\n"
     unless (defined $name);
 
   return $name;
