@@ -1,0 +1,27 @@
+<investigation identifier="MALED_healthy">
+
+  <study fileName="MALED_healthy.txt" identifierSuffix="-1" sampleRegex="MALED_healthy">
+    <dataset>MicrobiomeStudyEDA_MALED_healthy_RSRC</dataset>
+
+    <node name="Source" type="Participant" suffix="Source" idColumn="Child ID" /> 
+    <node name="RepeatedMeasure" type="Participant_repeated_measures" suffix="Source" idColumn="child id:::age (months)" isaObject="Source" /> 
+    <node name="Sample" type="Sample" idColumn="name"/>
+    <node isaObject="Assay" name="16S" type="16S rRNA sequencing assay targeting V4 region" suffix="16S" idColumn="name" />
+
+
+    <edge input="Source" output="RepeatedMeasure">
+        <protocol>observationprotocol</protocol>
+    </edge>
+
+    <edge input="RepeatedMeasure" output="Sample">
+        <protocol>specimen collection</protocol>
+    </edge>
+
+    
+    <edge input="Sample" output="16S">
+        <protocol>DNA extraction</protocol>
+        <protocol>DNA sequencing</protocol>
+    </edge>
+
+  </study>
+</investigation>
