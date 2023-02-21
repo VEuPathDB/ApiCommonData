@@ -83,7 +83,15 @@ my $argsDeclaration =
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
             constraintFunc => undef,
-            isList         => 0, }),
+              isList         => 0, }),
+
+    integerArg({  name           => 'userDatasetId',
+	       descr          => 'For use with Schema=ApidbUserDatasets; this is the user_dataset_id',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
+
+
   ];
 
 sub new {
