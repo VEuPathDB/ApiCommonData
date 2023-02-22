@@ -86,6 +86,24 @@ if ($testFunctions) {
   printf "'Anopheles arabiensis' is a child of 'gambiae species complex' %s (should be yes)\n",
     isAchildofB(termNameToId('Anopheles arabiensis'), termNameToId('gambiae species complex'), $veupathOntologyId) ? 'yes' : 'no';
 
+  printf "'gambiae species complex' is not a child of 'Anopheles arabiensis' %s (should be no)\n",
+    isAchildofB(termNameToId('gambiae species complex'), termNameToId('Anopheles arabiensis'), $veupathOntologyId) ? 'yes' : 'no';
+
+  printf "Common ancestor of 'Anopheles arabiensis' and 'Anopheles funestus' is '%s' (should be 'Cellia')\n",
+    termIdToName(commonAncestor(termNameToId('Anopheles arabiensis'), termNameToId('Anopheles funestus'), $veupathOntologyId));
+
+  printf "Common ancestor of 'Anopheles merus' and 'Anopheles melas' is '%s' (should be 'gambiae species complex')\n",
+    termIdToName(commonAncestor(termNameToId('Anopheles merus'), termNameToId('Anopheles melas'), $veupathOntologyId));
+
+  printf "And in the opposite direction is also '%s'\n",
+    termIdToName(commonAncestor(termNameToId('Anopheles melas'), termNameToId('Anopheles merus'), $veupathOntologyId));
+
+  # two that are EUPATH not NCBITaxon: 'Anopheles perplexens' and 'Culex chorleyi'
+  # not sure why 'culicidae' is lowercase, while other terms such as 'Culicinae' is capitalised
+  # 'Culicidae' is capitalised in eupath_dev.owl, for example.
+  printf "Common ancestor of 'Anopheles perplexens' and 'Culex chorleyi' is '%s' (should be 'culicidae')\n",
+    termIdToName(commonAncestor(termNameToId('Anopheles perplexens'), termNameToId('Culex chorleyi'), $veupathOntologyId));
+
 
   die "finished tests, quitting...\n";
 }
@@ -172,7 +190,7 @@ foreach my $sample_id (keys %sample2atts_json) {
       # that's fine - stick with the leaf term
     } else {
       # we need to return a common 'ancestral' internal node
-      $result = commonAncestor($result, $speciesTermId);
+      $result = commonAncestor($result, $speciesTermId, $veupathOntologyId);
       $internalResult = 1;
       $qualifier = 'ambiguous';
     }
@@ -344,20 +362,22 @@ EOT
 
 sub commonAncestor {
   my ($termA_id, $termB_id, $external_database_release_id) = @_;
-
+warn "going in with $termA_id, $termB_id, $external_database_release_id\n";
 #
 # find common ancestor (first row contains it)
 #
 
   my $sql = << 'EOT';
-with r1(subject_term_id, object_term_id, query_term_id, lvl) as (
-  select subject_term_id, object_term_id, subject_term_id as query_term_id, 1 as lvl
+with r1(subject_term_id, object_term_id, query_term_id, lvl, external_database_release_id) as (
+  select subject_term_id, object_term_id, subject_term_id as query_term_id, 1 as lvl, external_database_release_id
   from sres.ontologyrelationship r
   where subject_term_id in (?, ?) and external_database_release_id = ?
   union all
-  select r2.subject_term_id, r2.object_term_id, query_term_id, lvl+1
+  select r2.subject_term_id, r2.object_term_id, query_term_id, lvl+1, r2.external_database_release_id
   from sres.ontologyrelationship r2, r1
   where r2.subject_term_id = r1.object_term_id
+    and r2.subject_term_id != r2.object_term_id -- prevents circular issues
+    and r2.external_database_release_id = r1.external_database_release_id
 )
 select object_term_id
 from r1
