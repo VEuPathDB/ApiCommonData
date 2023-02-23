@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome_eda.owl">
-        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2023-02-21</owl:versionInfo>
+        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2023-02-23</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -750,6 +750,7 @@
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NICUNEC.txt::baby_delivery_mode</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resistome.txt::baby_delivery_mode</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">StLouisNICU.txt::baby_delivery_mode</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt::Delivery Mode</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DailyBaby.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EMP_10249_ECAM.txt</obo:EUPATH_0001001>
@@ -757,6 +758,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NICUNEC.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resistome.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">StLouisNICU.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Method of delivery (newborn)</obo:IAO_0000115>
@@ -1278,8 +1280,10 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000733">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bangladesh_healthy_5yr.txt::WAZ</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::waz_last</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MALED_healthy.txt::WAZ</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bangladesh_healthy_5yr.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MALED_healthy.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
@@ -1701,26 +1705,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009035 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009035">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036493"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::gestational_diabetes</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported gestational diabetes</obo:IAO_0000115>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported gestational diabetes</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009036 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009036">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036493"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::abx_while_pregnant</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt::Antibiotic use</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
@@ -1730,7 +1718,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported antibiotic use during pregnancy</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported antibiotic use during pregnancy</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotics before delivery, by maternal report</rdfs:label>
     </owl:Class>
     
 
@@ -1830,7 +1818,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the child was dianosed type 1 diabetes</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at diagnosis of type 1 diabetes</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at type 1 diabetes diagnosis</rdfs:label>
     </owl:Class>
     
 
@@ -1862,7 +1850,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for insulin autoantibodies (IAA)</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insulin autoantibodies positive</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insulin autoantibodies</rdfs:label>
     </owl:Class>
     
 
@@ -1878,7 +1866,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for Glutamic acid decarboxylase antibodies (GADA)</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Glutamic acid decarboxylase antibodies positive</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Glutamic acid decarboxylase antibodies</rdfs:label>
     </owl:Class>
     
 
@@ -1894,7 +1882,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for insulinoma-associated protein 2 autoantibody (IA2A)</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insulinoma-associated protein 2 autoantibody positive</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insulinoma-associated protein 2 autoantibodies</rdfs:label>
     </owl:Class>
     
 
@@ -1910,7 +1898,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for Zinc transporter 8 autoantibody (ZnT8A)</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zinc transporter 8 autoantibody positive</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zinc transporter 8 autoantibodies</rdfs:label>
     </owl:Class>
     
 
@@ -1926,7 +1914,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for Islet cell autoantibodies (ICA)</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Islet cell autoantibodies positive</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Islet cell autoantibodies</rdfs:label>
     </owl:Class>
     
 
@@ -1943,7 +1931,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Average weight gain during first three years, kilograms / year</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yearly average weight gain during first three years</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean weight gain during 1st 3 years</rdfs:label>
     </owl:Class>
     
 
@@ -1960,7 +1948,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Average linear growth pace during first three years, centimeters / year</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yearly average linear growth during first three years</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean linear growth during 1st 3 years</rdfs:label>
     </owl:Class>
     
 
@@ -1978,7 +1966,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight gain during the first year of life, kilograms</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight gain during first year</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight gain during 1st year</rdfs:label>
     </owl:Class>
     
 
@@ -1996,61 +1984,7 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Linear growth during the first year of life, centimeters</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Linear growth during first year</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009053 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009053">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::agedays_haz_last</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last height-for-age z-score was measured in days</obo:IAO_0000115>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at height-for-age z-score measured</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009054 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009054">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::agedays_waz_last</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last weight-for-age z-score was measured in days</obo:IAO_0000115>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at weight-for-age z-score measured</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009055 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009055">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::agedays_zBMI_last</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last BMI-for-age z-score was measured in days</obo:IAO_0000115>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at BMI-for-age z-score measured</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Linear growth during 1st year</rdfs:label>
     </owl:Class>
     
 
@@ -2059,16 +1993,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009056">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_solid_start_approx</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Approximate age in months when the child first received solid food or non-human milk.</obo:IAO_0000115>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received solid food or non-human milk</rdfs:label>
     </owl:Class>
     
@@ -2077,7 +2003,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009057 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009057">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_apple</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2086,7 +2012,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received apple</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given apple</rdfs:label>
     </owl:Class>
     
 
@@ -2094,7 +2020,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009058 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009058">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_banana</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2103,7 +2029,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received banana</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given banana</rdfs:label>
     </owl:Class>
     
 
@@ -2111,7 +2037,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009059 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009059">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_barley</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2120,7 +2046,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received barley</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given barley</rdfs:label>
     </owl:Class>
     
 
@@ -2128,7 +2054,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009060 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009060">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_beef</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2137,7 +2063,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received beef</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given beef</rdfs:label>
     </owl:Class>
     
 
@@ -2145,7 +2071,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009062 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009062">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_berries</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2154,7 +2080,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received berries</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given berries</rdfs:label>
     </owl:Class>
     
 
@@ -2162,7 +2088,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009063 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009063">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_cabbs</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2171,7 +2097,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received cabbs</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given cabbs</rdfs:label>
     </owl:Class>
     
 
@@ -2179,7 +2105,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009064 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009064">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_carrot</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2188,7 +2114,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received carrot</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given carrot</rdfs:label>
     </owl:Class>
     
 
@@ -2196,7 +2122,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009065 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009065">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_corn</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2205,7 +2131,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received corn</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given corn</rdfs:label>
     </owl:Class>
     
 
@@ -2213,7 +2139,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009066 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009066">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_cowsmilk</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2222,7 +2148,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received cowsmilk</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given cowsmilk</rdfs:label>
     </owl:Class>
     
 
@@ -2230,7 +2156,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009067 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009067">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_egg</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2239,7 +2165,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received egg</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given egg</rdfs:label>
     </owl:Class>
     
 
@@ -2247,7 +2173,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009068 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009068">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_fish</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2256,7 +2182,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received fish</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given fish</rdfs:label>
     </owl:Class>
     
 
@@ -2264,7 +2190,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009071 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009071">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_milkprod</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2273,7 +2199,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received milk products</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given milk products</rdfs:label>
     </owl:Class>
     
 
@@ -2281,7 +2207,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009072 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009072">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_oat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2290,7 +2216,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received oat</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given oat</rdfs:label>
     </owl:Class>
     
 
@@ -2298,7 +2224,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009073 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009073">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_pear</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2307,7 +2233,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received pear</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given pear</rdfs:label>
     </owl:Class>
     
 
@@ -2315,7 +2241,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009074 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009074">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_peas</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2324,7 +2250,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received peas</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given peas</rdfs:label>
     </owl:Class>
     
 
@@ -2332,7 +2258,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009075 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009075">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_plum</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2341,7 +2267,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received plum</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given plum</rdfs:label>
     </owl:Class>
     
 
@@ -2349,7 +2275,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009076 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009076">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_pork</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2358,7 +2284,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received pork</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given pork</rdfs:label>
     </owl:Class>
     
 
@@ -2366,7 +2292,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009077 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009077">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_potato</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2375,7 +2301,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received potato</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given potato</rdfs:label>
     </owl:Class>
     
 
@@ -2383,7 +2309,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009078 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009078">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_poultry</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2392,7 +2318,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received poultry</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given poultry</rdfs:label>
     </owl:Class>
     
 
@@ -2400,7 +2326,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009079 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009079">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_rice</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2409,7 +2335,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received rice</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given rice</rdfs:label>
     </owl:Class>
     
 
@@ -2417,7 +2343,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009080 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009080">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_rye</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2426,7 +2352,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received rye</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given rye</rdfs:label>
     </owl:Class>
     
 
@@ -2434,7 +2360,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009083 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009083">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_sweetpota</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2443,7 +2369,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received sweet potato</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given sweet potato</rdfs:label>
     </owl:Class>
     
 
@@ -2451,7 +2377,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009084 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009084">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_tomato</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2460,7 +2386,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received tomato</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given tomato</rdfs:label>
     </owl:Class>
     
 
@@ -2468,7 +2394,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009086 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009086">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_wheat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2477,7 +2403,7 @@
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000035</obo:EUPATH_0001009>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received wheat</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st given wheat</rdfs:label>
     </owl:Class>
     
 
@@ -2806,21 +2732,6 @@
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever during labor</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009110 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009110">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt::Number of previous pregnancies</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Previous pregnancies count</rdfs:label>
     </owl:Class>
     
 
@@ -6416,8 +6327,11 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009360">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::gestational_diabetes</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported gestational diabetes</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gestational diabetes, by maternal report</rdfs:label>
@@ -6549,6 +6463,24 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011033 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011033">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::compound_solid_start_approx</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Approximate age in months when the child first received solid food or non-human milk.</obo:IAO_0000115>
+        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
+        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age 1st animal milk or solids given</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011036 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011036">
@@ -6649,10 +6581,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011895">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bangladesh_healthy_5yr.txt::WHZ</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::waz_last</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MALED_healthy.txt::WHZ</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bangladesh_healthy_5yr.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MALED_healthy.txt</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
@@ -6885,6 +6815,26 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0037026 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0037026">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::agedays_haz_last</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::agedays_waz_last</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt::agedays_zBMI_last</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DiabImmune.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000033</obo:EUPATH_0001009>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last height-for-age z-score was measured in days</obo:IAO_0000115>
+        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
+        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at anthropometry</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0038078 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038078">
@@ -6976,6 +6926,21 @@
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age group at enrollment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0051011 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051011">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt::Number of previous pregnancies</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
+        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Previous pregnancies count</rdfs:label>
     </owl:Class>
     
 
@@ -7888,21 +7853,6 @@
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit number</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/OAE_0001041 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OAE_0001041">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042001"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt::Delivery Mode</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">UgandaMaternal.txt</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
-        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cesarean delivery</rdfs:label>
     </owl:Class>
     
 
