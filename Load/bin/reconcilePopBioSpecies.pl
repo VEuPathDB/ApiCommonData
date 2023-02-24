@@ -15,16 +15,9 @@ map { memoize($_) } qw/termNameToId termIdToName isAchildofB commonAncestor/;
 #
 # TO DO:
 #
-# 1. figure out what possibly different external_database_release_id
-#    in ontologytermrelationship and ontologyterm tables
-#    mean when eupath.owl is loaded, and fix
-#    isAchildofB and commonAncestor functions/SQL appropriately
+# 1. integration into nextflow and reflow
 #
-# 2. needs more sophisticated error handling?
-#
-# 3. integration into nextflow and reflow
-#
-# 4. usage function!
+# 2. usage function!
 
 
 my ($gusConfigFile, $extDbRlsSpec, $veupathOntologySpec, $fallbackSpecies, $verbose, $testFunctions);
@@ -51,6 +44,7 @@ my $qualifier_variable_iri = 'IAO_0000078'; # 'curation status specification' pl
 # TO DO: get correct IRIs from
 # NTR: https://github.com/VEuPathDB-ontology/VEuPathDB-ontology/issues/489
 # and make sure this is in eupath.owl (requires a release cycle???)
+# it should be OK if it's just in popbio.owl (these placeholders have been added as "Species" and "Species qualifier")
 
 my $dbh = $db->getQueryHandle(0);
 
@@ -58,16 +52,13 @@ die "FATAL ERROR: couldn't get a database handle - do you have a config/gus.conf
 
 die "FATAL ERROR: Must provide --extDbRlsSpec <RSRC|VERSION>\n" unless (defined $extDbRlsSpec);
 
+die "FATAL ERROR: Must provide --veupathOntologySpec <RSRC|VERSION>\n" unless (defined $veupathOntologySpec);
+
 my $extDbRlsId = externalDbReleaseSpecToId($extDbRlsSpec);
 
 my $veupathOntologyId;
 if ($veupathOntologySpec) {
   $veupathOntologyId = externalDbReleaseSpecToId($veupathOntologySpec);
-}
-
-if (!defined $veupathOntologyId) {
-  warn "need to make --veupathOntologySpec required option. Things aren't gonna work...\n";
-#   sleep 1;
 }
 
 # now let's get the study id (and internal abbreviation, for use in table names, may not be needed)
@@ -227,7 +218,7 @@ foreach my $sample_id (keys %sample2atts_json) {
    ');
 
   ### will uncomment nearer to proper testing! ###
-  # $update_stmt->execute($sample_atts_json, $sample_id);
+  $update_stmt->execute($sample_atts_json, $sample_id);
   $update_stmt->finish();
 }
 
