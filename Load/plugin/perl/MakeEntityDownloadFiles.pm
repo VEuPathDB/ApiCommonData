@@ -280,7 +280,14 @@ regexp_replace(os.ONTOLOGY_SYNONYM ,'\s','_') || '_Id' ID_COLUMN
 from ${SCHEMA}.entitytype t
 left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
 where t.study_id = $studyId
-and os.external_database_release_id = $ontologyId";
+and os.external_database_release_id = $ontologyId
+UNION 
+select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,t.name LABEL, '' PLURAL,
+regexp_replace(t.name ,'\s','_') || '_Id' ID_COLUMN
+from EDA.entitytype t
+where t.study_id = $studyId
+AND t.TYPE_ID NOT IN (SELECT ontology_term_id FROM SRes.OntologySynonym WHERE EXTERNAL_DATABASE_RELEASE_ID = $ontologyId)";
+
   my $dbh = $self->getQueryHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
   my $sh = $dbh->prepare($sql);
