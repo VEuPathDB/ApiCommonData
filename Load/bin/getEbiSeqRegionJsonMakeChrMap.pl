@@ -45,6 +45,8 @@ unless (-e $seqRegionFile) {
 
   my $getCmd = "wget --ftp-user $ftpUser --ftp-password $ftpPassword $finalFtpSite";
   `$getCmd`;
+} else {
+  print STDERR "\nWARNING ... $seqRegionFile already exist.\n\n";
 }
 
 ## seqRegionJson2ChrMap.pl stomoxys_calcitrans_seq_region.json > ../final/chromosomeMap.txt
