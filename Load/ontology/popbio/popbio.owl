@@ -594,6 +594,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EFO_0004667 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EFO_0004667">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>biological variation design</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/ENVO_00000005 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000005">
@@ -2246,6 +2256,18 @@
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:IAO_0000115>Qualifier providing information about the species/taxonomic assignment based on potentially multiple species identification assays performed on the same specimen. &apos;unambiguous&apos; indicates that the assignment could be made without any contradictory results. &apos;ambiguous&apos; indicates that a higher-level taxonomic term had to be used because of conflicting results. &apos;fallback&apos; indicates that no assay results were used and a dataset-wide default taxon was used.</obo:IAO_0000115>
         <rdfs:label>species qualifier</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000311 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000311">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:comment>Note, like &quot;Designs and Tags&quot; these values are unlikely to be loaded into EDA tables. They are here to prevent loader errors.</rdfs:comment>
+        <rdfs:label>Publication status</rdfs:label>
     </owl:Class>
     
 
@@ -7135,6 +7157,20 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0500000 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0500000">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:comment>Children will be values present in the i_investigation.txt sheet of popbio ISA-Tabs in the &quot;STUDY DESIGN DESCRIPTORS&quot; section. These are not currently loaded as EDA entity data. However, they fail validation if the loader doesn&apos;t know about the terms, so they go here so that it does.
+
+Note: this ISA-Tab section also includes terms that used to be in the now-deprecated custom &quot;STUDY TAGS&quot; section. For example, tags/terms like &quot;ICEMR&quot;.</rdfs:comment>
+        <rdfs:label>Designs and Tags</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0600018 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0600018">
@@ -7490,6 +7526,336 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043064"/>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hour</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0000233 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0000233">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000311"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>unpublished</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0000667 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0000667">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000311"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>website</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001047 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001047">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000311"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>data deposited</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001080 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001080">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>ICEMR</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001085 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001085">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>abundance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001090 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001090">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>whole genome sequencing</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001092 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001092">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Orange County Florida Mosquito Control</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001093 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001093">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>South Walton County Florida Mosquito Control</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001094 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001094">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Iowa State Mosquito Surveillance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001096 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001096">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Manatee County Florida Mosquito Control</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001097 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001097">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Hernando County Florida Mosquito Control</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001098 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001098">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Collier Mosquito Control District</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001100 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001100">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>CC BY-NC</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001101 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001101">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Biogents Mosquito Surveillance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001103 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001103">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Southern Nevada Health District</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001104 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001104">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Marion County Public Health Department, Indiana</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001105 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001105">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Anastasia Mosquito Control District, Florida</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001109 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001109">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>microsatellites</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001115 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001115">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>The Worldwide Insecticide resistance Network</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001117 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001117">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Salt Lake City Mosquito Abatement District</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001118 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001118">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Cass County Vector Control District</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001119 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001119">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Toledo Area Sanitary District</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001120 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001120">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Northwest Mosquito and Vector Control District</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001121 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001121">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Ada County Weed, Pest, and Mosquito Abatement</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001123 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001123">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>viral surveillance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001125 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001125">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Entomology Group, Pirbright</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001128 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001128">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Rhode Island Department of Environmental Management</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001131 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001131">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>City of Suffolk Mosquito Control</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001132 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001132">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Lee County Mosquito Control</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001133 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001133">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>DesPlaines Valley Mosquito Abatement</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001134 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001134">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Maryland Department of Agriculture</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001135 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001135">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>Montana State Mosquito Surveillance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/VBcv_0001142 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/VBcv_0001142">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>North Dakota Department of Health</rdfs:label>
     </owl:Class>
     
 
