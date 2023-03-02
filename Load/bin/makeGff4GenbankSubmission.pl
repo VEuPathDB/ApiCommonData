@@ -13,9 +13,9 @@ use GUS::Community::GeneModelLocations;
 
 use Bio::Tools::GFF;
 
-my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev, $outputFileDir, $ifSeparateParents);
+my ($help, $instanceName, $extDbRlsId, $outputFile, $orgAbbrev, $outputFileDir, $ifSeparateParents);
 &GetOptions('help|h' => \$help,
-            'gusConfigFile=s' => \$gusConfigFile,
+            'instanceName=s' => \$instanceName,
             'orgAbbrev=s' => \$orgAbbrev,
             'extDbRlsId=s' => \$extDbRlsId,
             'outputFile=s' => \$outputFile,
@@ -25,9 +25,7 @@ my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev, $outputFileDir,
 
 &usage("Missing a required argument.") unless (defined $orgAbbrev);
 
-if(!$gusConfigFile) {
-  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-}
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 if (!$outputFile) {
   $outputFile = $orgAbbrev . ".gff3.before";
@@ -47,6 +45,7 @@ my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 my $dbiDsn = $gusconfig->{props}->{dbiDsn};
 my $dbiUser = $gusconfig->{props}->{databaseLogin};
 my $dbiPswd = $gusconfig->{props}->{databasePassword};
+$dbiDsn = "dbi:Oracle:".$instanceName if ($instanceName);
 
 my $dbh = GUS::ObjRelP::DbiDbHandle->new($dbiDsn, $dbiUser, $dbiPswd);
 $dbh->{RaiseError} = 1;
@@ -609,7 +608,7 @@ where
   --extDbRlsId: optional, the externalDatabaseRleaseId that have database name like '*_primary_genome_RSRC'
   --outputFile: optional, the ouput file and/or dir
   --outputFileDir: optional, the ouput file dir that holds all output file
-  --gusConfigFile: optional, use the current GUS_HOME gusConfigFile if not specify
+  --instanceName: optional, use the instance in \$GUS_HOME gus.config if not specify
   --ifSeparateParents: optional, Yes|No, default is No
 ";
 }
