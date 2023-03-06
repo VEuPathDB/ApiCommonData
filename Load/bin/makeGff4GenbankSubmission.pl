@@ -66,6 +66,7 @@ my $transId2GeneId = getGeneIdFromTranscriptId ($dbh, $extDbRlsId);
 my $ecNumbers = getEcNumber ($dbh, $extDbRlsId);
 my $gos = getGoAssociations ($dbh, $extDbRlsId);
 my $dbxrefs = getDbxref ($dbh, $extDbRlsId);
+my $transcriptComment = getTranscriptComment ($dbh, $extDbRlsId);
 
 open(GFF, "> $outputFile") or die "Cannot open file $outputFile For writing: $!";
 
@@ -293,6 +294,24 @@ close GFF;
 ## 5. add DbxRef
 
 ############
+sub getTranscriptComment {
+  my ($dbh, $extDbRlsId) = @_;
+  my %t2Comment;
+  my $sql = "
+             select t.source_id, fc.comment_string
+             from DoTS.NaFeatureComment fc, dots.transcript t, dots.genefeature gf
+             where (t.na_feature_id=fc.na_feature_id OR gf.na_feature_id=fc.na_feature_id)
+             and gf.na_feature_id=t.parent_id and gf.external_database_release_id=$extDbRlsId
+            ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($tid, $cmmt) = $stmt->fetchrow_array()) {
+    $t2Comment{$tid} = $cmmt if($tid && $cmmt);
+  }
+  $stmt->finish();
+
+  return \%t2Comment;
+}
 
 sub getGeneIdFromTranscriptId {
   my ($dbh, $extDbRlsId) = @_;
@@ -530,7 +549,6 @@ sub getBioTypeAndUpdatePrimaryTag {
       }
       $$feat->add_tag_value("synonym", $gs) if ($gs);
     }
-
   } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/i) {
     $bioType = $transcriptAnnotations->{$id}->{so_term_name};
     if ($$feat->has_tag("is_pseudo") && ($$feat->get_tag_values("is_pseudo")) == 1) {
@@ -546,6 +564,12 @@ sub getBioTypeAndUpdatePrimaryTag {
 	$bioType = "pseudogenic_transcript";
 	$$feat->primary_tag("mRNA");
       }
+    }
+    my ($tid) = $$feat->get_tag_values("ID");
+    print STDERR "\$tid = $tid\n";
+    if ($transcriptComment->{$tid}) {
+      my $tc = $transcriptComment->{$tid};
+      $$feat->add_tag_value("comment", $tc) if ($tc);
     }
 
   } elsif ($$feat->primary_tag eq "exon" ) {
