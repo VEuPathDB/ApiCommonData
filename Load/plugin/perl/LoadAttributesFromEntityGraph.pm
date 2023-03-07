@@ -213,11 +213,18 @@ sub run {
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
     my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory);
 
+
+    $self->log("Starting load attribute values");
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh);
+    $self->log("Finished  load attribute values");
 
+    $self->log("Starting load stats for plots");
     my $statsForPlotsByAttributeStableIdAndEntityTypeId = $self->statsForPlots($dateValsFileName, $numericValsFileName, $tempDirectory);
+    $self->log("Finished load stats for plots");
 
+    $self->log("Starting load attribute terms");
     my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
+    $self->log("Finished load attribute terms");
 
     $self->log("Loaded $attributeCount attributes for study id $studyId");
   }
