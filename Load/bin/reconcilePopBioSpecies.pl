@@ -116,10 +116,12 @@ from
   EDA.entitytype et,
   EDA.processattributes pa,
   EDA.entityattributes ea2,
-  EDA.entitytype et2
+  EDA.entitytype et2,
+  SRES.ontologyterm ot
 where
   ea.entity_type_id = et.entity_type_id and
-  et.name = 'sample' and
+  et.type_id = ot.ontology_term_id and
+  ot.source_id = 'EUPATH_0000609' and
   et.study_id = ? and
   pa.in_entity_id = ea.entity_attributes_id and
   pa.out_entity_id = ea2.entity_attributes_id and
