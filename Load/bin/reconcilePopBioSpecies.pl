@@ -37,6 +37,8 @@ $fallbackSpecies = undef if (defined $fallbackSpecies && lc($fallbackSpecies) eq
 my $dbh = DBI->connect($gusconfig->getDbiDsn(),
 		       $gusconfig->getDatabaseLogin(),
 		       $gusconfig->getDatabasePassword());
+$dbh->{AutoCommit} = 0;
+
 
 die sprintf("FATAL ERROR: could not connect to %s as user %s\n", $gusconfig->getDbiDsn(), $gusconfig->getDatabaseLogin()) unless $dbh;
 
@@ -162,7 +164,13 @@ while (my ($sample_id, $sample_name, $sample_atts_loc, $assay_id, $assay_name, $
 
 $sample_and_organism_id_assays_stmt->finish();
 
+my $update_stmt = $dbh->prepare('
+    UPDATE EDA.entityattributes
+    SET atts = ?
+    WHERE entity_attributes_id = ?
+   ');
 
+my $row_count = 0;
 
 foreach my $sample_id (keys %sample2atts_json) {
   my $result; # id of computed reconciled species term
@@ -211,18 +219,14 @@ foreach my $sample_id (keys %sample2atts_json) {
   # by default decode_json/encode_json should use utf-8
   my $sample_atts_json = encode_json($sample_atts);
 
-  # is this all we need to do?  No messing about with lobLocators and chunks?
-  my $update_stmt = $dbh->prepare('
-    UPDATE EDA.entityattributes
-    SET atts = ?
-    WHERE entity_attributes_id = ?
-   ');
-
-  ### will uncomment nearer to proper testing! ###
   $update_stmt->execute($sample_atts_json, $sample_id);
-  $update_stmt->finish();
+
+  $dbh->commit if (++$row_count % 10000 == 0);
 }
 
+$update_stmt->finish();
+
+$dbh->commit;
 
 #
 # warning, Oracle specific code!
