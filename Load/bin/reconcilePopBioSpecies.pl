@@ -5,7 +5,8 @@ use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
-use GUS::ObjRelP::DbiDatabase;
+use DBI;
+use DBD::Oracle;
 use JSON;
 use Memoize;
 map { memoize($_) } qw/termNameToId termIdToName isAchildofB commonAncestor/;
@@ -31,11 +32,11 @@ my ($gusConfigFile, $extDbRlsSpec, $veupathOntologySpec, $fallbackSpecies, $verb
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
-                                        $gusconfig->getDatabaseLogin(),
-                                        $gusconfig->getDatabasePassword(),
-                                        $verbose,0,1,
-                                        $gusconfig->getCoreSchemaName());
+my $dbh = DBI->connect($gusconfig->getDbiDsn(),
+		       $gusconfig->getDatabaseLogin(),
+		       $gusconfig->getDatabasePassword());
+
+die sprintf("FATAL ERROR: could not connect to %s as user %s\n", $gusconfig->getDbiDsn(), $gusconfig->getDatabaseLogin()) unless $dbh;
 
 my $SCHEMA = 'EDA'; # TO DO: needs generalizing for DIY?
 my $species_variable_iri = 'EUPATH_0043194';
@@ -45,8 +46,6 @@ my $qualifier_variable_iri = 'IAO_0000078'; # 'curation status specification' pl
 # NTR: https://github.com/VEuPathDB-ontology/VEuPathDB-ontology/issues/489
 # and make sure this is in eupath.owl (requires a release cycle???)
 # it should be OK if it's just in popbio.owl (these placeholders have been added as "Species" and "Species qualifier")
-
-my $dbh = $db->getQueryHandle(0);
 
 die "FATAL ERROR: couldn't get a database handle - do you have a config/gus.config file in your \$GUS_HOME? (or use the command line option --gusConfigFile)\n" unless ($dbh);
 
@@ -353,7 +352,7 @@ EOT
 
 sub commonAncestor {
   my ($termA_id, $termB_id, $external_database_release_id) = @_;
-warn "going in with $termA_id, $termB_id, $external_database_release_id\n";
+
 #
 # find common ancestor (first row contains it)
 #
