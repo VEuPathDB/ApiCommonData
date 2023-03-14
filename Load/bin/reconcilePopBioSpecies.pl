@@ -26,11 +26,13 @@ my ($gusConfigFile, $extDbRlsSpec, $veupathOntologySpec, $fallbackSpecies, $verb
 &GetOptions("gusConfigFile=s"         => \$gusConfigFile,
 	    "extDbRlsSpec=s"          => \$extDbRlsSpec,
             "veupathOntologySpec=s"   => \$veupathOntologySpec,
-	    "fallbackSpecies=s"       => \$fallbackSpecies,
+	    "fallbackSpecies=s"       => \$fallbackSpecies, # if not needed, set to empty or 'na' or 'NA'
             "verbose!"                => \$verbose,
 	    "testFunctions"           => \$testFunctions);  # test isAchildofB and commonAncestor functions with some hardcoded species names and quit
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+$fallbackSpecies = undef if (defined $fallbackSpecies && lc($fallbackSpecies) eq 'na');
 
 my $dbh = DBI->connect($gusconfig->getDbiDsn(),
 		       $gusconfig->getDatabaseLogin(),
