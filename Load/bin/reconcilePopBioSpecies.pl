@@ -202,8 +202,8 @@ foreach my $sample_id (keys %sample2atts_json) {
   # now add or replace the new reconciled species in the sample attributes JSON
 
   my $sample_atts = decode_json($sample2atts_json{$sample_id});
-  $sample_atts->{$reconciled_species_variable_iri} = $reconciled_species_name;
-  $sample_atts->{$qualifier_variable_iri} = $qualifier;
+  $sample_atts->{$reconciled_species_variable_iri} = [ $reconciled_species_name ];
+  $sample_atts->{$qualifier_variable_iri} = [ $qualifier ];
 
   # and write it back to the database
   # by default decode_json/encode_json should use utf-8
