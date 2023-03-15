@@ -149,7 +149,9 @@ agg_follow_up::patient_recommend_fac	agg_follow_up::patient_recommend_fac	NA	:::
 agg_follow_up::pexp_danger_signs_resp	agg_follow_up::pexp_danger_signs_resp	0	No	
 agg_follow_up::pexp_danger_signs_resp	agg_follow_up::pexp_danger_signs_resp	1	At least one danger sign named for mother or baby	
 agg_follow_up::pexp_danger_signs_resp	agg_follow_up::pexp_danger_signs_resp	2	No response	
-agg_follow_up::pexp_danger_signs_resp	agg_follow_up::pexp_danger_signs_resp	NA	:::UNDEF:::	
+agg_follow_up::pexp_danger_signs_resp	agg_follow_up::pexp_danger_signs_resp	NA	:::UNDEF:::
+agg_follow_up::datatype	agg_follow_up::datatype	Observed birth and outcome data	Observed birth and outcome data
+agg_follow_up::datatype	agg_follow_up::datatype	Outcome data	Outcome data	
 dim_baby_outcomes_noconflict_var::baby_dead_day_7_1	dim_baby_outcomes_noconflict_var::baby_dead_day_7_1	0	No
 dim_baby_outcomes_noconflict_var::baby_dead_day_7_1	dim_baby_outcomes_noconflict_var::baby_dead_day_7_1	1	Yes
 dim_baby_outcomes_noconflict_var::baby_dead_day_7_1	dim_baby_outcomes_noconflict_var::baby_dead_day_7_1	NA	:::UNDEF:::
@@ -463,15 +465,14 @@ dim_fada_single_row::comment_refer_baby_flag	dim_fada_single_row::comment_refer_
 dim_fada_single_row::comment_refer_baby_flag	dim_fada_single_row::comment_refer_baby_flag	1	Yes	
 dim_fada_single_row::comment_refer_baby_flag	dim_fada_single_row::comment_refer_baby_flag	NA	:::UNDEF:::	
 dim_fada_single_row::comment_notes	dim_fada_single_row::comment_notes	>30 categories		
-dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	12 MONTH	12 month	
-dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	6 MONTH	6 month	
-dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	POST	Post	
-dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	PRE	Pre	
-dim_fada_single_row::smart_fada_phase	dim_fada_single_row::smart_fada_phase	12 MONTH	12 month	
-dim_fada_single_row::smart_fada_phase	dim_fada_single_row::smart_fada_phase	6 MONTH	6 month		
-dim_fada_single_row::smart_fada_phase	dim_fada_single_row::smart_fada_phase	OVERLAP	Overlap	
-dim_fada_single_row::smart_fada_phase	dim_fada_single_row::smart_fada_phase	POST	Post	
-dim_fada_single_row::smart_fada_phase	dim_fada_single_row::smart_fada_phase	PRE	Pre		
+dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	12 MONTH	12 month (intervention complete)	4
+dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	6 MONTH	6 months (intervention ongoing)	3
+dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	POST	2 months (intervention ongoing)	2
+dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	PRE	Baseline	1
+dim_fada_single_row::datatype	dim_fada_single_row::datatype	Observed birth and outcome data	Observed birth and outcome data	
+dim_fada_single_row::datatype	dim_fada_single_row::datatype	Observed birth data	Observed birth data	
+dim_fada_single_row::clinepi_id	dim_fada_single_row::clinepi_id	Yes	Yes
+dim_fada_single_row::lighttouch	dim_fada_single_row::lighttouch	No	No
 dim_mom_outcomes::mom_dead_day_0	dim_mom_outcomes::mom_dead_day_0	0	No	
 dim_mom_outcomes::mom_dead_day_0	dim_mom_outcomes::mom_dead_day_0	1	Yes	
 dim_mom_outcomes::mom_dead_day_0	dim_mom_outcomes::mom_dead_day_0	NA	:::UNDEF:::	
@@ -522,9 +523,9 @@ dim_mom_outcomes::mom_site_moved_omit_data	dim_mom_outcomes::mom_site_moved_omit
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	1	Vaginal	
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	2	Caesarean section	
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	3		
-dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	intensive	Intensive	
-dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	post	Post	
-dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	taper	Taper			
+dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	intensive	Intensive coaching intervention (2x per week)	1
+dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	post	Post coaching intervention	3
+dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	taper	Tapered coaching intervention (1x per week or less)	2		
 dim_mom_outcomes::coach_was_there	dim_mom_outcomes::coach_was_there	0	No	
 dim_mom_outcomes::coach_was_there	dim_mom_outcomes::coach_was_there	1	Yes	
 dim_mom_outcomes::coach_was_there	dim_mom_outcomes::coach_was_there	NA	:::UNDEF:::	
@@ -815,7 +816,10 @@ lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	low 
 lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	mec	MEC	
 lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	no checklist	No checklist	
 lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	transverse	Transverse	
-lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	twins	Twins		
+lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	twins	Twins	
+lt_dim_fada_single_row::datatype	lt_dim_fada_single_row::datatype	Observed birth data	Observed birth data	
+Lt_dim_fada_single_row::clinepi_id	lt_dim_fada_single_row::clinepi_id	Yes	Yes
+lt_dim_fada_single_row::lighttouch	lt_dim_fada_single_row::lighttouch	Yes	Yes
 lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	0	No	
 lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	1	Yes, supplied from facility	
 lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	2	Yes, purchased from facility	
@@ -854,7 +858,7 @@ lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	lt_raw_coach_tl_sbs::otis_sl_
 lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	2	Yes, purchased from facility	
 lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	3	Yes, from patient or family	
 lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	lt_raw_coach_tl_sbs::otis_sl_slr_clean_towel_avail	4	Yes, other	
-lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	0	No	
+llt_raw_coacht_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	0	No	
 lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	1	Yes, supplied from facility	
 lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	2	Yes, purchased from facility	
 lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	lt_raw_coach_tl_sbs::otis_sl_slr_mucus_extract_avail	3	Yes, from patient or family	
@@ -942,7 +946,9 @@ lt_raw_coach_tl_sbs::coach_tl_fp_male_steril	lt_raw_coach_tl_sbs::coach_tl_fp_ma
 lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	0	No	
 lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	1	Yes	
 lt_raw_coach_tl_sbs::coach_tl_fp_other	lt_raw_coach_tl_sbs::coach_tl_fp_other	0	No	
-lt_raw_coach_tl_sbs::coach_tl_fp_other	lt_raw_coach_tl_sbs::coach_tl_fp_other	1	Yes		
+lt_raw_coach_tl_sbs::coach_tl_fp_other	lt_raw_coach_tl_sbs::coach_tl_fp_other	1	Yes	
+lt_raw_coach_tl_sbs::datatype	lt_raw_coach_tl_sbs::datatype	Coach	Coach	
+lt_raw_coach_tl_sbs::lighttouch	lt_raw_coach_tl_sbs::lighttouch	No	No		
 lt_raw_otis_process_tl::otis_pt_visit_number	lt_raw_otis_process_tl::otis_pt_visit_number	1		
 lt_raw_otis_process_tl::otis_pt_visit_number	lt_raw_otis_process_tl::otis_pt_visit_number	2		
 lt_raw_otis_process_tl::otis_pt_visit_number	lt_raw_otis_process_tl::otis_pt_visit_number	3		
@@ -962,7 +968,9 @@ lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	lt_raw_otis_process_tl::oti
 lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	2	Not applicable	
 lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	NA	:::UNDEF:::	
 lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	0	No	
-lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	1	Yes			
+lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	1	Yes	
+lt_raw_otis_process_tl::lighttouch	lt_raw_otis_process_tl::lighttouch	Yes	Yes	
+lt_raw_otis_process_tl::datatype	lt_raw_otis_process_tl::datatype	otis process	OTIS process			
 lt_raw_otis_visit::otis_op1_observed	lt_raw_otis_visit::otis_op1_observed	0	No	
 lt_raw_otis_visit::otis_op1_observed	lt_raw_otis_visit::otis_op1_observed	1	Yes	
 lt_raw_otis_visit::otis_op2_observed	lt_raw_otis_visit::otis_op2_observed	0	No	
@@ -1735,14 +1743,16 @@ lt_raw_otis_visit::otis_hl_birth_attendant	lt_raw_otis_visit::otis_hl_birth_atte
 lt_raw_otis_visit::otis_hl_birth_attendant	lt_raw_otis_visit::otis_hl_birth_attendant	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_hl_bb_team_lead	lt_raw_otis_visit::otis_hl_bb_team_lead	0	No	
 lt_raw_otis_visit::otis_hl_bb_team_lead	lt_raw_otis_visit::otis_hl_bb_team_lead	1	Yes	
-lt_raw_otis_visit::otis_hl_bb_team_lead	lt_raw_otis_visit::otis_hl_bb_team_lead	NA	:::UNDEF:::				
-merged_work_sample_01::district	merged_work_sample_01::district	Faizabad	Faizabad	
-merged_work_sample_01::district	merged_work_sample_01::district	Gonda	Gonda	
-merged_work_sample_01::district	merged_work_sample_01::district	Hardoi	Hardoi	
-merged_work_sample_01::district	merged_work_sample_01::district	Kanpur	Kanpur	
-merged_work_sample_01::district	merged_work_sample_01::district	Lakhimpur Kheri	Lakhimpur Kheri	
-merged_work_sample_01::district	merged_work_sample_01::district	Sitapur	Sitapur	
-merged_work_sample_01::district	merged_work_sample_01::district	Sultanpur	Sultanpur	
+lt_raw_otis_visit::otis_hl_bb_team_lead	lt_raw_otis_visit::otis_hl_bb_team_lead	NA	:::UNDEF:::	
+lt_raw_otis_visit::lighttouch	lt_raw_otis_visit::lighttouch	Yes	Yes	
+lt_raw_otis_visit::datatype	lt_raw_otis_visit::datatype	Otis visit	OTIS visit				
+merged_work_sample_01::district	merged_work_sample_01::district	Faizabad	24	
+merged_work_sample_01::district	merged_work_sample_01::district	Gonda	10	
+merged_work_sample_01::district	merged_work_sample_01::district	Hardoi	5	
+merged_work_sample_01::district	merged_work_sample_01::district	Kanpur	15	
+merged_work_sample_01::district	merged_work_sample_01::district	Lakhimpur Kheri	20	
+merged_work_sample_01::district	merged_work_sample_01::district	Sitapur	13	
+merged_work_sample_01::district	merged_work_sample_01::district	Sultanpur	3	
 merged_work_sample_01::hcw_cadre	merged_work_sample_01::hcw_cadre	A.N.M	Auxiliary nurse midwife	
 merged_work_sample_01::hcw_cadre	merged_work_sample_01::hcw_cadre	Staff Nurse	Staff nurse					
 merged_work_sample_01::per_cl	merged_work_sample_01::per_cl	NA	:::UNDEF:::		
@@ -1752,261 +1762,7 @@ merged_work_sample_01::per_break	merged_work_sample_01::per_break	NA	:::UNDEF:::
 merged_work_sample_01::per_unobs	merged_work_sample_01::per_unobs	NA	:::UNDEF:::	
 merged_work_sample_01::avg_ba	merged_work_sample_01::avg_ba	NA	:::UNDEF:::	
 merged_work_sample_01::avg_hcw	merged_work_sample_01::avg_hcw	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::crhv_started_call	raw_cati_remote_home_visit::crhv_started_call	0	Not done	
-raw_cati_remote_home_visit::crhv_started_call	raw_cati_remote_home_visit::crhv_started_call	1	Started	
-raw_cati_remote_home_visit::crhv_delivery_type	raw_cati_remote_home_visit::crhv_delivery_type	1	Vaginal	
-raw_cati_remote_home_visit::crhv_delivery_type	raw_cati_remote_home_visit::crhv_delivery_type	2	Caesarean section	
-raw_cati_remote_home_visit::crhv_delivery_type	raw_cati_remote_home_visit::crhv_delivery_type	NA	:::UNDEF:::			
-raw_cati_remote_home_visit::chrv_num_of_births	raw_cati_remote_home_visit::chrv_num_of_births	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	0	No	
-raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	1	Yes	
-raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	99	Unable to complete call	
-raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	raw_cati_remote_home_visit::chrv_baby_alive_at_discharge	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_num_stillborn_dead_babies_v2	raw_cati_remote_home_visit::chrv_num_stillborn_dead_babies_v2	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_maternal_death_occurred	raw_cati_remote_home_visit::chrv_maternal_death_occurred	0	Alive	
-raw_cati_remote_home_visit::chrv_maternal_death_occurred	raw_cati_remote_home_visit::chrv_maternal_death_occurred	1	Dead	
-raw_cati_remote_home_visit::chrv_maternal_death_occurred	raw_cati_remote_home_visit::chrv_maternal_death_occurred	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_maternal_death_7days	raw_cati_remote_home_visit::chrv_maternal_death_7days	0	No	
-raw_cati_remote_home_visit::chrv_maternal_death_7days	raw_cati_remote_home_visit::chrv_maternal_death_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_maternal_death_7days	raw_cati_remote_home_visit::chrv_maternal_death_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby1_death	raw_cati_remote_home_visit::chrv_baby1_death	0	Alive	
-raw_cati_remote_home_visit::chrv_baby1_death	raw_cati_remote_home_visit::chrv_baby1_death	1	Dead	
-raw_cati_remote_home_visit::chrv_baby1_death	raw_cati_remote_home_visit::chrv_baby1_death	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby1_death_7days	raw_cati_remote_home_visit::chrv_baby1_death_7days	0	No	
-raw_cati_remote_home_visit::chrv_baby1_death_7days	raw_cati_remote_home_visit::chrv_baby1_death_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_baby1_death_7days	raw_cati_remote_home_visit::chrv_baby1_death_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby2_death	raw_cati_remote_home_visit::chrv_baby2_death	0	Alive	
-raw_cati_remote_home_visit::chrv_baby2_death	raw_cati_remote_home_visit::chrv_baby2_death	1	Dead	
-raw_cati_remote_home_visit::chrv_baby2_death	raw_cati_remote_home_visit::chrv_baby2_death	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby2_death_7days	raw_cati_remote_home_visit::chrv_baby2_death_7days	0	No	
-raw_cati_remote_home_visit::chrv_baby2_death_7days	raw_cati_remote_home_visit::chrv_baby2_death_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_baby2_death_7days	raw_cati_remote_home_visit::chrv_baby2_death_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_fits_7days	raw_cati_remote_home_visit::chrv_fits_7days	0	No	
-raw_cati_remote_home_visit::chrv_fits_7days	raw_cati_remote_home_visit::chrv_fits_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_fits_7days	raw_cati_remote_home_visit::chrv_fits_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_loss_consciousness	raw_cati_remote_home_visit::chrv_loss_consciousness	0	No	
-raw_cati_remote_home_visit::chrv_loss_consciousness	raw_cati_remote_home_visit::chrv_loss_consciousness	1	Yes	
-raw_cati_remote_home_visit::chrv_loss_consciousness	raw_cati_remote_home_visit::chrv_loss_consciousness	2	Unknown	
-raw_cati_remote_home_visit::chrv_loss_consciousness	raw_cati_remote_home_visit::chrv_loss_consciousness	3	Refused to answer	
-raw_cati_remote_home_visit::chrv_loss_consciousness	raw_cati_remote_home_visit::chrv_loss_consciousness	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_loss_consciousness_7days	raw_cati_remote_home_visit::chrv_loss_consciousness_7days	0	No	
-raw_cati_remote_home_visit::chrv_loss_consciousness_7days	raw_cati_remote_home_visit::chrv_loss_consciousness_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_loss_consciousness_7days	raw_cati_remote_home_visit::chrv_loss_consciousness_7days	2	Unknown	
-raw_cati_remote_home_visit::chrv_loss_consciousness_7days	raw_cati_remote_home_visit::chrv_loss_consciousness_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_loss_consciousness_conf	raw_cati_remote_home_visit::chrv_loss_consciousness_conf	0	No	
-raw_cati_remote_home_visit::chrv_loss_consciousness_conf	raw_cati_remote_home_visit::chrv_loss_consciousness_conf	1	Yes	
-raw_cati_remote_home_visit::chrv_loss_consciousness_conf	raw_cati_remote_home_visit::chrv_loss_consciousness_conf	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_fever_smelly_discharge	raw_cati_remote_home_visit::chrv_fever_smelly_discharge	0	No	
-raw_cati_remote_home_visit::chrv_fever_smelly_discharge	raw_cati_remote_home_visit::chrv_fever_smelly_discharge	1	Yes	
-raw_cati_remote_home_visit::chrv_fever_smelly_discharge	raw_cati_remote_home_visit::chrv_fever_smelly_discharge	2	Unknown	
-raw_cati_remote_home_visit::chrv_fever_smelly_discharge	raw_cati_remote_home_visit::chrv_fever_smelly_discharge	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_fever_7days	raw_cati_remote_home_visit::chrv_fever_7days	0	No	
-raw_cati_remote_home_visit::chrv_fever_7days	raw_cati_remote_home_visit::chrv_fever_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_fever_7days	raw_cati_remote_home_visit::chrv_fever_7days	2	Unknown	
-raw_cati_remote_home_visit::chrv_fever_7days	raw_cati_remote_home_visit::chrv_fever_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_transfusion_7days	raw_cati_remote_home_visit::chrv_transfusion_7days	0	No	
-raw_cati_remote_home_visit::chrv_transfusion_7days	raw_cati_remote_home_visit::chrv_transfusion_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_transfusion_7days	raw_cati_remote_home_visit::chrv_transfusion_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_hysterectomy	raw_cati_remote_home_visit::chrv_hysterectomy	0	No	
-raw_cati_remote_home_visit::chrv_hysterectomy	raw_cati_remote_home_visit::chrv_hysterectomy	1	Yes	
-raw_cati_remote_home_visit::chrv_hysterectomy	raw_cati_remote_home_visit::chrv_hysterectomy	2	Unknown	
-raw_cati_remote_home_visit::chrv_hysterectomy	raw_cati_remote_home_visit::chrv_hysterectomy	3	Refused to answer	
-raw_cati_remote_home_visit::chrv_hysterectomy	raw_cati_remote_home_visit::chrv_hysterectomy	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_hysterectomy_7days	raw_cati_remote_home_visit::chrv_hysterectomy_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_hysterectomy_7days	raw_cati_remote_home_visit::chrv_hysterectomy_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_stroke	raw_cati_remote_home_visit::chrv_stroke	0	No	
-raw_cati_remote_home_visit::chrv_stroke	raw_cati_remote_home_visit::chrv_stroke	1	Yes	
-raw_cati_remote_home_visit::chrv_stroke	raw_cati_remote_home_visit::chrv_stroke	2	Unknown	
-raw_cati_remote_home_visit::chrv_stroke	raw_cati_remote_home_visit::chrv_stroke	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_stroke_7days	raw_cati_remote_home_visit::chrv_stroke_7days	0	No	
-raw_cati_remote_home_visit::chrv_stroke_7days	raw_cati_remote_home_visit::chrv_stroke_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_stroke_7days	raw_cati_remote_home_visit::chrv_stroke_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_bleeding	raw_cati_remote_home_visit::chrv_bleeding	0	No	
-raw_cati_remote_home_visit::chrv_bleeding	raw_cati_remote_home_visit::chrv_bleeding	1	Yes	
-raw_cati_remote_home_visit::chrv_bleeding	raw_cati_remote_home_visit::chrv_bleeding	2	Unknown	
-raw_cati_remote_home_visit::chrv_bleeding	raw_cati_remote_home_visit::chrv_bleeding	3	Refused to answer	
-raw_cati_remote_home_visit::chrv_bleeding	raw_cati_remote_home_visit::chrv_bleeding	99	Unable to complete call	
-raw_cati_remote_home_visit::chrv_bleeding	raw_cati_remote_home_visit::chrv_bleeding	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_bleeding_amount	raw_cati_remote_home_visit::chrv_bleeding_amount	0	No	
-raw_cati_remote_home_visit::chrv_bleeding_amount	raw_cati_remote_home_visit::chrv_bleeding_amount	1	Yes	
-raw_cati_remote_home_visit::chrv_bleeding_amount	raw_cati_remote_home_visit::chrv_bleeding_amount	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_bleeding_7days	raw_cati_remote_home_visit::chrv_bleeding_7days	0	No	
-raw_cati_remote_home_visit::chrv_bleeding_7days	raw_cati_remote_home_visit::chrv_bleeding_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_bleeding_7days	raw_cati_remote_home_visit::chrv_bleeding_7days	2	Unknown	
-raw_cati_remote_home_visit::chrv_bleeding_7days	raw_cati_remote_home_visit::chrv_bleeding_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby_return	raw_cati_remote_home_visit::chrv_baby_return	0	No	
-raw_cati_remote_home_visit::chrv_baby_return	raw_cati_remote_home_visit::chrv_baby_return	1	Yes	
-raw_cati_remote_home_visit::chrv_baby_return	raw_cati_remote_home_visit::chrv_baby_return	2	Unknown	
-raw_cati_remote_home_visit::chrv_baby_return	raw_cati_remote_home_visit::chrv_baby_return	3	Refused to answer	
-raw_cati_remote_home_visit::chrv_baby_return	raw_cati_remote_home_visit::chrv_baby_return	99	Unable to complete call	
-raw_cati_remote_home_visit::chrv_baby_return	raw_cati_remote_home_visit::chrv_baby_return	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_baby_return_7days	raw_cati_remote_home_visit::chrv_baby_return_7days	0	No	
-raw_cati_remote_home_visit::chrv_baby_return_7days	raw_cati_remote_home_visit::chrv_baby_return_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_baby_return_7days	raw_cati_remote_home_visit::chrv_baby_return_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_mother_return	raw_cati_remote_home_visit::chrv_mother_return	0	No	
-raw_cati_remote_home_visit::chrv_mother_return	raw_cati_remote_home_visit::chrv_mother_return	1	Yes	
-raw_cati_remote_home_visit::chrv_mother_return	raw_cati_remote_home_visit::chrv_mother_return	2	Unknown	
-raw_cati_remote_home_visit::chrv_mother_return	raw_cati_remote_home_visit::chrv_mother_return	99	Unable to complete call	
-raw_cati_remote_home_visit::chrv_mother_return	raw_cati_remote_home_visit::chrv_mother_return	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_mother_return_7days	raw_cati_remote_home_visit::chrv_mother_return_7days	0	No	
-raw_cati_remote_home_visit::chrv_mother_return_7days	raw_cati_remote_home_visit::chrv_mother_return_7days	1	Yes	
-raw_cati_remote_home_visit::chrv_mother_return_7days	raw_cati_remote_home_visit::chrv_mother_return_7days	2	Unknown	
-raw_cati_remote_home_visit::chrv_mother_return_7days	raw_cati_remote_home_visit::chrv_mother_return_7days	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_patient_facility_satis	raw_cati_remote_home_visit::chrv_patient_facility_satis	1	Very satisfied	
-raw_cati_remote_home_visit::chrv_patient_facility_satis	raw_cati_remote_home_visit::chrv_patient_facility_satis	2	Somewhat satisfied	
-raw_cati_remote_home_visit::chrv_patient_facility_satis	raw_cati_remote_home_visit::chrv_patient_facility_satis	3	Somewhat unsatisfied	
-raw_cati_remote_home_visit::chrv_patient_facility_satis	raw_cati_remote_home_visit::chrv_patient_facility_satis	4	Very unsatisfied	
-raw_cati_remote_home_visit::chrv_patient_facility_satis	raw_cati_remote_home_visit::chrv_patient_facility_satis	5	No response	
-raw_cati_remote_home_visit::chrv_patient_facility_satis	raw_cati_remote_home_visit::chrv_patient_facility_satis	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_patient_recommend_fac	raw_cati_remote_home_visit::chrv_patient_recommend_fac	1	Very likely	
-raw_cati_remote_home_visit::chrv_patient_recommend_fac	raw_cati_remote_home_visit::chrv_patient_recommend_fac	2	Somewhat likely	
-raw_cati_remote_home_visit::chrv_patient_recommend_fac	raw_cati_remote_home_visit::chrv_patient_recommend_fac	3	Somewhat unlikely	
-raw_cati_remote_home_visit::chrv_patient_recommend_fac	raw_cati_remote_home_visit::chrv_patient_recommend_fac	4	Not likely at all	
-raw_cati_remote_home_visit::chrv_patient_recommend_fac	raw_cati_remote_home_visit::chrv_patient_recommend_fac	5	No response	
-raw_cati_remote_home_visit::chrv_patient_recommend_fac	raw_cati_remote_home_visit::chrv_patient_recommend_fac	NA	:::UNDEF:::	
-raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	0	No	
-raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	1	At least one danger sign named for mother or baby	
-raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	2	No response	
-raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	raw_cati_remote_home_visit::chrv_pexp_danger_signs_resp	NA	:::UNDEF:::		
-raw_cati_tl_follow_up::ctl_started_call	raw_cati_tl_follow_up::ctl_started_call	0	Not done	
-raw_cati_tl_follow_up::ctl_started_call	raw_cati_tl_follow_up::ctl_started_call	1	Started	
-raw_cati_tl_follow_up::ctl_not_started_call_reason	raw_cati_tl_follow_up::ctl_not_started_call_reason	1	No one picked up or participant or husband not available	
-raw_cati_tl_follow_up::ctl_not_started_call_reason	raw_cati_tl_follow_up::ctl_not_started_call_reason	2	All numbers incorrect	
-raw_cati_tl_follow_up::ctl_not_started_call_reason	raw_cati_tl_follow_up::ctl_not_started_call_reason	3	Less than 7 days since delivery	
-raw_cati_tl_follow_up::ctl_not_started_call_reason	raw_cati_tl_follow_up::ctl_not_started_call_reason	4	Other	
-raw_cati_tl_follow_up::ctl_not_started_call_reason	raw_cati_tl_follow_up::ctl_not_started_call_reason	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_delivery_type	raw_cati_tl_follow_up::ctl_delivery_type	1	Vaginal	
-raw_cati_tl_follow_up::ctl_delivery_type	raw_cati_tl_follow_up::ctl_delivery_type	2	Caesarean section	
-raw_cati_tl_follow_up::ctl_delivery_type	raw_cati_tl_follow_up::ctl_delivery_type	NA	:::UNDEF:::		
-raw_cati_tl_follow_up::ctl_num_of_births	raw_cati_tl_follow_up::ctl_num_of_births	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby_alive_at_discharge	raw_cati_tl_follow_up::ctl_baby_alive_at_discharge	0	No	
-raw_cati_tl_follow_up::ctl_baby_alive_at_discharge	raw_cati_tl_follow_up::ctl_baby_alive_at_discharge	1	Yes	
-raw_cati_tl_follow_up::ctl_baby_alive_at_discharge	raw_cati_tl_follow_up::ctl_baby_alive_at_discharge	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_num_stillborn_dead_babies_v2	raw_cati_tl_follow_up::ctl_num_stillborn_dead_babies_v2	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_maternal_death_occurred	raw_cati_tl_follow_up::ctl_maternal_death_occurred	0	Alive	
-raw_cati_tl_follow_up::ctl_maternal_death_occurred	raw_cati_tl_follow_up::ctl_maternal_death_occurred	1	Dead	
-raw_cati_tl_follow_up::ctl_maternal_death_occurred	raw_cati_tl_follow_up::ctl_maternal_death_occurred	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_maternal_death_7days	raw_cati_tl_follow_up::ctl_maternal_death_7days	0	No	
-raw_cati_tl_follow_up::ctl_maternal_death_7days	raw_cati_tl_follow_up::ctl_maternal_death_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_maternal_death_7days	raw_cati_tl_follow_up::ctl_maternal_death_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby1_death	raw_cati_tl_follow_up::ctl_baby1_death	0	Alive	
-raw_cati_tl_follow_up::ctl_baby1_death	raw_cati_tl_follow_up::ctl_baby1_death	1	Dead	
-raw_cati_tl_follow_up::ctl_baby1_death	raw_cati_tl_follow_up::ctl_baby1_death	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby1_death_7days	raw_cati_tl_follow_up::ctl_baby1_death_7days	0	No	
-raw_cati_tl_follow_up::ctl_baby1_death_7days	raw_cati_tl_follow_up::ctl_baby1_death_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_baby1_death_7days	raw_cati_tl_follow_up::ctl_baby1_death_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby2_death	raw_cati_tl_follow_up::ctl_baby2_death	0	Alive	
-raw_cati_tl_follow_up::ctl_baby2_death	raw_cati_tl_follow_up::ctl_baby2_death	1	Dead	
-raw_cati_tl_follow_up::ctl_baby2_death	raw_cati_tl_follow_up::ctl_baby2_death	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby2_death_7days	raw_cati_tl_follow_up::ctl_baby2_death_7days	1		
-raw_cati_tl_follow_up::ctl_baby2_death_7days	raw_cati_tl_follow_up::ctl_baby2_death_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_fits_7days	raw_cati_tl_follow_up::ctl_fits_7days	0	No	
-raw_cati_tl_follow_up::ctl_fits_7days	raw_cati_tl_follow_up::ctl_fits_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_fits_7days	raw_cati_tl_follow_up::ctl_fits_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_loss_consciousness	raw_cati_tl_follow_up::ctl_loss_consciousness	0	No	
-raw_cati_tl_follow_up::ctl_loss_consciousness	raw_cati_tl_follow_up::ctl_loss_consciousness	1	Yes	
-raw_cati_tl_follow_up::ctl_loss_consciousness	raw_cati_tl_follow_up::ctl_loss_consciousness	3	Refused to answer	
-raw_cati_tl_follow_up::ctl_loss_consciousness	raw_cati_tl_follow_up::ctl_loss_consciousness	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_loss_consciousness_7days	raw_cati_tl_follow_up::ctl_loss_consciousness_7days	0	No	
-raw_cati_tl_follow_up::ctl_loss_consciousness_7days	raw_cati_tl_follow_up::ctl_loss_consciousness_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_loss_consciousness_7days	raw_cati_tl_follow_up::ctl_loss_consciousness_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_loss_consciousness_conf	raw_cati_tl_follow_up::ctl_loss_consciousness_conf	1	Yes	
-raw_cati_tl_follow_up::ctl_loss_consciousness_conf	raw_cati_tl_follow_up::ctl_loss_consciousness_conf	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_fever_smelly_discharge	raw_cati_tl_follow_up::ctl_fever_smelly_discharge	0	No	
-raw_cati_tl_follow_up::ctl_fever_smelly_discharge	raw_cati_tl_follow_up::ctl_fever_smelly_discharge	1	Yes	
-raw_cati_tl_follow_up::ctl_fever_smelly_discharge	raw_cati_tl_follow_up::ctl_fever_smelly_discharge	2	Unknown	
-raw_cati_tl_follow_up::ctl_fever_smelly_discharge	raw_cati_tl_follow_up::ctl_fever_smelly_discharge	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_fever_7days	raw_cati_tl_follow_up::ctl_fever_7days	0	No	
-raw_cati_tl_follow_up::ctl_fever_7days	raw_cati_tl_follow_up::ctl_fever_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_fever_7days	raw_cati_tl_follow_up::ctl_fever_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_transfusion_7days	raw_cati_tl_follow_up::ctl_transfusion_7days	0	No	
-raw_cati_tl_follow_up::ctl_transfusion_7days	raw_cati_tl_follow_up::ctl_transfusion_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_transfusion_7days	raw_cati_tl_follow_up::ctl_transfusion_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_hysterectomy	raw_cati_tl_follow_up::ctl_hysterectomy	0	No	
-raw_cati_tl_follow_up::ctl_hysterectomy	raw_cati_tl_follow_up::ctl_hysterectomy	1	Yes	
-raw_cati_tl_follow_up::ctl_hysterectomy	raw_cati_tl_follow_up::ctl_hysterectomy	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_hysterectomy_7days	raw_cati_tl_follow_up::ctl_hysterectomy_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_hysterectomy_7days	raw_cati_tl_follow_up::ctl_hysterectomy_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_stroke	raw_cati_tl_follow_up::ctl_stroke	0	No	
-raw_cati_tl_follow_up::ctl_stroke	raw_cati_tl_follow_up::ctl_stroke	3	Unknown	
-raw_cati_tl_follow_up::ctl_stroke	raw_cati_tl_follow_up::ctl_stroke	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_stroke_7days	raw_cati_tl_follow_up::ctl_stroke_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_bleeding	raw_cati_tl_follow_up::ctl_bleeding	0	No	
-raw_cati_tl_follow_up::ctl_bleeding	raw_cati_tl_follow_up::ctl_bleeding	1	Yes	
-raw_cati_tl_follow_up::ctl_bleeding	raw_cati_tl_follow_up::ctl_bleeding	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_bleeding_amount	raw_cati_tl_follow_up::ctl_bleeding_amount	0	No	
-raw_cati_tl_follow_up::ctl_bleeding_amount	raw_cati_tl_follow_up::ctl_bleeding_amount	1	Yes	
-raw_cati_tl_follow_up::ctl_bleeding_amount	raw_cati_tl_follow_up::ctl_bleeding_amount	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_bleeding_7days	raw_cati_tl_follow_up::ctl_bleeding_7days	0	No	
-raw_cati_tl_follow_up::ctl_bleeding_7days	raw_cati_tl_follow_up::ctl_bleeding_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_bleeding_7days	raw_cati_tl_follow_up::ctl_bleeding_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby_return	raw_cati_tl_follow_up::ctl_baby_return	0	No	
-raw_cati_tl_follow_up::ctl_baby_return	raw_cati_tl_follow_up::ctl_baby_return	1	Yes	
-raw_cati_tl_follow_up::ctl_baby_return	raw_cati_tl_follow_up::ctl_baby_return	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_baby_return_7days	raw_cati_tl_follow_up::ctl_baby_return_7days	0	No	
-raw_cati_tl_follow_up::ctl_baby_return_7days	raw_cati_tl_follow_up::ctl_baby_return_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_baby_return_7days	raw_cati_tl_follow_up::ctl_baby_return_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_mother_return	raw_cati_tl_follow_up::ctl_mother_return	0	No	
-raw_cati_tl_follow_up::ctl_mother_return	raw_cati_tl_follow_up::ctl_mother_return	1	Yes	
-raw_cati_tl_follow_up::ctl_mother_return	raw_cati_tl_follow_up::ctl_mother_return	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_mother_return_7days	raw_cati_tl_follow_up::ctl_mother_return_7days	0	No	
-raw_cati_tl_follow_up::ctl_mother_return_7days	raw_cati_tl_follow_up::ctl_mother_return_7days	1	Yes	
-raw_cati_tl_follow_up::ctl_mother_return_7days	raw_cati_tl_follow_up::ctl_mother_return_7days	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_patient_facility_satis	raw_cati_tl_follow_up::ctl_patient_facility_satis	1	Very satisfied	
-raw_cati_tl_follow_up::ctl_patient_facility_satis	raw_cati_tl_follow_up::ctl_patient_facility_satis	2	Somewhat satisfied	
-raw_cati_tl_follow_up::ctl_patient_facility_satis	raw_cati_tl_follow_up::ctl_patient_facility_satis	3	Somewhat unsatisfied	
-raw_cati_tl_follow_up::ctl_patient_facility_satis	raw_cati_tl_follow_up::ctl_patient_facility_satis	4	Very unsatisfied	
-raw_cati_tl_follow_up::ctl_patient_facility_satis	raw_cati_tl_follow_up::ctl_patient_facility_satis	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_patient_recommend_fac	raw_cati_tl_follow_up::ctl_patient_recommend_fac	1	Very likely	
-raw_cati_tl_follow_up::ctl_patient_recommend_fac	raw_cati_tl_follow_up::ctl_patient_recommend_fac	2	Somewhat likely	
-raw_cati_tl_follow_up::ctl_patient_recommend_fac	raw_cati_tl_follow_up::ctl_patient_recommend_fac	3	Somewhat unlikely	
-raw_cati_tl_follow_up::ctl_patient_recommend_fac	raw_cati_tl_follow_up::ctl_patient_recommend_fac	4	Very unlikely	
-raw_cati_tl_follow_up::ctl_patient_recommend_fac	raw_cati_tl_follow_up::ctl_patient_recommend_fac	NA	:::UNDEF:::	
-raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	0	No	
-raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	1	At least one danger sign named for mother or baby	
-raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	2	No response	
-raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	raw_cati_tl_follow_up::ctl_pexp_danger_signs_resp	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_started_call	raw_cati_tl_remote_home_visit::ctlrhv_started_call	1	Started	
-raw_cati_tl_remote_home_visit::ctlrhv_delivery_type	raw_cati_tl_remote_home_visit::ctlrhv_delivery_type	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_num_of_births	raw_cati_tl_remote_home_visit::ctlrhv_num_of_births	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_baby_alive_at_discharge	raw_cati_tl_remote_home_visit::ctlrhv_baby_alive_at_discharge	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_baby_alive_at_discharge	raw_cati_tl_remote_home_visit::ctlrhv_baby_alive_at_discharge	1	Yes	
-raw_cati_tl_remote_home_visit::ctlrhv_num_stillborn_dead_babies_v2	raw_cati_tl_remote_home_visit::ctlrhv_num_stillborn_dead_babies_v2	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_maternal_death_occurred	raw_cati_tl_remote_home_visit::ctlrhv_maternal_death_occurred	0	Alive	
-raw_cati_tl_remote_home_visit::ctlrhv_maternal_death_occurred	raw_cati_tl_remote_home_visit::ctlrhv_maternal_death_occurred	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_maternal_death_7days	raw_cati_tl_remote_home_visit::ctlrhv_maternal_death_7days	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_baby1_death	raw_cati_tl_remote_home_visit::ctlrhv_baby1_death	0	Alive	
-raw_cati_tl_remote_home_visit::ctlrhv_baby1_death	raw_cati_tl_remote_home_visit::ctlrhv_baby1_death	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_loss_consciousness	raw_cati_tl_remote_home_visit::ctlrhv_loss_consciousness	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_fever_smelly_discharge	raw_cati_tl_remote_home_visit::ctlrhv_fever_smelly_discharge	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_fever_smelly_discharge	raw_cati_tl_remote_home_visit::ctlrhv_fever_smelly_discharge	1	Yes	
-raw_cati_tl_remote_home_visit::ctlrhv_fever_smelly_discharge	raw_cati_tl_remote_home_visit::ctlrhv_fever_smelly_discharge	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_fever_7days	raw_cati_tl_remote_home_visit::ctlrhv_fever_7days	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_hysterectomy	raw_cati_tl_remote_home_visit::ctlrhv_hysterectomy	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_stroke	raw_cati_tl_remote_home_visit::ctlrhv_stroke	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_bleeding	raw_cati_tl_remote_home_visit::ctlrhv_bleeding	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_bleeding	raw_cati_tl_remote_home_visit::ctlrhv_bleeding	1	Yes
-raw_cati_tl_remote_home_visit::ctlrhv_bleeding	raw_cati_tl_remote_home_visit::ctlrhv_bleeding	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_bleeding_amount	raw_cati_tl_remote_home_visit::ctlrhv_bleeding_amount	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_bleeding_amount	raw_cati_tl_remote_home_visit::ctlrhv_bleeding_amount	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_baby_return	raw_cati_tl_remote_home_visit::ctlrhv_baby_return	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_baby_return	raw_cati_tl_remote_home_visit::ctlrhv_baby_return	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_mother_return	raw_cati_tl_remote_home_visit::ctlrhv_mother_return	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_mother_return_7days	raw_cati_tl_remote_home_visit::ctlrhv_mother_return_7days	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	1	Very satisfied	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	2	Somewhat satisfied	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	3	Somewhat unsatisfied	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	5	No response	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	raw_cati_tl_remote_home_visit::ctlrhv_patient_facility_satis	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	1	Very likely	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	2	Somewhat likely	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	4	Very unlikely	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	5	No response	
-raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	raw_cati_tl_remote_home_visit::ctlrhv_patient_recommend_fac	NA	:::UNDEF:::	
-raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	0	No	
-raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	1	At least one danger sign named for mother or baby	
-raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	2	No response	
-raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	raw_cati_tl_remote_home_visit::ctlrhv_pexp_danger_signs_resp	NA	:::UNDEF:::		
+merged_work_sample_01::datatype	merged_work_sample_01::datatype	work sample	Work sample			
 raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	0	No	
 raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	1	Yes, supplied from facility	
 raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	2	Yes, purchased from facility	
@@ -2144,7 +1900,14 @@ raw_coach_tl_sbs::coach_tl_fp_male_steril	raw_coach_tl_sbs::coach_tl_fp_male_ste
 raw_coach_tl_sbs::coach_tl_fp_female_steril	raw_coach_tl_sbs::coach_tl_fp_female_steril	0	No	
 raw_coach_tl_sbs::coach_tl_fp_female_steril	raw_coach_tl_sbs::coach_tl_fp_female_steril	1	Yes	
 raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	0	No	
-raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	1	Yes		
+raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	1	Yes
+raw_coach_tl_sbs::datatype	raw_coach_tl_sbs::datatype	Coach	Coach	
+raw_coach_tl_sbs::lighttouch	raw_coach_tl_sbs::lighttouch	No	No	
+raw_coach_tl_sbs::otis_phase_name	raw_coach_tl_sbs::otis_phase_name	intensive	Intensive coaching intervention (2x per week)	1
+raw_coach_tl_sbs::otis_phase_name	raw_coach_tl_sbs::otis_phase_name	post	Post coaching intervention	3
+raw_coach_tl_sbs::otis_phase_name	raw_coach_tl_sbs::otis_phase_name	taper	Tapered coaching intervention (1x per week or less)	2	
+raw_coach_tl_sbs::otis_phase_name	raw_coach_tl_sbs::otis_phase_name	light touch	Light Touch study	4	
+lt_raw_coach_tl_sbs::otis_phase_name	lt_raw_coach_tl_sbs::otis_phase_name	light touch	Light Touch study	4
 raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	0	No	
 raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	1	Yes	
 raw_fida_birth_registration::sbr_mother_consent_code	raw_fida_birth_registration::sbr_mother_consent_code	2	No
@@ -2196,112 +1959,7 @@ raw_fida_birth_registration::sbr_attended_anm	raw_fida_birth_registration::sbr_a
 raw_fida_birth_registration::sbr_attended_others	raw_fida_birth_registration::sbr_attended_others	0	No	
 raw_fida_birth_registration::sbr_attended_others	raw_fida_birth_registration::sbr_attended_others	1	Yes	
 raw_fida_birth_registration::sbr_attended_unknown	raw_fida_birth_registration::sbr_attended_unknown	0	No	
-raw_fida_birth_registration::sbr_attended_unknown	raw_fida_birth_registration::sbr_attended_unknown	1	Yes		
-raw_fida_follow_up::fida_started_visit	raw_fida_follow_up::fida_started_visit	0	Not done	
-raw_fida_follow_up::fida_started_visit	raw_fida_follow_up::fida_started_visit	1	Started	
-raw_fida_follow_up::fida_not_started_visit_reason	raw_fida_follow_up::fida_not_started_visit_reason	1	Participant or husband not available	
-raw_fida_follow_up::fida_not_started_visit_reason	raw_fida_follow_up::fida_not_started_visit_reason	2	Moved out of catchment area	
-raw_fida_follow_up::fida_not_started_visit_reason	raw_fida_follow_up::fida_not_started_visit_reason	3	Address not found	
-raw_fida_follow_up::fida_not_started_visit_reason	raw_fida_follow_up::fida_not_started_visit_reason	4	Incorrect address - participant not living there	
-raw_fida_follow_up::fida_not_started_visit_reason	raw_fida_follow_up::fida_not_started_visit_reason	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_delivery_type	raw_fida_follow_up::fida_delivery_type	1	Vaginal	
-raw_fida_follow_up::fida_delivery_type	raw_fida_follow_up::fida_delivery_type	2	Caesarean section	
-raw_fida_follow_up::fida_delivery_type	raw_fida_follow_up::fida_delivery_type	99	Unable to complete visit	
-raw_fida_follow_up::fida_delivery_type	raw_fida_follow_up::fida_delivery_type	NA	:::UNDEF:::		
-raw_fida_follow_up::fida_num_of_births	raw_fida_follow_up::fida_num_of_births	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby_alive_at_discharge	raw_fida_follow_up::fida_baby_alive_at_discharge	0	No	
-raw_fida_follow_up::fida_baby_alive_at_discharge	raw_fida_follow_up::fida_baby_alive_at_discharge	1	Yes	
-raw_fida_follow_up::fida_baby_alive_at_discharge	raw_fida_follow_up::fida_baby_alive_at_discharge	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_num_stillborn_dead_babies_v2	raw_fida_follow_up::fida_num_stillborn_dead_babies_v2	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_maternal_death_occurred	raw_fida_follow_up::fida_maternal_death_occurred	0	Alive	
-raw_fida_follow_up::fida_maternal_death_occurred	raw_fida_follow_up::fida_maternal_death_occurred	1	Dead	
-raw_fida_follow_up::fida_maternal_death_occurred	raw_fida_follow_up::fida_maternal_death_occurred	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_maternal_death_7days	raw_fida_follow_up::fida_maternal_death_7days	1	Yes	
-raw_fida_follow_up::fida_maternal_death_7days	raw_fida_follow_up::fida_maternal_death_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby1_death	raw_fida_follow_up::fida_baby1_death	0	Alive	
-raw_fida_follow_up::fida_baby1_death	raw_fida_follow_up::fida_baby1_death	1	Dead	
-raw_fida_follow_up::fida_baby1_death	raw_fida_follow_up::fida_baby1_death	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby1_death_7days	raw_fida_follow_up::fida_baby1_death_7days	0	No	
-raw_fida_follow_up::fida_baby1_death_7days	raw_fida_follow_up::fida_baby1_death_7days	1	Yes	
-raw_fida_follow_up::fida_baby1_death_7days	raw_fida_follow_up::fida_baby1_death_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby2_death	raw_fida_follow_up::fida_baby2_death	0	Alive	
-raw_fida_follow_up::fida_baby2_death	raw_fida_follow_up::fida_baby2_death	1	Dead	
-raw_fida_follow_up::fida_baby2_death	raw_fida_follow_up::fida_baby2_death	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby2_death_7days	raw_fida_follow_up::fida_baby2_death_7days	1	Yes	
-raw_fida_follow_up::fida_baby2_death_7days	raw_fida_follow_up::fida_baby2_death_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_fits_7days	raw_fida_follow_up::fida_fits_7days	0	No	
-raw_fida_follow_up::fida_fits_7days	raw_fida_follow_up::fida_fits_7days	1	Yes	
-raw_fida_follow_up::fida_fits_7days	raw_fida_follow_up::fida_fits_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_loss_consciousness	raw_fida_follow_up::fida_loss_consciousness	0	No	
-raw_fida_follow_up::fida_loss_consciousness	raw_fida_follow_up::fida_loss_consciousness	1	Yes	
-raw_fida_follow_up::fida_loss_consciousness	raw_fida_follow_up::fida_loss_consciousness	2	Unknown	
-raw_fida_follow_up::fida_loss_consciousness	raw_fida_follow_up::fida_loss_consciousness	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_loss_consciousness_7days	raw_fida_follow_up::fida_loss_consciousness_7days	0	No	
-raw_fida_follow_up::fida_loss_consciousness_7days	raw_fida_follow_up::fida_loss_consciousness_7days	1	Yes	
-raw_fida_follow_up::fida_loss_consciousness_7days	raw_fida_follow_up::fida_loss_consciousness_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_loss_consciousness_conf	raw_fida_follow_up::fida_loss_consciousness_conf	0	No	
-raw_fida_follow_up::fida_loss_consciousness_conf	raw_fida_follow_up::fida_loss_consciousness_conf	1	Yes	
-raw_fida_follow_up::fida_loss_consciousness_conf	raw_fida_follow_up::fida_loss_consciousness_conf	2	Unknown	
-raw_fida_follow_up::fida_loss_consciousness_conf	raw_fida_follow_up::fida_loss_consciousness_conf	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_fever_smelly_discharge	raw_fida_follow_up::fida_fever_smelly_discharge	0	No	
-raw_fida_follow_up::fida_fever_smelly_discharge	raw_fida_follow_up::fida_fever_smelly_discharge	1	Yes	
-raw_fida_follow_up::fida_fever_smelly_discharge	raw_fida_follow_up::fida_fever_smelly_discharge	2	Unknown	
-raw_fida_follow_up::fida_fever_smelly_discharge	raw_fida_follow_up::fida_fever_smelly_discharge	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_fever_7days	raw_fida_follow_up::fida_fever_7days	0	No	
-raw_fida_follow_up::fida_fever_7days	raw_fida_follow_up::fida_fever_7days	1	Yes	
-raw_fida_follow_up::fida_fever_7days	raw_fida_follow_up::fida_fever_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_transfusion_7days	raw_fida_follow_up::fida_transfusion_7days	0	No	
-raw_fida_follow_up::fida_transfusion_7days	raw_fida_follow_up::fida_transfusion_7days	1	Yes	
-raw_fida_follow_up::fida_transfusion_7days	raw_fida_follow_up::fida_transfusion_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_hysterectomy	raw_fida_follow_up::fida_hysterectomy	0	No	
-raw_fida_follow_up::fida_hysterectomy	raw_fida_follow_up::fida_hysterectomy	1	Yes	
-raw_fida_follow_up::fida_hysterectomy	raw_fida_follow_up::fida_hysterectomy	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_hysterectomy_7days	raw_fida_follow_up::fida_hysterectomy_7days	1	Yes	
-raw_fida_follow_up::fida_hysterectomy_7days	raw_fida_follow_up::fida_hysterectomy_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_stroke	raw_fida_follow_up::fida_stroke	0	No	
-raw_fida_follow_up::fida_stroke	raw_fida_follow_up::fida_stroke	1	Yes	
-raw_fida_follow_up::fida_stroke	raw_fida_follow_up::fida_stroke	2	Unknown	
-raw_fida_follow_up::fida_stroke	raw_fida_follow_up::fida_stroke	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_stroke_7days	raw_fida_follow_up::fida_stroke_7days	1	Yes	
-raw_fida_follow_up::fida_stroke_7days	raw_fida_follow_up::fida_stroke_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_bleeding	raw_fida_follow_up::fida_bleeding	0	No
-raw_fida_follow_up::fida_bleeding	raw_fida_follow_up::fida_bleeding	1	Yes	
-raw_fida_follow_up::fida_bleeding	raw_fida_follow_up::fida_bleeding	2	Unknown	
-raw_fida_follow_up::fida_bleeding	raw_fida_follow_up::fida_bleeding	3	Refused to answer	
-raw_fida_follow_up::fida_bleeding	raw_fida_follow_up::fida_bleeding	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_bleeding_amount	raw_fida_follow_up::fida_bleeding_amount	0	No	
-raw_fida_follow_up::fida_bleeding_amount	raw_fida_follow_up::fida_bleeding_amount	1	Yes	
-raw_fida_follow_up::fida_bleeding_amount	raw_fida_follow_up::fida_bleeding_amount	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_bleeding_7days	raw_fida_follow_up::fida_bleeding_7days	0	No	
-raw_fida_follow_up::fida_bleeding_7days	raw_fida_follow_up::fida_bleeding_7days	1	Yes	
-raw_fida_follow_up::fida_bleeding_7days	raw_fida_follow_up::fida_bleeding_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby_return	raw_fida_follow_up::fida_baby_return	0	No	
-raw_fida_follow_up::fida_baby_return	raw_fida_follow_up::fida_baby_return	1	Yes	
-raw_fida_follow_up::fida_baby_return	raw_fida_follow_up::fida_baby_return	3	Refused to answer	
-raw_fida_follow_up::fida_baby_return	raw_fida_follow_up::fida_baby_return	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_baby_return_7days	raw_fida_follow_up::fida_baby_return_7days	0	No	
-raw_fida_follow_up::fida_baby_return_7days	raw_fida_follow_up::fida_baby_return_7days	1	Yes	
-raw_fida_follow_up::fida_baby_return_7days	raw_fida_follow_up::fida_baby_return_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_mother_return	raw_fida_follow_up::fida_mother_return	0	No	
-raw_fida_follow_up::fida_mother_return	raw_fida_follow_up::fida_mother_return	1	Yes	
-raw_fida_follow_up::fida_mother_return	raw_fida_follow_up::fida_mother_return	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_mother_return_7days	raw_fida_follow_up::fida_mother_return_7days	0	No	
-raw_fida_follow_up::fida_mother_return_7days	raw_fida_follow_up::fida_mother_return_7days	1	Yes	
-raw_fida_follow_up::fida_mother_return_7days	raw_fida_follow_up::fida_mother_return_7days	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_patient_facility_satis	raw_fida_follow_up::fida_patient_facility_satis	1	Very satisfied	
-raw_fida_follow_up::fida_patient_facility_satis	raw_fida_follow_up::fida_patient_facility_satis	2	Somewhat satisfied	
-raw_fida_follow_up::fida_patient_facility_satis	raw_fida_follow_up::fida_patient_facility_satis	3	Somewhat unsatisfied	
-raw_fida_follow_up::fida_patient_facility_satis	raw_fida_follow_up::fida_patient_facility_satis	4	Very unsatisfied	
-raw_fida_follow_up::fida_patient_facility_satis	raw_fida_follow_up::fida_patient_facility_satis	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_patient_recommend_fac	raw_fida_follow_up::fida_patient_recommend_fac	1	Very likely	
-raw_fida_follow_up::fida_patient_recommend_fac	raw_fida_follow_up::fida_patient_recommend_fac	2	Somewhat likely	
-raw_fida_follow_up::fida_patient_recommend_fac	raw_fida_follow_up::fida_patient_recommend_fac	3	Somewhat unlikely	
-raw_fida_follow_up::fida_patient_recommend_fac	raw_fida_follow_up::fida_patient_recommend_fac	4	Very unlikely	
-raw_fida_follow_up::fida_patient_recommend_fac	raw_fida_follow_up::fida_patient_recommend_fac	NA	:::UNDEF:::	
-raw_fida_follow_up::fida_pexp_danger_signs_resp	raw_fida_follow_up::fida_pexp_danger_signs_resp	0	No	
-raw_fida_follow_up::fida_pexp_danger_signs_resp	raw_fida_follow_up::fida_pexp_danger_signs_resp	1	At least one danger sign named for mother or baby	
-raw_fida_follow_up::fida_pexp_danger_signs_resp	raw_fida_follow_up::fida_pexp_danger_signs_resp	2	No response	
-raw_fida_follow_up::fida_pexp_danger_signs_resp	raw_fida_follow_up::fida_pexp_danger_signs_resp	NA	:::UNDEF:::			
+raw_fida_birth_registration::sbr_attended_unknown	raw_fida_birth_registration::sbr_attended_unknown	1	Yes				
 raw_fida_tl_facility_survey::fitl_fs_facility_upgraded	raw_fida_tl_facility_survey::fitl_fs_facility_upgraded	0	No	
 raw_fida_tl_facility_survey::fitl_fs_facility_upgraded	raw_fida_tl_facility_survey::fitl_fs_facility_upgraded	1	Yes	
 raw_fida_tl_facility_survey::fitl_fs_facility_funct_as_upgr	raw_fida_tl_facility_survey::fitl_fs_facility_funct_as_upgr	0	No	
@@ -2543,73 +2201,8 @@ raw_fida_tl_facility_survey::fitl_fs_fp_services_male_steril	raw_fida_tl_facilit
 raw_fida_tl_facility_survey::fitl_fs_fp_services_fem_steril	raw_fida_tl_facility_survey::fitl_fs_fp_services_fem_steril	0	No	
 raw_fida_tl_facility_survey::fitl_fs_fp_services_fem_steril	raw_fida_tl_facility_survey::fitl_fs_fp_services_fem_steril	1	Yes	
 raw_fida_tl_facility_survey::fitl_fs_fp_services_other	raw_fida_tl_facility_survey::fitl_fs_fp_services_other	0	No	
-raw_fida_tl_facility_survey::fitl_fs_fp_services_other	raw_fida_tl_facility_survey::fitl_fs_fp_services_other	1	Yes	
-raw_fida_tl_home_visit::fitl_started_visit	raw_fida_tl_home_visit::fitl_started_visit	0	Not done	
-raw_fida_tl_home_visit::fitl_started_visit	raw_fida_tl_home_visit::fitl_started_visit	1	Started	
-raw_fida_tl_home_visit::fitl_not_started_visit_reason	raw_fida_tl_home_visit::fitl_not_started_visit_reason	1	Participant or husband not available	
-raw_fida_tl_home_visit::fitl_not_started_visit_reason	raw_fida_tl_home_visit::fitl_not_started_visit_reason	2	Moved out of catchment area	
-raw_fida_tl_home_visit::fitl_not_started_visit_reason	raw_fida_tl_home_visit::fitl_not_started_visit_reason	3	Address not found	
-raw_fida_tl_home_visit::fitl_not_started_visit_reason	raw_fida_tl_home_visit::fitl_not_started_visit_reason	4	Incorrect address - participant not living there	
-raw_fida_tl_home_visit::fitl_not_started_visit_reason	raw_fida_tl_home_visit::fitl_not_started_visit_reason	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_delivery_type	raw_fida_tl_home_visit::fitl_delivery_type	1	Vaginal	
-raw_fida_tl_home_visit::fitl_delivery_type	raw_fida_tl_home_visit::fitl_delivery_type	2	Caesarean section	
-raw_fida_tl_home_visit::fitl_delivery_type	raw_fida_tl_home_visit::fitl_delivery_type	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_num_of_births	raw_fida_tl_home_visit::fitl_num_of_births	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_baby_alive_at_discharge	raw_fida_tl_home_visit::fitl_baby_alive_at_discharge	0	No	
-raw_fida_tl_home_visit::fitl_baby_alive_at_discharge	raw_fida_tl_home_visit::fitl_baby_alive_at_discharge	1	Yes	
-raw_fida_tl_home_visit::fitl_baby_alive_at_discharge	raw_fida_tl_home_visit::fitl_baby_alive_at_discharge	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_num_stillborn_dead_babies_v2	raw_fida_tl_home_visit::fitl_num_stillborn_dead_babies_v2	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_maternal_death_occurred	raw_fida_tl_home_visit::fitl_maternal_death_occurred	0	Alive	
-raw_fida_tl_home_visit::fitl_maternal_death_occurred	raw_fida_tl_home_visit::fitl_maternal_death_occurred	1	Dead	
-raw_fida_tl_home_visit::fitl_maternal_death_occurred	raw_fida_tl_home_visit::fitl_maternal_death_occurred	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_maternal_death_7days	raw_fida_tl_home_visit::fitl_maternal_death_7days	0	No	
-raw_fida_tl_home_visit::fitl_maternal_death_7days	raw_fida_tl_home_visit::fitl_maternal_death_7days	1	Yes	
-raw_fida_tl_home_visit::fitl_maternal_death_7days	raw_fida_tl_home_visit::fitl_maternal_death_7days	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_baby1_death	raw_fida_tl_home_visit::fitl_baby1_death	0	Alive	
-raw_fida_tl_home_visit::fitl_baby1_death	raw_fida_tl_home_visit::fitl_baby1_death	1	Dead	
-raw_fida_tl_home_visit::fitl_baby1_death	raw_fida_tl_home_visit::fitl_baby1_death	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_baby1_death_7days	raw_fida_tl_home_visit::fitl_baby1_death_7days	0	No	
-raw_fida_tl_home_visit::fitl_baby1_death_7days	raw_fida_tl_home_visit::fitl_baby1_death_7days	1	Yes	
-raw_fida_tl_home_visit::fitl_baby1_death_7days	raw_fida_tl_home_visit::fitl_baby1_death_7days	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_baby2_death	raw_fida_tl_home_visit::fitl_baby2_death	0	Alive	
-raw_fida_tl_home_visit::fitl_baby2_death	raw_fida_tl_home_visit::fitl_baby2_death	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_loss_consciousness	raw_fida_tl_home_visit::fitl_loss_consciousness	0	No	
-raw_fida_tl_home_visit::fitl_loss_consciousness	raw_fida_tl_home_visit::fitl_loss_consciousness	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_fever_smelly_discharge	raw_fida_tl_home_visit::fitl_fever_smelly_discharge	0	No	
-raw_fida_tl_home_visit::fitl_fever_smelly_discharge	raw_fida_tl_home_visit::fitl_fever_smelly_discharge	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_hysterectomy	raw_fida_tl_home_visit::fitl_hysterectomy	0	No	
-raw_fida_tl_home_visit::fitl_hysterectomy	raw_fida_tl_home_visit::fitl_hysterectomy	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_stroke	raw_fida_tl_home_visit::fitl_stroke	0	No	
-raw_fida_tl_home_visit::fitl_stroke	raw_fida_tl_home_visit::fitl_stroke	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_bleeding	raw_fida_tl_home_visit::fitl_bleeding	0	No	
-raw_fida_tl_home_visit::fitl_bleeding	raw_fida_tl_home_visit::fitl_bleeding	1	Yes	
-raw_fida_tl_home_visit::fitl_bleeding	raw_fida_tl_home_visit::fitl_bleeding	NA	:::UNDEF:::
-raw_fida_tl_home_visit::fitl_bleeding_amount	raw_fida_tl_home_visit::fitl_bleeding_amount	1	Yes	
-raw_fida_tl_home_visit::fitl_bleeding_amount	raw_fida_tl_home_visit::fitl_bleeding_amount	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_bleeding_7days	raw_fida_tl_home_visit::fitl_bleeding_7days	1	Yes	
-raw_fida_tl_home_visit::fitl_bleeding_7days	raw_fida_tl_home_visit::fitl_bleeding_7days	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_baby_return	raw_fida_tl_home_visit::fitl_baby_return	0	No	
-raw_fida_tl_home_visit::fitl_baby_return	raw_fida_tl_home_visit::fitl_baby_return	1	Yes	
-raw_fida_tl_home_visit::fitl_baby_return	raw_fida_tl_home_visit::fitl_baby_return	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_baby_return_7days	raw_fida_tl_home_visit::fitl_baby_return_7days	1	Yes	
-raw_fida_tl_home_visit::fitl_baby_return_7days	raw_fida_tl_home_visit::fitl_baby_return_7days	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_mother_return	raw_fida_tl_home_visit::fitl_mother_return	0	No	
-raw_fida_tl_home_visit::fitl_mother_return	raw_fida_tl_home_visit::fitl_mother_return	1	Yes	
-raw_fida_tl_home_visit::fitl_mother_return	raw_fida_tl_home_visit::fitl_mother_return	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_mother_return_7days	raw_fida_tl_home_visit::fitl_mother_return_7days	1	Yes	
-raw_fida_tl_home_visit::fitl_mother_return_7days	raw_fida_tl_home_visit::fitl_mother_return_7days	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_patient_facility_satis	raw_fida_tl_home_visit::fitl_patient_facility_satis	1	Very satisfied	
-raw_fida_tl_home_visit::fitl_patient_facility_satis	raw_fida_tl_home_visit::fitl_patient_facility_satis	2	Somewhat satisfied	
-raw_fida_tl_home_visit::fitl_patient_facility_satis	raw_fida_tl_home_visit::fitl_patient_facility_satis	4	Very unsatisfied	
-raw_fida_tl_home_visit::fitl_patient_facility_satis	raw_fida_tl_home_visit::fitl_patient_facility_satis	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_patient_recommend_fac	raw_fida_tl_home_visit::fitl_patient_recommend_fac	1	Very likely	
-raw_fida_tl_home_visit::fitl_patient_recommend_fac	raw_fida_tl_home_visit::fitl_patient_recommend_fac	2	Somewhat likely	
-raw_fida_tl_home_visit::fitl_patient_recommend_fac	raw_fida_tl_home_visit::fitl_patient_recommend_fac	4	Very unlikely	
-raw_fida_tl_home_visit::fitl_patient_recommend_fac	raw_fida_tl_home_visit::fitl_patient_recommend_fac	NA	:::UNDEF:::	
-raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	0	No	
-raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	1	At least one danger sign named for mother or baby	
-raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	2	No response	
-raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	raw_fida_tl_home_visit::fitl_pexp_danger_signs_resp	NA	:::UNDEF:::		
+raw_fida_tl_facility_survey::fitl_fs_fp_services_other	raw_fida_tl_facility_survey::fitl_fs_fp_services_other	1	Yes
+raw_fida_tl_facility_survey::datatype	raw_fida_tl_facility_survey::datatype	facility survey	Facility survey		
 raw_otis_process_tl::otis_pt_visit_number	raw_otis_process_tl::otis_pt_visit_number	continuous		
 raw_otis_process_tl::otis_pt_sbs_list_completed	raw_otis_process_tl::otis_pt_sbs_list_completed	0	No	
 raw_otis_process_tl::otis_pt_sbs_list_completed	raw_otis_process_tl::otis_pt_sbs_list_completed	1	Yes	
@@ -2624,6 +2217,8 @@ raw_otis_process_tl::otis_pt_data_sharing_meeting	raw_otis_process_tl::otis_pt_d
 raw_otis_process_tl::otis_pt_data_sharing_meeting	raw_otis_process_tl::otis_pt_data_sharing_meeting	NA	:::UNDEF:::	
 raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	0	No	
 raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	1	Yes	
+raw_otis_process_tl::lighttouch	raw_otis_process_tl::lighttouch	No	No	
+raw_otis_process_tl::datatype	raw_otis_process_tl::datatype	otis process	OTIS process	
 raw_otis_visit::otis_op1_observed	raw_otis_visit::otis_op1_observed	0	No	
 raw_otis_visit::otis_op1_observed	raw_otis_visit::otis_op1_observed	1	Yes	
 raw_otis_visit::otis_op2_observed	raw_otis_visit::otis_op2_observed	0	No	
@@ -3439,6 +3034,8 @@ raw_otis_visit::otis_hl_birth_attendant	raw_otis_visit::otis_hl_birth_attendant	
 raw_otis_visit::otis_hl_bb_team_lead	raw_otis_visit::otis_hl_bb_team_lead	0	No	
 raw_otis_visit::otis_hl_bb_team_lead	raw_otis_visit::otis_hl_bb_team_lead	1	Yes	
 raw_otis_visit::otis_hl_bb_team_lead	raw_otis_visit::otis_hl_bb_team_lead	NA	:::UNDEF:::	
+raw_otis_visit::lighttouch	raw_otis_visit::lighttouch	No	No	
+raw_otis_visit::datatype	raw_otis_visit::datatype	Otis visit	OTIS visit	
 xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	ANM	Auxiliary nurse midwife	
 xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	LMO	Lady medical officer	
 xls_ba_characteristics::ba_designation	xls_ba_characteristics::ba_designation	Staff Nurse	Staff nurse		
@@ -3455,7 +3052,9 @@ xls_ba_characteristics::highest_nursing_course	xls_ba_characteristics::highest_n
 xls_ba_characteristics::sba_training_flag	xls_ba_characteristics::sba_training_flag	0	No	
 xls_ba_characteristics::sba_training_flag	xls_ba_characteristics::sba_training_flag	1	Yes	
 xls_ba_characteristics::sba_training_year	xls_ba_characteristics::sba_training_year	NA	:::UNDEF:::		
-xls_ba_characteristics::ba_experience_length	xls_ba_characteristics::ba_experience_length	NA	:::UNDEF:::			
+xls_ba_characteristics::ba_experience_length	xls_ba_characteristics::ba_experience_length	NA	:::UNDEF:::
+xls_ba_characteristics::clinepi_id	xls_ba_characteristics::clinepi_id	Yes	Yes	
+xls_ba_characteristics::datatype	xls_ba_characteristics::datatype	ba	Birth attendant characteristics			
 xls_baseline_mortality::tp1_iud_count_raw_int	xls_baseline_mortality::tp1_iud_count_raw_int	NA	:::UNDEF:::	
 xls_baseline_mortality::tp1_iud_count_months	xls_baseline_mortality::tp1_iud_count_months	NA	:::UNDEF:::		
 xls_baseline_mortality::tp1_iud_count_annual	xls_baseline_mortality::tp1_iud_count_annual	NA	:::UNDEF:::	
@@ -3539,7 +3138,8 @@ xls_checklist_utilization::external_factors_difficulty	xls_checklist_utilization
 xls_checklist_utilization::external_factors_difficulty	xls_checklist_utilization::external_factors_difficulty	5. Strongly Agree	Strongly agree	5		
 xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	12 mo	12 months	
 xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	6 mo	6 months	
-xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	Baseline	Baseline	
+xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	Baseline	Baseline
+xls_checklist_utilization::datatype	xls_checklist_utilization::datatype	checklist utilization	Checklist utilization		
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	1.Doctor	Doctor	
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	2. L.H.V	Lady health visitor	
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	3. A.N.M	Auxiliary nurse midwife	
@@ -3578,6 +3178,7 @@ xls_safety_attitudes::necessary_resources	xls_safety_attitudes::necessary_resour
 xls_safety_attitudes::necessary_resources	xls_safety_attitudes::necessary_resources	4. Never	Never	4		
 xls_safety_attitudes::safe_having_your_baby	xls_safety_attitudes::safe_having_your_baby	1. Yes	Yes	
 xls_safety_attitudes::safe_having_your_baby	xls_safety_attitudes::safe_having_your_baby	2.No	No	
+xls_safety_attitudes::datatype	xls_safety_attitudes::datatype	Safety attitudes	Safety attitudes	
 xls_sbr_demographics::weigh_in_g	xls_sbr_demographics::weigh_in_g	NA	:::UNDEF:::	
 xls_sbr_demographics::gravida	xls_sbr_demographics::gravida	0	0	1
 xls_sbr_demographics::gravida	xls_sbr_demographics::gravida	1	1	2
@@ -3783,38 +3384,38 @@ xls_site_attributes::hub_name	xls_site_attributes::hub_name	3
 xls_site_attributes::hub_name	xls_site_attributes::hub_name	4		
 xls_site_attributes::hub_name	xls_site_attributes::hub_name	5		
 xls_site_attributes::district_name	xls_site_attributes::district_name	1		
-xls_site_attributes::district_name	xls_site_attributes::district_name	10	Gonda	
+xls_site_attributes::district_name	xls_site_attributes::district_name	10		
 xls_site_attributes::district_name	xls_site_attributes::district_name	11		
 xls_site_attributes::district_name	xls_site_attributes::district_name	12		
-xls_site_attributes::district_name	xls_site_attributes::district_name	13	Sitapur	
+xls_site_attributes::district_name	xls_site_attributes::district_name	13		
 xls_site_attributes::district_name	xls_site_attributes::district_name	14		
-xls_site_attributes::district_name	xls_site_attributes::district_name	15	Kanpur	
+xls_site_attributes::district_name	xls_site_attributes::district_name	15		
 xls_site_attributes::district_name	xls_site_attributes::district_name	16		
 xls_site_attributes::district_name	xls_site_attributes::district_name	17		
 xls_site_attributes::district_name	xls_site_attributes::district_name	18		
 xls_site_attributes::district_name	xls_site_attributes::district_name	19		
 xls_site_attributes::district_name	xls_site_attributes::district_name	2		
-xls_site_attributes::district_name	xls_site_attributes::district_name	20	Lakhimpur Kheri	
+xls_site_attributes::district_name	xls_site_attributes::district_name	20		
 xls_site_attributes::district_name	xls_site_attributes::district_name	21		
 xls_site_attributes::district_name	xls_site_attributes::district_name	22		
 xls_site_attributes::district_name	xls_site_attributes::district_name	23		
-xls_site_attributes::district_name	xls_site_attributes::district_name	24	Faizabad	
-xls_site_attributes::district_name	xls_site_attributes::district_name	3	Sultanpur	
+xls_site_attributes::district_name	xls_site_attributes::district_name	24		
+xls_site_attributes::district_name	xls_site_attributes::district_name	3		
 xls_site_attributes::district_name	xls_site_attributes::district_name	4		
-xls_site_attributes::district_name	xls_site_attributes::district_name	5	Hardoi	
+xls_site_attributes::district_name	xls_site_attributes::district_name	5		
 xls_site_attributes::district_name	xls_site_attributes::district_name	6		
 xls_site_attributes::district_name	xls_site_attributes::district_name	7		
 xls_site_attributes::district_name	xls_site_attributes::district_name	8		
 xls_site_attributes::district_name	xls_site_attributes::district_name	9					
 xls_site_attributes::pop_served_hmis	xls_site_attributes::pop_served_hmis	0		
 xls_site_attributes::pop_served_census	xls_site_attributes::pop_served_census	0		
-xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	BPHC		
-xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	BPHC/PHC		
-xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	CHC		
-xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	CHC/FRU		
-xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	PHC		
-xls_site_attributes::facility_type_changed	xls_site_attributes::facility_type_changed	CHC		
-xls_site_attributes::facility_type_changed	xls_site_attributes::facility_type_changed	CHC/FRU		
+xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	BPHC	Block-level Primary Health Center	
+xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	BPHC/PHC	Block-level Primary Health Center/Primary Health Center	
+xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	CHC	Community Health Center	
+xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	CHC/FRU	Community Health Center/First Referral Unit	
+xls_site_attributes::facility_type_at_matching	xls_site_attributes::facility_type_at_matching	PHC	Primary Health Center	
+xls_site_attributes::facility_type_changed	xls_site_attributes::facility_type_changed	CHC	Community Health Center	
+xls_site_attributes::facility_type_changed	xls_site_attributes::facility_type_changed	CHC/FRU	Community Health Center/First Referral Unit	
 xls_site_attributes::number_dpm_int	xls_site_attributes::number_dpm_int	NA	:::UNDEF:::	
 xls_site_attributes::delivery_load_matching	xls_site_attributes::delivery_load_matching	continuous		
 xls_site_attributes::sick_newborn_unit	xls_site_attributes::sick_newborn_unit	NBCC	Newborn Care Corner (NBCC)	
@@ -3825,8 +3426,8 @@ xls_site_attributes::when_initiate_sick_baby_unit	xls_site_attributes::when_init
 xls_site_attributes::high_priority_district_flag	xls_site_attributes::high_priority_district_flag	0	No	
 xls_site_attributes::high_priority_district_flag	xls_site_attributes::high_priority_district_flag	1	Yes	
 xls_vasa_death_data::agedeath	xls_vasa_death_data::agedeath	NA	:::UNDEF:::	
-xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	11		
-xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	12		
+xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	11	Hindu	
+xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	12	Muslim	
 xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	NA	:::UNDEF:::	
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Divorced	Divorced	
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Married	Married
