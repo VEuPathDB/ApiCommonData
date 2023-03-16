@@ -51,7 +51,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::DoTS::GOAssociationInstanceLOE" => ["name"], 
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
                             "GUS::Model::SRes::ExternalDatabaseRelease" => ["external_database_id", "version"],
-                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"],
+                            "GUS::Model::SRes::OntologyTerm" => ["source_id"],
                             "GUS::Model::SRes::OntologySynonym" => ["ontology_term_id", "ontology_synonym"],
                             "GUS::Model::SRes::OntologyRelationship" => ["subject_term_id", "object_term_id", "predicate_term_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologyTermType" => ["name"],

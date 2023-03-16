@@ -28,7 +28,7 @@ my $urlBase;
 if ($organism eq 'TRYPANO' || $organism eq 'LEISH') {
     $urlBase = "http://vm-trypanocyc.toulouse.inra.fr/";
 } else {
-    $urlBase = "http://metacyc.org/";
+    $urlBase = "https://metacyc.org/";
 }
 
 my $urlBiopax = $urlBase."$organism/pathway-biopax?type=3&object=";

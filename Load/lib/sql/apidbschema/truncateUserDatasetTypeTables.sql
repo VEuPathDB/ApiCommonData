@@ -28,11 +28,14 @@ BEGIN
         owner = 'APIDBUSERDATASETS'
         and (table_name like 'ATTRIBUTEVALUE_%'
              or table_name like 'ANCESTORS_%'
+             or table_name like 'ATTRIBUTES_%'
+             or table_name like 'COLLECTION_%'
+             or table_name like 'COLLECTIONATTRIBUTE_%'
              or table_name like 'ATTRIBUTEGRAPH_%')
     )
   LOOP
-   DBMS_OUTPUT.put_line (' dropping table:  &1.'||rec.table_name);
-   EXECUTE immediate 'DROP TABLE  &1.'||rec.table_name || ' CASCADE CONSTRAINTS';
+   DBMS_OUTPUT.put_line (' dropping table:  ApiDBUserDatasets' || '.'||rec.table_name);
+   EXECUTE immediate 'DROP TABLE  ApiDBUserDatasets' || '.'||rec.table_name || ' CASCADE CONSTRAINTS';
   END LOOP;
 END;
 /

@@ -10,17 +10,20 @@ begin
    begin
 
       -- find a TAXON in ProjectTaxon that matches the first N characters of the
-      --  organism name passed as an argument, where N is the length of that
-      --  ProjectTaxon.TAXON. Use MAX() to resolve any collisions, because as of
-      --  now (March 2020) the only collision between taxa of different projects
-      --  is HostDB's "mus" vs. VectorBase's "musca". A better fix would be to
-      --  prefer the match with greater N.
+      -- organism name passed as an argument, where N is the length of that
+      -- ProjectTaxon.TAXON. (That is, find a match for the whole length of the
+      -- name in ProjectTaxon). If multiple records in ProjectTaxon match for
+      -- the full length, use the longest one.
 
       org := replace(organism, '''', '');
       execute immediate
-         'select nvl(max( project_id), ''PiroplasmaDB'') ' ||
-         'from ApidbTuning.ProjectTaxon pt ' ||
-         'where pt.taxon = substr(lower(''' || org || '''), 1, length(pt.taxon)) '
+         'select project_id ' ||
+         'from (select project_id, ' ||
+         '             row_number() over (order by length(pt.taxon) desc) as ranking ' ||
+         '      from ApidbTuning.ProjectTaxon pt ' ||
+         '      where pt.taxon = substr(lower(''' || org || '''), 1, length(pt.taxon)) ' ||
+         '     ) ' ||
+         'where ranking = 1 '
       into project;
       exception
          when NO_DATA_FOUND then
@@ -37,7 +40,6 @@ end project_id;
 show errors;
 
 GRANT execute ON apidb.project_id TO public;
-
 -------------------------------------------------------------------------------
 create or replace function apidb.wrap (seq clob)
 return clob

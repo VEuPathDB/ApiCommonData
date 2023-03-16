@@ -265,7 +265,7 @@ SQL
 
 	    $loc
 	      = GUS::Model::ApiDB::FeatureLocation->
-		new({'feature_type' => "UTR",
+		new({'feature_type' => ($utrDirection eq "3" ? "three_prime_UTR" : $utrDirection eq "5" ? "five_prime_UTR": die $utrDirection ),
 		     'sequence_source_id' => $feature->seq_id(),
 		     'na_sequence_id' => ($feature->get_tag_values("NA_SEQUENCE_ID"))[0],
 		     'start_min' => $feature->start(),
@@ -316,8 +316,6 @@ SQL
             $self->incrementInsertCounter();
 
 	    # have bioperl calculate the intron coords for the transcript
-	    # NOTE:  the parent of the intron will be the transcript not the gene (may be some redundancy)
-
 	    unless($isPredicted) {
 	      foreach my $intron ($feature->introns()) {
 		my $intronLocation = $intron->location();
@@ -366,7 +364,7 @@ SQL
 		     'start_min' => $feature->start(),
 		     'end_max' => $feature->end(),
 		     'is_reversed' => $feature->strand() == -1 ? 1 : 0,
-		     'parent_id' => ($feature->get_tag_values("GENE_NA_FEATURE_ID"))[0],
+		     'parent_id' => ($feature->get_tag_values("PARENT_NA_FEATURE_ID"))[0],
 		     'is_top_level' => $isTopLevel,
 		     'external_database_release_id' => $genomeExtDbRlsId,
 		    });
@@ -383,7 +381,7 @@ SQL
 		     'start_min' => $feature->start(),
 		     'end_max' => $feature->end(),
 		     'is_reversed' => $feature->strand() == -1 ? 1 : 0,
-		     'parent_id' => ($feature->get_tag_values("GENE_NA_FEATURE_ID"))[0],
+		     'parent_id' => ($feature->get_tag_values("PARENT_NA_FEATURE_ID"))[0],
 		     'is_top_level' => $isTopLevel,
 		     'external_database_release_id' => $genomeExtDbRlsId,
 		    });

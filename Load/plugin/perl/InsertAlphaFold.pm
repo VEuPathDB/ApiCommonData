@@ -97,15 +97,70 @@ sub run {
     my $self = shift;
    
     my $extDbSpec = $self->getArg('extDbSpec');
-    my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n"; 
-
-    my ($ctrlFh, $ctrlFile) = tempfile(SUFFIX => '.dat');
+    my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n";
 
     my $inputFile = $self->getArg('inputFile');
+ 
+    my $uniprotIds = $self->getUniprotIds;
 
-    $self->loadAlphaFold($inputFile, $ctrlFile, $extDbRlsId);
+    my $filteredFile = $self->filterInput($inputFile, $uniprotIds);
+
+    my ($ctrlFh, $ctrlFile) = tempfile(SUFFIX => '.dat');
+    $self->loadAlphaFold($filteredFile, $ctrlFile, $extDbRlsId);
 
 }
+
+# get uniprot ids from dbref table for filtering
+sub getUniprotIds {
+    my ($self) = @_;
+    my $sql = "SELECT DISTINCT d.primary_identifier
+               FROM sres.dbref d
+               , sres.externaldatabase ed
+               , sres.externaldatabaserelease edr
+               WHERE (((ed.name = 'Uniprot/SWISSPROT' or ed.name = 'Uniprot/SPTREMBL')
+                    AND (edr.version = 'xrefuniparc' OR edr.version = 'xref_sprot_blastp' OR edr.version = 'xref_trembl_blastp'))
+                    OR (ed.name like '%_dbxref_%niprot_%RSRC'))
+               AND edr.external_database_id = ed.external_database_id
+               AND d.external_database_release_id = edr.external_database_release_id";
+
+    my $dbh = $self->getQueryHandle();
+
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+
+    my %uniprotIds;
+    while ((my $uniprotId) = $sh->fetchrow_array()) {
+        $uniprotIds{$uniprotId} = 1;
+    }
+
+    die "No uniprot ids retrieved from database\n" unless scalar(keys %uniprotIds) > 0;
+
+    return \%uniprotIds;
+}
+
+# filter out alphafold ids not in component database
+sub filterInput {
+    my ($self, $inputFile, $uniprotIds) = @_;
+
+    my $outputFile = "$inputFile\_filtered.txt";
+
+    open(IN, $inputFile) or die "Cannot open input file $inputFile for reading. Please check and try again\n$!\n\n";
+    open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing. Please check and try again\n$!\n\n";
+
+    while (<IN>) {
+        my $line = $_;
+        my $uniprot =  (split(',', $line))[0];
+        chomp($uniprot);
+        if (exists $uniprotIds->{$uniprot}) {
+            print OUT $line;
+        }
+    }
+    close(IN);
+    close(OUT);
+
+    return $outputFile;
+}
+
 
 sub loadAlphaFold {
     my ($self, $inputFile, $ctrlFile, $extDbRlsId) = @_;
@@ -195,6 +250,13 @@ sub getConfig {
     $self->{config}
 }
 
+# this will be run at the end of the workflow
+# truncate the table and reload everything with sqlldr rather than undoing rows
+sub undoPreprocess {
+    my ($self, $dbh, $rowAlgInvocationList) = @_;
+
+    $dbh->do('truncate table apidb.alphafold');
+}
 
 
 sub undoTables {

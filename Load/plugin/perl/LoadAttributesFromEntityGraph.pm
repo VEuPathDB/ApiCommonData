@@ -203,18 +203,35 @@ sub run {
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
     my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
-    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $ontologyOverride = &queryForOntologyTerms($dbh, $extDbRlsId, 1);
+
+    printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
+    while(my ($termIRI, $properties) = each %$ontologyOverride){
+      while(my ($prop, $value) = each %$properties){
+        next unless(defined($value) && $value ne "");
+        $ontologyTerms->{$termIRI}->{$prop} = $value;
+        printf STDERR ("Overriding: $termIRI $prop = $value\n");
+      }
+    }
+    my $overrideUnits = $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $extDbRlsId);
+    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')),$overrideUnits);
+
     $self->addScaleToOntologyTerms($ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
     $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
+    my $overrideOrdinals = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
+    foreach my $termIRI (keys %$overrideOrdinals){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
     my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory);
 
+
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh, $entityTypeIds, $internalAbbrev);
     my $statsForPlotsByAttributeStableIdAndEntityTypeId = $self->statsForPlots($dateValsFileName, $numericValsFileName, $tempDirectory);
+
     my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
+    $self->log("Finished load attribute terms");
 
     $self->log("Loaded $attributeCount attributes for study id $studyId");
   }
@@ -543,9 +560,14 @@ sub valProps {
 
 
 sub addUnitsToOntologyTerms {
-  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId) = @_;
+  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId, $overrideUnits) = @_;
 
   my $dbh = $self->getQueryHandle();
+
+  my $excludeStr = "";
+  if(ref($overrideUnits) && 0 < keys %$overrideUnits){
+    $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
+  }
 
   my $sql = "select * from (
 select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
@@ -571,13 +593,18 @@ where os.ontology_term_id = ot.ontology_term_id
 and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
 and json_value(annotation_properties, '\$.unitLabel[0]') is not null
 and os.external_database_release_id = ?
-) order by priority
+)
+$excludeStr
+ order by priority
 ";
 
+
+  $overrideUnits //= {};
   my $sh = $dbh->prepare($sql);
   $sh->execute($studyId, $ontologyExtDbRlsId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
+    next if defined($overrideUnits->{$sourceId});
     if($ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID}) {
       # TODO:  Shouldn't we allow one unit per attribute/entityType?
       $self->userError("The Attribute $sourceId can only have one unit specification per study.  Units can be specified either in the ISA files OR in annotation properties");
@@ -585,9 +612,11 @@ and os.external_database_release_id = ?
 
     $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
     $ontologyTerms->{$sourceId}->{UNIT_NAME} = $unitName;
+    $overrideUnits->{$sourceId} = 1;
   }
 
   $sh->finish();
+  return $overrideUnits;
 }
 
 

@@ -63,5 +63,16 @@ CREATE TABLE ApiDBUserDatasets.UserDatasetEvent
 GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetEvent TO gus_w;
 GRANT select ON ApiDBUserDatasets.UserDatasetEvent TO gus_r;
 
+--------------------------------------------------------------------------------
+
+CREATE TABLE ApiDBUserDatasets.UserDatasetProject (
+  user_dataset_id NUMBER(20) not null,
+  project VARCHAR2(20) not null,
+  PRIMARY KEY (user_dataset_id, project),
+  FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
+);
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetProject TO gus_w;
+GRANT select ON ApiDBUserDatasets.UserDatasetProject TO gus_r;
+
 exit;
 

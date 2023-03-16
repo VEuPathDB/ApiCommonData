@@ -159,7 +159,7 @@ sub run {
 
       $totalNum++;
 
-      my ($sourceId, $product, $preferred, $pmid, $evCode, $with) = split(/\t/,$_);
+      my ($sourceId, $product, $preferred, $pmid, $evCode, $with, $assignedBy) = split(/\t/,$_);
       next if ($sourceId =~ /^\s*$/ || $product =~ /^\s*$/);
       if ($preferred =~ /true/i || $preferred == 1) {
 	$preferred = 1;
@@ -182,7 +182,7 @@ sub run {
 	  my $nafeatureId = $transcript->getNaFeatureId();
           my $productReleaseId = $transcript->getExternalDatabaseReleaseId();
 
-	  $self->makeTranscriptProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with);
+	  $self->makeTranscriptProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with, $assignedBy);
 
 	  $processed++;
 
@@ -207,7 +207,7 @@ sub run {
 
 
 sub makeTranscriptProduct {
-  my ($self,$productReleaseId,$naFeatId,$product,$preferred, $pmid, $evCode, $with) = @_;
+  my ($self,$productReleaseId,$naFeatId,$product,$preferred, $pmid, $evCode, $with, $assignedBy) = @_;
 
   my $evCodeLink = getEvidCodeLink ($self, $evCode) if ($evCode);
   my $transcriptProduct = GUS::Model::ApiDB::TranscriptProduct->new({'na_feature_id' => $naFeatId,
@@ -220,6 +220,7 @@ sub makeTranscriptProduct {
       $transcriptProduct->set("external_database_release_id",$productReleaseId);
       $transcriptProduct->set("evidence_code",$evCodeLink);
       $transcriptProduct->set("with_from",$with);
+      $transcriptProduct->set("assigned_by",$assignedBy);
       $transcriptProduct->submit();
   }else{
       $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId, with publication: $pmid\n");

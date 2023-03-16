@@ -238,6 +238,7 @@ sub getMaterialTypesFromOwl {
     '16s rrna sequencing assay targeting v3-v4 region' => "EUPATH_0000811",
     '16s rrna sequencing assay targeting v3-v5 region' => "EUPATH_0000812",
     '16s rrna sequencing assay targeting v4 region' => "EUPATH_0000813",
+    'mass spectrometry assay' => 'OBI_0000470',
   );
   my $it = $owl->execute('top_level_entities');
   while (my $row = $it->next) {

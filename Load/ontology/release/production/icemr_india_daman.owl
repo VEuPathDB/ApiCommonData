@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_india_daman.owl">
-        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2022-08-02</owl:versionInfo>
+        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2023-02-20</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -80,6 +80,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0001008 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001008">
@@ -136,14 +144,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0001020 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
-    </owl:AnnotationProperty>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
@@ -173,6 +173,8 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A2.1  Hemoglobin (g/dl)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">g/dL</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000208</obo:EUPATH_0001009>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hemoglobin</rdfs:label>
     </owl:Class>
@@ -365,7 +367,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
+        <obo:EUPATH_0001015 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001015>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation date</rdfs:label>
     </owl:Class>
     
@@ -481,6 +483,22 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household observation details</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015457 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015457">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3questionnaire_data_2022-05-11::study_arm</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3questionnaire_data_2022-05-11</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable,derived</obo:EUPATH_0001005>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
+        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participants in Arm A lived in communities that received malaria camps (MCs) for the first time in year one. Participants in Arm B lived in communities that underwent routine malaria control in year one and received MCs for the first time in year two. Participants in Arm C lived in communities where MCs had already been implemented prior to the study period</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study arm</rdfs:label>
     </owl:Class>
     
 
@@ -1048,37 +1066,15 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0044122">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011995"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3participantsample_data_2022-05-11::redcap_repeat</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3questionnaire_data_2022-05-11::redcap_repeat</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3participantsample_data_2022-05-11</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3questionnaire_data_2022-05-11</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
         <obo:EUPATH_0001015 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001015>
         <obo:EUPATH_0001016 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001016>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household study timepoint</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0045101 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0045101">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3participantsample_data_2022-05-11::redcap_repeat_instance</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3questionnaire_data_2022-05-11::redcap_repeat_instance</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3participantsample_data_2022-05-11</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3questionnaire_data_2022-05-11</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
-        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:EUPATH_0001020 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001020>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Survey round</rdfs:label>
     </owl:Class>
     
 
@@ -1343,6 +1339,20 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0000070 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000070">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OGMS_0000056</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory test</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0000655 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000655">
@@ -1352,6 +1362,20 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood sample</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0000659 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000659">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OBI_0600005</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection process</rdfs:label>
     </owl:Class>
     
 
@@ -1400,14 +1424,13 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0600005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3participantsample_data_2022-05-11::visdat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">st3participantsample_data_2022-05-11</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. Date of interview</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
-        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection date</rdfs:label>
     </owl:Class>
     
@@ -1416,7 +1439,7 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0002649 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002649">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000070"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -1429,7 +1452,7 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0003040 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003040">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000070"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -1494,19 +1517,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/OBI_0600005 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0600005">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection process</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/OGMS_0000015 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000015">
@@ -1516,19 +1526,6 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical history</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/OGMS_0000056 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">India ICEMR DAMaN</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory test</rdfs:label>
     </owl:Class>
     
 
@@ -1656,9 +1653,6 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
-    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001013">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hidden</rdfs:label>
     </rdf:Description>
@@ -1673,6 +1667,9 @@
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001019">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">defaultBinWidth</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
     </rdf:Description>
 </rdf:RDF>
 

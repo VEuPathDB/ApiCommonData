@@ -40,7 +40,13 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
       my ($self, $sample) = @_;
       return entitiesForSampleGroupedAbundancesEukCpms($self->{data}{$sample});
     }
-  }
+  },
+  massSpec => {
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "mass spectrometry assay", undef, undef, undef); 
+    }
+  },
 };
 
 sub entitiesForSample {
@@ -91,13 +97,13 @@ sub entitiesForSampleFunctions {
   return \%result;
 }
 my $levelNamesTxt = <<EOF;
-relative abundance of kingdom data
-relative abundance of phylum data
-relative abundance of class data
-relative abundance of order data
-relative abundance of family data
-relative abundance of genus data
-relative abundance of species data
+eupath_0009251
+eupath_0009252
+eupath_0009253
+eupath_0009254
+eupath_0009255
+eupath_0009256
+eupath_0009257
 EOF
 my $levelNames = [grep {$_} split("\n", $levelNamesTxt)];
 

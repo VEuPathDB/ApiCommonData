@@ -27,7 +27,8 @@ use Getopt::Long;
 
 my($getFastq);
 
-&GetOptions("getFastq|q!" => \$getFastq 
+&GetOptions("getFastq|q!" => \$getFastq,
+            "apiKey=s" => \$apiKey,
             );
 
 if(scalar(@ARGV) == 0){
@@ -41,5 +42,5 @@ foreach my $sampleId (@ARGV){
   foreach my $s (split(/,\s*/,$sampleId)){
     push(@tmp,$s);
   }
-  &getFastqForSampleIds(\@tmp,"readsFor$ct.fastq","readsRev$ct.fastq",$getFastq ? 0 : 1);
+  &getFastqForSampleIds(\@tmp,"readsFor$ct.fastq","readsRev$ct.fastq",$getFastq ? 0 : 1, $apiKey);
 }
