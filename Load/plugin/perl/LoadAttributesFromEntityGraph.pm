@@ -906,7 +906,7 @@ select ea.entity_attributes_id
      , ea.stable_id
      , ea.entity_type_id
      , ea.orig_entity_type_id
-     , ea.type_id as entity_type_ontology_term_id
+     , ea.entity_type_ontology_term_id
      , null as process_type_id
      , null as process_type_ontology_term_id
      , ea.atts
@@ -923,7 +923,7 @@ select ea.entity_attributes_id
      , ea.stable_id
      , ea.entity_type_id
      , ea.entity_type_id as orig_entity_type_id
-     , ea.type_id as entity_type_ontology_term_id
+     , ea.entity_type_ontology_term_id
      , pt.process_type_id
      , pt.type_id as process_type_ontology_term_id
      , pa.atts
@@ -939,7 +939,13 @@ and ea.study_id = ?
 
 sub fieldsAndCreateTable {
   my ($self, $maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId) = @_;
+
   $maxAttrLength += $maxAttrLength; # Workaround to prevent Sqlldr from choking on wide characters
+
+  if(lc($internalAbbrev) eq 'study') {
+    $maxAttrLength = 400;
+  }
+
   my $datatypeMap = {};
 
   my $idField = lc($internalAbbrev) . "_stable_id";

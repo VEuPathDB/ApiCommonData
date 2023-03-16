@@ -92,7 +92,12 @@ sub run {
   $self->dropTables($extDbRlsSpec);
 
   my $collectionsYamlFile = $self->getArg('collectionsYaml');
-  my $collections = ApiCommonData::Load::StudyUtils::parseCollectionsConfig($collectionsYamlFile);
+
+
+  my $collections = {};
+  if($collectionsYamlFile) {
+    $collections = ApiCommonData::Load::StudyUtils::parseCollectionsConfig($collectionsYamlFile);
+  }
 
   my $dbh = $self->getDbHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;

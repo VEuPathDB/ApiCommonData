@@ -330,6 +330,7 @@ select p.parent_id
      , s.stable_id as study_stable_id
      , os.plural as display_name_plural
      , t.cardinality
+     , 0 as has_attribute_collections
      , case when maxProcessCountPerEntity.maxOutputCount is null then null
             when maxProcessCountPerEntity.maxOutputCount = 0 then null
             when maxProcessCountPerEntity.maxOutputCount = 1 then 0
