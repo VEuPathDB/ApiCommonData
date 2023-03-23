@@ -1,5 +1,14 @@
 set CONCAT OFF;
 
+drop table &1.annotationproperties;
+drop sequence &1.annotationproperties_sq;
+
+DELETE FROM core.TableInfo
+WHERE lower(name) = lower('annotationproperties')
+  AND database_id = (SELECT database_id
+                     FROM core.DatabaseInfo
+                     WHERE lower(name) = '&1');
+
 DROP TABLE &1.StudyCharacteristic;
 DROP SEQUENCE &1.StudyCharacteristic_sq;
 DELETE FROM core.TableInfo
