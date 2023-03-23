@@ -1,5 +1,15 @@
 package ApiCommonData::Load::Plugin::InsertAnnotationProperties;
 
+# Example usage
+# ga ApiCommonData::Load::Plugin::InsertAnnotationProperties  --extDbRlsSpec 'ISASimple_Gates_LLINE-UP_rct_qa_RSRC|2023-01' --attributesFile owlAttributes.txt --schema EDA --commit 1
+# owlAttributes.txt:
+# SOURCE_ID props
+# CMO_0000026 {"unitLabel":["g/dL"],"displayOrder":["2"],"variable":["hh_member_18m::hemoglobin","hh_member_12m::hemoglobin","household member level data 25m survey_final::hemoglobin","hh_member_00m::hemoglobin","hh_member_06m::hemoglobin"],"unitIRI":["http://purl.obolibrary.org/obo/UO_0000208"],"replaces":["EUPATH_0000047"]}
+# ENVO_00000009 {"displayOrder":["1"],"variable":["hh_18m::country","hh_12m::country","hh_06m::country","hh_00m::country"],"replaces":["ENVO_00000004"]}
+# ENVO_00000501 {"displayOrder":["2"],"variable":["hh_12m::bed","hh_18m::bed","household level data 25m survey_final::bed","hh_06m::bed","hh_00m::bed"]}
+# ENVO_00003064 {"displayOrder":["1"],"variable":["hh_06m::otherscs","hh_12m::swater","hh_12m::otherscs","hh_00m::swater","hh_06m::swater","hh_18m::otherscs","household level data 25m survey_final::swater","hh_18m::swater"]}
+#
+
 @ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
 use warnings;
@@ -14,6 +24,7 @@ my @UNDO_TABLES = qw(
 );
 my @REQUIRE_TABLES = qw(
   Study
+  AnnotationProperties
 );
 
 my $argsDeclaration =
@@ -91,23 +102,24 @@ sub run {
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   $SCHEMA = $self->getArg('schema');
   ## 
+  my $append = $self->getArg('append');
 
   my $attributesFile = $self->getArg('attributesFile');
   unless ( -e $attributesFile ){ $self->log("$attributesFile not found, nothing to do"); return 0 }
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   my $commit = $self->getArg('commit');
 
-  unless ($studyId){
-    printf STDERR ("Study %s not found. Loaded:\n%s\n", $datasetName, Dumper $results);
-    return -1; # fail
-  }
   my $study = $self->getGusModelClass('Study')->new({external_database_release_id => $extDbRlsId});
   unless($study->retrieveFromDB){
     $self->error("Study associated with extDbRlsSpec not found");
   }
   my $studyId = $study->getId();
+  unless ($studyId){
+    printf STDERR ("Study not found");
+    return -1; # fail
+  }
   my $csv = Text::CSV->new({binary => 1, escape_char => "\\", quote_char => undef, sep_char => "\t"});
-  open(my $fh, "<$attributesFile") or die "Cannot read $file:$!\n";
+  open(my $fh, "<$attributesFile") or die "Cannot read $attributesFile:$!\n";
   
   my $hr = $csv->getline($fh);
   my $k = $hr->[0]; ## First column is source_id
