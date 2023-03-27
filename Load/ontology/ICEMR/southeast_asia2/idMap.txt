@@ -1,5 +1,11 @@
 file	category	id
-icemr_cohort_data_20230126	household	housecode
-icemr_cohort_data_20230126	participant	studycode
-icemr_cohort_data_20230126	participant_repeated_measures	studycode+punchdate
-icemr_cohort_data_20230126	sample	studycode+punchdate
+icemr2_households	household	{{h}}+vill_code+house_no
+icemr2_participants	household	{{h}}+vill_code+house_no
+icemr2_observations	household	{{h}}+village+house_no
+#
+icemr2_participants	participant	{{p}}+vill_code+house_no+person_no
+icemr2_observations	participant	{{p}}+village+house_no+person_no
+#
+icemr2_observations	participant_repeated_measures	{{pr}}+studycode+punchdate
+#
+icemr2_observations	sample	{{s}}+studycode+punchdate
