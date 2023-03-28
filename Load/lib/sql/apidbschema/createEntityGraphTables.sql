@@ -691,7 +691,8 @@ CREATE TABLE &1.AnnotationProperties (
   ontology_term_id       NUMBER(10) NOT NULL,
   study_id            NUMBER(12) NOT NULL,
   props                         CLOB,
-  MODIFICATION_DATE     DATE,
+ external_database_release_id number(10) NOT NULL,
+MODIFICATION_DATE     DATE,
   USER_READ             NUMBER(1),
   USER_WRITE            NUMBER(1),
   GROUP_READ            NUMBER(1),
@@ -704,7 +705,8 @@ CREATE TABLE &1.AnnotationProperties (
   ROW_ALG_INVOCATION_ID NUMBER(12),
   FOREIGN KEY (ontology_term_id) REFERENCES sres.OntologyTerm (ontology_term_id),
   FOREIGN KEY (study_id) REFERENCES &1.study (study_id),
-  PRIMARY KEY (annotation_properties_id),
+ FOREIGN KEY (external_database_release_id) REFERENCES sres.ExternalDatabaseRelease,
+PRIMARY KEY (annotation_properties_id),
   CONSTRAINT ensure_anp_json CHECK (props is json)
 );
 

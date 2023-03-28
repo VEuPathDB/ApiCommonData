@@ -6,7 +6,7 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyHierarchyAndAnnotationProperties);
 
 use YAML::Tiny;
 
@@ -131,16 +131,8 @@ sub run {
 
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
-    my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-    my $ontologyOverride = &queryForOntologyTerms($self->getQueryHandle(), $extDbRlsId, 1);
-    printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
-    while(my ($termIRI, $properties) = each %$ontologyOverride){
-      while(my ($prop, $value) = each %$properties){
-        next unless(defined($value) && $value ne "");
-        $ontologyTerms->{$termIRI}->{$prop} = $value;
-        printf STDERR ("Overriding: $termIRI $prop = $value\n");
-      }
-    }
+
+    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $extDbRlsId, $SCHEMA);
 
     $self->updateDisplayTypesForGeoVariables($ontologyTerms);
 
@@ -184,10 +176,9 @@ sub updateDisplayTypesForGeoVariables {
 sub constructAndSubmitAttributeGraphsForNonontologicalLeaves {
   my ($self, $studyId, $ontologyTerms) = @_;
 
-  my $sql = "select distinct a.stable_id as source_id, a.parent_ontology_term_id, pt.source_id as parent_source_id, a.display_name
-from $SCHEMA.attribute a, $SCHEMA.entitytype et, sres.ontologyterm pt
+  my $sql = "select distinct a.stable_id as source_id, a.parent_source_id, a.non_ontological_name
+from $SCHEMA.attribute a, $SCHEMA.entitytype et
 where a.entity_type_id = et.entity_type_id
-and a.parent_ontology_term_id = pt.ontology_term_id
 and et.study_id = ?
 and a.ontology_term_id is null";
 
@@ -195,13 +186,12 @@ and a.ontology_term_id is null";
   my $sh = $dbh->prepare($sql);
   $sh->execute($studyId);
 
-
   my $attributeGraphCount;
   NONONTOLOGICAL_LEAF:
   while(my $hash = $sh->fetchrow_hashref()) {
     my $sourceId = $hash->{SOURCE_ID};
     my $parentSourceId = $hash->{PARENT_SOURCE_ID};
-    my $displayName = $hash->{DISPLAY_NAME};
+    my $displayName = $hash->{NON_ONTOLOGICAl_NAME};
     my $parentOntologyTerm =  $ontologyTerms->{$parentSourceId};
     $self->error("Parent $parentSourceId of nonontological leaf $sourceId not found ")
       unless $parentOntologyTerm;
@@ -225,12 +215,12 @@ and a.ontology_term_id is null";
 }
 
 sub createAttributeGraph {
-  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $parentOntologyTermId, $displayName, $ontologyTerm) = @_;
+  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $displayName, $ontologyTerm) = @_;
   return $self->getGusModelClass('AttributeGraph')->new({study_id => $studyId,
                                                                  stable_id => $stableId,
                                                                  ontology_term_id => $ontologyTermId,
                                                                  parent_stable_id => $parentStableId,
-                                                                 parent_ontology_term_id => $parentOntologyTermId,
+                                                                 #parent_ontology_term_id => $parentOntologyTermId,
                                                                  provider_label => $ontologyTerm->{PROVIDER_LABEL},
                                                                  display_name => $displayName,
                                                                  display_type => $ontologyTerm->{DISPLAY_TYPE}, 
@@ -250,7 +240,7 @@ sub createAttributeGraph {
 }
 sub createAttributeGraphForTerm {
   my ($self, $studyId, $sourceId, $ontologyTerm) = @_;
-  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_SOURCE_ID}, $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
+  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_SOURCE_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
 }
 sub createAttributeGraphForNonontologicalLeaf {
   my ($self, $studyId, $sourceId, $displayName, $parentOntologyTerm) = @_;
@@ -259,7 +249,7 @@ sub createAttributeGraphForNonontologicalLeaf {
     delete($parentCopy{DISPLAY_TYPE}); 
     printf STDERR ("DEBUG: removed multifilter from $sourceId\n");
   }
-  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentCopy{SOURCE_ID}, $parentCopy{ONTOLOGY_TERM_ID}, $displayName, \%parentCopy);
+  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentCopy{SOURCE_ID}, $displayName, \%parentCopy);
 }
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
   my ($self, $studyId, $ontologyTerms) = @_;
@@ -335,14 +325,14 @@ processCounts as (select in_entity_type_id
 )
 select p.parent_id
      , p.parent_stable_id
-     , nvl(os.ontology_synonym, t.name) display_name
+     , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, t.name)) as display_name
      , t.entity_type_id
      , t.internal_abbrev
      ,  ot.source_id as stable_id
-     , nvl(os.definition, ot.definition) as description
+     , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as definition
      , s.study_id
      , s.stable_id as study_stable_id
-     , os.plural as display_name_plural
+     , nvl(json_value(ap.props, '\$.definition[0]'), os.plural) as display_name_plural
      , t.cardinality
      , 0 as has_attribute_collections
      , case when maxProcessCountPerEntity.maxOutputCount is null then null
@@ -364,6 +354,7 @@ from  (select distinct study_id
    , $SCHEMA.study s
    , sres.ontologyterm ot
    , (select * from sres.ontologysynonym where external_database_release_id = $extDbRlsId) os
+   , (select * from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId) ap
 where s.study_id = $studyId 
  and s.study_id = t.study_id
  and t.entity_type_id = maxProcessCountPerEntity.out_entity_type_id (+)
@@ -371,6 +362,7 @@ where s.study_id = $studyId
 and t.entity_type_id = out_entity_type_id (+)
  and t.type_id = ot.ontology_term_id (+)
  and ot.ontology_term_id = os.ontology_term_id (+)
+ and ot.ontology_term_id = ap.ontology_term_id (+)
 ";
 
 

@@ -21,7 +21,8 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
+#use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
+use ApiCommonData::Load::StudyUtils qw(dropTablesLike);
 
 use JSON;
 use Encode qw/encode/;
@@ -35,7 +36,7 @@ my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
 
-my $TERMS_WITH_DATASHAPE_ORDINAL = {};
+#my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
 my $ALLOW_VOCABULARY_COUNT = 10; # if the number of distinct values is less, generate vocabulary/ordered_values/ordinal_values
 
@@ -67,7 +68,7 @@ my $tablesDependedOn =
      ['__SCHEMA__::ProcessType',  ''],
     ];
 
-my $howToRestart = ""; 
+my $howToRestart = "";
 my $failureCases = "";
 my $notes = "";
 
@@ -162,7 +163,7 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   $SCHEMA = $self->getArg('schema');
-  ## 
+  ##
 
   chdir $self->getArg('logDir');
 
@@ -203,24 +204,23 @@ sub run {
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
     my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
-    my $ontologyOverride = &queryForOntologyTerms($dbh, $extDbRlsId, 1);
+    #my $ontologyOverride = &queryForOntologyTerms($dbh, $extDbRlsId, 1);
 
-    printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
-    while(my ($termIRI, $properties) = each %$ontologyOverride){
-      while(my ($prop, $value) = each %$properties){
-        next unless(defined($value) && $value ne "");
-        $ontologyTerms->{$termIRI}->{$prop} = $value;
-        printf STDERR ("Overriding: $termIRI $prop = $value\n");
-      }
-    }
-    my $overrideUnits = $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $extDbRlsId);
-    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')),$overrideUnits);
+    # printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
+    # while(my ($termIRI, $properties) = each %$ontologyOverride){
+    #   while(my ($prop, $value) = each %$properties){
+    #     next unless(defined($value) && $value ne "");
+    #     $ontologyTerms->{$termIRI}->{$prop} = $value;
+    #     printf STDERR ("Overriding: $termIRI $prop = $value\n");
+    #   }
+    # }
+    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $extDbRlsId);
+    #$self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')),$overrideUnits);
+    #$self->addScaleToOntologyTerms($ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
-    $self->addScaleToOntologyTerms($ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-
-    $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
-    my $overrideOrdinals = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
-    foreach my $termIRI (keys %$overrideOrdinals){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
+    # $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
+    # my $overrideOrdinals = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
+    # foreach my $termIRI (keys %$overrideOrdinals){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -409,15 +409,18 @@ and study_id = $studyId";
 
   return \%rv;
 }
+
+# non ontological things will have a name and also a parent source_id
 sub annPropsFromParentOntologyTerm {
   my ($displayName, $parentOntologyTerm, $processTypeId, $isMultiValued) = @_;
   return {
     ontology_term_id => undef,
-    parent_ontology_term_id => $parentOntologyTerm->{ONTOLOGY_TERM_ID},
+#    parent_ontology_term_id => $parentOntologyTerm->{ONTOLOGY_TERM_ID},
+    parent_stable_id => $parentOntologyTerm->{SOURCE_ID},
     unit => $parentOntologyTerm->{UNIT_NAME},
     unit_ontology_term_id => $parentOntologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-    scale => $parentOntologyTerm->{SCALE},
-    display_name => $displayName,
+#    scale => $parentOntologyTerm->{SCALE},
+    non_ontological_name => $displayName,
     process_type_id => $processTypeId,
     is_multi_valued => $isMultiValued,
   };
@@ -426,11 +429,11 @@ sub annPropsFromOntologyTerm {
   my ($ontologyTerm, $processTypeId, $isMultiValued) = @_;
   return {
     ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-    parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
+#    parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
     unit => $ontologyTerm->{UNIT_NAME},
     unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-    scale => $ontologyTerm->{SCALE},
-    display_name => $ontologyTerm->{DISPLAY_NAME},
+#    scale => $ontologyTerm->{SCALE},
+#    name => $ontologyTerm->{DISPLAY_NAME},
     process_type_id => $processTypeId,
     is_multi_valued => $isMultiValued,
   };
@@ -502,9 +505,9 @@ sub valProps {
 
 #  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
-  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
-    $dataShape = 'ordinal';
-  }
+  # if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
+  #   $dataShape = 'ordinal';
+  # }
 # DEPRECATED - never infer shape = ordinal
 # elsif($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
 #   $dataShape = 'ordinal';
@@ -560,14 +563,14 @@ sub valProps {
 
 
 sub addUnitsToOntologyTerms {
-  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId, $overrideUnits) = @_;
+  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId) = @_;
 
   my $dbh = $self->getQueryHandle();
 
-  my $excludeStr = "";
-  if(ref($overrideUnits) && 0 < keys %$overrideUnits){
-    $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
-  }
+  # my $excludeStr = "";
+  # if(ref($overrideUnits) && 0 < keys %$overrideUnits){
+  #   $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
+  # }
 
   my $sql = "select * from (
 select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
@@ -581,30 +584,30 @@ and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
 and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
 and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id
-UNION
-select ot.source_id
-     , uot.ontology_term_id
-     , json_value(annotation_properties, '\$.unitLabel[0]') label
-     , 1 as priority
-from sres.ontologysynonym os
-   , sres.ontologyterm ot
-   , sres.ontologyterm uot
-where os.ontology_term_id = ot.ontology_term_id
-and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
-and json_value(annotation_properties, '\$.unitLabel[0]') is not null
-and os.external_database_release_id = ?
+--UNION
+--select ot.source_id
+--     , uot.ontology_term_id
+--     , json_value(annotation_properties, '\$.unitLabel[0]') label
+--     , 1 as priority
+--from sres.ontologysynonym os
+--   , sres.ontologyterm ot
+--   , sres.ontologyterm uot
+--where os.ontology_term_id = ot.ontology_term_id
+--and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
+--and json_value(annotation_properties, '\$.unitLabel[0]') is not null
+--and os.external_database_release_id = ?
 )
-$excludeStr
  order by priority
 ";
 
 
-  $overrideUnits //= {};
+  #$overrideUnits //= {};
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId, $ontologyExtDbRlsId);
+  #$sh->execute($studyId, $ontologyExtDbRlsId);
+  $sh->execute($studyId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
-    next if defined($overrideUnits->{$sourceId});
+    #next if defined($overrideUnits->{$sourceId});
     if($ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID}) {
       # TODO:  Shouldn't we allow one unit per attribute/entityType?
       $self->userError("The Attribute $sourceId can only have one unit specification per study.  Units can be specified either in the ISA files OR in annotation properties");
@@ -612,42 +615,42 @@ $excludeStr
 
     $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
     $ontologyTerms->{$sourceId}->{UNIT_NAME} = $unitName;
-    $overrideUnits->{$sourceId} = 1;
+#    $overrideUnits->{$sourceId} = 1;
   }
 
   $sh->finish();
-  return $overrideUnits;
+#  return $overrideUnits;
 }
 
 
-sub addScaleToOntologyTerms {
-  my ($self, $ontologyTerms, $ontologyExtDbRlsId) = @_;
+# sub addScaleToOntologyTerms {
+#   my ($self, $ontologyTerms, $ontologyExtDbRlsId) = @_;
 
-  my $dbh = $self->getQueryHandle();
+#   my $dbh = $self->getQueryHandle();
 
-  my $sql = "
-select ot.source_id
-     , json_value(annotation_properties, '\$.scale[0]') scale
-from sres.ontologysynonym os
-   , sres.ontologyterm ot
-where os.ontology_term_id = ot.ontology_term_id
-and json_value(annotation_properties, '\$.scale[0]') is not null
-and os.external_database_release_id = ?
-";
+#   my $sql = "
+# select ot.source_id
+#      , json_value(annotation_properties, '\$.scale[0]') scale
+# from sres.ontologysynonym os
+#    , sres.ontologyterm ot
+# where os.ontology_term_id = ot.ontology_term_id
+# and json_value(annotation_properties, '\$.scale[0]') is not null
+# and os.external_database_release_id = ?
+# ";
 
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($ontologyExtDbRlsId);
+#   my $sh = $dbh->prepare($sql);
+#   $sh->execute($ontologyExtDbRlsId);
 
-  while(my ($sourceId, $scale) = $sh->fetchrow_array()) {
-    if($ontologyTerms->{$sourceId}->{SCALE}) {
-      $self->userError("The Attribute $sourceId can only have one SCALE specification per study.  Units can be specified either in the ISA files OR in annotation properties");
-    }
+#   while(my ($sourceId, $scale) = $sh->fetchrow_array()) {
+#     if($ontologyTerms->{$sourceId}->{SCALE}) {
+#       $self->userError("The Attribute $sourceId can only have one SCALE specification per study.  Units can be specified either in the ISA files OR in annotation properties");
+#     }
 
-    $ontologyTerms->{$sourceId}->{SCALE} = $scale;
-  }
+#     $ontologyTerms->{$sourceId}->{SCALE} = $scale;
+#   }
 
-  $sh->finish();
-}
+#   $sh->finish();
+# }
 
 
 
@@ -862,10 +865,10 @@ sub typedValueForAttribute {
   ## Abort if annotation property forceStringType = yes
   ## which is loaded into SRes.OntologySynonym.Annotation_Properties
   ## by the step _updateOntologySynonym_owlAttributes
-  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
-    $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
-    return $counts, $stringValue, $numberValue, $dateValue;
-  }
+  # if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
+  #   $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
+  #   return $counts, $stringValue, $numberValue, $dateValue;
+  # }
   #####################################################
 
   if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
@@ -885,9 +888,9 @@ sub typedValueForAttribute {
     # $counts->{_MIN_DATE} = (sort { Date_Cmp($b, $a) } ($counts->{_MIN_DATE} || $parsedDate, $parsedDate))[-1];
     # $counts->{_MAX_DATE} = (sort { Date_Cmp($a, $b) } ($counts->{_MAX_DATE} || $parsedDate, $parsedDate))[-1];
   }
-  elsif($value =~ /^\d/) {
-    $counts->{_IS_ORDINAL_COUNT}++;
-  }
+  # elsif($value =~ /^\d/) {
+  #   $counts->{_IS_ORDINAL_COUNT}++;
+  # }
   else {
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
