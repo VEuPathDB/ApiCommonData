@@ -176,7 +176,7 @@ sub updateDisplayTypesForGeoVariables {
 sub constructAndSubmitAttributeGraphsForNonontologicalLeaves {
   my ($self, $studyId, $ontologyTerms) = @_;
 
-  my $sql = "select distinct a.stable_id as source_id, a.parent_source_id, a.non_ontological_name
+  my $sql = "select distinct a.stable_id as source_id, a.parent_stable_id, a.non_ontological_name
 from $SCHEMA.attribute a, $SCHEMA.entitytype et
 where a.entity_type_id = et.entity_type_id
 and et.study_id = ?
@@ -190,7 +190,7 @@ and a.ontology_term_id is null";
   NONONTOLOGICAL_LEAF:
   while(my $hash = $sh->fetchrow_hashref()) {
     my $sourceId = $hash->{SOURCE_ID};
-    my $parentSourceId = $hash->{PARENT_SOURCE_ID};
+    my $parentSourceId = $hash->{PARENT_STABLE_ID};
     my $displayName = $hash->{NON_ONTOLOGICAl_NAME};
     my $parentOntologyTerm =  $ontologyTerms->{$parentSourceId};
     $self->error("Parent $parentSourceId of nonontological leaf $sourceId not found ")
@@ -240,7 +240,7 @@ sub createAttributeGraph {
 }
 sub createAttributeGraphForTerm {
   my ($self, $studyId, $sourceId, $ontologyTerm) = @_;
-  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_SOURCE_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
+  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_STABLE_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
 }
 sub createAttributeGraphForNonontologicalLeaf {
   my ($self, $studyId, $sourceId, $displayName, $parentOntologyTerm) = @_;
@@ -329,10 +329,10 @@ select p.parent_id
      , t.entity_type_id
      , t.internal_abbrev
      ,  ot.source_id as stable_id
-     , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as definition
+     , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as description
      , s.study_id
      , s.stable_id as study_stable_id
-     , nvl(json_value(ap.props, '\$.definition[0]'), os.plural) as display_name_plural
+     , nvl(json_value(ap.props, '\$.display_name_plural[0]'), os.plural) as display_name_plural
      , t.cardinality
      , 0 as has_attribute_collections
      , case when maxProcessCountPerEntity.maxOutputCount is null then null

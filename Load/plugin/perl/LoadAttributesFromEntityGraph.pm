@@ -22,7 +22,7 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 use Time::HiRes qw(gettimeofday);
 
 #use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
-use ApiCommonData::Load::StudyUtils qw(dropTablesLike);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike);
 
 use JSON;
 use Encode qw/encode/;
@@ -512,7 +512,7 @@ sub valProps {
 # elsif($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
 #   $dataShape = 'ordinal';
 # }
-  elsif($isDate || $isNumber ){
+  if($isDate || $isNumber ){
     $dataShape = 'continuous';
   }
   elsif($valueCount == 2) {
