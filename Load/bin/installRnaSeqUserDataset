@@ -56,6 +56,8 @@ my $insertNaFeatureExpression = $dbh->prepare(<<EOF);
     VALUES (ApiDBUserDatasets.UD_NaFeatureExpression_sq.nextval,?,?,?)
 EOF
 
+# As a post-process, update the profile set, correcting the sense/antisense state, in case user supplied it backwards 
+# The update is only operative when sense.median < antisense.median (otherwise this SQL is a no-op)
 my $unswitchProfiles = $dbh->prepare(<<EOF);
 update apidbUserDatasets.ud_ProfileSet
 set name = case name
