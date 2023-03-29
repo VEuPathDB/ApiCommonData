@@ -66,13 +66,13 @@ where s.ontology_term_id = os.ontology_term_id (+)
 
 
 sub queryForOntologyHierarchyAndAnnotationProperties {
-  my ($dbh, $extDbRlsId, $schema) = @_;
+  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema) = @_;
 
   my $sql = "select s.name
                   , s.source_id
                    , s.ontology_term_id
                   , o.name parent_name
-                  , o.source_id parent_source_id
+                  , o.source_id as parent_stable_id
                   , o.ontology_term_id parent_ontology_term_id
                   , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, s.name)) as display_name
                   , os.is_preferred
@@ -95,7 +95,7 @@ from sres.ontologyrelationship r
    , sres.ontologyterm o
    , sres.ontologyterm p
    , sres.ontologysynonym os
-   , ${schema}.annotationproperties ap
+   , (select * from ${schema}.annotationproperties where external_database_release_id = ?) ap
 where r.subject_term_id = s.ontology_term_id
 and r.predicate_term_id = p.ontology_term_id
 and r.object_term_id = o.ontology_term_id
@@ -107,7 +107,7 @@ and r.EXTERNAL_DATABASE_RELEASE_ID = ap.EXTERNAL_DATABASE_RELEASE_ID (+)
 and r.external_database_release_id = ?";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($extDbRlsId);
+  $sh->execute($extDbRlsId, $ontologyExtDbRlsId);
 
   my %ontologyTerms;
 

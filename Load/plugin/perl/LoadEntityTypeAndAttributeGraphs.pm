@@ -122,7 +122,8 @@ sub run {
   chdir $self->getArg('logDir');
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-  
+  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
+
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from $SCHEMA.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
@@ -132,7 +133,7 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
 
-    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $extDbRlsId, $SCHEMA);
+    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $ontologyExtDbRlsId, $extDbRlsId, $SCHEMA);
 
     $self->updateDisplayTypesForGeoVariables($ontologyTerms);
 
@@ -215,12 +216,12 @@ and a.ontology_term_id is null";
 }
 
 sub createAttributeGraph {
-  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $displayName, $ontologyTerm) = @_;
+  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $parentOntologyTermId, $displayName, $ontologyTerm) = @_;
   return $self->getGusModelClass('AttributeGraph')->new({study_id => $studyId,
                                                                  stable_id => $stableId,
                                                                  ontology_term_id => $ontologyTermId,
                                                                  parent_stable_id => $parentStableId,
-                                                                 #parent_ontology_term_id => $parentOntologyTermId,
+                                                                 parent_ontology_term_id => $parentOntologyTermId,
                                                                  provider_label => $ontologyTerm->{PROVIDER_LABEL},
                                                                  display_name => $displayName,
                                                                  display_type => $ontologyTerm->{DISPLAY_TYPE}, 
@@ -240,7 +241,7 @@ sub createAttributeGraph {
 }
 sub createAttributeGraphForTerm {
   my ($self, $studyId, $sourceId, $ontologyTerm) = @_;
-  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_STABLE_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
+  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_STABLE_ID}, $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
 }
 sub createAttributeGraphForNonontologicalLeaf {
   my ($self, $studyId, $sourceId, $displayName, $parentOntologyTerm) = @_;
@@ -249,7 +250,7 @@ sub createAttributeGraphForNonontologicalLeaf {
     delete($parentCopy{DISPLAY_TYPE}); 
     printf STDERR ("DEBUG: removed multifilter from $sourceId\n");
   }
-  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentCopy{SOURCE_ID}, $displayName, \%parentCopy);
+  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentCopy{SOURCE_ID}, $parentCopy{ONTOLOGY_TERM_ID}, $displayName, \%parentCopy);
 }
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
   my ($self, $studyId, $ontologyTerms) = @_;
