@@ -619,7 +619,7 @@ CREATE TABLE &1.StudyCharacteristic (
   study_id                     NUMBER(12) NOT NULL, 
   attribute_id                 NUMBER(12) NOT NULL,
   value_ontology_term_id       NUMBER(10),
-  value                        VARCHAR2(200) NOT NULL,
+  value                        VARCHAR2(300) NOT NULL,
   modification_date            DATE NOT NULL,
   user_read                    NUMBER(1) NOT NULL,
   user_write                   NUMBER(1) NOT NULL,
