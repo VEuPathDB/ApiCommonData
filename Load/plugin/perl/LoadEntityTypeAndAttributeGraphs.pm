@@ -281,8 +281,7 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
   my $dbh = $self->getQueryHandle();
   $dbh->{FetchHashKeyName} = 'NAME_lc';
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
-
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
 
   if(my $collectionsYamlFile = $self->getArg('collectionsYamlFile')) {
     my $yaml = YAML::Tiny->read();
@@ -365,7 +364,6 @@ and t.entity_type_id = out_entity_type_id (+)
  and ot.ontology_term_id = os.ontology_term_id (+)
  and ot.ontology_term_id = ap.ontology_term_id (+)
 ";
-
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
