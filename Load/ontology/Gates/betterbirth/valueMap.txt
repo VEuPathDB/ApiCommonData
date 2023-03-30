@@ -13,6 +13,7 @@ agg_follow_up::response_person	EUPATH_0010123	3	Other immediate family member
 agg_follow_up::response_person	EUPATH_0010123	NA	:::UNDEF:::		
 agg_follow_up::delivery_type	agg_follow_up::delivery_type	1	Vaginal	
 agg_follow_up::delivery_type	agg_follow_up::delivery_type	2	Caesarean section	
+agg_follow_up::delivery_type	agg_follow_up::delivery_type	3	:::UNDEF:::	
 agg_follow_up::delivery_type	agg_follow_up::delivery_type	NA	:::UNDEF:::	
 agg_follow_up::num_of_births	agg_follow_up::num_of_births	NA	:::UNDEF:::	
 agg_follow_up::baby_alive_at_discharge	agg_follow_up::baby_alive_at_discharge	0	No	
@@ -216,7 +217,6 @@ dim_baby_outcomes_noconflict_var::baby_death_day_0_location_2	dim_baby_outcomes_
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	BB Facility	BetterBirth facility
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	Referral Facility	Referral facility
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	NA	:::UNDEF:::
-
 dim_fada_single_row::fada_op1_assisted_by_doctor	dim_fada_single_row::fada_op1_assisted_by_doctor	0	No	
 dim_fada_single_row::fada_op1_assisted_by_doctor	dim_fada_single_row::fada_op1_assisted_by_doctor	1	Yes	
 dim_fada_single_row::fada_op1_assisted_by_doctor	dim_fada_single_row::fada_op1_assisted_by_doctor	NA	:::UNDEF:::	
@@ -523,7 +523,7 @@ dim_mom_outcomes::mom_site_moved_omit_data	dim_mom_outcomes::mom_site_moved_omit
 dim_mom_outcomes::mom_site_moved_omit_data	dim_mom_outcomes::mom_site_moved_omit_data	1	Yes	
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	1	Vaginal	
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	2	Caesarean section	
-dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	3		
+dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	3	:::UNDEF:::	
 dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	intensive	Intensive coaching intervention (2x per week)	1
 dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	post	Post coaching intervention	3
 dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	taper	Tapered coaching intervention (1x per week or less)	2		
@@ -1038,7 +1038,7 @@ lt_raw_otis_visit::otis_op1_fhs_no_opp	lt_raw_otis_visit::otis_op1_fhs_no_opp	NA
 lt_raw_otis_visit::otis_op1_exam	lt_raw_otis_visit::otis_op1_exam	0	No	
 lt_raw_otis_visit::otis_op1_exam	lt_raw_otis_visit::otis_op1_exam	1	Yes	
 lt_raw_otis_visit::otis_op1_exam	lt_raw_otis_visit::otis_op1_exam	NA	:::UNDEF:::	
-lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	0		
+lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_vag_exam_no_skills	lt_raw_otis_visit::otis_op1_vag_exam_no_skills	0	No	
 lt_raw_otis_visit::otis_op1_vag_exam_no_skills	lt_raw_otis_visit::otis_op1_vag_exam_no_skills	NA	:::UNDEF:::	
@@ -1986,7 +1986,7 @@ raw_fida_birth_registration::sbr_mother_referred_in	raw_fida_birth_registration:
 raw_fida_birth_registration::sbr_mother_referred_in	raw_fida_birth_registration::sbr_mother_referred_in	1	Yes	
 raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	1	Vaginal	
 raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	2	Caesarean section
-raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	3	Referred	
+raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	3	:::UNDEF:::	
 raw_fida_birth_registration::sbr_delivery_datetime	raw_fida_birth_registration::sbr_delivery_datetime	NA	:::UNDEF:::	
 raw_fida_birth_registration::sbr_referral_type	raw_fida_birth_registration::sbr_referral_type	0	No	
 raw_fida_birth_registration::sbr_referral_type	raw_fida_birth_registration::sbr_referral_type	1	Yes, before delivery	
@@ -3557,7 +3557,7 @@ xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	NA	:::UNDEF:::
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Divorced	Divorced	
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Married	Married
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Never Married/Single	Never married/single	
-xls_vasa_death_data::type_death	xls_vasa_death_data::type_death	Neonatal	Neonatal	
+xls_vasa_death_data::type_death	xls_vasa_death_data::type_death	Neonatal	Death after delivery	
 xls_vasa_death_data::type_death	xls_vasa_death_data::type_death	Stillbirth	Stillbirth	
 xls_vasa_death_data::finaltime_sb	xls_vasa_death_data::finaltime_sb	Intrapartum	Intrapartum	
 xls_vasa_death_data::finaltime_sb	xls_vasa_death_data::finaltime_sb	NA	:::UNDEF:::	
