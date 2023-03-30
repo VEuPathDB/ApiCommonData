@@ -46,6 +46,10 @@ my $SCHEMA = 'EDA'; # TO DO: needs generalizing for DIY?
 my $species_variable_iri = 'EUPATH_0043194';
 my $reconciled_species_variable_iri = 'OBI_0001909'; # 'conclusion based on data' placeholder term
 my $qualifier_variable_iri = 'IAO_0000078'; # 'curation status specification' placeholder
+
+my $sample_entity_type_iri = "EUPATH_0000609";
+my $species_identification_assay_iri = "OBI_0001624";
+
 # TO DO: get correct IRIs from
 # NTR: https://github.com/VEuPathDB-ontology/VEuPathDB-ontology/issues/489
 # and make sure this is in eupath.owl (requires a release cycle???)
@@ -117,16 +121,20 @@ from
   EDA.processattributes pa,
   EDA.entityattributes ea2,
   EDA.entitytype et2,
-  SRES.ontologyterm ot
+  SRES.ontologyterm ot,
+  SRES.ontologyterm ot2
 where
   ea.entity_type_id = et.entity_type_id and
   et.type_id = ot.ontology_term_id and
-  ot.source_id = 'EUPATH_0000609' and
+  ot.source_id = '${sample_entity_type_iri}' and
   et.study_id = ? and
   pa.in_entity_id = ea.entity_attributes_id and
   pa.out_entity_id = ea2.entity_attributes_id and
   ea2.entity_type_id = et2.entity_type_id and
-  et2.name = 'organism identification assay'
+--  et2.name = 'organism identification assay'
+  et2.type_id = ot2.ontology_term_id and
+  ot2.source_id = '${species_identification_assay_iri}'
+
 order by
   ea.stable_id
 FOO
