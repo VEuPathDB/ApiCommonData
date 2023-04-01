@@ -736,7 +736,7 @@ sub loadAttributes {
           $unitOntologytermIdOrig = $self->lookupUnit($entityTypeIdOrig, $attributeStableId);
 
           if(!$unitOntologytermIdOrig || $unitOntologytermIdOrig != $unitOntologyTermId) {
-            my ($convertedValue) = $self->convertValue($value, $unitOntologytermIdOrig, $unitOntologyTermId);
+            my ($convertedValue) = $self->convertValue($value, $unitOntologytermIdOrig, $unitOntologyTermId, $attributeStableId);
             $value = $convertedValue;
           }
         }
@@ -778,7 +778,12 @@ sub loadAttributes {
 
 
 sub convertValue {
-  my ($self, $value, $unitIdOrig, $unitIdDesired) = @_;
+  my ($self, $value, $unitIdOrig, $unitIdDesired,$attributeStableId) = @_;
+
+  if(!$unitIdOrig) {
+    $self->log("WARN:  Missing unit for some entities for attribute $attributeStableId.  Expected unit id=$unitIdDesired.  Applying that unit to those entities");
+    return $value;
+  }
 
   $self->error("Unit Mismatch Not yet supported.  VALUE $value found in units [$unitIdOrig] but desired [$unitIdDesired]");
 

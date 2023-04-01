@@ -161,6 +161,7 @@ sub loadEntityClassificationsFromSubstudy {
     $subStudyEntityClassification->setEntityTypeId($megaEntityTypeId);
     $subStudyEntityClassification->setEntityAttributesId($entityAttributesId);
     $subStudyEntityClassification->submit();
+    $self->undefPointerCache();
   }
   $sh->finish();
 }
