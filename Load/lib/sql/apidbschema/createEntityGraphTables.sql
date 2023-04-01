@@ -8,7 +8,7 @@ CREATE TABLE &1.Study (
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
- internal_abbrev              varchar2(50),
+ internal_abbrev              varchar2(75),
  max_attr_length              number(4),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
@@ -512,7 +512,6 @@ CREATE TABLE &1.Attribute (
   FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
   FOREIGN KEY (process_type_id) REFERENCES &1.ProcessType,
  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
   PRIMARY KEY (attribute_id),
   CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
@@ -525,7 +524,7 @@ CREATE SEQUENCE &1.Attribute_sq;
 GRANT SELECT ON &1.Attribute_sq TO gus_w;
 GRANT SELECT ON &1.Attribute_sq TO gus_r;
 
-CREATE INDEX &1.attribute_ix_1 ON &1.attribute (entity_type_id, process_type_id, parent_ontology_term_id, stable_id, attribute_id) TABLESPACE indx;
+CREATE INDEX &1.attribute_ix_1 ON &1.attribute (entity_type_id, process_type_id, stable_id, attribute_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -673,6 +672,7 @@ select ea.entity_attributes_id
      , ea.entity_type_id as orig_entity_type_id
      , ea.atts
      , ea.row_project_id
+     , et.type_id as entity_type_ontology_term_id
      , ec.entity_type_id
      , s.stable_id as study_stable_id
      , s.INTERNAL_ABBREV as study_internal_abbrev
@@ -683,8 +683,10 @@ from &1.entityclassification ec
    , &1.study s
  where ec.entity_attributes_id = ea.entity_attributes_id
 and ec.entity_type_id = et.entity_type_id
-and et.study_id = s.study_id
+and et.study_id = s.study_id;
 
+GRANT select ON &1.entityattributes_bfv TO gus_r;
+GRANT select ON &1.entityattributes_bfv TO gus_w;
 
 CREATE TABLE &1.AnnotationProperties (
   annotation_properties_id   NUMBER(10) NOT NULL,
