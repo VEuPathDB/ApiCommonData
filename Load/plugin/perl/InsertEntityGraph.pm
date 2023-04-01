@@ -330,7 +330,7 @@ sub createGusStudy {
   my $identifier = $study->getIdentifier();
   my $description = $study->getDescription();
   my $studyInternalAbbrev = $identifier;
-  $studyInternalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
+  $studyInternalAbbrev =~ s/[-\.]/_/g; #clean name/id for use in oracle table name
   return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
