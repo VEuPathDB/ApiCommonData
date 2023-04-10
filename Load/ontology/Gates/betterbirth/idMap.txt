@@ -18,13 +18,12 @@ raw_coach_tl_sbs	community_repeated_measures	{{cr}}+site_id+otis_sl_survey_date
 raw_fida_birth_registration	participant	{{p}}+case_id
 raw_fida_birth_registration	community	{{c}}+site_id
 raw_fida_tl_facility_survey	community	{{c}}+site_id
-raw_fida_tl_facility_survey	community_repeated_measures	{{cr}}+site_id+fitl_fs_observation_date+f
+raw_fida_tl_facility_survey	community_repeated_measures	{{cr}}+site_id+fitl_fs_observation_date+{{f}}
 lt_raw_otis_process_tl	community	{{c}}+site_id
 lt_raw_otis_process_tl	community_repeated_measures	{{cr}}+site_id+otis_pt_observation_date
 raw_otis_process_tl	community	{{c}}+site_id
 raw_otis_process_tl	community_repeated_measures	{{cr}}+site_id+otis_pt_observation_date
-lt_raw_otis_visit	
-community	{{c}}+site_id
+lt_raw_otis_visit	community	{{c}}+site_id
 lt_raw_otis_visit	community_repeated_measures	{{cr}}+site_id+form_id
 raw_otis_visit	community	{{c}}+site_id
 raw_otis_visit	community_repeated_measures	{{cr}}+site_id+form_id
@@ -39,3 +38,5 @@ xls_sbr_demographics	community	{{c}}+site_id
 xls_site_attributes	community	{{c}}+site_id
 xls_vasa_death_data	community	{{c}}+site_id
 xls_vasa_death_data	participant	{{p}}+case_id
+part	participant	_primary_key
+part	community	parent
