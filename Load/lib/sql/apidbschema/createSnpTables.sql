@@ -18,7 +18,7 @@ create table apidb.Snp (
     total_allele_count           number(5),
     major_product                varchar(1),
     minor_product                varchar(1),
-    distinct_strain_count        number(3), 
+    distinct_strain_count        number(5),
     distinct_allele_count        number(3),
     is_coding                number(1),
     has_stop_codon                number(1),
