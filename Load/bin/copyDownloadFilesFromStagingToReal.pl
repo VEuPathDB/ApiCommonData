@@ -86,12 +86,17 @@ sub loopDir {
      }else{
 	   my $oldname= $f;
 	   $f =~ s/CURRENT/$buildNumber/;
-           my $fileSize =  (stat($oldname))[7];
+       my $fileSize =  (stat($oldname))[7];
 	   if($fileSize<1){
 	       unlink($oldname) or die "Can't remove empty file $oldname\n";
 	       print STDERR "Delete empty file $f\n";
 	   }else{
-	        rename $oldname, $f or die "Can't rename $oldname to $f: $!"; ;
+	        rename $oldname, $f or die "Can't rename $oldname to $f: $!";
+            #create a symbolic link with static name for curated gaf file.
+            if ($oldname =~ /\.gaf$/){
+              symlink $f, $oldname or die "Failed to create symbolic link: $!";
+              print "Symbolic link created: $oldname -> $f\n";
+           }
 	   }
 
      }
