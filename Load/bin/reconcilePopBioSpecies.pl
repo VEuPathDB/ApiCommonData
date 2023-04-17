@@ -300,13 +300,22 @@ sub termNameToId {
   my ($term_name) = @_;
 
   my $stmt = $dbh->prepare("
-    SELECT ontology_term_id
-    FROM sres.ontologyterm
+    SELECT ot.ontology_term_id
+    FROM sres.ontologyterm ot
     WHERE
-      name = ?
+      ot.name = ?
+    union
+    select ontology_term_id
+    FROM sres.ontologysynonym
+    where ontology_synonym = ?
   ");
-  $stmt->execute($term_name);
-  my ($term_id) = $stmt->fetchrow_array();
+
+  $stmt->execute($term_name, $term_name);
+
+  my $term_id;
+  while(my ($t) = $stmt->fetchrow_array()) {
+    $term_id = $t;
+  }
   $stmt->finish();
   die "FATAL ERROR: Could not find term named '$term_name' in sres.ontologyterm\n"
     unless (defined $term_id);
