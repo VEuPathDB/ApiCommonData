@@ -92,6 +92,15 @@ my $argsDeclaration =
           isList => 0,
          }),
 
+
+      booleanArg({name => 'useOntologyTermTableForTaxonTerms',
+          descr => 'should we use sres.ontologyterm instead of sres.taxonname',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+
    fileArg({name           => 'ontologyMappingFile',
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
@@ -330,7 +339,7 @@ sub createGusStudy {
   my $identifier = $study->getIdentifier();
   my $description = $study->getDescription();
   my $studyInternalAbbrev = $identifier;
-  $studyInternalAbbrev =~ s/[-\.]/_/g; #clean name/id for use in oracle table name
+  $studyInternalAbbrev =~ s/[-\.\s]/_/g; #clean name/id for use in oracle table name
   return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
@@ -458,7 +467,7 @@ sub loadNodes {
 
       my ($charQualifierSourceId, $charValue);
 
-      if ($characteristic->getQualifier =~ m{ncbitaxon}i){
+      if ($characteristic->getQualifier =~ m{ncbitaxon}i && !$self->getArg('useOntologyTermTableForTaxonTerms')){
           # taxon id Wojtek: I think we don't want that
           # $charQualifierSourceId = $ontologyTermToIdentifiers->{QUALIFIER}->{$characteristic->getQualifier};
           # stable id
@@ -477,7 +486,7 @@ sub loadNodes {
   
         if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) { #value is ontology term
 
-          if($characteristic->getTermSourceRef() eq 'NCBITaxon') {
+          if($characteristic->getTermSourceRef() eq 'NCBITaxon' && !$self->getArg('useOntologyTermTableForTaxonTerms')) {
             my $valueTaxonName = $self->getTaxonNameGusObj($ontologyTermToIdentifiers, $characteristic, 0);
             $charValue = $valueTaxonName->getName();
           }
@@ -843,15 +852,21 @@ sub loadProcesses {
 sub checkOntologyTermsAndFetchIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
 
+  my $ncbiTaxon = 'ncbitaxon%';
+  if($self->getArg('useOntologyTermTableForTaxonTerms')) {
+    $ncbiTaxon = 'PREFIX_WE_DONT_WANT';
+  }
+
+
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where ot.source_id = ?
-and lower(ot.source_id) not like 'ncbitaxon%'
+and lower(ot.source_id) not like '$ncbiTaxon'
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
 from sres.taxon t, sres.taxonname tn
 where 'NCBITaxon_' || t.ncbi_tax_id = ?
-and lower(?) like  'ncbitaxon%'
+and lower(?) like  '$ncbiTaxon'
 and t.taxon_id = tn.taxon_id
 and tn.name_class = 'scientific name'
 ";
