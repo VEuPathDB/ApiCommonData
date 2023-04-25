@@ -667,7 +667,7 @@ create or replace view &1.entityattributes_bfv as
 select ea.entity_attributes_id
      ,  case when ec.entity_type_id = ea.entity_type_id
             then ea.stable_id
-            else s.stable_id || '|' || ea.stable_id
+            else s2.stable_id || '|' || ea.stable_id
         end as stable_id
      , ea.entity_type_id as orig_entity_type_id
      , ea.atts
@@ -681,9 +681,13 @@ from &1.entityclassification ec
    , &1.entityattributes ea
    , &1.entitytype et
    , &1.study s
+   , &1.entitytype et2
+   , &1.study s2
  where ec.entity_attributes_id = ea.entity_attributes_id
 and ec.entity_type_id = et.entity_type_id
-and et.study_id = s.study_id;
+and et.study_id = s.study_id
+and ea.ENTITY_TYPE_ID = et2.entity_type_id
+and et2.study_id = s2.study_id;
 
 GRANT select ON &1.entityattributes_bfv TO gus_r;
 GRANT select ON &1.entityattributes_bfv TO gus_w;

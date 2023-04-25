@@ -655,7 +655,7 @@ and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id
 
 
 sub makeFifosForSqlloader {
-  my ($self, $entityTypeIds, $maxAttrLength, $studyInternalAbbrev) = @_;
+  my ($self, $entityTypeIds, $maxAttrLength, $studyInternalAbbrev, $studyId) = @_;
 
   my $entityTypeIdFifos;
 
@@ -665,8 +665,8 @@ sub makeFifosForSqlloader {
     my $timestamp = int (gettimeofday * 1000);
     my $fifoName = "${SCHEMA}_attributevalue_${internalAbbrev}_${timestamp}.dat";
 
-    my $fields = $self->fieldsAndCreateTable($maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId);
-    my $fifo = $self->makeFifo($fields, $fifoName, $internalAbbrev, $studyInternalAbbrev);
+    my $fields = $self->fieldsAndCreateTable($maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId, $studyId);
+    my $fifo = $self->makeFifo($fields, $fifoName, $entityTypeId, $studyId);
 
     $entityTypeIdFifos->{$entityTypeId} = $fifo;
   }
@@ -678,7 +678,7 @@ sub makeFifosForSqlloader {
 sub loadAttributeValues {
   my ($self, $studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh, $entityTypeIds, $studyInternalAbbrev) = @_;
 
-  my $fifos = $self->makeFifosForSqlloader($entityTypeIds, $maxAttrLength, $studyInternalAbbrev);
+  my $fifos = $self->makeFifosForSqlloader($entityTypeIds, $maxAttrLength, $studyInternalAbbrev, $studyId);
 
   my $annPropsByAttributeStableIdAndEntityTypeId = {};
   my $typeCountsByAttributeStableIdAndEntityTypeId = {};
@@ -975,7 +975,7 @@ and ea.study_id = ?
 }
 
 sub fieldsAndCreateTable {
-  my ($self, $maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId) = @_;
+  my ($self, $maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId, $studyId) = @_;
 
   $maxAttrLength += $maxAttrLength; # Workaround to prevent Sqlldr from choking on wide characters
 
@@ -1004,7 +1004,9 @@ sub fieldsAndCreateTable {
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyInternalAbbrev}_${internalAbbrev}";
 
-  my $createTableSql = "create table $tableName (
+  my $tableSynonymName = "${SCHEMA}.AttributeValue_${studyId}_${entityTypeId}";
+
+  my $createTableSql = "create table $tableSynonymName (
 $idField VARCHAR2(200) NOT NULL,
 attribute_stable_id  VARCHAR2(255) NOT NULL,
 string_value VARCHAR2(1000) NOT NULL,
@@ -1017,20 +1019,22 @@ date_value DATE
 
   $dbh->do($createTableSql) or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableSynonymName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableSynonymName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableSynonymName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableSynonymName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
+  $dbh->do("create synonym ${tableName} for ${tableSynonymName}") or die $dbh->errstr;
+  $dbh->do("GRANT SELECT ON $tableSynonymName TO gus_r") or die $dbh->errstr;
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
 
   return \@fields;
 }
 
 
 sub makeFifo {
-  my ($self, $fields, $fifoName, $entityTypeAbbrev, $studyInternalAbbrev) = @_;
+  my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -1053,7 +1057,7 @@ sub makeFifo {
                                                  _append => 0,
                                                  _infile_name => $fifoName,
                                                  _reenable_disabled_constraints => 1,
-                                                 _table_name => "$SCHEMA.AttributeValue_${studyInternalAbbrev}_${entityTypeAbbrev}",
+                                                 _table_name => "$SCHEMA.AttributeValue_${studyId}_${entityTypeId}",
                                                  _fields => $fields
                                                 });
 
