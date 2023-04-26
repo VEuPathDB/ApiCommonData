@@ -1,0 +1,107 @@
+#!/usr/bin/perl
+
+use Getopt::Long;
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+#use CBIL::Util::Utils;
+use ApiCommonData::Load::NCBIToolsUtils;
+
+
+my ($databaseName,
+    $ifSpecies,
+    $outputFile,
+     $help);
+
+&GetOptions(
+            'databaseName=s' => \$databaseName,
+            'ifSpecies=s' => \$ifSpecies,
+            'outputFile=s' => \$outputFile,
+	    'help|h' => \$help,
+	    );
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $outputFile);
+
+my @instanceNames;
+if ($databaseName) {
+  @instanceNames = split (/\,/, $databaseName);
+} else {
+  @instanceNames = (
+     "ameb-inc", "cryp-inc", "fungi-inc", "giar-inc", "host-inc", "micr-inc", "piro-inc", "plas-inc", "toxo-inc", "tvag-inc", "tryp-inc", "vect-inc"
+		    );
+}
+
+open (OUT, ">$outputFile") || die "can not open $outputFile to write!\n";
+
+foreach my $instanceName(@instanceNames) {
+
+  print STDERR "checking $instanceName ......\n";
+  my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+  my $u = $gusconfig->{props}->{databaseLogin};
+  my $pw = $gusconfig->{props}->{databasePassword};
+  my $dsn = $gusconfig->{props}->{dbiDsn};
+  $dsn = "dbi:Oracle:".$instanceName if ($instanceName);
+  my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+  $dbh->{RaiseError} = 1;
+  $dbh->{LongTruncOk} = 1;
+
+my $sql = <<SQL;
+select o.abbrev, t.ncbi_tax_id, tn.name from apidb.organism o, sres.taxon t, sres.taxonname tn
+where o.taxon_id=t.taxon_id and t.taxon_id=tn.taxon_id
+and tn.name_class like 'scientific name'
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while ( my ($abbrev, $ncbiTaxIdDbs, $orgFullName) = $stmt->fetchrow_array() ) {
+
+    print STDERR "    processing $abbrev ... ";
+    my @items = split (/\s/, $orgFullName);
+    my $genus = shift @items;
+    $genus =~ s/^\[//;
+    $genus =~ s/\]$//;
+    my $species = shift @items;
+
+    ## based on organismFullName, retrieve ncbiTaxId from taxonomy at NCBI
+#    print STDERR "\$orgFullName = '$orgFullName' ... ";
+    my $xmlTaxonomy = ApiCommonData::Load::NCBIToolsUtils::eFetch4ResultPage($orgFullName) if ($orgFullName);
+#    print STDERR "\$xmlTaxonomy = $xmlTaxonomy ... ";
+    sleep(5);
+    my $ncbiTaxIdSite = ApiCommonData::Load::NCBIToolsUtils::getTaxonId($xmlTaxonomy);
+#    print STDERR "\$ncbiTaxIdSite = $ncbiTaxIdSite ... \n";
+
+    if ($ncbiTaxIdSite) {
+      print OUT "for '$orgFullName',\n      ncbiTaxIdDbs = $ncbiTaxIdDbs, ncbiTaxIdSite = $ncbiTaxIdSite\n"; # if ($ncbiTaxIdDbs ne $ncbiTaxIdSite);
+    }
+
+    print STDERR "    Done\n\n";
+
+  }
+  $stmt->finish();
+
+}
+
+close OUT;
+
+
+
+
+
+##############
+sub usage {
+  die
+"
+Usage: perl batchCheckNcbiTaxonIds --databaseName cryp-inc --outputFile result.log
+
+where
+  --outputFile: required, a file name that write the new ncbi taxon ids
+  --databaseName: optional, the name of the database to be queried in batches. Will check all genomic sites if not available
+
+
+";
+}
