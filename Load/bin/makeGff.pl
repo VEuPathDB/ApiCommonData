@@ -88,7 +88,7 @@ foreach(sort keys %$sequenceLengths) {
   print GFF "##sequence-region $_ 1 $length\n";
 }
 
-foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
+foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
   my $features = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
 
   foreach my $feature (@$features) {
