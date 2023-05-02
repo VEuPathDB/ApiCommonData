@@ -89,7 +89,8 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , case when lower(json_value(ap.props, '\$.mergeKey[0]')) = 'yes' then 1 else 0 end as is_merge_key
                   , case when lower(json_value(ap.props, '\$.impute_zero[0]')) = 'yes' then 1 else 0 end as impute_zero
                   , json_query(ap.props, '\$.variable') as provider_label -- gives json array
-                  , os.ordinal_values as ordinal_values --gives json array
+                  , json_query(ap.props, '\$.ordinal_values') as ordinal_values -- gives json array
+                  , json_value(ap.props, '\$.scale[0]') as scale
 from sres.ontologyrelationship r
    , sres.ontologyterm s
    , sres.ontologyterm o

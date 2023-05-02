@@ -486,7 +486,6 @@ CREATE TABLE &1.Attribute (
   distinct_values_count            integer,
   is_multi_valued                number(1),
   data_shape                     varchar2(30),
-  scale                         varchar2(30),
   unit                          varchar2(30),
   unit_ontology_term_id         NUMBER(10),
   precision                     integer,
@@ -565,10 +564,10 @@ CREATE TABLE &1.AttributeGraph (
   impute_zero                  number(1),
   is_repeated                  number(1),
   bin_width_override           varchar2(16),
-  -- is_hidden                    number(1),
   is_temporal                  number(1),
   is_featured                  number(1),
   ordinal_values               CLOB,
+  scale                         varchar2(30),
   modification_date            DATE NOT NULL,
   user_read                    NUMBER(1) NOT NULL,
   user_write                   NUMBER(1) NOT NULL,
@@ -584,7 +583,8 @@ CREATE TABLE &1.AttributeGraph (
  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (attribute_graph_id),
-  CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json)   
+  CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json),
+  CONSTRAINT ensure_prolbl_json CHECK (provider_label is json),
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeGraph TO gus_w;

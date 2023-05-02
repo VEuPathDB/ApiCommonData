@@ -237,6 +237,7 @@ sub createAttributeGraph {
                                                                  display_order => $ontologyTerm->{DISPLAY_ORDER},
                                                                  definition => $ontologyTerm->{DEFINITION},
                                                                  ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
+                                                                 scale => $ontologyTerm->{SCALE}
                                                                 });
 }
 sub createAttributeGraphForTerm {
@@ -282,6 +283,7 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
   $dbh->{FetchHashKeyName} = 'NAME_lc';
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
 
   if(my $collectionsYamlFile = $self->getArg('collectionsYamlFile')) {
     my $yaml = YAML::Tiny->read();
@@ -353,7 +355,7 @@ from  (select distinct study_id
    , $SCHEMA.entitytype t
    , $SCHEMA.study s
    , sres.ontologyterm ot
-   , (select * from sres.ontologysynonym where external_database_release_id = $extDbRlsId) os
+   , (select * from sres.ontologysynonym where external_database_release_id = $ontologyExtDbRlsId) os
    , (select * from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId) ap
 where s.study_id = $studyId 
  and s.study_id = t.study_id

@@ -1025,7 +1025,7 @@ date_value DATE
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableSynonymName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableSynonymName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("create synonym ${tableName} for ${tableSynonymName}") or die $dbh->errstr;
+  $dbh->do("create or replace synonym ${tableName} for ${tableSynonymName}") or die $dbh->errstr;
   $dbh->do("GRANT SELECT ON $tableSynonymName TO gus_r") or die $dbh->errstr;
   $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
 

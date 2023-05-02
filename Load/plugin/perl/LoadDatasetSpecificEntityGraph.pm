@@ -116,7 +116,7 @@ sub run {
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
       $self->createAncestorsTable($studyId, $entityTypeId, $studyAbbrev);
-      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId);
+      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId, $extDbRlsId);
 
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
         $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
@@ -467,7 +467,7 @@ sub getEntityTypeInfo {
 
 
 sub createAttributeGraphTable {
-  my ($self, $entityTypeId, $studyAbbrev, $studyId) = @_;
+  my ($self, $entityTypeId, $studyAbbrev, $studyId, $extDbRlsId) = @_;
 
   my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
@@ -483,8 +483,10 @@ sub createAttributeGraphTable {
   # careful: att.ontology_term_id doesn't have to exist
 
   my $sql = "CREATE TABLE $tableName as
-  WITH att AS
-  (SELECT a.*, t.source_id as unit_stable_id FROM ${SCHEMA}.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
+  WITH attAnnProps AS
+  (select ontology_term_id, json_value(props, '\$.unitLabel[0]') as unit_override from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId)
+   , att AS
+  (SELECT a.*, t.unit_override FROM ${SCHEMA}.attribute a, attAnnProps t WHERE a.ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
    , satg AS
   (SELECT atg.*
    FROM ${SCHEMA}.attributegraph atg
@@ -502,7 +504,7 @@ SELECT --  distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , atg.ordinal_values as vocabulary
+     , null as vocabulary
      , atg.display_type
      , atg.hidden
      , atg.display_order
@@ -539,11 +541,7 @@ SELECT -- distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , CASE
-         WHEN atg.ordinal_values IS NULL
-           THEN att.ordered_values
-         ELSE atg.ordinal_values
-       END as vocabulary
+     , nvl(atg.ordinal_values, att.ordered_values) as vocabulary
      , atg.display_type display_type
      , atg.hidden
      , atg.display_order
@@ -567,8 +565,8 @@ SELECT -- distinct
      , att.distinct_values_count
      , att.is_multi_valued
      , att.data_shape
-     , att.unit
-     , att.scale
+     , nvl(att.unit_override, att.unit) as unit
+     , atg.scale
      , att.precision
 FROM atg, att
 where atg.stable_id = att.stable_id

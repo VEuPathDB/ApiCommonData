@@ -258,7 +258,8 @@ sub loadInvestigation {
     my $studies = $investigation->getStudies();
 
     my $nodeToIdMap = {};
-    
+    my $seenProcessMap = {};
+
     foreach my $study (@$studies) {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
 
@@ -283,11 +284,19 @@ sub loadInvestigation {
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadBatchOfStudyData($ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudy->getId, $nodes, $protocols, $edges, $nodeToIdMap)
+        $self->loadBatchOfStudyData($ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudy->getId, $nodes, $protocols, $edges, $nodeToIdMap, $seenProcessMap)
          unless %errors;
       }
       $self->ifNeededUpdateStudyMaxAttrLength($gusStudy);
       $self->updateEntityCardinality($gusStudy->getId);
+    }
+
+    foreach my $output (keys %$seenProcessMap) {
+      foreach my $input (keys %{$seenProcessMap->{$output}}) {
+        if(keys %{$seenProcessMap->{$output}} > 1) {
+          $self->userError("Entity [$output] has multiple inputs");
+        }
+      }
     }
 
     my $errorCount = scalar keys %errors;
@@ -352,11 +361,11 @@ sub ifNeededUpdateStudyMaxAttrLength {
 
 sub loadBatchOfStudyData {
   my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudyId,
-   $nodes, $protocols, $edges, $nodeToIdMap) = @_;
+   $nodes, $protocols, $edges, $nodeToIdMap, $seenProcessMap) = @_;
 
   $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap);
   my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
-  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap, $seenProcessMap);
 
 }
 
@@ -808,7 +817,7 @@ sub getProcessAttributesHash {
 
 
 sub loadProcesses {
-  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
+  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap, $seenProcessMap) = @_;
 
   my $processCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
@@ -823,7 +832,12 @@ sub loadProcesses {
       ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
 
     foreach my $output (@{$process->getOutputs()}) {
+      my $outputName = $output->getValue();
       foreach my $input (@{$process->getInputs()}) {
+        my $inputName = $input->getValue();
+
+        next if($seenProcessMap->{$outputName} && $seenProcessMap->{$outputName}->{$inputName});
+
         my $inId = $self->getGusEntityId($input, $nodeNameToIdMap);
         my $outId = $self->getGusEntityId($output, $nodeNameToIdMap);
 
@@ -841,6 +855,8 @@ sub loadProcesses {
           # $self->log("Loaded $processCount processes");
           $self->getDb()->manageTransaction(0, 'begin');
         }
+
+        $seenProcessMap->{$outputName}->{$inputName}++;
       }
     }
   }
