@@ -104,7 +104,6 @@ and p.SOURCE_ID = 'subClassOf'
 and s.ontology_term_id = os.ontology_term_id (+)
 and s.ontology_term_id = ap.ontology_term_id (+)
 and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = ap.EXTERNAL_DATABASE_RELEASE_ID (+)
 and r.external_database_release_id = ?";
 
   my $sh = $dbh->prepare($sql);
