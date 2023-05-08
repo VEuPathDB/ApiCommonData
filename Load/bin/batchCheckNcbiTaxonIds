@@ -76,7 +76,7 @@ SQL
 #    print STDERR "\$ncbiTaxIdSite = $ncbiTaxIdSite ... \n";
 
     if ($ncbiTaxIdSite) {
-      print OUT "for '$orgFullName',\n      ncbiTaxIdDbs = $ncbiTaxIdDbs, ncbiTaxIdSite = $ncbiTaxIdSite\n"; # if ($ncbiTaxIdDbs ne $ncbiTaxIdSite);
+      print OUT "for '$orgFullName',\n      ncbiTaxIdDbs = $ncbiTaxIdDbs, ncbiTaxIdSite = $ncbiTaxIdSite\n" if ($ncbiTaxIdDbs ne $ncbiTaxIdSite);
     }
 
     print STDERR "    Done\n\n";
@@ -100,7 +100,10 @@ Usage: perl batchCheckNcbiTaxonIds --databaseName cryp-inc --outputFile result.l
 
 where
   --outputFile: required, a file name that write the new ncbi taxon ids
-  --databaseName: optional, the name of the database to be queried in batches. Will check all genomic sites if not available
+  --databaseName: optional, the name of the database to be queried in batches. If not present, all genomic sites will be checked.
+
+Notes: Sometimes the script fails if the service is slow. You can try running at different times.
+       Or uncomment some print statements in ApiCommonData::Load::NCBIToolsUtils to debug.
 
 
 ";
