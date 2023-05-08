@@ -217,7 +217,12 @@ printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "hasTemporaryNcbiTaxonId", $
 printRegularLine (\%excelInfo, $organismAbbrev, "orthomclAbbrev");
 printRegularLine (\%excelInfo, $organismAbbrev, "strainAbbrev");
 printRegularLine (\%excelInfo, $organismAbbrev, "genomeSource");
-printRegularLine (\%excelInfo, $organismAbbrev, "taxonFilterForNRProteinsAlignedToGenome");
+
+my $taxonFilter = getFirstWord($excelInfo{$organismAbbrev}{'organismFullName'});
+($excelInfo{$organismAbbrev}{'taxonFilterForNRProteinsAlignedToGenome'})
+? printRegularLine (\%excelInfo, $organismAbbrev, "taxonFilterForNRProteinsAlignedToGenome")
+: print PO "    <prop name=\"taxonFilterForNRProteinsAlignedToGenome\">$taxonFilter</prop>\n";
+
 
 if ($isEbiGenome =~ /^y/i ) {
   print PO "    <prop name=\"isNotEbiGenome\">false</prop>\n";
@@ -308,6 +313,12 @@ close $ofh;
 
 
 ##################### subroutine ###################
+sub getFirstWord {
+  my ($fullName) = @_;
+  my @items = split (/\s+/, $fullName);
+  return $items[0];
+}
+
 sub printEbiGenome {
   my ($fh, $ebiOrganismName, $ebiVersion, $genomeVersion) = @_;
 
