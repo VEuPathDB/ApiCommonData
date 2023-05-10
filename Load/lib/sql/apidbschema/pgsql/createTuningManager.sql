@@ -36,7 +36,7 @@ grant insert, update, delete on apidb.TuningMgrExternalDependency to gus_w;
 -- TODO but not the host name. Also, maybe this may be irrelevant in pgsql context.
 create table apidb.InstanceMetaInfo as
 -- select sys_context ('USERENV', 'SERVICE_NAME') as instance_nickname,
-select cast(null as varchar(50)) as instance_nickname,
+select cast(current_database() as varchar(50)) as instance_nickname,
        cast(null as varchar(50)) as current_updater,
        cast(null as timestamp) as update_start,
        cast(null as varchar(20)) as project_id,
