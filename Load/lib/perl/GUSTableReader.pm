@@ -89,7 +89,7 @@ sub getTableSql {
 
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
 
-  my $sql = "select * from $tableName $where $orderBy";
+  my $sql = "select * from (select * from $tableName $where) t $orderBy";
 
   return $sql;
 }
