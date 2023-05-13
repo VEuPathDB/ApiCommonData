@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_rimdamal.owl">
-        <owl:versionInfo>2023-05-10</owl:versionInfo>
+        <owl:versionInfo>2023-05-13</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -104,6 +104,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001011 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001011">
+        <rdfs:label>repeated</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0001015 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001015">
@@ -144,6 +152,7 @@
         <obo:EUPATH_0001003>acute pulmonary edema</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Acute pulmonary edema</rdfs:label>
     </owl:Class>
     
@@ -161,6 +170,7 @@
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Observation type</rdfs:label>
     </owl:Class>
     
@@ -179,6 +189,7 @@
         <obo:EUPATH_0001003>Acute respiratory distress syndrome</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Acute respiratory distress syndrome</rdfs:label>
     </owl:Class>
     
@@ -197,6 +208,7 @@
         <obo:EUPATH_0001003>Does the participant live in one of these villages? If yes, please click on the village</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Village</rdfs:label>
     </owl:Class>
     
@@ -261,6 +273,7 @@
         <obo:EUPATH_0001003>Does the participant have uncomplicated malaria?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Uncomplicated malaria</rdfs:label>
     </owl:Class>
     
@@ -311,6 +324,7 @@
         <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Antimalarial medication</rdfs:label>
     </owl:Class>
     
@@ -360,6 +374,7 @@
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Severe anemia</rdfs:label>
     </owl:Class>
     
@@ -381,6 +396,7 @@
         <obo:EUPATH_0001003>What was the result of the treatment during today&apos;s visit?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Treatment outcome</rdfs:label>
     </owl:Class>
     
@@ -530,6 +546,7 @@
         <obo:EUPATH_0001004>2, C-section</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Delivery mode</rdfs:label>
     </owl:Class>
     
@@ -765,19 +782,14 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pregnancy_monitori_arm_reshaped::child_lenght</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>pregnancy_monitori_arm_reshaped::child_weight</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>pregnancy_monitori_arm_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003>What is the child&apos;s length (cm)?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001003>What is the child&apos;s weight?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004>1, Less than 1 kg</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004>2, 1-2 kg</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004>3, 2-3 kg</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004>4, 4-5 kg</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001008>cm</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000015</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Length</rdfs:label>
     </owl:Class>
     
@@ -829,6 +841,7 @@
         <obo:EUPATH_0001003>Cerebral malaria - defined as unarousable coma not attributable to any other cause in a patient with falciparum malaria</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Cerebral malaria</rdfs:label>
     </owl:Class>
     
@@ -847,6 +860,7 @@
         <obo:EUPATH_0001003>Generalized convulsions (? 3 convulsions over 24 hour period</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Convulsions (&gt;3) over 24 hours</rdfs:label>
     </owl:Class>
     
@@ -905,6 +919,7 @@
         <obo:EUPATH_0001008>mg/dL</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/NCIT_C67015</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Severe anemia (hemoglobin &lt;5 mg/dL)</rdfs:label>
     </owl:Class>
     
@@ -920,6 +935,7 @@
         <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Severe malaria signs</rdfs:label>
     </owl:Class>
     
@@ -961,6 +977,7 @@
         <obo:EUPATH_0001003>jaundice</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Jaundice</rdfs:label>
     </owl:Class>
     
@@ -990,6 +1007,7 @@
         <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Symptoms</rdfs:label>
     </owl:Class>
     
@@ -1175,6 +1193,7 @@
         <obo:EUPATH_0001004>1, Oui</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Fever</rdfs:label>
     </owl:Class>
     
@@ -1192,22 +1211,6 @@
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
         <rdfs:label>Has bednet</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0024164 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0024164">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
-        <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>household_survey_f_arm_2020_reshaped::net_type_hsc_v2</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003>Record the type of mosquito net hung from the name on the label sewn into the mosquito net</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
-        <rdfs:label>Bednet brand</rdfs:label>
     </owl:Class>
     
 
@@ -1329,6 +1332,7 @@
         <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Medication</rdfs:label>
     </owl:Class>
     
@@ -1404,6 +1408,7 @@
         <obo:EUPATH_0001008>mg/dL</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/NCIT_C67015</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Hypoglycemia (&lt;40 mg/dL)</rdfs:label>
     </owl:Class>
     
@@ -1510,7 +1515,10 @@
         <obo:EUPATH_0001003>What is the child&apos;s estimated gestational age?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>What is the estimated gestational age at today&apos;s visit?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008>weeks</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000034</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
         <rdfs:label>Estimated gestational age</rdfs:label>
     </owl:Class>
@@ -1528,6 +1536,7 @@
         <obo:EUPATH_0001003>Did you see the participant take the first dose of artemether-lumefantrine?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Artemether-lumefantrine</rdfs:label>
     </owl:Class>
     
@@ -1546,6 +1555,7 @@
         <obo:EUPATH_0001003>Has the participant had malaria during this pregnancy?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Malaria diagnosis in pregnancy</rdfs:label>
     </owl:Class>
     
@@ -1564,6 +1574,7 @@
         <obo:EUPATH_0001003>Does the participant currently use tobacco?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Tobacco use</rdfs:label>
     </owl:Class>
     
@@ -1582,6 +1593,7 @@
         <obo:EUPATH_0001003>Does the participant currently use alcohol?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Alcohol use</rdfs:label>
     </owl:Class>
     
@@ -1633,6 +1645,7 @@
         <obo:EUPATH_0001004>5, Grade 5 (Death)</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event severity</rdfs:label>
     </owl:Class>
     
@@ -1659,6 +1672,7 @@
         <obo:EUPATH_0001004>6, Unclassified</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Relationship to study intervention</rdfs:label>
     </owl:Class>
     
@@ -1738,6 +1752,7 @@
         <obo:EUPATH_0001003>How many previous full-term births has the participant had?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Full term deliveries count</rdfs:label>
     </owl:Class>
     
@@ -1756,6 +1771,7 @@
         <obo:EUPATH_0001003>How many previous preterm births has the participant had?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Preterm births count</rdfs:label>
     </owl:Class>
     
@@ -1929,6 +1945,7 @@
         <obo:EUPATH_0001003>How many times has the participant been previously pregnant?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Previous pregnancies count</rdfs:label>
     </owl:Class>
     
@@ -1946,6 +1963,7 @@
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Fever</rdfs:label>
     </owl:Class>
     
@@ -2950,6 +2968,7 @@ The participant is part of the cross-sectional cohort</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>Check &quot;Yes&quot; only if the participant was selected to be part of the Pharmacokinetic-dynamics of ivermectin (PKPD) cohort</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>PKPD cohort member</rdfs:label>
     </owl:Class>
     
@@ -2987,6 +3006,7 @@ The participant is part of the cross-sectional cohort</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>Is this visit occuring the week before a mass drug administration (MDA)?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Visit 1 week before MDA distribution</rdfs:label>
     </owl:Class>
     
@@ -3142,6 +3162,7 @@ urine 1 week before each TM</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>Abnormal bleeding</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Abnormal bleeding</rdfs:label>
     </owl:Class>
     
@@ -3161,6 +3182,7 @@ urine 1 week before each TM</obo:EUPATH_0001003>
 distress syndrome (ARDS)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Acute pulmonary edema and adult respiratory
 distress syndrome (ARDS)</rdfs:label>
     </owl:Class>
@@ -3180,6 +3202,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Acute renal failure</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Acute renal failure</rdfs:label>
     </owl:Class>
     
@@ -3198,6 +3221,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>anuria</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Anuria</rdfs:label>
     </owl:Class>
     
@@ -3216,6 +3240,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Breathing associated with acidosis and respiratory distress</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Breathing associated with acidosis and respiratory distress</rdfs:label>
     </owl:Class>
     
@@ -3234,6 +3259,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>cardiovascular collapse or shock</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Cardiovascular collapse or shock</rdfs:label>
     </owl:Class>
     
@@ -3252,6 +3278,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Circulatory collapse, shock, septicemia (&quot;algid malaria&quot;)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Circulatory collapse, shock, septicemia (&quot;algid malaria&quot;)</rdfs:label>
     </owl:Class>
     
@@ -3270,6 +3297,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>multiple seizures (i.e., more than two episodes in 24 hours)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Convulsions (&gt;2) over 24 hours</rdfs:label>
     </owl:Class>
     
@@ -3288,6 +3316,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Danger Signs (any of the following): Current or previous convulsions; Vomiting everything that is consumed / Uncontrollable vomiting; Lethargy / Unconciousness; Inability to drink or suckle</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Danger Signs (any of the following): Current or previous convulsions; Vomiting everything that is consumed / Uncontrollable vomiting; Lethargy / Unconciousness; Inability to drink or suckle</rdfs:label>
     </owl:Class>
     
@@ -3306,6 +3335,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>exhaustion (i.e., unable to sit, stand or walk without assistance)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Exhaustion</rdfs:label>
     </owl:Class>
     
@@ -3324,6 +3354,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Fluid and electrolyte disturbances</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Fluid and electrolyte disturbances</rdfs:label>
     </owl:Class>
     
@@ -3344,6 +3375,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001008>mmol/l</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/NCIT_C64387</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Hyperlactatemia (lactate &gt;5mmol/l)</rdfs:label>
     </owl:Class>
     
@@ -3364,6 +3396,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001008>mmol/l</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/NCIT_C64387</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Metabolic acidosis (plasma bicarbonate &lt;15 mmol/l)</rdfs:label>
     </owl:Class>
     
@@ -3382,6 +3415,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Metabolic acidosis with respiratory distress</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Metabolic acidosis with respiratory distress</rdfs:label>
     </owl:Class>
     
@@ -3397,6 +3431,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>None of the above</rdfs:label>
     </owl:Class>
     
@@ -3417,6 +3452,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001008>uL</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000101</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Parasite density &gt;500,000/uL blood</rdfs:label>
     </owl:Class>
     
@@ -3437,6 +3473,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001008>mol/l</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/NCIT_C48555</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Renal insufficiency (serum creatinine &gt;265 mol/l)</rdfs:label>
     </owl:Class>
     
@@ -3455,6 +3492,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>serious signs</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Serious signs</rdfs:label>
     </owl:Class>
     
@@ -3472,6 +3510,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Fatigue or malaise</rdfs:label>
     </owl:Class>
     
@@ -3491,6 +3530,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Detailed description of IE at follow-up visit</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event detailed description</rdfs:label>
     </owl:Class>
     
@@ -3504,6 +3544,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event general description</rdfs:label>
     </owl:Class>
     
@@ -3521,6 +3562,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event number</rdfs:label>
     </owl:Class>
     
@@ -3541,6 +3583,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001004>1, Oui</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event other than malaria</rdfs:label>
     </owl:Class>
     
@@ -3572,6 +3615,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Has the participant visited the antenatal clinic or CSPS during her pregnancy?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Antenatal clinic or CSPS during pregnancy</rdfs:label>
     </owl:Class>
     
@@ -3588,9 +3632,11 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___9</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Birifor</rdfs:label>
     </owl:Class>
     
@@ -3608,6 +3654,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Blood and lymphatic system disorders</rdfs:label>
     </owl:Class>
     
@@ -3624,9 +3671,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Bobo</rdfs:label>
     </owl:Class>
     
@@ -3643,9 +3691,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___11</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Bwaba</rdfs:label>
     </owl:Class>
     
@@ -3662,9 +3711,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___6</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Dafins</rdfs:label>
     </owl:Class>
     
@@ -3681,9 +3731,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___7</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Dagaris</rdfs:label>
     </owl:Class>
     
@@ -3700,9 +3751,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___2</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Dioula</rdfs:label>
     </owl:Class>
     
@@ -3719,9 +3771,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___10</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Djan</rdfs:label>
     </owl:Class>
     
@@ -3738,9 +3791,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___8</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Lobire</rdfs:label>
     </owl:Class>
     
@@ -3757,9 +3811,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___13</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Mixed</rdfs:label>
     </owl:Class>
     
@@ -3776,9 +3831,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___3</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Mossi</rdfs:label>
     </owl:Class>
     
@@ -3795,9 +3851,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___12</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Other</rdfs:label>
     </owl:Class>
     
@@ -3814,9 +3871,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___4</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Peulh</rdfs:label>
     </owl:Class>
     
@@ -3833,9 +3891,10 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0000755>household_survey_f_arm_reshaped::ethnicity_hsc_v2___5</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>household_survey_f_arm_reshaped</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Samos</rdfs:label>
     </owl:Class>
     
@@ -3853,6 +3912,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Cardiac disorders</rdfs:label>
     </owl:Class>
     
@@ -3871,6 +3931,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Was the child healthy at birth?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Child healthy at birth</rdfs:label>
     </owl:Class>
     
@@ -3889,6 +3950,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Was the child hospitalized in the first month of life?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Child hospitalised in first month of life</rdfs:label>
     </owl:Class>
     
@@ -3930,6 +3992,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001004>3, Triplets</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Children delivered</rdfs:label>
     </owl:Class>
     
@@ -3948,6 +4011,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001003>Has the participant had any children with congenital abnormalities?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Child with congenital abnormalities</rdfs:label>
     </owl:Class>
     
@@ -3983,6 +4047,7 @@ distress syndrome (ARDS)</rdfs:label>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Congenital, familial and genetic disorders</rdfs:label>
     </owl:Class>
     
@@ -4207,6 +4272,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>How many doses of this medication has she taken?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Doses of malaria medication during pregnancy</rdfs:label>
     </owl:Class>
     
@@ -4256,6 +4322,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Ear and labyrinth disorders</rdfs:label>
     </owl:Class>
     
@@ -4274,6 +4341,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Has the participant had any prior elective or therapeutic abortions?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Elective abortion</rdfs:label>
     </owl:Class>
     
@@ -4308,6 +4376,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Endocrine disorders</rdfs:label>
     </owl:Class>
     
@@ -4325,6 +4394,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Eye disorders</rdfs:label>
     </owl:Class>
     
@@ -4393,6 +4463,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Is this a follow-up visit?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Follow up visit</rdfs:label>
     </owl:Class>
     
@@ -4410,6 +4481,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Gastrointestinal disorders</rdfs:label>
     </owl:Class>
     
@@ -4427,6 +4499,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>General disorders</rdfs:label>
     </owl:Class>
     
@@ -4450,6 +4523,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001004>4, Other</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Health care facility</rdfs:label>
     </owl:Class>
     
@@ -4521,6 +4595,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Hepatobiliary disorders</rdfs:label>
     </owl:Class>
     
@@ -4538,6 +4613,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Immune system disorders</rdfs:label>
     </owl:Class>
     
@@ -4556,6 +4632,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Infections and infestations</rdfs:label>
     </owl:Class>
     
@@ -4573,6 +4650,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Injury, poisoning and procedural complications</rdfs:label>
     </owl:Class>
     
@@ -4590,6 +4668,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Investigations</rdfs:label>
     </owl:Class>
     
@@ -4643,6 +4722,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Was the participant treated for simple malaria in the last 28 days?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Malaria treatment in last 28 days</rdfs:label>
     </owl:Class>
     
@@ -4661,6 +4741,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Was the participant treated for malaria last month?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Malaria treatment in last month</rdfs:label>
     </owl:Class>
     
@@ -4732,6 +4813,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Was the participant taking medication to prevent malaria during pregnancy?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Medicine for malaria prevention during pregnancy</rdfs:label>
     </owl:Class>
     
@@ -4749,6 +4831,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Metabolism and nutrition disorders</rdfs:label>
     </owl:Class>
     
@@ -4766,6 +4849,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Musculoskeletal and connective tissue disorders</rdfs:label>
     </owl:Class>
     
@@ -4785,6 +4869,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Which medicine is she taking?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Name of malaria medication taken during pregnancy</rdfs:label>
     </owl:Class>
     
@@ -4803,6 +4888,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001003>Neoplasms benign, malignant and unspecified (including cysts and polyps)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Neoplasms benign, malignant and unspecified (including cysts and polyps)</rdfs:label>
     </owl:Class>
     
@@ -4820,6 +4906,7 @@ It may also include drug tolerance reactions, such as vomiting and abdominal pai
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Nervous system disorders</rdfs:label>
     </owl:Class>
     
@@ -4907,6 +4994,7 @@ Check all boxes if applicable</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Pains other than abdominal pains</rdfs:label>
     </owl:Class>
     
@@ -4943,6 +5031,7 @@ This part must be completed after the first season of MDA1 - Answer &apos;&apos;
 (participant spontaneously reported it to the study team)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Passive adverse event report</rdfs:label>
     </owl:Class>
     
@@ -4961,6 +5050,7 @@ This part must be completed after the first season of MDA1 - Answer &apos;&apos;
         <obo:EUPATH_0001003>Participant tested positive in the pre-treatment urine pregnancy test  for MDA</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Positive pregnancy test in pre-treatment urine pregnancy test</rdfs:label>
     </owl:Class>
     
@@ -4979,6 +5069,7 @@ This part must be completed after the first season of MDA1 - Answer &apos;&apos;
         <obo:EUPATH_0001003>How many previous post-term births has the participant had?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Post-term birth count</rdfs:label>
     </owl:Class>
     
@@ -4997,6 +5088,7 @@ This part must be completed after the first season of MDA1 - Answer &apos;&apos;
         <obo:EUPATH_0001003>Pregnancy was detected in a period other than the MDA</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Pregnancy detected outside MDA period</rdfs:label>
     </owl:Class>
     
@@ -5038,6 +5130,7 @@ This part must be completed after the first season of MDA1 - Answer &apos;&apos;
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Pregnancy, peurperium and perinatal condition</rdfs:label>
     </owl:Class>
     
@@ -5067,6 +5160,7 @@ of Seasonal Malaria (CPS)
 Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Previous stillbirth count</rdfs:label>
         <rdfs:label>Take SMC</rdfs:label>
     </owl:Class>
@@ -5092,6 +5186,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001008>weeks</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000034</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Prior malaria treatment time</rdfs:label>
     </owl:Class>
     
@@ -5109,6 +5204,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Product issues</rdfs:label>
     </owl:Class>
     
@@ -5126,6 +5222,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Psychiatric disorders</rdfs:label>
     </owl:Class>
     
@@ -5253,6 +5350,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>Was the patient referred to a health care facility because of the adverse event?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Referred to health care facility</rdfs:label>
     </owl:Class>
     
@@ -5271,6 +5369,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>Was the patient referred to a health care facility because of the adverse event?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Referred to health care facility, due to adverse event</rdfs:label>
     </owl:Class>
     
@@ -5288,6 +5387,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Renal and urinary disorders</rdfs:label>
     </owl:Class>
     
@@ -5305,6 +5405,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Reproductive system and breast disorders</rdfs:label>
     </owl:Class>
     
@@ -5322,6 +5423,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Respiratory, thoracic and mediastinal disorders</rdfs:label>
     </owl:Class>
     
@@ -5339,6 +5441,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Skin and subcutaneous tissue disorders</rdfs:label>
     </owl:Class>
     
@@ -5374,6 +5477,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Social circumstances</rdfs:label>
     </owl:Class>
     
@@ -5391,6 +5495,7 @@ Will he/she take CPS?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Surgical and medical procedures</rdfs:label>
     </owl:Class>
     
@@ -5449,6 +5554,7 @@ What is the classification of the result of the treatment after 28 days for this
         <obo:EUPATH_0001004>3, Sufficient clinical and parasitological response</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Therapeutic failure classification</rdfs:label>
     </owl:Class>
     
@@ -5484,6 +5590,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>Describe the treatment for this adverse event at the health care facility</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Treatment for adverse event at health facility</rdfs:label>
     </owl:Class>
     
@@ -5502,6 +5609,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>Is this person being treated or supported for IE?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Treatment or support for IE</rdfs:label>
     </owl:Class>
     
@@ -5519,6 +5627,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Vascular disorders</rdfs:label>
     </owl:Class>
     
@@ -5548,6 +5657,8 @@ Since the treatment failed after 28 days, how should this treatment failure be c
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0064657">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OAE_0000001"/>
         <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
+        <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event detected, by ACD</rdfs:label>
     </owl:Class>
     
@@ -5566,6 +5677,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>The adverse event was detected during an Active Case Detection (ACD) cohort visit</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Cohort visit</rdfs:label>
     </owl:Class>
     
@@ -5584,6 +5696,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>The adverse event was detected during a cross-sectional visit</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Cross-sectional visit</rdfs:label>
     </owl:Class>
     
@@ -5602,6 +5715,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>The adverse event was detected during an MDA visit</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>MDA visit</rdfs:label>
     </owl:Class>
     
@@ -5622,7 +5736,25 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001004>2, Follow-up pregnancy monitoring visit</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Pregnancy observation type</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0064662 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0064662">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
+        <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>household_survey_f_arm_2020_reshaped::net_type_hsc_v2</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>household_survey_f_arm_2020_reshaped</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003>Record the type of mosquito net hung from the name on the label sewn into the mosquito net</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:IAO_0000115>Did the nurse see the mosquito net in the bedroom?</obo:IAO_0000115>
+        <rdfs:label>Bednet observed</rdfs:label>
     </owl:Class>
     
 
@@ -5671,6 +5803,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Jaundice</rdfs:label>
     </owl:Class>
     
@@ -5688,6 +5821,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Paleness</rdfs:label>
     </owl:Class>
     
@@ -5706,6 +5840,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>abnormal bleeding</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Abnormal bleeding</rdfs:label>
     </owl:Class>
     
@@ -5724,6 +5859,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>Hypoglycemia</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Hypoglycemia</rdfs:label>
     </owl:Class>
     
@@ -5741,6 +5877,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Vomiting</rdfs:label>
     </owl:Class>
     
@@ -5758,6 +5895,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Diarrhea</rdfs:label>
     </owl:Class>
     
@@ -5775,6 +5913,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Abdominal pain</rdfs:label>
     </owl:Class>
     
@@ -5792,6 +5931,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Shortness of breath</rdfs:label>
     </owl:Class>
     
@@ -5809,6 +5949,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Headache</rdfs:label>
     </owl:Class>
     
@@ -5827,6 +5968,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>hemoglobinuria</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Hemoglobinuria</rdfs:label>
     </owl:Class>
     
@@ -5845,6 +5987,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>altered consciousness</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Altered consciousness</rdfs:label>
     </owl:Class>
     
@@ -5862,6 +6005,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Shivers</rdfs:label>
     </owl:Class>
     
@@ -5871,10 +6015,12 @@ Since the treatment failed after 28 days, how should this treatment failure be c
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000414">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>malaria_arm_2020_reshaped::unc_malaria_weight</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>malaria_arm_reshaped::unc_malaria_weight</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>pregnancy_monitori_arm_2020_reshaped::weight_v2</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>pregnancy_monitori_arm_reshaped::child_weight</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>pregnancy_monitori_arm_reshaped::weight</obo:EUPATH_0000755>
         <obo:EUPATH_0001001>malaria_arm_2020_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001001>malaria_arm_reshaped</obo:EUPATH_0001001>
@@ -5882,11 +6028,19 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001001>pregnancy_monitori_arm_reshaped</obo:EUPATH_0001001>
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003>Please enter the participant&apos;s weight in kilograms.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001003>What is the child&apos;s weight?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>What is the participant current weight (kg)?</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004>1, Less than 1 kg</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004>2, 1-2 kg</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004>3, 2-3 kg</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004>4, 4-5 kg</obo:EUPATH_0001004>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008>cm</obo:EUPATH_0001008>
         <obo:EUPATH_0001008>kg</obo:EUPATH_0001008>
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000009</obo:EUPATH_0001009>
+        <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000015</obo:EUPATH_0001009>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Weight</rdfs:label>
     </owl:Class>
     
@@ -5905,6 +6059,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>How many previous spontaneous abortions/miscarriages has the participant had?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Spontaneous abortions count</rdfs:label>
     </owl:Class>
     
@@ -5947,6 +6102,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001003>Is this person being treated or medicated for the adverse event?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Adverse event treatment</rdfs:label>
     </owl:Class>
     
@@ -6270,6 +6426,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Anorexia</rdfs:label>
     </owl:Class>
     
@@ -6287,6 +6444,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Convulsions</rdfs:label>
     </owl:Class>
     
@@ -6304,6 +6462,7 @@ Since the treatment failed after 28 days, how should this treatment failure be c
         <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010>RIMDAMAL</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011>yes</obo:EUPATH_0001011>
         <rdfs:label>Cough</rdfs:label>
     </owl:Class>
     
@@ -6319,9 +6478,6 @@ Since the treatment failed after 28 days, how should this treatment failure be c
 
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
         <rdfs:label>replaces</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001011">
-        <rdfs:label>repeated</rdfs:label>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001012">
         <rdfs:label>is_featured</rdfs:label>
