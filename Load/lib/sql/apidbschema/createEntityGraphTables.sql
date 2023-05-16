@@ -584,7 +584,7 @@ CREATE TABLE &1.AttributeGraph (
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (attribute_graph_id),
   CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json),
-  CONSTRAINT ensure_prolbl_json CHECK (provider_label is json),
+  CONSTRAINT ensure_prolbl_json CHECK (provider_label is json)
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeGraph TO gus_w;
