@@ -9,6 +9,7 @@ use warnings;
 use ApiCommonData::Load::MBioResultsDir;
 use CBIL::ISA::InvestigationSimple;
 use File::Basename;
+use JSON;
 use Carp;
 
 my $argsDeclaration =
@@ -90,6 +91,12 @@ my $argsDeclaration =
 	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
+      booleanArg({name => 'useOntologyTermTableForTaxonTerms',
+          descr => 'should we use sres.ontologyterm instead of sres.taxonname',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
 
 
   ];
@@ -130,6 +137,13 @@ sub run {
   my $schema = $self->getArg('schema');
   my $mbioResultsDir = $self->getArg('mbioResultsDir');
   my $mbioResultsFileExtensions = $self->getArg('mbioResultsFileExtensions');
+  if(-f $mbioResultsFileExtensions){
+    open(FH, "<$mbioResultsFileExtensions");
+    my @lines = <FH>;
+    close(FH);
+    chomp $_ for @lines;
+    $mbioResultsFileExtensions = join(' ', @lines);
+  }
   my $fileExtensions = eval $mbioResultsFileExtensions;
   $self->error("string eval of $mbioResultsFileExtensions failed: $@") if $@;
   $self->error("string eval of $mbioResultsFileExtensions failed: should return a hash") unless ref $fileExtensions eq 'HASH';
