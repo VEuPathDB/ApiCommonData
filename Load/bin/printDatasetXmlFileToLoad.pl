@@ -300,6 +300,7 @@ printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{
 #printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);  ## 2020-03-23 will put in general dataset
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
+printRefStrainGenbankEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB
 printRefStraindbEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB
 printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printIsolatesFromFamilyRep ($ofh, \%excelInfo) if ($projectName ne "VectorBase" && $projectName ne "HostDB"); ## do not print it if VectorBase or HostDB
@@ -690,6 +691,24 @@ sub printRefStraindbEST {
   printNameWithDollarSign ($fh, 'referenceStrainOrganismAbbrev');
   print $fh "  </dataset>\n";
   print $fh "\n";
+  return 0;
+}
+
+sub printRefStrainGenbankEST {
+  my ($fh, $excelInfoPoint) = @_;
+  if ($excelInfoPoint->{$organismAbbrev}->{'isReferenceStrain'} =~ /^y/i) {
+    print $fh "  <dataset class=\"referenceStrain-GenbankEST\">\n";
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId', 'speciesNcbiTaxonId');
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
+
+#  print $fh "  <dataset class=\"transcriptsFromReferenceStrain\">\n";
+#  printNameWithDollarSign ($fh, 'referenceStrainOrganismAbbrev');
+#  print $fh "  </dataset>\n";
+#  print $fh "\n";
   return 0;
 }
 
