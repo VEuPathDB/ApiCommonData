@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.ChrCopyNumber (
   CHR_COPY_NUMBER_ID            NUMERIC(12)    NOT NULL,
-  PROTOCOL_APP_NODE_ID          NUMERIC(10)    NOT NULL,
+  ENTITY_ID                     NUMERIC(12)    NOT NULL,
   NA_SEQUENCE_ID                NUMERIC(12)    NOT NULL,
   CHR_COPY_NUMBER               NUMERIC(10),
   MODIFICATION_DATE             TIMESTAMP,
@@ -15,16 +15,16 @@ CREATE TABLE ApiDB.ChrCopyNumber (
   ROW_PROJECT_ID        	    NUMERIC(4),
   ROW_ALG_INVOCATION_ID		    NUMERIC(12),
   PRIMARY KEY (CHR_COPY_NUMBER_ID),
-  FOREIGN KEY (PROTOCOL_APP_NODE_ID) REFERENCES Study.ProtocolAppNode (PROTOCOL_APP_NODE_ID),
+  FOREIGN KEY (ENTITY_ID) REFERENCES Eda.Entityattributes (ENTITY_ATTRIBUTES_ID),
   FOREIGN KEY (NA_SEQUENCE_ID) REFERENCES DoTS.NASequenceImp (NA_SEQUENCE_ID)
 );
 
 CREATE INDEX ccn_revix1 ON apidb.ChrCopyNumber (na_sequence_id, chr_copy_number_id) TABLESPACE indx;
-CREATE INDEX ccn_revix0 ON apidb.ChrCopyNumber (protocol_app_node_id, chr_copy_number_id) TABLESPACE indx;
+CREATE INDEX ccn_revix0 ON apidb.ChrCopyNumber (entity_id, chr_copy_number_id) TABLESPACE indx;
 
 CREATE TABLE ApiDB.GeneCopyNumber (
   GENE_COPY_NUMBER_ID            NUMERIC(12)  NOT NULL,
-  PROTOCOL_APP_NODE_ID           NUMERIC(10)  NOT NULL,
+  ENTITY_ID                      NUMERIC(12)  NOT NULL,
   NA_FEATURE_ID 	             NUMERIC(12)  NOT NULL,
   HAPLOID_NUMBER 		  	     FLOAT8,
   REF_COPY_NUMBER                NUMERIC(10),
@@ -40,12 +40,12 @@ CREATE TABLE ApiDB.GeneCopyNumber (
   ROW_PROJECT_ID                 NUMERIC(4),
   ROW_ALG_INVOCATION_ID          NUMERIC(12),
   PRIMARY KEY (GENE_COPY_NUMBER_ID),
-  FOREIGN KEY (PROTOCOL_APP_NODE_ID) REFERENCES Study.ProtocolAppNode (PROTOCOL_APP_NODE_ID),
+  FOREIGN KEY (ENTITY_ID) REFERENCES Eda.Entityattributes (ENTITY_ATTRIBUTES_ID),
   FOREIGN KEY (NA_FEATURE_ID) REFERENCES DoTS.NAFeatureImp (NA_FEATURE_ID)
 );
 
 CREATE INDEX gcn_revix0 ON apidb.GeneCopyNumber (na_feature_id, gene_copy_number_id) TABLESPACE indx;
-CREATE INDEX gcn_revix1 ON apidb.GeneCopyNumber (PROTOCOL_APP_NODE_ID, GENE_COPY_NUMBER_ID) tablespace indx;
+CREATE INDEX gcn_revix1 ON apidb.GeneCopyNumber (ENTITY_ID, GENE_COPY_NUMBER_ID) tablespace indx;
 
 CREATE SEQUENCE ApiDB.ChrCopyNumber_SQ;
 CREATE SEQUENCE ApiDB.GeneCopyNumber_SQ;
