@@ -7,7 +7,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
-use CBIL::TranscriptExpression::CalculationsForTPM qw(doTPMCalculation);
+use CBIL::StudyAssayResults::CalculationsForTPM qw(doTPMCalculation);
 
 
 my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $analysisConfig, $isStranded);

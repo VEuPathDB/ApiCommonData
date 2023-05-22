@@ -1,5 +1,5 @@
 package ApiCommonData::Load::GenericStudyResult;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 
 
 sub new {

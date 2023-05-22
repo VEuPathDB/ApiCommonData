@@ -1,8 +1,8 @@
 package ApiCommonData::Load::WGCNAME;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 
 use strict;
-use CBIL::TranscriptExpression::Error;
+use CBIL::StudyAssayResults::Error;
 use Data::Dumper;
 use Exporter;
 use File::Basename;

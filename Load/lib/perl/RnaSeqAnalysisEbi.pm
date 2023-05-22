@@ -19,12 +19,12 @@ package ApiCommonData::Load::RnaSeqAnalysisEbi;
 # GUS4_STATUS | Rethink                        | auto   | absent
 # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
-use base qw(CBIL::TranscriptExpression::DataMunger);
+use base qw(CBIL::StudyAssayResults::DataMunger);
 
 use strict;
 
-use CBIL::TranscriptExpression::Error;
-use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
+use CBIL::StudyAssayResults::Error;
+use CBIL::StudyAssayResults::DataMunger::ProfileFromSeparateFiles;
 
 
 
@@ -256,7 +256,7 @@ sub makeProfiles {
     
     my $outputFile = "$OUTPUT_FILE_BASE.$featureType.$quantificationType.$strand.$valueType";
     
-    my $profile = CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles->
+    my $profile = CBIL::StudyAssayResults::DataMunger::ProfileFromSeparateFiles->
 	new({mainDirectory => $self->getMainDirectory,
 	     outputFile => $outputFile,
 	     makePercentiles => $makePercentiles,

@@ -7,7 +7,7 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 use Data::Dumper;
 
-#script converts aliase ids to the source_id in dots.genefeature, generally used for quant mass spec data, this may lead to duplicate ids so that the appropriate step class, CBIL::TranscriptExpression::DataMunger::MapIdentifiersAndAverageRows, should be included in the analysisConfig.xml file. This script is not generalized for all files.  
+#script converts aliase ids to the source_id in dots.genefeature, generally used for quant mass spec data, this may lead to duplicate ids so that the appropriate step class, CBIL::StudyAssayResults::DataMunger::MapIdentifiersAndAverageRows, should be included in the analysisConfig.xml file. This script is not generalized for all files.  
 
 
 my ($verbose,$gusConfigFile,$profileFile);

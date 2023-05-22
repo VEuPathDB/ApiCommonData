@@ -1,5 +1,5 @@
 package ApiCommonData::Load::MRNADecayAnalysis;
-use base qw(CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles);
+use base qw(CBIL::StudyAssayResults::DataMunger::NoSampleConfigurationProfiles);
 
 sub getProtocolName {
   return "MRNADecay";

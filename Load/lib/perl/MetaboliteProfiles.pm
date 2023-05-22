@@ -1,6 +1,6 @@
 package ApiCommonData::Load::MetaboliteProfiles;
-#use base qw(CBIL::TranscriptExpression::DataMunger::Profiles);
-use base qw(CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles);
+#use base qw(CBIL::StudyAssayResults::DataMunger::Profiles);
+use base qw(CBIL::StudyAssayResults::DataMunger::NoSampleConfigurationProfiles);
 
 use strict;
 

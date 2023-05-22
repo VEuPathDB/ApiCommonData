@@ -1,10 +1,10 @@
 
 package ApiCommonData::Load::IterativeWGCNAResults;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 
 use strict;
-#use CBIL::TranscriptExpression::Error;
-use CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles;
+#use CBIL::StudyAssayResults::Error;
+use CBIL::StudyAssayResults::DataMunger::NoSampleConfigurationProfiles;
 
 use Data::Dumper;
 
@@ -209,7 +209,7 @@ sub munge {
 	my $CPresults  =  system($CPcommand);
 
 	# Also something like sourceIdType. Default is "gene". In this case should probably be "eigengene" so that the plugin knows.
-        my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+        my $egenes = CBIL::StudyAssayResults::DataMunger::NoSampleConfigurationProfiles->new(
 		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0,profileSetName => "$profileSetName"}
 	);
 	$egenes ->setTechnologyType("RNASeq");

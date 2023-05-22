@@ -1,5 +1,5 @@
 package ApiCommonData::Load::DeseqAnalysisEbi;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 use CBIL::Util::Utils;
 use strict;
 use Data::Dumper;

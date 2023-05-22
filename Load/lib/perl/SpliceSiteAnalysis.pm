@@ -1,10 +1,10 @@
 package ApiCommonData::Load::SpliceSiteAnalysis;
-use base qw(CBIL::TranscriptExpression::DataMunger);
+use base qw(CBIL::StudyAssayResults::DataMunger);
 
 use strict;
 
-use CBIL::TranscriptExpression::Error;
-use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
+use CBIL::StudyAssayResults::Error;
+use CBIL::StudyAssayResults::DataMunger::ProfileFromSeparateFiles;
 
 use ApiCommonData::Load::SpliceSiteFeatures;
 use ApiCommonData::Load::SpliceSiteProfiles;
@@ -26,7 +26,7 @@ sub new {
   my $sst = $self->getSpliceSiteType();
 
   unless($sst eq 'Poly A' || $sst eq 'Splice Site') {
-    CBIL::TranscriptExpression::Error->new("spliceSiteType must be [Poly A] or [Splice Site]")->throw();
+    CBIL::StudyAssayResults::Error->new("spliceSiteType must be [Poly A] or [Splice Site]")->throw();
   }
 
   return $self;
@@ -40,7 +40,7 @@ sub munge {
 
   foreach my $sampleName (keys %$samplesHash) {
     if(scalar @{$samplesHash->{$sampleName}} > 1) {
-      CBIL::TranscriptExpression::Error->new("Multiple Inputs found for splice site feature $sampleName")->throw();
+      CBIL::StudyAssayResults::Error->new("Multiple Inputs found for splice site feature $sampleName")->throw();
     }
 
     my $ssFeatures = ApiCommonData::Load::SpliceSiteFeatures->new({sampleName => $sampleName,

@@ -1,5 +1,5 @@
 package ApiCommonData::Load::DoNothing;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 
 sub munge {
   my ($self) = @_;

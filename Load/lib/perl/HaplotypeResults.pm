@@ -1,5 +1,5 @@
 package ApiCommonData::Load::HaplotypeResults;
-use base qw(CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles);
+use base qw(CBIL::StudyAssayResults::DataMunger::NoSampleConfigurationProfiles);
 
 use File::Basename;
 use File::Temp qw/ tempfile /;
@@ -24,7 +24,7 @@ sub writeRScript {
 
   my $rString = <<RString;
 
-source("$ENV{GUS_HOME}/lib/R/TranscriptExpression/profile_functions.R");
+source("$ENV{GUS_HOME}/lib/R/StudyAssayResults/profile_functions.R");
 
 dat = read.table("$inputFile", header=T, sep="\\t", check.names=FALSE);
 
