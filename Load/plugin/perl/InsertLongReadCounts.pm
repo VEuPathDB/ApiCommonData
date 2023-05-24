@@ -10,6 +10,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::LongReadTranscript;
 use Data::Dumper;
+use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
 sub getArgsDeclaration {
     my $argsDeclaration  =
@@ -32,6 +33,14 @@ sub getArgsDeclaration {
 		     mustExist => 1,
 		     format=>'Text',
 		   }),
+	fileArg({ name => 'analysisConfig',
+                     descr => 'analysisConfig used for the analysis of the dataset',
+                     constraintFunc=> undef,
+                     reqd  => 1,
+                     isList => 0,
+                     mustExist => 1,
+                     format=>'Text',
+                   }),
 	stringArg({name => 'extDbSpec',
               	     descr => 'External database from whence this data came|version',
               	     constraintFunc=> undef,
@@ -107,17 +116,18 @@ sub run {
 	my ($self) = @_;
 	my $gffFile = $self->getArg('gffFile');
 	my $countFile = $self->getArg('countFile');
-	$self->loadLongReadCount($gffFile, $countFile)	
+	my $samplesConfig = $self->getArg('analysisConfig');
+	$self->loadLongReadCount($gffFile, $countFile, $samplesConfig)	
 
 }
 
 
 sub loadLongReadCount {
 
-	my ($self, $gffFile, $countFile) = @_;
+	my ($self, $gffFile, $countFile, $samplesConfig) = @_;
 	my $extDbSpec = $self->getArg('extDbSpec');
-  	my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";
-	
+  	my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";		
+	my %samplesHash = displayAndBaseName($samplesConfig);	
     	my $gffhh;
 	open($gffhh, "gunzip -c $gffFile |") || die "can't open pipe to $gffFile";
 	my $gffio = Bio::Tools::GFF->new(-fh => $gffhh, -gff_version => 3);
@@ -132,7 +142,6 @@ sub loadLongReadCount {
             		$transcript_coordinates{$id} = \@{coordinates};
         		}     
 	    }
-
 
     	#my $count_file = $countFile;
     	open(my $count, $countFile) or die "Could not open file '$countFile' $!";
@@ -159,7 +168,8 @@ sub loadLongReadCount {
         	my $chr = $transcript_coordinates{$transcript_source_id}[2];
         	my %read_counts;
         	for my $index(0 .. $#counts -1) {       
-            		$read_counts{$sampleIDs[$index]} = int($counts[$index]); 
+            		#$read_counts{$sampleIDs[$index]} = int($counts[$index]);
+			$read_counts{$samplesHash{$sampleIDs[$index]}} = int($counts[$index]);  
         	}
 
         	my $json = encode_json \%read_counts;
