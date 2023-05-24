@@ -91,13 +91,21 @@ my $argsDeclaration =
 	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
+
+      booleanArg({name => 'loadProtocolTypeAsVariable',
+          descr => 'should we add protocol types in processattributes',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+
       booleanArg({name => 'useOntologyTermTableForTaxonTerms',
           descr => 'should we use sres.ontologyterm instead of sres.taxonname',
           reqd => 0,
           constraintFunc => undef,
           isList => 0,
          }),
-
 
   ];
 
