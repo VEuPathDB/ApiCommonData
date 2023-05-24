@@ -700,7 +700,7 @@ sub printRefStrainGenbankEST {
     print $fh "  <dataset class=\"referenceStrain-GenbankEST\">\n";
     printNameWithDollarSign ($fh, 'projectName');
     printNameWithDollarSign ($fh, 'organismAbbrev');
-    printNameWithDollarSign ($fh, 'ncbiTaxonId', 'speciesNcbiTaxonId');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId');
     print $fh "  </dataset>\n";
     print $fh "\n";
   }
