@@ -192,7 +192,7 @@ and a.ontology_term_id is null";
   while(my $hash = $sh->fetchrow_hashref()) {
     my $sourceId = $hash->{SOURCE_ID};
     my $parentSourceId = $hash->{PARENT_STABLE_ID};
-    my $displayName = $hash->{NON_ONTOLOGICAl_NAME};
+    my $displayName = $hash->{NON_ONTOLOGICAL_NAME};
     my $parentOntologyTerm =  $ontologyTerms->{$parentSourceId};
     $self->error("Parent $parentSourceId of nonontological leaf $sourceId not found ")
       unless $parentOntologyTerm;
