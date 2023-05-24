@@ -325,7 +325,7 @@ processCounts as (select in_entity_type_id
                          , out_entity_type_id
                          , in_entity_id
 )
-select p.parent_id
+select DISTINCT p.parent_id
      , p.parent_stable_id
      , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, t.name)) as display_name
      , t.entity_type_id
