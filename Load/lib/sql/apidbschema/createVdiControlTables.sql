@@ -49,3 +49,5 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON vdi.sync_control            TO gus_w;
 GRANT DELETE, INSERT, SELECT, UPDATE ON vdi.dataset_install_message TO gus_w;
 GRANT DELETE, INSERT, SELECT, UPDATE ON vdi.dataset_visibility      TO gus_w;
 GRANT DELETE, INSERT, SELECT, UPDATE ON vdi.dataset_project         TO gus_w;
+
+GRANT REFERENCES ON vdi.dataset TO apidbuserdatasets;
