@@ -1,21 +1,21 @@
 CREATE TABLE ApiDB.Indel (
-  indel_id   NUMBER(10) NOT NULL,
-  sample_name  VARCHAR2(100) NOT NULL,
-  NA_SEQUENCE_ID	NUMBER(10) NOT NULL,
-  location		NUMBER(15) NOT NULL,
-  shift			NUMBER(5) NOT NULL,
+  indel_id                     NUMBER(10) NOT NULL,
+  sample_name                  VARCHAR2(100) NOT NULL,
+  NA_SEQUENCE_ID	       NUMBER(10) NOT NULL,
+  location		       NUMBER(15) NOT NULL,
+  shift			       NUMBER(5) NOT NULL,
   external_database_release_id NUMBER(10) NOT NULL,  
-  MODIFICATION_DATE     DATE,
-  USER_READ             NUMBER(1),
-  USER_WRITE            NUMBER(1),
-  GROUP_READ            NUMBER(1),
-  GROUP_WRITE           NUMBER(1),
-  OTHER_READ            NUMBER(1),
-  OTHER_WRITE           NUMBER(1),
-  ROW_USER_ID           NUMBER(12),
-  ROW_GROUP_ID          NUMBER(3),
-  ROW_PROJECT_ID        NUMBER(4),
-  ROW_ALG_INVOCATION_ID NUMBER(12),
+  MODIFICATION_DATE            DATE,
+  USER_READ                    NUMBER(1),
+  USER_WRITE                   NUMBER(1),
+  GROUP_READ                   NUMBER(1),
+  GROUP_WRITE                  NUMBER(1),
+  OTHER_READ                   NUMBER(1),
+  OTHER_WRITE                  NUMBER(1),
+  ROW_USER_ID                  NUMBER(12),
+  ROW_GROUP_ID                 NUMBER(3),
+  ROW_PROJECT_ID               NUMBER(4),
+  ROW_ALG_INVOCATION_ID        NUMBER(12),
   FOREIGN KEY (na_sequence_id) REFERENCES dots.nasequenceimp (na_sequence_id),
   FOREIGN KEY (EXTERNAL_DATABASE_RELEASE_ID) REFERENCES sres.ExternalDatabaseRelease (EXTERNAL_DATABASE_RELEASE_ID),
   PRIMARY KEY (indel_id)
@@ -40,7 +40,6 @@ INSERT INTO core.TableInfo
        (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
   WHERE 'Indel' NOT IN (SELECT name FROM core.TableInfo
   WHERE database_id = d.database_id); 
-
 
 
 exit;
