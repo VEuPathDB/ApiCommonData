@@ -127,7 +127,7 @@ sub loadLongReadCount {
 	my ($self, $gffFile, $countFile, $samplesConfig) = @_;
 	my $extDbSpec = $self->getArg('extDbSpec');
   	my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";		
-	my %samplesHash = displayAndBaseName($samplesConfig);	
+	my $samplesHash = displayAndBaseName($samplesConfig);	
     	my $gffhh;
 	open($gffhh, "gunzip -c $gffFile |") || die "can't open pipe to $gffFile";
 	my $gffio = Bio::Tools::GFF->new(-fh => $gffhh, -gff_version => 3);
@@ -169,7 +169,7 @@ sub loadLongReadCount {
         	my %read_counts;
         	for my $index(0 .. $#counts -1) {       
             		#$read_counts{$sampleIDs[$index]} = int($counts[$index]);
-			$read_counts{$samplesHash{$sampleIDs[$index]}} = int($counts[$index]);  
+			$read_counts{$samplesHash->{$sampleIDs[$index]}} = int($counts[$index]);  
         	}
 
         	my $json = encode_json \%read_counts;
