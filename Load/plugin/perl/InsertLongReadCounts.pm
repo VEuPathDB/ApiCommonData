@@ -127,7 +127,17 @@ sub loadLongReadCount {
 	my ($self, $gffFile, $countFile, $samplesConfig) = @_;
 	my $extDbSpec = $self->getArg('extDbSpec');
   	my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";		
-	my $samplesHash = displayAndBaseName($samplesConfig);	
+	my $samplesData = displayAndBaseName($samplesConfig);	
+
+	my $samplesHash;
+	foreach my $sample (keys %{$samplesData}) {
+		my $sampleNames = $samplesData->{$sample}->{'samples'};
+		my $displayName = $samplesData->{$sample}->{'displayName'};	
+		foreach my $sampleName (@{$sampleNames}) {
+			$samplesHash->{$sampleName} = $displayName;
+		}
+	}
+
     	my $gffhh;
 	open($gffhh, "gunzip -c $gffFile |") || die "can't open pipe to $gffFile";
 	my $gffio = Bio::Tools::GFF->new(-fh => $gffhh, -gff_version => 3);
@@ -153,7 +163,7 @@ sub loadLongReadCount {
         	chomp $row;
         	my @counts_list = split /\s+/,$row;
         	next if $. == 1;
-       		my @counts = @counts_list[11 .. $len];
+       		my @counts = @counts_list[11 .. $len-1];
         	my $gene_source_id = $counts_list[2];
         	my $transcript_source_id = $counts_list[3];
         	my $talon_gene_name = $counts_list[4];
@@ -167,9 +177,9 @@ sub loadLongReadCount {
         	my $maxEnd = $transcript_coordinates{$transcript_source_id}[1];
         	my $chr = $transcript_coordinates{$transcript_source_id}[2];
         	my %read_counts;
-        	for my $index(0 .. $#counts -1) {       
+		for my $index(0 .. $#counts ) {       
             		#$read_counts{$sampleIDs[$index]} = int($counts[$index]);
-			$read_counts{$samplesHash->{$sampleIDs[$index]}} = int($counts[$index]);  
+			$read_counts{$samplesHash->{$sampleIDs[$index]}} = int($counts[$index]);   
         	}
 
         	my $json = encode_json \%read_counts;
