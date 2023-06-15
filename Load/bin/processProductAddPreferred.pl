@@ -27,7 +27,7 @@ while (<IN>) {
 
   ## check if the product name has been assigned to this gene
   $items[1] =~ s/\;/\,/g;
-  my $pkey = "$items[1];$items[3];$items[4];$items[5]";
+  my $pkey = "$items[1];$items[3];$items[4];$items[5];$items[6]";
 
   if (!$assignedProduct{$items[0]}{$pkey}) {
     push @{$products{$items[0]}}, $pkey;

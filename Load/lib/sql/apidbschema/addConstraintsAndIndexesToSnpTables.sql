@@ -54,11 +54,11 @@ alter table apidb.sequencevariation add foreign key (na_sequence_id) references 
 create index apidb.SeqVarLocIx
 on apidb.SequenceVariation (na_sequence_id, location, strain, allele, sequence_variation_id) tablespace indx;
 
-create index apidb.SeqVarStrnIx
-on apidb.SequenceVariation (strain, na_sequence_id, location, allele, sequence_variation_id) tablespace indx;
+-- create index apidb.SeqVarStrnIx
+-- on apidb.SequenceVariation (strain, na_sequence_id, location, allele, sequence_variation_id) tablespace indx;
 
-create index apidb.SeqVarIdIx
-on apidb.SequenceVariation (sequence_variation_id, strain, na_sequence_id, location, allele) tablespace indx;
+-- create index apidb.SeqVarIdIx
+-- on apidb.SequenceVariation (sequence_variation_id, strain, na_sequence_id, location, allele) tablespace indx;
 
 create index apidb.SnpVarNASeqLocIx 
 on apidb.SequenceVariation (ref_na_sequence_id, location) tablespace indx;

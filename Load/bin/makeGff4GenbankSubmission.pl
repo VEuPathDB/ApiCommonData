@@ -121,7 +121,7 @@ my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $extDbRls
 
 
 print GFF "##gff-version 3\n";
-print GFF "#!gff-spec-version 1.21\n";
+#print GFF "#!gff-spec-version 1.21\n";
 
 foreach(sort keys %$sequenceLengths) {
   my $length = $sequenceLengths->{$_};
@@ -133,7 +133,7 @@ my $date = HTTP::Date::time2iso();
 #print GFF "#created $date\n";
 
 
-foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
+foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
   my $features = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
 
   foreach my $feature (@$features) {

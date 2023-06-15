@@ -153,6 +153,29 @@ sub wgsPathways {
   return new($class, $dataTypeInfo, \@samples, \@rows, \%data, {}, \%rowDetails);
 }
 
+sub massSpec {
+  my ($class, $unitType, $inputPath) = @_;
+  return construct($class, dataTypeInfo($class, 'massSpec'), $inputPath, sub {
+    my ($samples, $rowSampleHashPairs) = @_;
+    my %rows;
+    my %data;
+    my %rowDetails;
+    #P:
+    for my $p (@{$rowSampleHashPairs}){
+      my $row = $p->[0];
+      #next P if $row =~ m{UNMAPPED|UNGROUPED|UNINTEGRATED};
+      $rowDetails{$row} = {name => $row, description => 'Metabolite'};
+      $rows{$row}++;
+      for my $sample (@$samples){
+        my $value = $p->[1]{$sample};
+        $data{$sample}{$row} = $value if $value;
+      }
+    }
+    my @rows = sort keys %rows;
+    return \@rows, \%data, {}, \%rowDetails;
+  });
+}
+
 sub construct {
   my ($class, $dataTypeInfo, $inputPath, $prepare) = @_;
 
@@ -219,7 +242,8 @@ sub detailsFromRowNameTaxa {
   my $name = $row;
   if (length $name > 255){
     my ($x, $y) = split(";", $name, 2);
-    $name = $x .";...".substr($y, length $y - (255 - length $x - 4), length $y);
+    $y //= "";
+    $name = $x . ";..." . substr($y, length($y) - (255 - length($x) - 4), length($y));
   }
   return {name => $name, description => $description};
 }

@@ -12,6 +12,7 @@ use GUS::Model::SRes::OntologyTerm;
 use ApiCommonData::Load::OwlReader;
 use Text::CSV_XS;
 use Config::Std;
+use YAML qw/LoadFile/;
 
 use Digest::SHA qw/sha1_hex/;
 
@@ -115,7 +116,13 @@ sub run {
   my $datasetName = $self->getArg('datasetName');
   my $commit = $self->getArg('commit');
 
-  my $cfg = $self->readConfig($file,$datasetName);
+  my $cfg = {};
+  if( $file =~ /\.yaml$/i){
+    $cfg = $self->getCharacteristicsFromYaml($file, $datasetName);
+  }
+  else { # legacy, deprecated - read .ini, or multiple .ini in a directory
+    $cfg = $self->readConfigFiles($file,$datasetName);
+  }
 
   unless (0 < keys %$cfg){ $self->log("$datasetName not found in $file, nothing to do"); return 0 }
 
@@ -312,7 +319,26 @@ sub selectHashRef {
   return $sth->fetchall_hashref($cols[0]);
 }
 
-sub readConfig {
+sub getCharacteristicsFromYaml {
+  my ($self, $file, $datasetName) = @_;
+  my $yaml = LoadFile($file);
+  my %data;
+  while(my($k,$v) = each %{$yaml->{$datasetName}}){
+    my $arr = [];
+    if(ref($v) eq 'ARRAY'){ $arr = $v } # array of values
+    else { $arr = [ $v ] } # single value
+    foreach my $av (@$arr){ # array value
+      $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, parser should handle it
+      if($av =~ /\w+/){
+        $data{$k} //= [];
+        push(@{$data{$k}}, $av);
+      }
+    }
+  }
+  return \%data ;
+}
+
+sub readConfigFiles {
   my ($self, $file, $datasetName) = @_;
   if(-f $file && $file =~ /\.csv$/i){ return $self->readConfigFromCsv($file, $datasetName) }
   if(-d $file){ # a directory containing .ini files

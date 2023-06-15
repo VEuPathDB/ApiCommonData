@@ -401,10 +401,13 @@ sub createAttributeGraphTable {
   my $sql = "CREATE TABLE $tableName as
   WITH att AS
   (SELECT a.*, t.source_id as unit_stable_id FROM ${SCHEMA}.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
-   , atg AS
+   , satg AS
   (SELECT atg.*
    FROM ${SCHEMA}.attributegraph atg
    WHERE study_id = $studyId
+  )
+   , atg AS
+  (select * from satg
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )

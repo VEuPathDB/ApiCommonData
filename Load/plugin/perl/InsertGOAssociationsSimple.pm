@@ -324,7 +324,7 @@ sub targetNotFound {
   return 0 if $targetRowId;
 
   my $goId = $inputAssoc->getGOId();
-  my $isNot = $inputAssoc->getIsNot() eq 'NOT'? 'y' : 'n';
+  my $isNot = $inputAssoc->getIsNot() =~ /NOT/ ? 'y' : 'n';
   if ($self->getArg('tolerateMissingSeqs')) {
     $self->log("  skipping '$sourceId $goId' ($sourceId not found)");
     $self->{skipCount}++;
@@ -349,7 +349,7 @@ sub findAssociationId {
 
   $self->getPriorAssociations() if (!$self->{assocIds});
 
-  my $isNot = $inputAssoc->getIsNot() eq 'NOT'? 1 : 0;
+  my $isNot = $inputAssoc->getIsNot() =~ /NOT/ ? 1 : 0;
 
   my $tableId = $self->{targetTableId};
 
