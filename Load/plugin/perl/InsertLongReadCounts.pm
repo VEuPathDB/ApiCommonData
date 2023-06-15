@@ -153,7 +153,6 @@ sub loadLongReadCount {
         		}     
 	    }
 
-    	#my $count_file = $countFile;
     	open(my $count, $countFile) or die "Could not open file '$countFile' $!";
     	my $line = <$count>;
     	my @header = split /\s+/,$line;
@@ -178,7 +177,6 @@ sub loadLongReadCount {
         	my $chr = $transcript_coordinates{$transcript_source_id}[2];
         	my %read_counts;
 		for my $index(0 .. $#counts ) {       
-            		#$read_counts{$sampleIDs[$index]} = int($counts[$index]);
 			$read_counts{$samplesHash->{$sampleIDs[$index]}} = int($counts[$index]);   
         	}
 
