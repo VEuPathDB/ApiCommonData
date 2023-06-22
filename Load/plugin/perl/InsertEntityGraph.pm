@@ -889,8 +889,10 @@ and tn.name_class = 'scientific name'
 
 
   # ensure the database has the geo hash ids
-  foreach(@GEOHASH_SOURCE_IDS) {
-    $iOntologyTermAccessionsHash->{"QUALIFIER"}->{$_}++;
+  if(defined($iOntologyTermAccessionsHash->{QUALIFIER}->{OBI_0001620}) && defined($iOntologyTermAccessionsHash->{QUALIFIER}->{OBI_0001621})){
+    foreach(@GEOHASH_SOURCE_IDS) {
+      $iOntologyTermAccessionsHash->{"QUALIFIER"}->{$_}++;
+    }
   }
 
   my $dbh = $self->getQueryHandle();
