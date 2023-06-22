@@ -149,8 +149,17 @@ sub parseAndLoadBuscoFile {
               "external_database_release_id" => $extDbRlsId
       );
 
+
+  my ($lineageDataset, $lineageDatasetComment);
+
   while (<FILE>) {
     chomp;
+
+
+    if(/The lineage dataset is:\s?([^\(]+)\s\((.+)\)/) {
+      $lineageDataset = $1;
+      $lineageDatasetComment = $2;
+    }
     if (/\s+(\d+)\s+.+\(([CSDFM])\)/) {
       my $buscoField = "${2}_score";
 
@@ -158,7 +167,13 @@ sub parseAndLoadBuscoFile {
     }
   }
 
+  $self->error("could not determine lineage dataset") unless($lineageDataset);
+
   my $busco = GUS::Model::ApiDB::Busco->new(\%hash);
+
+  $busco->setLineageDataset($lineageDataset);
+  $busco->setLineageDatasetComment($lineageDatasetComment);
+
   $busco->submit();
 }
 
