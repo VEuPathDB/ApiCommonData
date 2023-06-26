@@ -20,7 +20,11 @@
         <dc:creator>Jie Zheng</dc:creator>
         <dc:creator>John Judkins</dc:creator>
         <dc:creator>Sarah Kelly</dc:creator>
-        <dc:description>The VEuPathDB PopBio Taxonomy is an augmented NCBI Taxonomy, containing species of interest to the Population Biology community that are not currently in NCBI&apos;s Taxonomy. For historical reasons, new terms have the EUPATH: prefix.</dc:description>
+        <dc:description>The VEuPathDB PopBio Taxonomy is an augmented NCBI Taxonomy, containing species of interest to the Population Biology community that are not currently in NCBI&apos;s Taxonomy. For historical reasons, new terms have the EUPATH: prefix.
+
+This taxonomy should be edited directly in Protege or similar. This OWL file is the master version. There are no tab delimited template files or similar. The OWL file lives in this github directory: https://github.com/VEuPathDB/ApiCommonData/tree/master/Load/ontology/popbio 
+
+If in doubt make a branch and a pull request!</dc:description>
         <dc:title>VEuPathDB PopBio Taxonomy</dc:title>
         <terms:license rdf:resource="http://creativecommons.org/licenses/by/4.0/"/>
         <owl:versionInfo>2023-05-30</owl:versionInfo>
@@ -13221,10 +13225,19 @@ https://sourceforge.net/tracker/index.php?func=detail&amp;aid=3512902&amp;group_
     
 
 
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_6935 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6935">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_6656"/>
+        <rdfs:label>Ixodida</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_6939 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6939">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_6656"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_6935"/>
         <obo:IAO_0000118>hard ticks</obo:IAO_0000118>
         <obo:IAO_0000118>hardbacked ticks</obo:IAO_0000118>
         <obo:IAO_0000118>scale ticks</obo:IAO_0000118>
