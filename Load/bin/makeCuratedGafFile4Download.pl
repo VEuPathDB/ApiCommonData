@@ -60,7 +60,7 @@ my $synonymRef = getSynonymsForOrganism ($dbh, $organismAbbrev);
 
 my $goRef = getGoInfoFromDbs ($dbh, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $synonymRef, $transcriptTypeRef, $date, $tuningTablePrefix);
 
-printGoInfo ($fhl, $goRef) if ($goRef);
+printGoInfo ($fhl, $goRef) if (scalar (@$goRef) > 0);
 
 close $fhl;
 
