@@ -92,6 +92,11 @@ my $argsDeclaration =
           isList => 0,
          }),
 
+   stringArg({name           => 'protocolVariableSourceId',
+            descr          => 'If set, will load protocol names as values attached to this term',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 1, }),
 
       booleanArg({name => 'useOntologyTermTableForTaxonTerms',
           descr => 'should we use sres.ontologyterm instead of sres.taxonname',
@@ -786,6 +791,10 @@ sub getProcessAttributesHash {
   foreach my $protocolApp (@{$process->getProtocolApplications()}) {
     my $protocol = $protocolApp->getProtocol();
     my $protocolName = $protocol->getProtocolName();
+
+    if(my $protocolSourceId = $self->getArg('protocolVariableSourceId')) {
+      push @{$rv{$protocolSourceId}}, $protocolName;
+    }
 
     if($self->getArg('loadProtocolTypeAsVariable')) {
       my $protocolType = $protocol->getProtocolType();
