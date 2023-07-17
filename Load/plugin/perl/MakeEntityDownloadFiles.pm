@@ -147,8 +147,8 @@ sub run {
 
     ## ontology file
 
-    my $outputFile = "OntologyMetadata.txt"; 
-    if($outputDir){ 
+    my $outputFile = "OntologyMetadata.txt";
+    if($outputDir){
        unless(-d $outputDir){
          mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
        }
@@ -160,8 +160,42 @@ sub run {
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
   }
+
+
+
+    my $studiesFile = "studies.txt";
+    if($outputDir){
+       unless(-d $outputDir){
+         mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
+       }
+       $studiesFile = sprintf("%s/%s_Studies.txt", $outputDir, $fileBasename);
+    }
+    else{
+      $studiesFile = sprintf("%s_Studies.txt", $fileBasename);
+    }
+    $self->log("Makingfile $studiesFile");
+    $self->makeStudiesFile($studiesFile, ${SCHEMA}, $extDbRlsId);
+
   return("Created download files");
 }
+
+sub makeStudiesFile {
+  my ($self, $outputFile, $schema, $extDbRlsId) = @_;
+
+  my $sql = "select stable_id, internal_abbrev from ${schema}.study where external_database_release_id = $extDbRlsId";
+
+  my $queryHandle = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute;
+
+  open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
+
+  while(my ($stableId, $internalAbbrev) = $sh->fetchrow_array()) {
+    print FH "$stableId\t$internalAbbrev\n";
+  }
+  close FH;
+}
+
 
 sub createDownloadFile {
  my ($self, $entityTypeId, $entityTypeAbbrev, $entityNames, $studyAbbrev, $outputFile) = @_;
@@ -201,7 +235,7 @@ SQL_GETLABELS
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute;
-  my @cols = @{$sh->{NAME}}; 
+  my @cols = @{$sh->{NAME}};
   my @entityIdCols; # for creating this file (raw ID from SQL)
   my @mergeIdCols; # for merging with this file (pretty ID from file)
   foreach my $col (@cols){
@@ -221,7 +255,7 @@ SQL_GETLABELS
   open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
   # print header row
   printf FH ("%s\n", join("\t", map { $attrNames->{$_} } @entityIdCols, @orderedIRIs));
-  
+
   my $entityId = "___NOT_SET____";
   my $hash = {};
   my $keycount = 0;
