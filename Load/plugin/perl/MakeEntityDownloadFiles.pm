@@ -62,6 +62,17 @@ my $argsDeclaration =
 
 my ${SCHEMA} = '__SCHEMA__'; # must be replaced with real schema name
 
+# temporary, just in case
+my $HARDCODE_FORCED_HIDDEN = {
+  EUPATH_0043203 => 1,
+  EUPATH_0043204 => 1,
+  EUPATH_0043205 => 1,
+  EUPATH_0043206 => 1,
+  EUPATH_0043207 => 1,
+  EUPATH_0043208 => 1,
+  EUPATH_0043209 => 1,
+};
+
 # ----------------------------------------------------------------------
 
 sub new {
@@ -113,7 +124,7 @@ sub run {
     my %mergeInfo; # populate with id_cols, merge_key for each file
     while( my ($entityTypeId, $meta) = each %$entityTypeIds) {
       my $entityTypeAbbrev = $meta->{ABBREV};
-      my $entityNameForFile = $meta->{PLURAL} || $entityTypeAbbrev;
+      my $entityNameForFile = $meta->{PLURAL} || $meta->{LABEL} || $entityTypeAbbrev;
       my $entityName = map { ucfirst($_) } split(/\s/, $meta->{LABEL});
       $entityNameForFile =~ tr/ /_/;
       $entityName =~ tr/ /_/;
@@ -227,6 +238,7 @@ SQL_GETLABELS
   my $keycount = 0;
   my $totalEntityIds = 0;
   while(my $row = $sh->fetchrow_hashref()) {
+    next if ($HARDCODE_FORCED_HIDDEN->{$row->{ATTRIBUTE_STABLE_ID}});
     # $entityId ||= $row->{ $stableIdCol };
     my ($attrId, $value) = ($row->{ATTRIBUTE_STABLE_ID}, $row->{STRING_VALUE});
     if($entityId ne $row->{ $stableIdCol }) {
@@ -243,8 +255,9 @@ SQL_GETLABELS
       $entityId = $row->{ $stableIdCol };
     }
     if( $keycount > $totalcols ){
-      foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
-      printf STDERR ("DEBUG: too many variables found %s\n", Dumper $hash);
+      # Not necessary to wipe out the entire row; only mapped terms will get printed
+      #foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
+      printf STDERR ("WARNING... too many variables found (wanted $totalcols, found $keycount): %s\n", join(",", keys %$hash));
       #die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
     }
     unless(defined $hash->{$attrId} ){
