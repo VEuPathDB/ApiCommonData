@@ -62,6 +62,17 @@ my $argsDeclaration =
 
 my ${SCHEMA} = '__SCHEMA__'; # must be replaced with real schema name
 
+# temporary, just in case
+my $HARDCODE_FORCED_HIDDEN = {
+  EUPATH_0043203 => 1,
+  EUPATH_0043204 => 1,
+  EUPATH_0043205 => 1,
+  EUPATH_0043206 => 1,
+  EUPATH_0043207 => 1,
+  EUPATH_0043208 => 1,
+  EUPATH_0043209 => 1,
+};
+
 # ----------------------------------------------------------------------
 
 sub new {
@@ -113,7 +124,7 @@ sub run {
     my %mergeInfo; # populate with id_cols, merge_key for each file
     while( my ($entityTypeId, $meta) = each %$entityTypeIds) {
       my $entityTypeAbbrev = $meta->{ABBREV};
-      my $entityNameForFile = $meta->{PLURAL} || $entityTypeAbbrev;
+      my $entityNameForFile = $meta->{PLURAL} || $meta->{LABEL} || $entityTypeAbbrev;
       my $entityName = map { ucfirst($_) } split(/\s/, $meta->{LABEL});
       $entityNameForFile =~ tr/ /_/;
       $entityName =~ tr/ /_/;
@@ -147,8 +158,8 @@ sub run {
 
     ## ontology file
 
-    my $outputFile = "OntologyMetadata.txt";
-    if($outputDir){
+    my $outputFile = "OntologyMetadata.txt"; 
+    if($outputDir){ 
        unless(-d $outputDir){
          mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
        }
@@ -160,42 +171,8 @@ sub run {
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
   }
-
-
-
-    my $studiesFile = "studies.txt";
-    if($outputDir){
-       unless(-d $outputDir){
-         mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
-       }
-       $studiesFile = sprintf("%s/%s_Studies.txt", $outputDir, $fileBasename);
-    }
-    else{
-      $studiesFile = sprintf("%s_Studies.txt", $fileBasename);
-    }
-    $self->log("Makingfile $studiesFile");
-    $self->makeStudiesFile($studiesFile, ${SCHEMA}, $extDbRlsId);
-
   return("Created download files");
 }
-
-sub makeStudiesFile {
-  my ($self, $outputFile, $schema, $extDbRlsId) = @_;
-
-  my $sql = "select stable_id, internal_abbrev from ${schema}.study where external_database_release_id = $extDbRlsId";
-
-  my $queryHandle = $self->getQueryHandle();
-  my $sh = $dbh->prepare($sql);
-  $sh->execute;
-
-  open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
-
-  while(my ($stableId, $internalAbbrev) = $sh->fetchrow_array()) {
-    print FH "$stableId\t$internalAbbrev\n";
-  }
-  close FH;
-}
-
 
 sub createDownloadFile {
  my ($self, $entityTypeId, $entityTypeAbbrev, $entityNames, $studyAbbrev, $outputFile) = @_;
@@ -235,7 +212,7 @@ SQL_GETLABELS
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute;
-  my @cols = @{$sh->{NAME}};
+  my @cols = @{$sh->{NAME}}; 
   my @entityIdCols; # for creating this file (raw ID from SQL)
   my @mergeIdCols; # for merging with this file (pretty ID from file)
   foreach my $col (@cols){
@@ -255,12 +232,13 @@ SQL_GETLABELS
   open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
   # print header row
   printf FH ("%s\n", join("\t", map { $attrNames->{$_} } @entityIdCols, @orderedIRIs));
-
+  
   my $entityId = "___NOT_SET____";
   my $hash = {};
   my $keycount = 0;
   my $totalEntityIds = 0;
   while(my $row = $sh->fetchrow_hashref()) {
+    next if ($HARDCODE_FORCED_HIDDEN->{$row->{ATTRIBUTE_STABLE_ID}});
     # $entityId ||= $row->{ $stableIdCol };
     my ($attrId, $value) = ($row->{ATTRIBUTE_STABLE_ID}, $row->{STRING_VALUE});
     if($entityId ne $row->{ $stableIdCol }) {
@@ -277,8 +255,9 @@ SQL_GETLABELS
       $entityId = $row->{ $stableIdCol };
     }
     if( $keycount > $totalcols ){
-      foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
-      printf STDERR ("DEBUG: too many variables found %s\n", Dumper $hash);
+      # Not necessary to wipe out the entire row; only mapped terms will get printed
+      #foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
+      printf STDERR ("WARNING... too many variables found (wanted $totalcols, found $keycount): %s\n", join(",", keys %$hash));
       #die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
     }
     unless(defined $hash->{$attrId} ){
