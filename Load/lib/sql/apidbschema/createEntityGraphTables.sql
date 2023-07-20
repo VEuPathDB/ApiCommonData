@@ -486,7 +486,7 @@ CREATE TABLE &1.Attribute (
   distinct_values_count            integer,
   is_multi_valued                number(1),
   data_shape                     varchar2(30),
-  unit                          varchar2(30),
+  unit                          varchar2(400),
   unit_ontology_term_id         NUMBER(10),
   precision                     integer,
   ordered_values                CLOB,    
