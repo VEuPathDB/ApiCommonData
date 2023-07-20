@@ -687,6 +687,8 @@ SELECT parent.stable_id       as stable_id,
        Max(child.display_range_max) AS display_range_max,
        Min(child.range_min)         AS range_min,
        Max(child.range_max)         AS range_max,
+       null  as member,
+       null as member_plural,
        child.impute_zero,
        child.data_type,
        child.data_shape,
@@ -711,13 +713,21 @@ EOF
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
 
-  # display_range_min and display_range_max may ge specified in the yaml;  update those here
+  # update some things from the yaml.
   foreach my $stableId (keys %$collections) {
     if(my $rangeMin = $collections->{$stableId}->{range_min}) {
-      $dbh->do("update $collectionAttributesTableName set display_range_min = $rangeMin");
+      $dbh->do("update $collectionTableName set display_range_min = $rangeMin");
     }
     if(my $rangeMax = $collections->{$stableId}->{range_max}) {
-      $dbh->do("update $collectionAttributesTableName set display_range_max = $rangeMax");
+      $dbh->do("update $collectionTableName set display_range_max = $rangeMax");
+    }
+
+    if(my $member = $collections->{$stableId}->{member}) {
+      $dbh->do("update $collectionTableName set member = $member");
+
+      if(my $memberPlural = $collections->{$stableId}->{memberPlural}) {
+        $dbh->do("update $collectionTableName set member_plural = $memberPlural");
+      }
     }
   }
 
