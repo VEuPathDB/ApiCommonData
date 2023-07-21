@@ -8,10 +8,11 @@ use JSON qw/encode_json/;
 use feature 'say';
 
 sub new {
-  my ($class, $dir, $fileExtensions) = @_;
+  my ($class, $dir, $fileExtensions, $isRelativeAbundance) = @_;
   return bless {
     dir => $dir,
     fileExtensions => $fileExtensions,
+    isRelativeAbundance => $isRelativeAbundance,
   }, $class;
 }
 
