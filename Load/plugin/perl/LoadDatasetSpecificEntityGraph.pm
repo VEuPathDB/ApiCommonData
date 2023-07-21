@@ -687,8 +687,6 @@ SELECT parent.stable_id       as stable_id,
        Max(child.display_range_max) AS display_range_max,
        Min(child.range_min)         AS range_min,
        Max(child.range_max)         AS range_max,
-       null  as member,
-       null as member_plural,
        child.impute_zero,
        child.data_type,
        child.data_shape,
@@ -712,6 +710,7 @@ EOF
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
+  $dbh->do("ALTER TABLE $collectionTableName add (member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
 
   # update some things from the yaml.
   foreach my $stableId (keys %$collections) {
@@ -723,10 +722,10 @@ EOF
     }
 
     if(my $member = $collections->{$stableId}->{member}) {
-      $dbh->do("update $collectionTableName set member = $member");
+      $dbh->do("update $collectionTableName set member = '$member' where stable_id = '$stableId'");
 
       if(my $memberPlural = $collections->{$stableId}->{memberPlural}) {
-        $dbh->do("update $collectionTableName set member_plural = $memberPlural");
+        $dbh->do("update $collectionTableName set member_plural = '$memberPlural' where stable_id = '$stableId'");
       }
     }
   }
