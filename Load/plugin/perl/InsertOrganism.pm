@@ -50,12 +50,6 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'speciesNcbiTaxonId',
-		 descr => '',
-		 constraintFunc=> undef,
-		 reqd  => 1,
-		 isList => 0,
-	       }),
      stringArg({ name => 'projectName',
 		 descr => '',
 		 constraintFunc=> undef,
@@ -208,7 +202,6 @@ sub run {
 
   my $fullName = $self->getArg('fullName');
   my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
-  my $speciesNcbiTaxonId = $self->getArg('speciesNcbiTaxonId');
   my $abbrev = $self->getArg('abbrev');
   my $abbrevPublic = $self->getArg('publicAbbrev');
   my $nameForFilenames = $self->getArg('nameForFilenames');
@@ -238,18 +231,6 @@ sub run {
 
   $self->error("fullName '$fullName' and ncbiTaxonId '$ncbiTaxonId' do not match, according to SRes.TaxonName") unless $ncbi_tax_id eq $ncbiTaxonId;
   
-  # validate species ncbi taxon id against ncbi taxon id
-  $sql = "select ncbi_tax_id 
-             from 
-              (select ncbi_tax_id, rank from sres.taxon
-               connect by taxon_id = prior parent_id 
-               start with ncbi_tax_id = $ncbiTaxonId) t
-             where t.rank = 'species'";
-  $sth = $self->prepareAndExecute($sql);
-  my ($species_ncbi_tax_id) = $sth->fetchrow_array();
-  
-  $self->error("speciesNcbiTaxonId '$speciesNcbiTaxonId' is not the species ncbi taxon id for ncbi taxon id '$ncbiTaxonId'.  (The species in the taxonomy table is '$species_ncbi_tax_id')") unless $species_ncbi_tax_id eq $speciesNcbiTaxonId;
-
   # validate temp ncbi taxon id
   if ($hasTemporaryNcbiTaxonId && $ncbiTaxonId < 9000000000) {
       $self->error("hasTemporaryNcbiTaxonId is true but the provided ncbi taxon ID does not look like a temporary one.  (It must be greater than 9000000000 to be a temp ID)");
