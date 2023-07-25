@@ -327,14 +327,14 @@ processCounts as (select in_entity_type_id
 )
 select DISTINCT p.parent_id
      , p.parent_stable_id
-     , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, t.name)) as display_name
+     , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(json_value(ap.props, '\$.label[0]'), nvl(os.ontology_synonym, t.name))) as display_name
      , t.entity_type_id
      , t.internal_abbrev
      ,  ot.source_id as stable_id
      , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as description
      , s.study_id
      , s.stable_id as study_stable_id
-     , nvl(json_value(ap.props, '\$.display_name_plural[0]'), os.plural) as display_name_plural
+     , nvl(json_value(ap.props, '\$.display_name_plural[0]'), nvl(json_value(ap.props, '\$.plural[0]'), os.plural)) as display_name_plural
      , t.cardinality
      , 0 as has_attribute_collections
      , case when maxProcessCountPerEntity.maxOutputCount is null then null
