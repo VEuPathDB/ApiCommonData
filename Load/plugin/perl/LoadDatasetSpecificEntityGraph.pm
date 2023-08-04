@@ -55,6 +55,8 @@ my $argsDeclaration =
 ];
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
+
 my @UNDO_TABLES;
 my @REQUIRE_TABLES;
 
@@ -83,6 +85,9 @@ sub run {
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   $SCHEMA = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
@@ -609,7 +614,7 @@ sub dropTables {
   my $dbh = $self->getDbHandle();
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
 
-  my $sql1 = "select distinct s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s
+  my $sql1 = "select distinct s.internal_abbrev from ${TERM_SCHEMA}.externaldatabase d, ${TERM_SCHEMA}.externaldatabaserelease r, ${SCHEMA}.study s
  where d.external_database_id = r.external_database_id
 and d.name = '$dbName' and r.version = '$dbVersion'
 and r.external_database_release_id = s.external_database_release_id";

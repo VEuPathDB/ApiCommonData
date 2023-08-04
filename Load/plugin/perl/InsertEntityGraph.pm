@@ -12,6 +12,7 @@ use CBIL::ISA::InvestigationSimple;
 use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
+use GUS::Model::ApidbUserDatasets::OntologyTerm;
 use GUS::Model::SRes::TaxonName;
 
 use CBIL::ISA::Investigation;
@@ -27,6 +28,9 @@ use JSON;
 use Data::Dumper;
 my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
 my @GEOHASH_SOURCE_IDS = sort { $GEOHASH_PRECISION->{$a} <=> $GEOHASH_PRECISION->{$b} } keys %$GEOHASH_PRECISION;
+
+my $SCHEMA;
+my $TERM_SCHEMA = "SRES";
 
 my $argsDeclaration =
   [
@@ -213,7 +217,12 @@ sub run {
   }
   $self->userError("No investigation files") unless @investigationFiles;
 
-  my $schema = $self->getArg('schema');
+  $SCHEMA = $self->getArg('schema');
+
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
@@ -235,7 +244,7 @@ sub run {
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
-    $self->loadInvestigation($investigation, $extDbRlsId, $schema);
+    $self->loadInvestigation($investigation, $extDbRlsId);
     $investigationCount++;
   }
   $self->logRowsInserted() if($self->getArg('commit'));
@@ -246,7 +255,7 @@ sub run {
 # called by the run methods
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
-  my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  my ($self, $investigation, $extDbRlsId) = @_;
   do {
     my %errors;
     my $c = $investigation->{_on_error};
@@ -269,7 +278,7 @@ sub loadInvestigation {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
 
       # add the user_dataset_id if we are in that mode
-      if(uc($schema) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+      if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
         $gusStudy->setUserDatasetId($self->getArg("userDatasetId"));
       }
 
@@ -282,7 +291,7 @@ sub loadInvestigation {
         $investigation->dealWithAllOntologies();
 
         my $nodes = $study->getNodes();
-        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols(), $schema);
+        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
         my $edges = $study->getEdges();
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
@@ -322,9 +331,9 @@ sub countLines {
 
 
 sub protocolsCheckProcessTypesAndSetIds {
-  my ($self, $protocols, $schema) = @_;
+  my ($self, $protocols) = @_;
 
-  my $sql = "select name, process_type_id from $schema.processtype";
+  my $sql = "select name, process_type_id from $SCHEMA.processtype";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
@@ -676,7 +685,14 @@ sub getOntologyTermGusObj {
       return $gusObj;
     }
 
-    my $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    my $gusOntologyTerm;
+    if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+      $gusOntologyTerm = GUS::Model::ApidbUserDatasets::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    }
+    else {
+      $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    }
+
     unless($gusOntologyTerm->retrieveFromDB()) {
       print Dumper $ontologyTerm;
 
@@ -883,8 +899,9 @@ sub checkOntologyTermsAndFetchIds {
   }
 
 
+
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
-from sres.ontologyterm ot
+from ${TERM_SCHEMA}.ontologyterm ot
 where ot.source_id = ?
 and lower(ot.source_id) not like '$ncbiTaxon'
 UNION

@@ -30,6 +30,7 @@ use Encode qw/encode/;
 use Data::Dumper;
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
 
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
@@ -163,6 +164,10 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   $SCHEMA = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
   ##
 
   chdir $self->getArg('logDir');
@@ -203,7 +208,7 @@ sub run {
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
+    my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec, $TERM_SCHEMA);
     #my $ontologyOverride = &queryForOntologyTerms($dbh, $extDbRlsId, 1);
 
     # printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
@@ -392,7 +397,7 @@ sub queryForEntityTypeIds {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select t.name, t.entity_type_id, ot.source_id, t.internal_abbrev
-from $SCHEMA.entitytype t, sres.ontologyterm ot
+from $SCHEMA.entitytype t, ${TERM_SCHEMA}.ontologyterm ot
 where t.type_id = ot.ontology_term_id (+)
 and study_id = $studyId";
 
@@ -577,8 +582,8 @@ select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
 from $SCHEMA.study pg
    , $SCHEMA.entitytype vt
    , $SCHEMA.attributeunit au
-   , sres.ontologyterm att
-   , sres.ontologyterm unit
+   , ${TERM_SCHEMA}.ontologyterm att
+   , ${TERM_SCHEMA}.ontologyterm unit
 where pg.study_id = ?
 and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
@@ -800,7 +805,7 @@ sub lookupUnit {
   }
 
   my $sql = "select ot.source_id, au.unit_ontology_term_id
-from SRES.ONTOLOGYTERM ot, ${SCHEMA}.attributeunit au
+from ${TERM_SCHEMA}.ONTOLOGYTERM ot, ${SCHEMA}.attributeunit au
 where au.ATTR_ONTOLOGY_TERM_ID = ot.ONTOLOGY_TERM_ID
 and au.entity_type_id = ?";
 

@@ -82,6 +82,8 @@ my $argsDeclaration =
 ];
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
+
 my @UNDO_TABLES = qw(
   AttributeGraph
   EntityTypeGraph
@@ -117,7 +119,11 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   $SCHEMA = $self->getArg('schema');
-  ## 
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
+  ##
 
   chdir $self->getArg('logDir');
 
@@ -133,7 +139,7 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
 
-    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $ontologyExtDbRlsId, $extDbRlsId, $SCHEMA);
+    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $ontologyExtDbRlsId, $extDbRlsId, $SCHEMA, $TERM_SCHEMA);
 
     $self->updateDisplayTypesForGeoVariables($ontologyTerms);
 
@@ -306,7 +312,7 @@ from $SCHEMA.processattributes p
    , $SCHEMA.entitytype it
    , $SCHEMA.study s
    , $SCHEMA.entitytype ot
-   , sres.ontologyterm iot
+   , ${TERM_SCHEMA}.ontologyterm iot
 where s.study_id = $studyId
 and it.STUDY_ID = s.study_id
 and ot.STUDY_ID = s.study_id
@@ -354,8 +360,8 @@ from  (select distinct study_id
             , out_entity_type_id) maxProcessCountPerEntity
    , $SCHEMA.entitytype t
    , $SCHEMA.study s
-   , sres.ontologyterm ot
-   , (select * from sres.ontologysynonym where external_database_release_id = $ontologyExtDbRlsId) os
+   , ${TERM_SCHEMA}.ontologyterm ot
+   , (select * from ${TERM_SCHEMA}.ontologysynonym where external_database_release_id = $ontologyExtDbRlsId) os
    , (select * from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId) ap
 where s.study_id = $studyId 
  and s.study_id = t.study_id

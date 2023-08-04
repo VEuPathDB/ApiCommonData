@@ -20,6 +20,7 @@ use Data::Dumper;
 
 use YAML::Tiny;
 
+
 our $GEOHASH_PRECISION = {
     EUPATH_0043203 => 1,
     EUPATH_0043204 => 2,
@@ -35,16 +36,16 @@ our $latitudeSourceId = "OBI_0001620";
 our $longitudeSourceId = "OBI_0001621";
 
 sub queryForOntologyTerms {
-  my ($dbh, $extDbRlsId, $overrideOnly) = @_;
+  my ($dbh, $extDbRlsId, $overrideOnly, $termSchema) = @_;
 
 
   my $sql = "select s.source_id
                   , s.ontology_term_id
                   , nvl(os.ontology_synonym, s.name) as display_name
-from sres.ontologyterm s
+from ${termSchema}.ontologyterm s
    , (select ontology_term_id
            , ontology_synonym
-      from sres.ontologysynonym
+      from ${termSchema}.ontologysynonym
       where external_database_release_id = ?) os
 where s.ontology_term_id = os.ontology_term_id (+)
 ";
@@ -66,7 +67,7 @@ where s.ontology_term_id = os.ontology_term_id (+)
 
 
 sub queryForOntologyHierarchyAndAnnotationProperties {
-  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema) = @_;
+  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema) = @_;
 
   my $sql = "select s.name
                   , s.source_id
@@ -91,11 +92,11 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , json_query(ap.props, '\$.variable') as provider_label -- gives json array
                   , json_query(ap.props, '\$.ordinal_values') as ordinal_values -- gives json array
                   , json_value(ap.props, '\$.scale[0]') as scale
-from sres.ontologyrelationship r
-   , sres.ontologyterm s
-   , sres.ontologyterm o
-   , sres.ontologyterm p
-   , sres.ontologysynonym os
+from ${termSchema}.ontologyrelationship r
+   , ${termSchema}.ontologyterm s
+   , ${termSchema}.ontologyterm o
+   , ${termSchema}.ontologyterm p
+   , ${termSchema}.ontologysynonym os
    , (select * from ${schema}.annotationproperties where external_database_release_id = ?) ap
 where r.subject_term_id = s.ontology_term_id
 and r.predicate_term_id = p.ontology_term_id
@@ -143,11 +144,11 @@ printf STDERR ("SCHEMA = $schema\n");
 }
 
 sub getTermsAnnotationProperties {
-  my ($dbh, $extDbRlsId) = @_;
+  my ($dbh, $extDbRlsId, $termSchema) = @_;
 
   my $sql = "SELECT o2.source_id,o.ANNOTATION_PROPERTIES
-FROM sres.ONTOLOGYSYNONYM o
-LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
+FROM ${termSchema}.ONTOLOGYSYNONYM o
+LEFT JOIN ${termSchema}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
 and o.ANNOTATION_PROPERTIES IS NOT NULL";
 
@@ -161,10 +162,10 @@ and o.ANNOTATION_PROPERTIES IS NOT NULL";
 }
 
 sub getTermsWithDataShapeOrdinal {
-  my($dbh, $extDbRlsId, $property, $match) = @_;
+  my($dbh, $extDbRlsId, $property, $match, $termSchema) = @_;
   my $sql = "SELECT o2.source_id,'1'
-FROM sres.ONTOLOGYSYNONYM o
-LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
+FROM ${termSchema}.ONTOLOGYSYNONYM o
+LEFT JOIN ${termSchema}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
 and (json_value(o.ANNOTATION_PROPERTIES, '\$.forceStringType[0]') = 'yes' 
 OR (o.ORDINAL_VALUES IS NOT NULL
