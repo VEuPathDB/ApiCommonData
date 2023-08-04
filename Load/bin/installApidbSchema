@@ -177,9 +177,11 @@ if ($create) {
      my @sqlplusParamValues;
      if($sql eq 'createEntityGraphTables.sql') {
        $sqlplusParamValues[0] = "EDA";
+       $sqlplusParamValues[1] = "SRES";
        &runSql($login, $password, $db, $sql, @sqlplusParamValues);
 
        $sqlplusParamValues[0] = "ApidbUserDatasets";
+       $sqlplusParamValues[1] = "ApidbUserDatasets";
        &runSql($login, $password, $db, $sql, @sqlplusParamValues);
      }
 

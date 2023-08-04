@@ -1,8 +1,8 @@
 set CONCAT OFF;
 
 -- so the foreign key constraints are allowed
-grant references on sres.OntologyTerm to &1;
-grant references on sres.ExternalDatabaseRelease to &1;
+grant references on &2.OntologyTerm to &1;
+grant references on &2.ExternalDatabaseRelease to &1;
 
 CREATE TABLE &1.Study (
  study_id            NUMBER(12) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE &1.Study (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (external_database_release_id) REFERENCES sres.ExternalDatabaseRelease,
+ FOREIGN KEY (external_database_release_id) REFERENCES &2.ExternalDatabaseRelease,
  PRIMARY KEY (study_id),
  CONSTRAINT unique_stable_id UNIQUE (stable_id)
 );
@@ -73,7 +73,7 @@ CREATE TABLE &1.EntityType (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (study_id) REFERENCES &1.study,
- FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (type_id) REFERENCES &2.ontologyterm,
  PRIMARY KEY (entity_type_id)
 );
 
@@ -123,7 +123,7 @@ CREATE TABLE &1.ProcessType (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
-FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (type_id) REFERENCES &2.ontologyterm,
  PRIMARY KEY (process_type_id)
 );
 
@@ -386,8 +386,8 @@ CREATE TABLE &1.AttributeUnit (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
-FOREIGN KEY (attr_ontology_term_id) REFERENCES sres.ontologyterm,
-FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (attr_ontology_term_id) REFERENCES &2.ontologyterm,
+FOREIGN KEY (unit_ontology_term_id) REFERENCES &2.ontologyterm,
  PRIMARY KEY (attribute_unit_id)
 );
 
@@ -510,8 +510,8 @@ CREATE TABLE &1.Attribute (
   row_alg_invocation_id        NUMBER(12) NOT NULL,
   FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
   FOREIGN KEY (process_type_id) REFERENCES &1.ProcessType,
- FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (unit_ontology_term_id) REFERENCES &2.ontologyterm,
   PRIMARY KEY (attribute_id),
   CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
 );
@@ -579,8 +579,8 @@ CREATE TABLE &1.AttributeGraph (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (parent_ontology_term_id) REFERENCES &2.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (attribute_graph_id),
   CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json),
@@ -630,8 +630,8 @@ CREATE TABLE &1.StudyCharacteristic (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (value_ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (attribute_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (value_ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (attribute_id) REFERENCES &2.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (study_characteristic_id)
 );
@@ -709,9 +709,9 @@ MODIFICATION_DATE     DATE,
   ROW_GROUP_ID          NUMBER(3),
   ROW_PROJECT_ID        NUMBER(4),
   ROW_ALG_INVOCATION_ID NUMBER(12),
-  FOREIGN KEY (ontology_term_id) REFERENCES sres.OntologyTerm (ontology_term_id),
+  FOREIGN KEY (ontology_term_id) REFERENCES &2.OntologyTerm (ontology_term_id),
   FOREIGN KEY (study_id) REFERENCES &1.study (study_id),
- FOREIGN KEY (external_database_release_id) REFERENCES sres.ExternalDatabaseRelease,
+ FOREIGN KEY (external_database_release_id) REFERENCES &2.ExternalDatabaseRelease,
 PRIMARY KEY (annotation_properties_id),
   CONSTRAINT ensure_anp_json CHECK (props is json)
 );
