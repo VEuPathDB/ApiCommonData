@@ -98,7 +98,9 @@ sub _load_shapefiles {
 
 
 sub lookup {
-  my ($self, $lat, $long) = @_;
+  my ($self, $lat, $long, $max_level) = @_;
+
+  $max_level = 2 unless (defined $max_level && $max_level =~ /^[012]$/);
 
   # some default parameters that we may choose to add as command-line options later
   my $max_radius_degrees = 0.025; # max distance in degrees to search around points that don't geocode (around 2.5 km)
@@ -116,7 +118,7 @@ sub lookup {
 						   Y => $lat + sin($angle)*$radius);
       my $parent_id; # the ID, e.g. AFG of the higher level term that was geocoded
 
-      foreach my $level (0 .. 2) {
+      foreach my $level (0 .. $max_level) {
 	last if ($level > 0 && !defined $parent_id);
 	# print "Scanning level $level\n" if $verbose;
 	my $shapefile = $self->_shapefiles->[$level];
