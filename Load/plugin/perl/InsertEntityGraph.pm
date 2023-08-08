@@ -688,7 +688,7 @@ sub addLookedUpPlacenames {
   # maxAdminLevel is a per row value the data provider can use to control how many levels of placenames
   # are looked up. It's OK to be undefined, will fall back to default (2) in lookup method:
   my $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
-  my ($gadm_names, $gadm_ids, $veugeo_names) = $self->{_geolookup}->lookup($lat, $long, $maxAdminLevel);
+  my ($gadm_names, $gadm_ids, $veugeo_names) = @{$self->{_geolookup}->lookup($lat, $long, $maxAdminLevel)};
   foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
     my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
     if ($variable_iri) {

@@ -75,7 +75,16 @@ has 'VEuGEO_extDbRlsId' => (
   is => 'ro',
 );
 
-
+# "private" cache attribute, see https://metacpan.org/pod/Moose::Meta::Attribute::Native::Trait::Hash
+has '_cache' => (
+  is => 'ro', # don't worry the cache will still be rw
+  traits => [ 'Hash' ],
+  handles   => {
+    set_cache     => 'set', # set_cache is a GeoLookup object method
+    get_cache     => 'get', # ditto here
+    check_cache => 'exists', # and here
+  },
+);
 
 # private lazy attribute
 # cannot be provided to constructor
@@ -102,7 +111,13 @@ sub lookup {
 
   $max_level = 2 unless (defined $max_level && $max_level =~ /^[012]$/);
 
-  # some default parameters that we may choose to add as command-line options later
+  my $cache_key = "$lat:$long:$max_level";
+  if ($self->check_cache($cache_key)) {
+    return $self->get_cache($cache_key);
+  }
+
+  # some default parameters that we may choose to add as command-line options later but they should be object-wide
+  # so that the cache works properly
   my $max_radius_degrees = 0.025; # max distance in degrees to search around points that don't geocode (around 2.5 km)
   my $radius_steps = 10; # how many steps to take expanding the search around the center point
 
@@ -151,7 +166,8 @@ sub lookup {
       last RADIUS if (@{$result_ids} > 0);
     }
   }
-  return ($result_names, $result_ids, $result_veugeo_names);
+  # returns the just-set value
+  return $self->set_cache($cache_key => [ $result_names, $result_ids, $result_veugeo_names ]);
 }
 
 sub getVEuGEOname {
