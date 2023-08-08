@@ -62,6 +62,17 @@ my $argsDeclaration =
 
 my ${SCHEMA} = '__SCHEMA__'; # must be replaced with real schema name
 
+# temporary, just in case
+my $HARDCODE_FORCED_HIDDEN = {
+  EUPATH_0043203 => 1,
+  EUPATH_0043204 => 1,
+  EUPATH_0043205 => 1,
+  EUPATH_0043206 => 1,
+  EUPATH_0043207 => 1,
+  EUPATH_0043208 => 1,
+  EUPATH_0043209 => 1,
+};
+
 # ----------------------------------------------------------------------
 
 sub new {
@@ -113,7 +124,7 @@ sub run {
     my %mergeInfo; # populate with id_cols, merge_key for each file
     while( my ($entityTypeId, $meta) = each %$entityTypeIds) {
       my $entityTypeAbbrev = $meta->{ABBREV};
-      my $entityNameForFile = $meta->{PLURAL} || $entityTypeAbbrev;
+      my $entityNameForFile = $meta->{PLURAL} || $meta->{LABEL} || $entityTypeAbbrev;
       my $entityName = map { ucfirst($_) } split(/\s/, $meta->{LABEL});
       $entityNameForFile =~ tr/ /_/;
       $entityName =~ tr/ /_/;
@@ -160,8 +171,42 @@ sub run {
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
   }
+
+
+  my $studiesFile = "studies.txt";
+  if($outputDir){
+    unless(-d $outputDir){
+      mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
+    }
+    $studiesFile = sprintf("%s/%s_Studies.txt", $outputDir, $fileBasename);
+  }
+  else{
+    $studiesFile = sprintf("%s_Studies.txt", $fileBasename);
+  }
+  $self->log("Makingfile $studiesFile");
+  $self->makeStudiesFile($studiesFile, ${SCHEMA}, $extDbRlsId);
+
   return("Created download files");
 }
+
+sub makeStudiesFile {
+  my ($self, $outputFile, $schema, $extDbRlsId) = @_;
+
+  my $sql = "select stable_id, internal_abbrev from ${schema}.study where external_database_release_id = $extDbRlsId";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute;
+
+  open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
+
+  while(my ($stableId, $internalAbbrev) = $sh->fetchrow_array()) {
+    print FH "$stableId\t$internalAbbrev\n";
+  }
+  close FH;
+}
+
+
 
 sub createDownloadFile {
  my ($self, $entityTypeId, $entityTypeAbbrev, $entityNames, $studyAbbrev, $outputFile) = @_;
@@ -197,7 +242,7 @@ SQL_GETLABELS
   my $valueTableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
   my $stableIdCol = uc("${entityTypeAbbrev}_STABLE_ID");
 
-  my $sql = "select at.*, vt.attribute_stable_id, vt.string_value from $ancestorTableName at left join $valueTableName vt on at.$stableIdCol=vt.$stableIdCol order by at.$stableIdCol";
+  my $sql = "select DISTINCT at.*, vt.attribute_stable_id, vt.string_value from $ancestorTableName at left join $valueTableName vt on at.$stableIdCol=vt.$stableIdCol where vt.string_value is not NULL order by at.$stableIdCol";
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute;
@@ -227,13 +272,14 @@ SQL_GETLABELS
   my $keycount = 0;
   my $totalEntityIds = 0;
   while(my $row = $sh->fetchrow_hashref()) {
+    next if ($HARDCODE_FORCED_HIDDEN->{$row->{ATTRIBUTE_STABLE_ID}});
     # $entityId ||= $row->{ $stableIdCol };
     my ($attrId, $value) = ($row->{ATTRIBUTE_STABLE_ID}, $row->{STRING_VALUE});
     if($entityId ne $row->{ $stableIdCol }) {
       #New row batch (per entityId): print previous and load next entity+ancestor IDs
       $self->formatValues($hash, \@orderedIRIs, $multiValueIRIs);
       if(keys %$hash){
-        printf FH ("%s\n", join("\t", map { $hash->{$_} } @entityIdCols, @orderedIRIs));
+        printf FH ("%s\n", join("\t", map { ref($hash->{$_}) eq 'ARRAY' ? join("|",@{$hash->{$_}}) : $hash->{$_} } @entityIdCols, @orderedIRIs));
       }
       $hash = $row; 
       delete $hash->{ATTRIBUTE_STABLE_ID};
@@ -243,9 +289,10 @@ SQL_GETLABELS
       $entityId = $row->{ $stableIdCol };
     }
     if( $keycount > $totalcols ){
-      foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
-      printf STDERR ("DEBUG: too many variables found %s\n", Dumper $hash);
-      die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
+      # Not necessary to wipe out the entire row; only mapped terms will get printed
+      #foreach my $col (@entityIdCols, @orderedIRIs){ delete $hash->{$col} }
+      printf STDERR ("WARNING... too many variables found (wanted $totalcols, found $keycount): %s\n", join(",", keys %$hash));
+      #die ("ERROR: Entity ID not incremented $entityId. Saw $totalEntityIds entities, last variable count $keycount > $totalcols\n");
     }
     unless(defined $hash->{$attrId} ){
       $hash->{$attrId} = [];
@@ -254,7 +301,7 @@ SQL_GETLABELS
     push(@{ $hash->{ $attrId } }, $value);
   }
   $self->formatValues($hash, \@orderedIRIs, $multiValueIRIs);
-  printf FH ("%s\n", join("\t", map { $hash->{$_} } @entityIdCols, @orderedIRIs));
+  printf FH ("%s\n", join("\t", map { ref($hash->{$_}) eq 'ARRAY' ? join("|",@{$hash->{$_}}) : $hash->{$_} } @entityIdCols, @orderedIRIs));
   close(FH);
   return { id_cols => \@mergeIdCols, merge_key => $mergeKey };
 }
@@ -262,7 +309,7 @@ SQL_GETLABELS
 sub formatValues {
   my ($self, $hash, $orderedIRIs, $multiValueIRIs) = @_;
   foreach my $col ( @$orderedIRIs){
-    next unless defined $hash->{$col};
+    if(!defined($hash->{$col}) || scalar @{$hash->{$col}} < 1 ){ next }
     if((scalar @{ $hash->{$col} } > 1) || $multiValueIRIs->{$col}){
       $hash->{$col} = sprintf('[%s]', join(",", map { sprintf('"%s"', $_) } @{$hash->{$col}}));
     }
@@ -280,7 +327,14 @@ regexp_replace(os.ONTOLOGY_SYNONYM ,'\s','_') || '_Id' ID_COLUMN
 from ${SCHEMA}.entitytype t
 left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
 where t.study_id = $studyId
-and os.external_database_release_id = $ontologyId";
+and os.external_database_release_id = $ontologyId
+UNION 
+select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,t.name LABEL, '' PLURAL,
+regexp_replace(t.name ,'\s','_') || '_Id' ID_COLUMN
+from EDA.entitytype t
+where t.study_id = $studyId
+AND t.TYPE_ID NOT IN (SELECT ontology_term_id FROM SRes.OntologySynonym WHERE EXTERNAL_DATABASE_RELEASE_ID = $ontologyId)";
+
   my $dbh = $self->getQueryHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
   my $sh = $dbh->prepare($sql);

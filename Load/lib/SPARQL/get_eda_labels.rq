@@ -1,18 +1,26 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX ebi: <http://www.ebi.ac.uk/efo/>
 PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
 
-SELECT distinct ?entity ?iri ?label ?category
-WHERE { 
-  ?_entity a owl:Class .
-  ?_entity rdfs:label ?_label . 
-  ?_entity obo:EUPATH_0001002 ?_category . 
-  FILTER regex(?_category, "EDA") . 
-  BIND (str(?_entity) AS ?entity) .
-  BIND (str(?_category) AS ?category) .
+
+select ?iri ?label
+where {
+  ?catleaf a owl:Class .
+  ?catleaf rdfs:label ?_label . 
+  $catleaf obo:EUPATH_0001005 ?_type .
   BIND (str(?_label) AS ?label) .
+  BIND (str(?_type) AS ?type) .
+  VALUES ?type  { "multifilter" "category" "" } .
+  filter not exists {
+    select distinct ?catleaf
+      where {
+      ?a_entity a owl:Class .
+      ?a_entity rdfs:subClassOf ?catleaf .
+      }
+    } .
+  BIND (str(?catleaf) AS ?entity) .
   BIND(
     replace(
       replace(
@@ -20,4 +28,4 @@ WHERE {
         str(ebi:), ""),
       str(sno:), "SNOMEDCT_")
     as $iri) .
-}
+  }

@@ -4,6 +4,7 @@ use Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(
 queryForOntologyTerms
+queryForOntologyHierarchyAndAnnotationProperties
 getSchemaFromRowAlgInvocationId
 getTermsByAnnotationPropertyValue
 getTermsWithDataShapeOrdinal
@@ -18,6 +19,7 @@ use JSON;
 use Data::Dumper;
 
 use YAML::Tiny;
+
 
 our $GEOHASH_PRECISION = {
     EUPATH_0043203 => 1,
@@ -37,45 +39,19 @@ our @adminLevelSourceIds = qw/OBI_0001627 ENVO_00000005 ENVO_00000006/; # countr
 
 
 sub queryForOntologyTerms {
-  my ($dbh, $extDbRlsId) = @_;
+  my ($dbh, $extDbRlsId, $overrideOnly, $termSchema) = @_;
 
 
-  my $sql = "select s.name
-                  , s.source_id
+  my $sql = "select s.source_id
                   , s.ontology_term_id
-                  , o.name parent_name
-                  , o.source_id parent_source_id
-                  , o.ontology_term_id parent_ontology_term_id
                   , nvl(os.ontology_synonym, s.name) as display_name
-                  , os.is_preferred
-                  , os.definition                    --this is also in the annotation_properties json
-                  , json_value(os.annotation_properties, '\$.displayType[0]') as display_type
-                  , json_query(os.annotation_properties, '\$.hidden') as hidden -- gives json array
-                  , json_value(os.annotation_properties, '\$.displayOrder[0]') as display_order
-                  , json_value(annotation_properties, '\$.defaultDisplayRangeMin[0]') as display_range_min
-                  , json_value(annotation_properties, '\$.defaultDisplayRangeMax[0]') as display_range_max
-                  , json_value(annotation_properties, '\$.defaultBinWidth[0]') as bin_width_override
-                  , case when lower(json_value(annotation_properties, '\$.is_temporal[0]')) = 'yes' then 1 else 0 end as is_temporal
-                  , case when lower(json_value(annotation_properties, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
-                  , case when lower(json_value(annotation_properties, '\$.repeated[0]')) = 'yes' then 1 else 0 end as is_repeated
-                  , case when lower(json_value(annotation_properties, '\$.mergeKey[0]')) = 'yes' then 1 else 0 end as is_merge_key
-                  , case when lower(json_value(annotation_properties, '\$.impute_zero[0]')) = 'yes' then 1 else 0 end as impute_zero
-                  , json_query(os.annotation_properties, '\$.variable') as provider_label -- gives json array
-                  , os.ordinal_values as ordinal_values --gives json array
-from sres.ontologyrelationship r
-   , sres.ontologyterm s
-   , sres.ontologyterm o
-   , sres.ontologyterm p
-   , sres.ontologysynonym os
-where r.subject_term_id = s.ontology_term_id
-and r.predicate_term_id = p.ontology_term_id
-and r.object_term_id = o.ontology_term_id
-and p.SOURCE_ID = 'subClassOf'
-and s.ontology_term_id = os.ontology_term_id (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
-and r.external_database_release_id = ?
+from ${termSchema}.ontologyterm s
+   , (select ontology_term_id
+           , ontology_synonym
+      from ${termSchema}.ontologysynonym
+      where external_database_release_id = ?) os
+where s.ontology_term_id = os.ontology_term_id (+)
 ";
-
 
   my $sh = $dbh->prepare($sql);
   $sh->execute($extDbRlsId);
@@ -91,6 +67,67 @@ and r.external_database_release_id = ?
 
   return \%ontologyTerms;
 }
+
+
+sub queryForOntologyHierarchyAndAnnotationProperties {
+  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema) = @_;
+
+  my $sql = "select s.name
+                  , s.source_id
+                   , s.ontology_term_id
+                  , o.name parent_name
+                  , o.source_id as parent_stable_id
+                  , o.ontology_term_id parent_ontology_term_id
+                  , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, s.name)) as display_name
+                  , os.is_preferred
+                  , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, s.definition)) as definition
+                  , json_value(ap.props, '\$.displayType[0]') as display_type
+                  , json_query(ap.props, '\$.hidden') as hidden -- gives json array
+                  , json_value(ap.props, '\$.displayOrder[0]') as display_order
+                  , json_value(ap.props, '\$.defaultDisplayRangeMin[0]') as display_range_min
+                  , json_value(ap.props, '\$.defaultDisplayRangeMax[0]') as display_range_max
+                  , json_value(ap.props, '\$.defaultBinWidth[0]') as bin_width_override
+                  , case when lower(json_value(ap.props, '\$.is_temporal[0]')) = 'yes' then 1 else 0 end as is_temporal
+                  , case when lower(json_value(ap.props, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
+                  , case when lower(json_value(ap.props, '\$.repeated[0]')) = 'yes' then 1 else 0 end as is_repeated
+                  , case when lower(json_value(ap.props, '\$.mergeKey[0]')) = 'yes' then 1 else 0 end as is_merge_key
+                  , case when lower(json_value(ap.props, '\$.impute_zero[0]')) = 'yes' then 1 else 0 end as impute_zero
+                  , json_query(ap.props, '\$.variable') as provider_label -- gives json array
+                  , json_query(ap.props, '\$.ordinal_values') as ordinal_values -- gives json array
+                  , json_value(ap.props, '\$.scale[0]') as scale
+from ${termSchema}.ontologyrelationship r
+   , ${termSchema}.ontologyterm s
+   , ${termSchema}.ontologyterm o
+   , ${termSchema}.ontologyterm p
+   , ${termSchema}.ontologysynonym os
+   , (select * from ${schema}.annotationproperties where external_database_release_id = ?) ap
+where r.subject_term_id = s.ontology_term_id
+and r.predicate_term_id = p.ontology_term_id
+and r.object_term_id = o.ontology_term_id
+and p.SOURCE_ID = 'subClassOf'
+and s.ontology_term_id = os.ontology_term_id (+)
+and s.ontology_term_id = ap.ontology_term_id (+)
+and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)
+and r.external_database_release_id = ?";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId, $ontologyExtDbRlsId);
+
+  my %ontologyTerms;
+
+  while(my $hash = $sh->fetchrow_hashref()) {
+    my $sourceId = $hash->{SOURCE_ID};
+
+    $ontologyTerms{$sourceId} = $hash;
+  }
+  $sh->finish();
+
+  return \%ontologyTerms;
+
+}
+
+
+
 
 sub getSchemaFromRowAlgInvocationId {
   my($dbh, $rowAlgInvocationId) = @_;
@@ -110,11 +147,11 @@ printf STDERR ("SCHEMA = $schema\n");
 }
 
 sub getTermsAnnotationProperties {
-  my ($dbh, $extDbRlsId) = @_;
+  my ($dbh, $extDbRlsId, $termSchema) = @_;
 
   my $sql = "SELECT o2.source_id,o.ANNOTATION_PROPERTIES
-FROM sres.ONTOLOGYSYNONYM o
-LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
+FROM ${termSchema}.ONTOLOGYSYNONYM o
+LEFT JOIN ${termSchema}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
 and o.ANNOTATION_PROPERTIES IS NOT NULL";
 
@@ -128,10 +165,10 @@ and o.ANNOTATION_PROPERTIES IS NOT NULL";
 }
 
 sub getTermsWithDataShapeOrdinal {
-  my($dbh, $extDbRlsId, $property, $match) = @_;
+  my($dbh, $extDbRlsId, $property, $match, $termSchema) = @_;
   my $sql = "SELECT o2.source_id,'1'
-FROM sres.ONTOLOGYSYNONYM o
-LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
+FROM ${termSchema}.ONTOLOGYSYNONYM o
+LEFT JOIN ${termSchema}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
 and (json_value(o.ANNOTATION_PROPERTIES, '\$.forceStringType[0]') = 'yes' 
 OR (o.ORDINAL_VALUES IS NOT NULL

@@ -21,7 +21,8 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
+#use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike);
 
 use JSON;
 use Encode qw/encode/;
@@ -29,13 +30,14 @@ use Encode qw/encode/;
 use Data::Dumper;
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
 
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
 
-my $TERMS_WITH_DATASHAPE_ORDINAL = {};
+#my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
 my $ALLOW_VOCABULARY_COUNT = 10; # if the number of distinct values is less, generate vocabulary/ordered_values/ordinal_values
 
@@ -67,7 +69,7 @@ my $tablesDependedOn =
      ['__SCHEMA__::ProcessType',  ''],
     ];
 
-my $howToRestart = ""; 
+my $howToRestart = "";
 my $failureCases = "";
 my $notes = "";
 
@@ -162,7 +164,11 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   $SCHEMA = $self->getArg('schema');
-  ## 
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
+  ##
 
   chdir $self->getArg('logDir');
 
@@ -202,19 +208,35 @@ sub run {
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
-    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-    $self->addScaleToOntologyTerms($ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec, $TERM_SCHEMA);
+    #my $ontologyOverride = &queryForOntologyTerms($dbh, $extDbRlsId, 1);
 
-    $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
+    # printf STDERR ("Checking for overrides with extDbRlsId = $extDbRlsId\n");
+    # while(my ($termIRI, $properties) = each %$ontologyOverride){
+    #   while(my ($prop, $value) = each %$properties){
+    #     next unless(defined($value) && $value ne "");
+    #     $ontologyTerms->{$termIRI}->{$prop} = $value;
+    #     printf STDERR ("Overriding: $termIRI $prop = $value\n");
+    #   }
+    # }
+    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $extDbRlsId);
+    #$self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')),$overrideUnits);
+    #$self->addScaleToOntologyTerms($ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+
+    # $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
+    # my $overrideOrdinals = &getTermsWithDataShapeOrdinal($dbh, $extDbRlsId) ;
+    # foreach my $termIRI (keys %$overrideOrdinals){ $TERMS_WITH_DATASHAPE_ORDINAL->{$termIRI} = 1 }
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
     my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory);
 
+
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh, $entityTypeIds, $internalAbbrev);
     my $statsForPlotsByAttributeStableIdAndEntityTypeId = $self->statsForPlots($dateValsFileName, $numericValsFileName, $tempDirectory);
+
     my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
+    $self->log("Finished load attribute terms");
 
     $self->log("Loaded $attributeCount attributes for study id $studyId");
   }
@@ -375,7 +397,7 @@ sub queryForEntityTypeIds {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select t.name, t.entity_type_id, ot.source_id, t.internal_abbrev
-from $SCHEMA.entitytype t, sres.ontologyterm ot
+from $SCHEMA.entitytype t, ${TERM_SCHEMA}.ontologyterm ot
 where t.type_id = ot.ontology_term_id (+)
 and study_id = $studyId";
 
@@ -392,15 +414,18 @@ and study_id = $studyId";
 
   return \%rv;
 }
+
+# non ontological things will have a name and also a parent source_id
 sub annPropsFromParentOntologyTerm {
   my ($displayName, $parentOntologyTerm, $processTypeId, $isMultiValued) = @_;
   return {
     ontology_term_id => undef,
-    parent_ontology_term_id => $parentOntologyTerm->{ONTOLOGY_TERM_ID},
+#    parent_ontology_term_id => $parentOntologyTerm->{ONTOLOGY_TERM_ID},
+    parent_stable_id => $parentOntologyTerm->{SOURCE_ID},
     unit => $parentOntologyTerm->{UNIT_NAME},
     unit_ontology_term_id => $parentOntologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-    scale => $parentOntologyTerm->{SCALE},
-    display_name => $displayName,
+#    scale => $parentOntologyTerm->{SCALE},
+    non_ontological_name => $displayName,
     process_type_id => $processTypeId,
     is_multi_valued => $isMultiValued,
   };
@@ -409,11 +434,11 @@ sub annPropsFromOntologyTerm {
   my ($ontologyTerm, $processTypeId, $isMultiValued) = @_;
   return {
     ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-    parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
+#    parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
     unit => $ontologyTerm->{UNIT_NAME},
     unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-    scale => $ontologyTerm->{SCALE},
-    display_name => $ontologyTerm->{DISPLAY_NAME},
+#    scale => $ontologyTerm->{SCALE},
+#    name => $ontologyTerm->{DISPLAY_NAME},
     process_type_id => $processTypeId,
     is_multi_valued => $isMultiValued,
   };
@@ -485,14 +510,14 @@ sub valProps {
 
 #  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
-  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
-    $dataShape = 'ordinal';
-  }
+  # if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
+  #   $dataShape = 'ordinal';
+  # }
 # DEPRECATED - never infer shape = ordinal
 # elsif($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
 #   $dataShape = 'ordinal';
 # }
-  elsif($isDate || $isNumber ){
+  if($isDate || $isNumber ){
     $dataShape = 'continuous';
   }
   elsif($valueCount == 2) {
@@ -547,37 +572,47 @@ sub addUnitsToOntologyTerms {
 
   my $dbh = $self->getQueryHandle();
 
+  # my $excludeStr = "";
+  # if(ref($overrideUnits) && 0 < keys %$overrideUnits){
+  #   $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
+  # }
+
   my $sql = "select * from (
 select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
 from $SCHEMA.study pg
    , $SCHEMA.entitytype vt
    , $SCHEMA.attributeunit au
-   , sres.ontologyterm att
-   , sres.ontologyterm unit
+   , ${TERM_SCHEMA}.ontologyterm att
+   , ${TERM_SCHEMA}.ontologyterm unit
 where pg.study_id = ?
 and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
 and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
 and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id
-UNION
-select ot.source_id
-     , uot.ontology_term_id
-     , json_value(annotation_properties, '\$.unitLabel[0]') label
-     , 1 as priority
-from sres.ontologysynonym os
-   , sres.ontologyterm ot
-   , sres.ontologyterm uot
-where os.ontology_term_id = ot.ontology_term_id
-and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
-and json_value(annotation_properties, '\$.unitLabel[0]') is not null
-and os.external_database_release_id = ?
-) order by priority
+--UNION
+--select ot.source_id
+--     , uot.ontology_term_id
+--     , json_value(annotation_properties, '\$.unitLabel[0]') label
+--     , 1 as priority
+--from sres.ontologysynonym os
+--   , sres.ontologyterm ot
+--   , sres.ontologyterm uot
+--where os.ontology_term_id = ot.ontology_term_id
+--and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
+--and json_value(annotation_properties, '\$.unitLabel[0]') is not null
+--and os.external_database_release_id = ?
+)
+ order by priority
 ";
 
+
+  #$overrideUnits //= {};
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId, $ontologyExtDbRlsId);
+  #$sh->execute($studyId, $ontologyExtDbRlsId);
+  $sh->execute($studyId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
+    #next if defined($overrideUnits->{$sourceId});
     if($ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID}) {
       # TODO:  Shouldn't we allow one unit per attribute/entityType?
       $self->userError("The Attribute $sourceId can only have one unit specification per study.  Units can be specified either in the ISA files OR in annotation properties");
@@ -585,45 +620,47 @@ and os.external_database_release_id = ?
 
     $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
     $ontologyTerms->{$sourceId}->{UNIT_NAME} = $unitName;
+#    $overrideUnits->{$sourceId} = 1;
   }
 
   $sh->finish();
+#  return $overrideUnits;
 }
 
 
-sub addScaleToOntologyTerms {
-  my ($self, $ontologyTerms, $ontologyExtDbRlsId) = @_;
+# sub addScaleToOntologyTerms {
+#   my ($self, $ontologyTerms, $ontologyExtDbRlsId) = @_;
 
-  my $dbh = $self->getQueryHandle();
+#   my $dbh = $self->getQueryHandle();
 
-  my $sql = "
-select ot.source_id
-     , json_value(annotation_properties, '\$.scale[0]') scale
-from sres.ontologysynonym os
-   , sres.ontologyterm ot
-where os.ontology_term_id = ot.ontology_term_id
-and json_value(annotation_properties, '\$.scale[0]') is not null
-and os.external_database_release_id = ?
-";
+#   my $sql = "
+# select ot.source_id
+#      , json_value(annotation_properties, '\$.scale[0]') scale
+# from sres.ontologysynonym os
+#    , sres.ontologyterm ot
+# where os.ontology_term_id = ot.ontology_term_id
+# and json_value(annotation_properties, '\$.scale[0]') is not null
+# and os.external_database_release_id = ?
+# ";
 
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($ontologyExtDbRlsId);
+#   my $sh = $dbh->prepare($sql);
+#   $sh->execute($ontologyExtDbRlsId);
 
-  while(my ($sourceId, $scale) = $sh->fetchrow_array()) {
-    if($ontologyTerms->{$sourceId}->{SCALE}) {
-      $self->userError("The Attribute $sourceId can only have one SCALE specification per study.  Units can be specified either in the ISA files OR in annotation properties");
-    }
+#   while(my ($sourceId, $scale) = $sh->fetchrow_array()) {
+#     if($ontologyTerms->{$sourceId}->{SCALE}) {
+#       $self->userError("The Attribute $sourceId can only have one SCALE specification per study.  Units can be specified either in the ISA files OR in annotation properties");
+#     }
 
-    $ontologyTerms->{$sourceId}->{SCALE} = $scale;
-  }
+#     $ontologyTerms->{$sourceId}->{SCALE} = $scale;
+#   }
 
-  $sh->finish();
-}
+#   $sh->finish();
+# }
 
 
 
 sub makeFifosForSqlloader {
-  my ($self, $entityTypeIds, $maxAttrLength, $studyInternalAbbrev) = @_;
+  my ($self, $entityTypeIds, $maxAttrLength, $studyInternalAbbrev, $studyId) = @_;
 
   my $entityTypeIdFifos;
 
@@ -633,8 +670,8 @@ sub makeFifosForSqlloader {
     my $timestamp = int (gettimeofday * 1000);
     my $fifoName = "${SCHEMA}_attributevalue_${internalAbbrev}_${timestamp}.dat";
 
-    my $fields = $self->fieldsAndCreateTable($maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId);
-    my $fifo = $self->makeFifo($fields, $fifoName, $internalAbbrev, $studyInternalAbbrev);
+    my $fields = $self->fieldsAndCreateTable($maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId, $studyId);
+    my $fifo = $self->makeFifo($fields, $fifoName, $entityTypeId, $studyId);
 
     $entityTypeIdFifos->{$entityTypeId} = $fifo;
   }
@@ -646,7 +683,7 @@ sub makeFifosForSqlloader {
 sub loadAttributeValues {
   my ($self, $studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh, $entityTypeIds, $studyInternalAbbrev) = @_;
 
-  my $fifos = $self->makeFifosForSqlloader($entityTypeIds, $maxAttrLength, $studyInternalAbbrev);
+  my $fifos = $self->makeFifosForSqlloader($entityTypeIds, $maxAttrLength, $studyInternalAbbrev, $studyId);
 
   my $annPropsByAttributeStableIdAndEntityTypeId = {};
   my $typeCountsByAttributeStableIdAndEntityTypeId = {};
@@ -704,7 +741,7 @@ sub loadAttributes {
           $unitOntologytermIdOrig = $self->lookupUnit($entityTypeIdOrig, $attributeStableId);
 
           if(!$unitOntologytermIdOrig || $unitOntologytermIdOrig != $unitOntologyTermId) {
-            my ($convertedValue) = $self->convertValue($value, $unitOntologytermIdOrig, $unitOntologyTermId);
+            my ($convertedValue) = $self->convertValue($value, $unitOntologytermIdOrig, $unitOntologyTermId, $attributeStableId);
             $value = $convertedValue;
           }
         }
@@ -746,7 +783,12 @@ sub loadAttributes {
 
 
 sub convertValue {
-  my ($self, $value, $unitIdOrig, $unitIdDesired) = @_;
+  my ($self, $value, $unitIdOrig, $unitIdDesired,$attributeStableId) = @_;
+
+  if(!$unitIdOrig) {
+    $self->log("WARN:  Missing unit for some entities for attribute $attributeStableId.  Expected unit id=$unitIdDesired.  Applying that unit to those entities");
+    return $value;
+  }
 
   $self->error("Unit Mismatch Not yet supported.  VALUE $value found in units [$unitIdOrig] but desired [$unitIdDesired]");
 
@@ -763,7 +805,7 @@ sub lookupUnit {
   }
 
   my $sql = "select ot.source_id, au.unit_ontology_term_id
-from SRES.ONTOLOGYTERM ot, ${SCHEMA}.attributeunit au
+from ${TERM_SCHEMA}.ONTOLOGYTERM ot, ${SCHEMA}.attributeunit au
 where au.ATTR_ONTOLOGY_TERM_ID = ot.ONTOLOGY_TERM_ID
 and au.entity_type_id = ?";
 
@@ -833,10 +875,10 @@ sub typedValueForAttribute {
   ## Abort if annotation property forceStringType = yes
   ## which is loaded into SRes.OntologySynonym.Annotation_Properties
   ## by the step _updateOntologySynonym_owlAttributes
-  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
-    $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
-    return $counts, $stringValue, $numberValue, $dateValue;
-  }
+  # if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
+  #   $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
+  #   return $counts, $stringValue, $numberValue, $dateValue;
+  # }
   #####################################################
 
   if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
@@ -856,9 +898,9 @@ sub typedValueForAttribute {
     # $counts->{_MIN_DATE} = (sort { Date_Cmp($b, $a) } ($counts->{_MIN_DATE} || $parsedDate, $parsedDate))[-1];
     # $counts->{_MAX_DATE} = (sort { Date_Cmp($a, $b) } ($counts->{_MAX_DATE} || $parsedDate, $parsedDate))[-1];
   }
-  elsif($value =~ /^\d/) {
-    $counts->{_IS_ORDINAL_COUNT}++;
-  }
+  # elsif($value =~ /^\d/) {
+  #   $counts->{_IS_ORDINAL_COUNT}++;
+  # }
   else {
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
@@ -906,7 +948,7 @@ select ea.entity_attributes_id
      , ea.stable_id
      , ea.entity_type_id
      , ea.orig_entity_type_id
-     , ea.type_id as entity_type_ontology_term_id
+     , ea.entity_type_ontology_term_id
      , null as process_type_id
      , null as process_type_ontology_term_id
      , ea.atts
@@ -923,7 +965,7 @@ select ea.entity_attributes_id
      , ea.stable_id
      , ea.entity_type_id
      , ea.entity_type_id as orig_entity_type_id
-     , ea.type_id as entity_type_ontology_term_id
+     , ea.entity_type_ontology_term_id
      , pt.process_type_id
      , pt.type_id as process_type_ontology_term_id
      , pa.atts
@@ -938,8 +980,14 @@ and ea.study_id = ?
 }
 
 sub fieldsAndCreateTable {
-  my ($self, $maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId) = @_;
+  my ($self, $maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId, $studyId) = @_;
+
   $maxAttrLength += $maxAttrLength; # Workaround to prevent Sqlldr from choking on wide characters
+
+  if(lc($internalAbbrev) eq 'study') {
+    $maxAttrLength = 400;
+  }
+
   my $datatypeMap = {};
 
   my $idField = lc($internalAbbrev) . "_stable_id";
@@ -961,7 +1009,9 @@ sub fieldsAndCreateTable {
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyInternalAbbrev}_${internalAbbrev}";
 
-  my $createTableSql = "create table $tableName (
+  my $tableSynonymName = "${SCHEMA}.AttributeValue_${studyId}_${entityTypeId}";
+
+  my $createTableSql = "create table $tableSynonymName (
 $idField VARCHAR2(200) NOT NULL,
 attribute_stable_id  VARCHAR2(255) NOT NULL,
 string_value VARCHAR2(1000) NOT NULL,
@@ -974,20 +1024,22 @@ date_value DATE
 
   $dbh->do($createTableSql) or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableSynonymName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableSynonymName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableSynonymName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableSynonymName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
+  $dbh->do("create or replace synonym ${tableName} for ${tableSynonymName}") or die $dbh->errstr;
+  $dbh->do("GRANT SELECT ON $tableSynonymName TO gus_r") or die $dbh->errstr;
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
 
   return \@fields;
 }
 
 
 sub makeFifo {
-  my ($self, $fields, $fifoName, $entityTypeAbbrev, $studyInternalAbbrev) = @_;
+  my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -1010,7 +1062,7 @@ sub makeFifo {
                                                  _append => 0,
                                                  _infile_name => $fifoName,
                                                  _reenable_disabled_constraints => 1,
-                                                 _table_name => "$SCHEMA.AttributeValue_${studyInternalAbbrev}_${entityTypeAbbrev}",
+                                                 _table_name => "$SCHEMA.AttributeValue_${studyId}_${entityTypeId}",
                                                  _fields => $fields
                                                 });
 

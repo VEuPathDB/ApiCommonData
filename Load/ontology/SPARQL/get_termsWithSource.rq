@@ -1,0 +1,35 @@
+# Retrieve all ontology terms used in the VEUPATHDB terminologies with label, parent, definition and project names
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?IRI
+  (GROUP_CONCAT(DISTINCT ?label;separator="|") AS ?labels)
+  (GROUP_CONCAT(DISTINCT ?parent_entity;separator="|") AS ?parent_IRI)
+  (GROUP_CONCAT(DISTINCT ?plabel;separator="|") AS ?parent_label)
+  (GROUP_CONCAT(DISTINCT ?def;separator="|") AS ?definitions)
+  (GROUP_CONCAT(DISTINCT ?dataset;separator=" | ") AS ?projects)
+WHERE {
+  <http://purl.obolibrary.org/obo/web_display.owl> owl:imports ?file .
+  GRAPH ?file {
+	?IRI rdfs:subClassOf ?parent_entity .} .
+  ?IRI a owl:Class .
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	IF(STRSTARTS(?f2, "general/"), STRAFTER(?f2, "general/"), ?c), 
+	?f2) AS ?dataset) .
+  ?IRI rdfs:label ?org_label . 
+  ?parent_entity rdfs:label ?p_label .
+  OPTIONAL {
+    	?IRI obo:IAO_0000115 ?def .
+  }
+  BIND (str(?org_label) AS ?label)
+  BIND (str(?p_label) AS ?plabel)
+}
+GROUP BY ?IRI
+ORDER BY ASC(?IRI)

@@ -51,7 +51,12 @@ sub displayAndBaseName {
 
       $order++ unless($rv{$key});
 
-      $rv{$key}->{displayName} = $group . $suffix;
+      if($suffix) {
+        $rv{$key}->{displayName} = $group . $suffix;
+      }
+      else {
+        $rv{$key}->{displayName} = $group;
+      }
 
       $rv{$key}->{orderNum} = $order;
 

@@ -168,7 +168,7 @@ sub run {
     }
 
     # for now using random hard coded source_id for this - there must be a better way?!
-    my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => 'EUPATH_0000454'}); # "Average mapping coverage"
+    my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => 'EuPathUserDefined_00501'}); # "Average mapping coverage"
     my $coverageOntologyTermCount = $coverageOntologyTerm->retrieveFromDB();
     if ($coverageOntologyTermCount > 1) {
       $self->userError("More than one OntologyTerm record found with source_id \"" . $coverageOntologyTerm->getSourceId() . "\"\n");
@@ -184,7 +184,7 @@ sub run {
     $coverageCharacteristic->setParent($assayProtocolAppNode);
     $gusStudy->addToSubmitList($coverageCharacteristic);
 
-    my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => 'EUPATH_0000455'}); # "Proportion mapped reads"
+    my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => 'EuPathUserDefined_00502'}); # "Proportion mapped reads"
     my $mappedReadOntologyTermCount = $mappedReadOntologyTerm->retrieveFromDB();
     if ($mappedReadOntologyTermCount > 1) {
       $self->userError("More than one OntologyTerm record found with source_id \"" . $mappedReadOntologyTerm->getSourceId() . "\"\n");

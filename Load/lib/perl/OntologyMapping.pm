@@ -231,6 +231,7 @@ sub getMaterialTypesFromOwl {
     'dna extract' => "OBI_0001051",
     'sample from organism' => "OBI_0000671",
     'participant' => "EUPATH_0000096",
+    'participant_repeated_measure' => "EUPATH_0000738",
     'whole metagenome sequencing assay' => "OBI_0002623",
     '16s rrna sequencing assay targeting v1-v2 region' => "EUPATH_0000808",
     '16s rrna sequencing assay targeting v1-v3 region' => "EUPATH_0000809",
@@ -238,6 +239,7 @@ sub getMaterialTypesFromOwl {
     '16s rrna sequencing assay targeting v3-v4 region' => "EUPATH_0000811",
     '16s rrna sequencing assay targeting v3-v5 region' => "EUPATH_0000812",
     '16s rrna sequencing assay targeting v4 region' => "EUPATH_0000813",
+    'mass spectrometry assay' => 'OBI_0000470',
   );
   my $it = $owl->execute('top_level_entities');
   while (my $row = $it->next) {
@@ -266,6 +268,7 @@ sub getProtocols {
     'dna sequencing' => 'OBI_0000626',
     'data collection' => 'OBI_0600013',
     'data transformation' => 'OBI_0200000',
+    'parent of participant_repeated_measure' => 'BFO_0000015',
   );
   my @sorted;
   foreach my $prot ( sort keys %protocols ){

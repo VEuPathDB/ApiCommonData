@@ -11,45 +11,122 @@ Current for making queries working for cross ontologies, need to download robot.
 
 
 =============================================================
-# Retrieve ontology files and SPARQL queries from SVN repository
+# Retrieve ontology files and SPARQL queries from Git repository
 =============================================================
-SVN check out the files from https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommonData/trunk/Load/ontology and store under ontology directory
-	svn co https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommonData/trunk/Load/ontology ontology/
+Git check out the files from https://github.com/VEuPathDB/ApiCommonData/Load/ontology and store under ontology directory
+	git colon https://github.com/VEuPathDB/ApiCommonData.git
 
-# EuPathDB projects
-. Genomics site
-	- ISA-TAB files: eupath_isa.owl
-	- ICEMR protein array: protein_array.owl
+# VEuPathDB projects that used terminologies in OWL files
 
-. Microbiome DB
-	- microbiome.owl
+ClinEpi Projects
+--------------------------------------------
+Gates foundation projects:
+- gates_avenir.owl
+- gates_betterbirth.owl
+- gates_elicit.owl
+- gates_gamin.owl
+- gates_ganc.owl
+- gates_gems.owl
+- gates_gems_huas.owl
+- gates_gems1a.owl
+- gates_gems1a_huas.owl
+- gates_jilinde_awareness_survey.owl
+- gates_jilinde_costing_survey.owl
+- gates_jilinde_demand_creation_evaluation_questionnaire.owl
+- gates_jilinde_healthcareprovider_cohort.owl
+- gates_jilinde_pe_chv_cohort.owl
+- gates_jilinde_prospective_cohort.owl
+- gates_jilinde_retrospective_survey.owl
+- gates_llineup.owl
+- gates_maled.owl
+- gates_mordor.owl
+- gates_namibia.owl
+- gates_nectar1.owl
+- gates_pcs.owl
+- gates_perch.owl
+- gates_ppfp_choices_kenya_pp.owl
+- gates_provide.owl
+- gates_score_burundi.owl
+- gates_score_five_country.owl
+- gates_score_moz.owl
+- gates_score_nig.owl
+- gates_score_rwanda.owl
+- gates_score_seasonal.owl
+- gates_score_sm_cohort.owl
+- gates_score_sm_crt.owl
+- gates_score_zanzibar.owl
+- gates_shine.owl
+- gates_sip.owl
+- gates_vida.owl
+- gates_vida_hucs_gambia_mali.owl
+- gates_vida_hucs_kenya.owl
+- gates_washb_bangladesh.owl
+- gates_washb_kenya.owl
 
-. ClinEpi site
-	- Gates
-		gates_maled.owl
-		gates_gems.owl
-		gates_gems1a.owl
-	- ICEMR
-		icemr_prism.owl
-		icemr_indian.owl
-		icemr_southAsia.owl
-		icemr_amazoniaPeru_long.owl
+General
+- general_guatemala_oi_cohort.owl
+- general_kalifabougou.owl
+- general_promote.owl
+- general_umsp.owl
+- general_umsp_aggregate.owl
+
+ICEMR projects:
+- icemr_amazonia_brazil.owl
+- icemr_amazonia_peru.owl
+- icemr_india_behavior.owl
+- icemr_india_cohort.owl
+- icemr_india_cx.owl (cross-sectional study)
+- icemr_india_daman.owl
+- icemr_india_fever_surv.owl
+- icemr_india_meghalaya.owl
+- icemr_india_severe_malaria.owl
+- icemr_llineup2.owl
+- icemr_malawi.owl
+- icemr_myanmar.owl
+- icemr_prism.owl
+- icemr_prism2.owl
+- icemr_prism2_border_cohort.owl
+- icemr_south_asia.owl
+- icemr_southeast_asia.owl
+- icemr_southern_africa.owl
+- icemr_sub_saharan_africa_kenya_cohort.owl
+- icemr_sw_pacific.owl
+- icemr_west_africa.owl
+
+Non-eda projects:
+- general_covid19_india.owl
+- general_hcq_non_randomized.owl
+- general_nhs.owl
+
+--------------------------------------------
+
+Genomics projects:
+- eupath_isa.owl
+- protein_array.owl (ICEMR protein array)
+
+MicrobiomeDB project:
+- microbiome_eda.owl
+
+PopBio project:
+- popbio.owl
+
+Study classification:
+- general_classifications.owl
+
+=============================================================
 
 # SPARQL queries is under:
 	ontology/SPARQL
 
 # harmonization/web_display.owl
-	includes all EuPathDB projects
+	includes all VEuPathDB projects
 
-# harmonization/clinEpi.owl
-	includes all ClinEpi projects
+# harmonization/clinEpi_eda.owl
+	includes all ClinEpi EDA projects
 
-# File organization under ontology is documented in the file:
-	readme.rtf
-(some information may out-of-date, need to be updated)
 
 =============================================================
-# Issue SPARQL queries using robot tools
+# Run SPARQL queries using robot tools
 =============================================================
 
 1. Open Terminal window for running command line
@@ -62,6 +139,22 @@ SVN check out the files from https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommon
 4. Following SPARQL queries can be ran using ROBOT tool, SPARQL queries are in SPARQL directory and query results will be saved in query_results directory. All output are in CSV format. We can set the output as other formats, like TSV, TTL, JSONLD, etc.
 
 Notes: You need to change the PATH to the files or queries if you want to run the query and save results in the directory other than what specified here.
+
+
+
+QUERY EXAMPLEs
+
+=============================================================
+# Retrieve terms used in VEuPathDB
+=============================================================
+
+# Terms with EUPATH prefix
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/get_EuPathTermsWithSource.rq ./harmonization/EuPathTermsWithSource.csv
+
+# All Terms
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/get_termsWithSource.rq ./harmonization/termsWithSource.csv
+
+
 
 =============================================================
 # Individual ontology queries

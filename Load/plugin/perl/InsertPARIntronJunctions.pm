@@ -11,7 +11,6 @@ use DBI;
 use DBD::Oracle;
 use GUS::Model::ApiDB::IntronJunction;
 use GUS::PluginMgr::Plugin;
-use GUS::Community::GeneModelLocations;
 use GUS::Model::DoTS::NASequence;
 use Bio::Location::Simple;
 use Bio::Coordinate::Pair;

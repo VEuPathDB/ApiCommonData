@@ -9,6 +9,7 @@ use warnings;
 use ApiCommonData::Load::MBioResultsDir;
 use CBIL::ISA::InvestigationSimple;
 use File::Basename;
+use JSON;
 use Carp;
 
 my $argsDeclaration =
@@ -69,6 +70,56 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
+
+   fileArg({name           => 'valueMappingFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+        mustExist      => 0,
+        format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+
+   stringArg({name           => 'ontologyMappingOverrideFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+            constraintFunc => undef,
+              isList         => 0, }),
+
+    integerArg({  name           => 'userDatasetId',
+	       descr          => 'For use with Schema=ApidbUserDatasets; this is the user_dataset_id',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
+
+      booleanArg({name => 'loadProtocolTypeAsVariable',
+          descr => 'should we add protocol types in processattributes',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+   stringArg({name           => 'protocolVariableSourceId',
+            descr          => 'If set, will load protocol names as values attached to this term',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 1, }),
+
+
+      booleanArg({name => 'useOntologyTermTableForTaxonTerms',
+          descr => 'should we use sres.ontologyterm instead of sres.taxonname',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+      booleanArg({name => 'isRelativeAbundance',
+          descr => 'do we need to compute and load relative abundance (default 0, compute rel, load both)',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
   ];
 
 sub new {
@@ -97,18 +148,28 @@ sub run {
   my $investigationFile = $self->getArg('investigationFile');
   my $namesPrefixForOwl = basename $self->getArg('sampleDetailsFile');
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
-  my $ontologyMappingOverrideFile = undef;
-  my $valueMappingFile = undef;
+  my $ontologyMappingOverrideFile = $self->getArg('ontologyMappingOverrideFile');
+  unless( -e $ontologyMappingOverrideFile ){ $ontologyMappingOverrideFile = undef }
+  my $valueMappingFile = $self->getArg('valueMappingFile');
+  unless( -e $valueMappingFile ){ $valueMappingFile = undef }
   my $onError = $self->getArg('dieOnFirstError') ? sub {confess @_}: undef;
   my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
   my $schema = $self->getArg('schema');
   my $mbioResultsDir = $self->getArg('mbioResultsDir');
+  my $isRelativeAbundance= $self->getArg('isRelativeAbundance');
   my $mbioResultsFileExtensions = $self->getArg('mbioResultsFileExtensions');
+  if(-f $mbioResultsFileExtensions){
+    open(FH, "<$mbioResultsFileExtensions");
+    my @lines = <FH>;
+    close(FH);
+    chomp $_ for @lines;
+    $mbioResultsFileExtensions = join(' ', @lines);
+  }
   my $fileExtensions = eval $mbioResultsFileExtensions;
   $self->error("string eval of $mbioResultsFileExtensions failed: $@") if $@;
   $self->error("string eval of $mbioResultsFileExtensions failed: should return a hash") unless ref $fileExtensions eq 'HASH';
-  my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions)->toGetAddMoreData;
+  my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions, $isRelativeAbundance)->toGetAddMoreData;
    
   my $doPruneStudies = 1;
   my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, $onError, $isReporterMode, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl, $doPruneStudies);

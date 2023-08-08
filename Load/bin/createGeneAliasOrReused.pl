@@ -42,9 +42,9 @@ my ($help, $oldTranscriptFile, $oldAnnotationFile, $oldAnnotationFormat, $newAnn
 &usage("Missing a Required Argument") unless (defined ($newAnnotationFile && $oldAnnotationFile && ($ifAlias || $ifReused) ));
 
 
-my ($oldSeqId, $oldGeneStart, $oldGeneEnd, $oldGeneStrand) = ($oldAnnotationFormat =~ /gff3/i) ? getGeneInfoFromGff3 ($oldAnnotationFile) : getGeneInfoFromGenbank ($oldAnnotationFile);
+my ($oldSeqId, $oldGeneStart, $oldGeneEnd, $oldGeneStrand) = ($oldAnnotationFormat =~ /gff/i) ? getGeneInfoFromGff3 ($oldAnnotationFile) : getGeneInfoFromGenbank ($oldAnnotationFile);
 
-my ($newSeqId, $newGeneStart, $newGeneEnd, $newGeneStrand) = ($newAnnotationFormat =~ /gff3/i) ? getGeneInfoFromGff3 ($newAnnotationFile) : getGeneInfoFromGenbank ($newAnnotationFile);
+my ($newSeqId, $newGeneStart, $newGeneEnd, $newGeneStrand) = ($newAnnotationFormat =~ /gff/i) ? getGeneInfoFromGff3 ($newAnnotationFile) : getGeneInfoFromGenbank ($newAnnotationFile);
 
 my ($oldSeqs) = ($oldAnnotationFormat =~ /genbank/i) ? getSeqsFromGenbank ($oldAnnotationFile) : getSeqsFromFasta ($oldFastaFile);
 

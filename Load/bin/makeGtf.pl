@@ -63,22 +63,8 @@ foreach my $geneSourceId (@geneSourceIds) {
     foreach my $subFeature (@{$feature}) {
         # Of bioperl features from GeneModelLocation, only CDS and exon are valid for gtf files
         if ($subFeature->primary_tag() eq 'exon') {
-
-            # If an exon belongs to 2 transcripts, we need to write it twice...
-            my @parents = $subFeature->get_tag_values('PARENT');
-            die "A feature belonging to gene $geneSourceId has more than one parent\n" unless (scalar @parents == 1);
-               
-            foreach my $parent (@parents) { 
-                my @transcriptIds = sort (split (',', $parent));
-                foreach my $transcriptId (@transcriptIds) {
-                    $subFeature->remove_tag('PARENT');
-                    $subFeature->add_tag_value('PARENT', $transcriptId);
-                    writeGtfRow($subFeature, $project, $geneSourceId, 'exon') unless($cdsOnly);
-                }
-            }
-        }
-
-        elsif ($subFeature->primary_tag() eq 'CDS') {
+            writeGtfRow($subFeature, $project, $geneSourceId, 'exon') unless($cdsOnly);
+        } elsif ($subFeature->primary_tag() eq 'CDS') {
             # Separate CDS features by parent
             my @parents = $subFeature->get_tag_values('PARENT');
             die "A feature belonging to gene $geneSourceId has more than one parent\n" unless (scalar @parents == 1);

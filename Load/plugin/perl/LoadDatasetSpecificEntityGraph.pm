@@ -55,6 +55,8 @@ my $argsDeclaration =
 ];
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
+
 my @UNDO_TABLES;
 my @REQUIRE_TABLES;
 
@@ -83,6 +85,9 @@ sub run {
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   $SCHEMA = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
@@ -92,7 +97,12 @@ sub run {
   $self->dropTables($extDbRlsSpec);
 
   my $collectionsYamlFile = $self->getArg('collectionsYaml');
-  my $collections = ApiCommonData::Load::StudyUtils::parseCollectionsConfig($collectionsYamlFile);
+
+
+  my $collections = {};
+  if($collectionsYamlFile) {
+    $collections = ApiCommonData::Load::StudyUtils::parseCollectionsConfig($collectionsYamlFile);
+  }
 
   my $dbh = $self->getDbHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
@@ -111,7 +121,7 @@ sub run {
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
       $self->createAncestorsTable($studyId, $entityTypeId, $studyAbbrev);
-      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId);
+      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId, $extDbRlsId);
 
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
         $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
@@ -148,6 +158,7 @@ where entity_type_id = $entityTypeId";
 
   my (@entityColumnStrings, @processColumnStrings);
   while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
+    $stableId = qq/"$stableId"/;
     my $path = "\$.${stableId}[0]";
     $dataType = lc($dataType) eq 'string' ? "VARCHAR2" : uc($dataType);
 # TODO Is this the right way to handle longitude?
@@ -188,7 +199,7 @@ sub createWideTable {
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
-  my $entityColumns = join("\n,", map { sprintf(qq/"%s"/, $_) } @$entityColumnStrings);
+  my $entityColumns = join("\n,", @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
 
@@ -461,7 +472,7 @@ sub getEntityTypeInfo {
 
 
 sub createAttributeGraphTable {
-  my ($self, $entityTypeId, $studyAbbrev, $studyId) = @_;
+  my ($self, $entityTypeId, $studyAbbrev, $studyId, $extDbRlsId) = @_;
 
   my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
@@ -477,12 +488,17 @@ sub createAttributeGraphTable {
   # careful: att.ontology_term_id doesn't have to exist
 
   my $sql = "CREATE TABLE $tableName as
-  WITH att AS
-  (SELECT a.*, t.source_id as unit_stable_id FROM ${SCHEMA}.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
-   , atg AS
+  WITH attAnnProps AS
+  (select ontology_term_id, json_value(props, '\$.unitLabel[0]') as unit_override from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId)
+   , att AS
+  (SELECT a.*, t.unit_override FROM ${SCHEMA}.attribute a, attAnnProps t WHERE a.ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
+   , satg AS
   (SELECT atg.*
    FROM ${SCHEMA}.attributegraph atg
    WHERE study_id = $studyId
+  )
+   , atg AS
+  (select * from satg
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing' and study_id = $studyId
   )
@@ -493,7 +509,7 @@ SELECT --  distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , atg.ordinal_values as vocabulary
+     , null as vocabulary
      , atg.display_type
      , atg.hidden
      , atg.display_order
@@ -530,11 +546,7 @@ SELECT -- distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , CASE
-         WHEN atg.ordinal_values IS NULL
-           THEN att.ordered_values
-         ELSE atg.ordinal_values
-       END as vocabulary
+     , nvl(atg.ordinal_values, att.ordered_values) as vocabulary
      , atg.display_type display_type
      , atg.hidden
      , atg.display_order
@@ -558,8 +570,8 @@ SELECT -- distinct
      , att.distinct_values_count
      , att.is_multi_valued
      , att.data_shape
-     , att.unit
-     , att.scale
+     , nvl(att.unit_override, att.unit) as unit
+     , atg.scale
      , att.precision
 FROM atg, att
 where atg.stable_id = att.stable_id
@@ -602,7 +614,7 @@ sub dropTables {
   my $dbh = $self->getDbHandle();
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
 
-  my $sql1 = "select distinct s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s
+  my $sql1 = "select distinct s.internal_abbrev from ${TERM_SCHEMA}.externaldatabase d, ${TERM_SCHEMA}.externaldatabaserelease r, ${SCHEMA}.study s
  where d.external_database_id = r.external_database_id
 and d.name = '$dbName' and r.version = '$dbVersion'
 and r.external_database_release_id = s.external_database_release_id";
@@ -703,14 +715,23 @@ EOF
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
+  $dbh->do("ALTER TABLE $collectionTableName add (member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
 
-  # display_range_min and display_range_max may ge specified in the yaml;  update those here
+  # update some things from the yaml.
   foreach my $stableId (keys %$collections) {
     if(my $rangeMin = $collections->{$stableId}->{range_min}) {
-      $dbh->do("update $collectionAttributesTableName set display_range_min = $rangeMin");
+      $dbh->do("update $collectionTableName set display_range_min = $rangeMin");
     }
     if(my $rangeMax = $collections->{$stableId}->{range_max}) {
-      $dbh->do("update $collectionAttributesTableName set display_range_max = $rangeMax");
+      $dbh->do("update $collectionTableName set display_range_max = $rangeMax");
+    }
+
+    if(my $member = $collections->{$stableId}->{member}) {
+      $dbh->do("update $collectionTableName set member = '$member' where stable_id = '$stableId'");
+
+      if(my $memberPlural = $collections->{$stableId}->{memberPlural}) {
+        $dbh->do("update $collectionTableName set member_plural = '$memberPlural' where stable_id = '$stableId'");
+      }
     }
   }
 
