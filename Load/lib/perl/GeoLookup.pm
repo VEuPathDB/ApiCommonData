@@ -78,9 +78,11 @@ has 'VEuGEO_extDbRlsId' => (
 # "private" cache attribute, see https://metacpan.org/pod/Moose::Meta::Attribute::Native::Trait::Hash
 has '_cache' => (
   is => 'ro', # don't worry the cache will still be rw
+  isa => 'HashRef',
+  default => sub { return {} },
   traits => [ 'Hash' ],
   handles   => {
-    set_cache     => 'set', # set_cache is a GeoLookup object method
+    set_cache     => 'set', # set_cache is now a GeoLookup object method
     get_cache     => 'get', # ditto here
     check_cache => 'exists', # and here
   },
