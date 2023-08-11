@@ -36,7 +36,7 @@ our $latitudeSourceId = "OBI_0001620";
 our $longitudeSourceId = "OBI_0001621";
 
 sub queryForOntologyTerms {
-  my ($dbh, $extDbRlsId, $overrideOnly, $termSchema) = @_;
+  my ($dbh, $extDbRlsId, $termSchema) = @_;
 
 
   my $sql = "select s.source_id
