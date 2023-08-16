@@ -10,13 +10,11 @@ use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
 use ApiCommonData::Load::OwlReader;
-
 use Text::CSV_XS;
-
+use Config::Std;
+use YAML qw/LoadFile/;
 
 use Digest::SHA qw/sha1_hex/;
-
-use YAML::Tiny;
 
 use Data::Dumper;
 
@@ -118,11 +116,15 @@ sub run {
   my $datasetName = $self->getArg('datasetName');
   my $commit = $self->getArg('commit');
 
-  my $yaml = YAML::Tiny->read($file);
+  my $cfg = {};
+  if( $file =~ /\.yaml$/i){
+    $cfg = $self->getCharacteristicsFromYaml($file, $datasetName);
+  }
+  else { # legacy, deprecated - read .ini, or multiple .ini in a directory
+    $cfg = $self->readConfigFiles($file,$datasetName);
+  }
 
-  my $datasetInfo = $self->datasetInfoFromYaml($yaml, $datasetName);
-
-  unless (0 < keys %$datasetInfo){ $self->log("$datasetName not found in $file, nothing to do"); return 0 }
+  unless (0 < keys %$cfg){ $self->log("$datasetName not found in $file, nothing to do"); return 0 }
 
   # fetch all 
   
@@ -200,10 +202,8 @@ ORDER BY e2.modification_date desc";
   my @rows;
   my @decodedRows;
   my $help_msg = 0;
-
-
-  while( my ($k, $values) = each %{$datasetInfo}){
-        ###
+  while( my ($k, $values) = each %{$cfg}){
+    ###
     $k = uc($k);
     my $attributeSourceId = $variableTerms{$k}; 
     unless($attributeSourceId){
@@ -309,26 +309,6 @@ ORDER BY e2.modification_date desc";
 
 # ======================================================================
 
-sub datasetInfoFromYaml {
-  my ($self, $yaml, $datasetName) = @_;
-
-  my %rv;
-
-  foreach my $doc (@$yaml) {
-    my $docDataset;
-    foreach my $key (keys %$doc) {
-      if($key eq 'dataset') {
-        $docDataset = $doc->{$key};
-      }
-      else {
-        $rv{$key} = ref($doc->{$key}) eq "ARRAY" ? $doc->{$key} : [$doc->{$key}];
-      }
-    }
-    return \%rv if($datasetName eq $docDataset)
-  }
-  $self->error("No study characteristics found for dataset: $datasetName");
-}
-
 sub selectHashRef {
   my ($self, $dbh, $sql, $args) = @_;
   my $sth = $dbh->prepare($sql);
@@ -339,64 +319,83 @@ sub selectHashRef {
   return $sth->fetchall_hashref($cols[0]);
 }
 
-# sub readConfig {
-#   my ($self, $file, $datasetName) = @_;
-#   if(-f $file && $file =~ /\.csv$/i){ return $self->readConfigFromCsv($file, $datasetName) }
-#   if(-d $file){ # a directory containing .ini files
-#     opendir(DH, "$file") or die "Cannot open directory $file:$!\n";
-#     my @inifiles = map { "$file/$_" } grep { /.+\.ini$/i } readdir(DH);
-#     foreach my $inifile (@inifiles){
-#       read_config($inifile, my %cfg);
-#       next unless(defined($cfg{$datasetName}));
-#       printf STDERR ("Found %s in %s\n", $datasetName, $inifile);
-#       # clean it up
-#       my %data;
-#       while(my($k,$v) = each %{$cfg{$datasetName}}){
-#         my $arr = [];
-#         if(ref($v)){ $arr = $v } # array of values
-#         else { $arr = [ $v ] } # single value
-#         foreach my $av (@$arr){ # array value
-#           $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, Config::Std should handle it
-#           if($av =~ /\w+/){
-#             $data{$k} //= [];
-#             push(@{$data{$k}}, $av);
-#           }
-#         }
-#       }
-#       return \%data ;
-#     }
-#     return {}; # study not found, fail gracefully
-#   }
-# }
+sub getCharacteristicsFromYaml {
+  my ($self, $file, $datasetName) = @_;
+  my $yaml = LoadFile($file);
+  my %data;
+  while(my($k,$v) = each %{$yaml->{$datasetName}}){
+    my $arr = [];
+    if(ref($v) eq 'ARRAY'){ $arr = $v } # array of values
+    else { $arr = [ $v ] } # single value
+    foreach my $av (@$arr){ # array value
+      $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, parser should handle it
+      if($av =~ /\w+/){
+        $data{$k} //= [];
+        push(@{$data{$k}}, $av);
+      }
+    }
+  }
+  return \%data ;
+}
 
-# sub readConfigFromCsv {
-# # Not using  CBIL::Config::PropertySet because it doesn't handle variables with spaces
-#   my ($self, $file, $datasetName) = @_;
-#   my $csv = Text::CSV_XS->new({ binary => 1, sep_char => ",", quote_char => '"', allow_loose_quotes => 1 }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();
-#   my @fields;
-#   open(FH, "<$file") or die "$file $!\n";
-#   my $line = <FH>;
-#   if($csv->parse($line)) {
-#     @fields = $csv->fields();
-#   }
-#   my %data;
-#   while(my $line = <FH>){
-#     next if $line =~ /^[\w\r\l\n,]*$/;
-#     $csv->parse($line);
-#     my @row = $csv->fields();
-#     if($datasetName eq $row[0]){
-#       @data{@fields} = @row;
-#       last;
-#     }
-#   }
-#   close(FH);
-#   foreach my $k (keys %data){
-#     $data{$k} =~ s/^\s*|\s*$//g;
-#     my @values = split(/\s*;\s*/, $data{$k});
-#     $data{$k} = \@values;
-#   }
-#   return \%data;
-# }
+sub readConfigFiles {
+  my ($self, $file, $datasetName) = @_;
+  if(-f $file && $file =~ /\.csv$/i){ return $self->readConfigFromCsv($file, $datasetName) }
+  if(-d $file){ # a directory containing .ini files
+    opendir(DH, "$file") or die "Cannot open directory $file:$!\n";
+    my @inifiles = map { "$file/$_" } grep { /.+\.ini$/i } readdir(DH);
+    foreach my $inifile (@inifiles){
+      read_config($inifile, my %cfg);
+      next unless(defined($cfg{$datasetName}));
+      printf STDERR ("Found %s in %s\n", $datasetName, $inifile);
+      # clean it up
+      my %data;
+      while(my($k,$v) = each %{$cfg{$datasetName}}){
+        my $arr = [];
+        if(ref($v)){ $arr = $v } # array of values
+        else { $arr = [ $v ] } # single value
+        foreach my $av (@$arr){ # array value
+          $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, Config::Std should handle it
+          if($av =~ /\w+/){
+            $data{$k} //= [];
+            push(@{$data{$k}}, $av);
+          }
+        }
+      }
+      return \%data ;
+    }
+    return {}; # study not found, fail gracefully
+  }
+}
+
+sub readConfigFromCsv {
+# Not using  CBIL::Config::PropertySet because it doesn't handle variables with spaces
+  my ($self, $file, $datasetName) = @_;
+  my $csv = Text::CSV_XS->new({ binary => 1, sep_char => ",", quote_char => '"', allow_loose_quotes => 1 }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
+  my @fields;
+  open(FH, "<$file") or die "$file $!\n";
+  my $line = <FH>;
+  if($csv->parse($line)) {
+    @fields = $csv->fields();
+  }
+  my %data;
+  while(my $line = <FH>){
+    next if $line =~ /^[\w\r\l\n,]*$/;
+    $csv->parse($line);
+    my @row = $csv->fields();
+    if($datasetName eq $row[0]){
+      @data{@fields} = @row;
+      last;
+    }
+  }
+  close(FH);
+  foreach my $k (keys %data){
+    $data{$k} =~ s/^\s*|\s*$//g;
+    my @values = split(/\s*;\s*/, $data{$k});
+    $data{$k} = \@values;
+  }
+  return \%data;
+}
 
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
