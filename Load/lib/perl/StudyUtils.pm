@@ -34,6 +34,10 @@ our $GEOHASH_PRECISION = {
 
 our $latitudeSourceId = "OBI_0001620";
 our $longitudeSourceId = "OBI_0001621";
+our $maxAdminLevelSourceId = "POPBIO_8000179";
+
+our @adminLevelSourceIds = qw/OBI_0001627 ENVO_00000005 ENVO_00000006/; # country, admin1, admin2
+
 
 sub queryForOntologyTerms {
   my ($dbh, $extDbRlsId, $termSchema) = @_;

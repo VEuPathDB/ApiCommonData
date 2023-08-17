@@ -25,6 +25,8 @@ use POSIX qw/strftime/;
 
 use JSON;
 
+use ApiCommonData::Load::GeoLookup;
+
 use Data::Dumper;
 my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
 my @GEOHASH_SOURCE_IDS = sort { $GEOHASH_PRECISION->{$a} <=> $GEOHASH_PRECISION->{$b} } keys %$GEOHASH_PRECISION;
@@ -141,6 +143,29 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
+
+   # for testing you can use /home/bmaccallum/gadm on yew
+   directoryArg({name           => 'shapeFilesDirectory',
+            descr          => 'Location of GADM shape files for geocoding placename look-up. Optional. No look-up if omitted.',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+   stringArg({name         => 'shapeFilePrefix',
+	      descr        => "Prefix before the '_[012].shp', defaults to 'gadm36_' in ApiCommonData::Load::GeoLookup",
+	      reqd         => 0,
+	      constraintFunc => undef,
+	      isList       => 0,
+	     }),
+
+   stringArg({name         => 'VEuGEO_extDbRlsSpec',
+	      descr        => 'External database release spec for the VEuGEO ontology, needed for looking up disambiguated place names',
+	      reqd         => 1,
+	      constraintFunc => undef,
+	      isList       => 0,
+	     }),
   ];
 
 our $documentation = { purpose          => "",
@@ -200,6 +225,20 @@ sub run {
   my ($self) = @_;
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
+
+  if (my $shapeFilesDirectory = $self->getArg('shapeFilesDirectory')) {
+    # only provide this argument to GeoLookup if we have it
+    my $shapefile_prefix = $self->getArg('shapeFilePrefix');
+    $self->{_geolookup} = ApiCommonData::Load::GeoLookup->new(shapefiles_directory => $shapeFilesDirectory,
+							      # next line is a bit ugly, but Moose won't automatically assign the default
+							      # value if you pass undefined
+							      $shapefile_prefix ? (shapefile_prefix => $shapefile_prefix) : (),
+							      levels => 3,
+							      dbh => $self->getQueryHandle(),
+							      VEuGEO_extDbRlsId => $self->getArg('VEuGEO_extDbRlsId'),
+							     );
+  }
+
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -546,7 +585,11 @@ sub loadNodes {
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
-    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);
+    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);  # TO DO: $ontologyTermToIdentifiers not used, remove?
+
+    if (my $shapeFileDirectory = $self->getArg('shapeFileDirectory')) {
+      $self->addLookedUpPlacenames($charsForLoader);
+    }
 
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts) unless($atts eq '{}');
@@ -598,9 +641,8 @@ sub addGeohash {
 
 
     $hash->{$geohashSourceId} = [$subvalue];
-  }           
+  }
 }
-
 
 sub encodeGeohash {
   my($self, $latitude, $longitude, $precision ) = @_;
@@ -626,6 +668,34 @@ sub encodeGeohash {
     $start += 5;
   }
   return $enc
+}
+
+#
+# does GADM shapefile lookup at three levels and loads the string results (place names)
+# into the $hash of attributes
+#
+sub addLookedUpPlacenames {
+  my ($self, $hash) = @_;
+
+  # find $lat and $long from $hash
+  my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
+  my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
+  my $maxAdminLevelSourceId = ${ApiCommonData::Load::StudyUtils::maxAdminLevelSourceId};
+
+  my ($lat, $long) = ($hash->{$latitudeSourceId}[0], $hash->{$longitudeSourceId}[0]);
+  return unless(defined $lat && defined $long);
+
+  # maxAdminLevel is a per row value the data provider can use to control how many levels of placenames
+  # are looked up. It's OK to be undefined, will fall back to default (2) in lookup method:
+  my $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
+  my ($gadm_names, $gadm_ids, $veugeo_names) = @{$self->{_geolookup}->lookup($lat, $long, $maxAdminLevel)};
+  foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
+    my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
+    if ($variable_iri) {
+      ### TO DO: find disambiguated name
+      $hash->{$variable_iri} = [ $veugeo_names->[$level] ];
+    }
+  }
 }
 
 sub getTaxonNameGusObj {
@@ -920,6 +990,12 @@ and tn.name_class = 'scientific name'
       $iOntologyTermAccessionsHash->{"QUALIFIER"}->{$_}++;
     }
   }
+  # TO DO?
+  # check that $latitudeSourceId, $longitudeSourceId
+  # and @adminLevelSourceIds
+  # are in the database?
+  # presumably these are only needed if geohashing
+  # or geocoding is needed (if $shapeFilesDirectory is defined)
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
