@@ -210,17 +210,21 @@ if ($create) {
      print STDOUT "$sql\n";     
      print STDOUT "==============================================================\n";
      
-     my $schema_prefix;
+     my @sqlplusParamValues;
      if($sql eq 'createEntityGraphTables.sql') {
-       $schema_prefix = "EDA";
-       &runSql($login, $password, $db, $sql, $schema_prefix, $dbVendor);
+       $sqlplusParamValues[0] = "EDA";
+       $sqlplusParamValues[1] = "SRES";
+       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
 
-       $schema_prefix = "ApidbUserDatasets";
-       &runSql($login, $password, $db, $sql, $schema_prefix, $dbVendor);
+
+
+       $sqlplusParamValues[0] = "ApidbUserDatasets";
+       $sqlplusParamValues[1] = "ApidbUserDatasets";
+       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
      }
 
      else {
-       &runSql($login, $password, $db, $sql, $schema_prefix, $dbVendor);
+       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
      }
   }
 } elsif ($dropApiDB) {
@@ -248,19 +252,19 @@ if ($create) {
 print STDERR "\nDone.\n";
 
 sub runSql {
-  my ($login, $password, $db, $file, $schema_prefix, $dbVendor) = @_;
+  my ($login, $password, $db, $file, $dbVendor, @params) = @_;
   
   if (lc $dbVendor eq 'oracle') { 
-    &runSqlOracle($login, $password, $db, $file, $schema_prefix); 
+    &runSqlOracle($login, $password, $db, $file, @params);
   } elsif (lc $dbVendor eq 'postgres') {
-    &runSqlPostgres($login, $password, $db, $file, $schema_prefix); 
+    &runSqlPostgres($login, $password, $db, $file, @params);
   } else { 
     die "Unsupported dbVendor:$dbVendor."; 
   }
 }
 
 sub runSqlOracle {
-  my ($login, $password, $db, $file, $schema_prefix) = @_;
+  my ($login, $password, $db, $file, @params) = @_;
 
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
 
@@ -280,7 +284,7 @@ sub runSqlOracle {
   runCmd($cmd, $tmpFile);
 
   # my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
-  $cmd = "sqlplus $login\@$db/$password \@$tmpFile $schema_prefix";
+  $cmd = "sqlplus $login\@$db/$password \@$tmpFile " . join(' ', @params);
   print STDOUT "\n==============================================================\n";
   print STDOUT "Running $tmpFile\n";
   print STDOUT "==============================================================\n";
@@ -290,7 +294,7 @@ sub runSqlOracle {
 }
 
 sub runSqlPostgres {
-  my ($login, $password, $db, $file, $schema_prefix) = @_;
+  my ($login, $password, $db, $file, @params) = @_;
   
   my $folder_prefix = "pgsql";
   my $psql_params = "";
@@ -303,8 +307,17 @@ sub runSqlPostgres {
 
   my $cmd;
   if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
-  
-  if ($schema_prefix) { $psql_params = "$psql_params -v SCHEMA_PREFIX=$schema_prefix"; }
+
+  if (scalar @params > 0) {
+    my @paramsFull;
+    for(my $i = 0; $i < scalar @params; $i++) {
+      my $n = $i +1;
+      my $p = "VAR${n}";
+      push @paramsFull, "-v ${p}=$params[$i]";
+    }
+
+    $psql_params = "$psql_params " . join(" ", @paramsFull);
+  }
 
   $cmd = "psql --echo-all -f $fullFile $psql_params $connectionString";
   print STDOUT "\n==============================================================\n";

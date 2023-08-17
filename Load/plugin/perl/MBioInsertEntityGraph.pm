@@ -9,6 +9,7 @@ use warnings;
 use ApiCommonData::Load::MBioResultsDir;
 use CBIL::ISA::InvestigationSimple;
 use File::Basename;
+use JSON;
 use Carp;
 
 my $argsDeclaration =
@@ -91,6 +92,33 @@ my $argsDeclaration =
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
+      booleanArg({name => 'loadProtocolTypeAsVariable',
+          descr => 'should we add protocol types in processattributes',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+   stringArg({name           => 'protocolVariableSourceId',
+            descr          => 'If set, will load protocol names as values attached to this term',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 1, }),
+
+
+      booleanArg({name => 'useOntologyTermTableForTaxonTerms',
+          descr => 'should we use sres.ontologyterm instead of sres.taxonname',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+      booleanArg({name => 'isRelativeAbundance',
+          descr => 'do we need to compute and load relative abundance (default 0, compute rel, load both)',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
 
   ];
 
@@ -129,11 +157,19 @@ sub run {
   my $dateObfuscationFile = undef;
   my $schema = $self->getArg('schema');
   my $mbioResultsDir = $self->getArg('mbioResultsDir');
+  my $isRelativeAbundance= $self->getArg('isRelativeAbundance');
   my $mbioResultsFileExtensions = $self->getArg('mbioResultsFileExtensions');
+  if(-f $mbioResultsFileExtensions){
+    open(FH, "<$mbioResultsFileExtensions");
+    my @lines = <FH>;
+    close(FH);
+    chomp $_ for @lines;
+    $mbioResultsFileExtensions = join(' ', @lines);
+  }
   my $fileExtensions = eval $mbioResultsFileExtensions;
   $self->error("string eval of $mbioResultsFileExtensions failed: $@") if $@;
   $self->error("string eval of $mbioResultsFileExtensions failed: should return a hash") unless ref $fileExtensions eq 'HASH';
-  my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions)->toGetAddMoreData;
+  my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions, $isRelativeAbundance)->toGetAddMoreData;
    
   my $doPruneStudies = 1;
   my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, $onError, $isReporterMode, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl, $doPruneStudies);

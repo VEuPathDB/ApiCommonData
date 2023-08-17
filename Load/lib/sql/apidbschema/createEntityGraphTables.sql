@@ -1,14 +1,14 @@
 set CONCAT OFF;
 
 -- so the foreign key constraints are allowed
-grant references on sres.OntologyTerm to &1;
-grant references on sres.ExternalDatabaseRelease to &1;
+grant references on &2.OntologyTerm to &1;
+grant references on &2.ExternalDatabaseRelease to &1;
 
 CREATE TABLE &1.Study (
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
- internal_abbrev              varchar2(50),
+ internal_abbrev              varchar2(75),
  max_attr_length              number(4),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE &1.Study (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (external_database_release_id) REFERENCES sres.ExternalDatabaseRelease,
+ FOREIGN KEY (external_database_release_id) REFERENCES &2.ExternalDatabaseRelease,
  PRIMARY KEY (study_id),
  CONSTRAINT unique_stable_id UNIQUE (stable_id)
 );
@@ -73,7 +73,7 @@ CREATE TABLE &1.EntityType (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (study_id) REFERENCES &1.study,
- FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (type_id) REFERENCES &2.ontologyterm,
  PRIMARY KEY (entity_type_id)
 );
 
@@ -123,7 +123,7 @@ CREATE TABLE &1.ProcessType (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (type_id) REFERENCES &2.ontologyterm,
  PRIMARY KEY (process_type_id)
 );
 
@@ -157,7 +157,7 @@ WHERE 'processtype' NOT IN (SELECT lower(name) FROM core.TableInfo
 CREATE TABLE &1.EntityAttributes (
  entity_attributes_id         NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
- entity_type_id                    NUMBER(12) NOT NULL,
+ entity_type_id               NUMBER(12) NOT NULL,
  atts                         CLOB,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
@@ -170,9 +170,9 @@ CREATE TABLE &1.EntityAttributes (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
  PRIMARY KEY (entity_attributes_id),
- CONSTRAINT ensure_va_json CHECK (atts is json)   
+FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
+CONSTRAINT ensure_va_json CHECK (atts is json)
 );
 
 -- 
@@ -201,6 +201,54 @@ FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('&1')) d
 WHERE 'entityattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+-----------------------------------------------------------
+
+CREATE TABLE &1.EntityClassification (
+ entity_classification_id         NUMBER(12) NOT NULL,
+ entity_attributes_id         NUMBER(12) NOT NULL,
+ entity_type_id               NUMBER(12) NOT NULL,
+ modification_date            DATE NOT NULL,
+ user_read                    NUMBER(1) NOT NULL,
+ user_write                   NUMBER(1) NOT NULL,
+ group_read                   NUMBER(1) NOT NULL,
+ group_write                  NUMBER(1) NOT NULL,
+ other_read                   NUMBER(1) NOT NULL,
+ other_write                  NUMBER(1) NOT NULL,
+ row_user_id                  NUMBER(12) NOT NULL,
+ row_group_id                 NUMBER(3) NOT NULL,
+ row_project_id               NUMBER(4) NOT NULL,
+ row_alg_invocation_id        NUMBER(12) NOT NULL,
+ FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
+ FOREIGN KEY (entity_attributes_id) REFERENCES &1.EntityAttributes,
+ PRIMARY KEY (entity_classification_id)
+);
+
+CREATE INDEX &1.entityclassification_ix_1 ON &1.entityclassification (entity_type_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX &1.entityclassification_ix_2 ON &1.entityclassification (entity_attributes_id, entity_type_id) TABLESPACE indx;
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1.EntityClassification TO gus_w;
+GRANT SELECT ON &1.EntityClassification TO gus_r;
+
+CREATE SEQUENCE &1.EntityClassification_sq;
+GRANT SELECT ON &1.EntityClassification_sq TO gus_w;
+GRANT SELECT ON &1.EntityClassification_sq TO gus_r;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'EntityClassification',
+       'Standard', 'entity_classification_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('&1')) d
+WHERE 'entityclassification' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 -----------------------------------------------------------
@@ -273,6 +321,7 @@ CREATE TABLE &1.EntityTypeGraph (
  internal_abbrev              VARCHAR2(50) NOT NULL,
  has_attribute_collections    NUMBER(1),
  is_many_to_one_with_parent   NUMBER(1),
+ cardinality                  NUMBER(38,0),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -337,8 +386,8 @@ CREATE TABLE &1.AttributeUnit (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
- FOREIGN KEY (attr_ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (attr_ontology_term_id) REFERENCES &2.ontologyterm,
+FOREIGN KEY (unit_ontology_term_id) REFERENCES &2.ontologyterm,
  PRIMARY KEY (attribute_unit_id)
 );
 
@@ -422,71 +471,6 @@ WHERE 'processtypecomponent' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.AttributeValue (
- attribute_value_id           NUMBER(12) NOT NULL,
- entity_attributes_id         NUMBER(12) NOT NULL,
- entity_type_id               NUMBER(12) NOT NULL,
- incoming_process_type_id        NUMBER(12),
- attribute_stable_id                VARCHAR(255)  NOT NULL, 
- string_value                 VARCHAR(1000),
- number_value                 NUMBER,
- date_value                   DATE, 
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (entity_attributes_id) REFERENCES &1.EntityAttributes,
- FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
- FOREIGN KEY (incoming_process_type_id) REFERENCES &1.ProcessType,
- PRIMARY KEY (attribute_value_id)
-);
-
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeValue TO gus_w;
-GRANT SELECT ON &1.AttributeValue TO gus_r;
-
-CREATE SEQUENCE &1.AttributeValue_sq;
-GRANT SELECT ON &1.AttributeValue_sq TO gus_w;
-GRANT SELECT ON &1.AttributeValue_sq TO gus_r;
-
-CREATE INDEX &1.attributevalue_ix_1
-  ON &1.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id,
-                        entity_attributes_id)
-  TABLESPACE indx;
-
-CREATE INDEX &1.attributevalue_ix_2
-  ON &1.attributevalue 
-     (number_value, date_value, attribute_stable_id, entity_type_id, string_value)
-  TABLESPACE indx;
-
-CREATE INDEX &1.attributevalue_ix_3
-  ON &1.attributevalue 
-     (attribute_stable_id, string_value, entity_type_id, number_value, date_value)
-  TABLESPACE indx;
-
-INSERT INTO core.TableInfo
-    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
-     is_view, view_on_table_id, superclass_table_id, is_updatable, 
-     modification_date, user_read, user_write, group_read, group_write, 
-     other_read, other_write, row_user_id, row_group_id, row_project_id, 
-     row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'AttributeValue',
-       'Standard', 'attribute_value_id',
-       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
-       p.project_id, 0
-FROM dual,
-     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('&1')) d
-WHERE 'attributevalue' NOT IN (SELECT lower(name) FROM core.TableInfo
-                                    WHERE database_id = d.database_id);
-
------------------------------------------------------------
 
 CREATE TABLE &1.Attribute (
   attribute_id                  NUMBER(12) NOT NULL,
@@ -494,14 +478,15 @@ CREATE TABLE &1.Attribute (
   entity_type_stable_id         varchar2(255),
   process_type_id                 NUMBER(12),
   ontology_term_id         NUMBER(10),
-  parent_ontology_term_id         NUMBER(10) NOT NULL,
+  parent_stable_id         varchar2(255),
+--parent_ontology_term_id         NUMBER(10) NOT NULL,
   stable_id varchar2(255) NOT NULL,
-  display_name                  varchar(1500) not null,
+  non_ontological_name                  varchar(1500),
   data_type                    varchar2(10) not null,
   distinct_values_count            integer,
   is_multi_valued                number(1),
   data_shape                     varchar2(30),
-  unit                          varchar2(30),
+  unit                          varchar2(400),
   unit_ontology_term_id         NUMBER(10),
   precision                     integer,
   ordered_values                CLOB,    
@@ -525,9 +510,8 @@ CREATE TABLE &1.Attribute (
   row_alg_invocation_id        NUMBER(12) NOT NULL,
   FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
   FOREIGN KEY (process_type_id) REFERENCES &1.ProcessType,
-  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (unit_ontology_term_id) REFERENCES &2.ontologyterm,
   PRIMARY KEY (attribute_id),
   CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
 );
@@ -539,7 +523,7 @@ CREATE SEQUENCE &1.Attribute_sq;
 GRANT SELECT ON &1.Attribute_sq TO gus_w;
 GRANT SELECT ON &1.Attribute_sq TO gus_r;
 
-CREATE INDEX &1.attribute_ix_1 ON &1.attribute (entity_type_id, process_type_id, parent_ontology_term_id, stable_id, attribute_id) TABLESPACE indx;
+CREATE INDEX &1.attribute_ix_1 ON &1.attribute (entity_type_id, process_type_id, stable_id, attribute_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -580,10 +564,10 @@ CREATE TABLE &1.AttributeGraph (
   impute_zero                  number(1),
   is_repeated                  number(1),
   bin_width_override           varchar2(16),
-  -- is_hidden                    number(1),
   is_temporal                  number(1),
   is_featured                  number(1),
   ordinal_values               CLOB,
+  scale                         varchar2(30),
   modification_date            DATE NOT NULL,
   user_read                    NUMBER(1) NOT NULL,
   user_write                   NUMBER(1) NOT NULL,
@@ -595,11 +579,12 @@ CREATE TABLE &1.AttributeGraph (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
-  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (parent_ontology_term_id) REFERENCES &2.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (attribute_graph_id),
-  CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json)   
+  CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json),
+  CONSTRAINT ensure_prolbl_json CHECK (provider_label is json)
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeGraph TO gus_w;
@@ -633,7 +618,7 @@ CREATE TABLE &1.StudyCharacteristic (
   study_id                     NUMBER(12) NOT NULL, 
   attribute_id                 NUMBER(12) NOT NULL,
   value_ontology_term_id       NUMBER(10),
-  value                        VARCHAR2(200) NOT NULL,
+  value                        VARCHAR2(300) NOT NULL,
   modification_date            DATE NOT NULL,
   user_read                    NUMBER(1) NOT NULL,
   user_write                   NUMBER(1) NOT NULL,
@@ -645,8 +630,8 @@ CREATE TABLE &1.StudyCharacteristic (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
-  FOREIGN KEY (value_ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (attribute_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (value_ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (attribute_id) REFERENCES &2.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (study_characteristic_id)
 );
@@ -674,6 +659,84 @@ FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('&1')) d
 WHERE 'study_characteristic_id' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
+-- for mega study, we need to prefix the stable id with the study stable id (bfv=big fat view)
+create or replace view &1.entityattributes_bfv as
+select ea.entity_attributes_id
+     ,  case when ec.entity_type_id = ea.entity_type_id
+            then ea.stable_id
+            else s2.stable_id || '|' || ea.stable_id
+        end as stable_id
+     , ea.entity_type_id as orig_entity_type_id
+     , ea.atts
+     , ea.row_project_id
+     , et.type_id as entity_type_ontology_term_id
+     , ec.entity_type_id
+     , s.stable_id as study_stable_id
+     , s.INTERNAL_ABBREV as study_internal_abbrev
+     , s.study_id as study_id
+from &1.entityclassification ec
+   , &1.entityattributes ea
+   , &1.entitytype et
+   , &1.study s
+   , &1.entitytype et2
+   , &1.study s2
+ where ec.entity_attributes_id = ea.entity_attributes_id
+and ec.entity_type_id = et.entity_type_id
+and et.study_id = s.study_id
+and ea.ENTITY_TYPE_ID = et2.entity_type_id
+and et2.study_id = s2.study_id;
+
+GRANT select ON &1.entityattributes_bfv TO gus_r;
+GRANT select ON &1.entityattributes_bfv TO gus_w;
+
+CREATE TABLE &1.AnnotationProperties (
+  annotation_properties_id   NUMBER(10) NOT NULL,
+  ontology_term_id       NUMBER(10) NOT NULL,
+  study_id            NUMBER(12) NOT NULL,
+  props                         CLOB,
+ external_database_release_id number(10) NOT NULL,
+MODIFICATION_DATE     DATE,
+  USER_READ             NUMBER(1),
+  USER_WRITE            NUMBER(1),
+  GROUP_READ            NUMBER(1),
+  GROUP_WRITE           NUMBER(1),
+  OTHER_READ            NUMBER(1),
+  OTHER_WRITE           NUMBER(1),
+  ROW_USER_ID           NUMBER(12),
+  ROW_GROUP_ID          NUMBER(3),
+  ROW_PROJECT_ID        NUMBER(4),
+  ROW_ALG_INVOCATION_ID NUMBER(12),
+  FOREIGN KEY (ontology_term_id) REFERENCES &2.OntologyTerm (ontology_term_id),
+  FOREIGN KEY (study_id) REFERENCES &1.study (study_id),
+ FOREIGN KEY (external_database_release_id) REFERENCES &2.ExternalDatabaseRelease,
+PRIMARY KEY (annotation_properties_id),
+  CONSTRAINT ensure_anp_json CHECK (props is json)
+);
+
+CREATE SEQUENCE &1.AnnotationProperties_sq;
+
+GRANT insert, select, update, delete ON &1.AnnotationProperties TO gus_w;
+GRANT select ON &1.AnnotationProperties TO gus_r;
+GRANT select ON &1.AnnotationProperties_sq TO gus_w;
+
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable,
+     modification_date, user_read, user_write, group_read, group_write,
+     other_read, other_write, row_user_id, row_group_id, row_project_id,
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'AnnotationProperties',
+       'Standard', 'annotation_properties_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('&1')) d
+WHERE 'annotationproperties' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 

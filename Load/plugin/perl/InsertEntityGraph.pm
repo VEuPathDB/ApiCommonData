@@ -1,10 +1,10 @@
 package ApiCommonData::Load::Plugin::InsertEntityGraph;
+use base qw(ApiCommonData::Load::Plugin::ParameterizedSchema);
 
-@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
-use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Plugin::ParameterizedSchema;
 use strict;
 use warnings;
+
+use GUS::PluginMgr::Plugin;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
@@ -12,18 +12,27 @@ use CBIL::ISA::InvestigationSimple;
 use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
+use GUS::Model::ApidbUserDatasets::OntologyTerm;
+use GUS::Model::SRes::TaxonName;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
 
-# use ApiCommonData::Load::StudyUtils qw/getSchemaFromRowAlgInvocationId/;
+use ApiCommonData::Load::StudyUtils;
 
 use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
 
 use JSON;
 
+use ApiCommonData::Load::GeoLookup;
+
 use Data::Dumper;
+my $GEOHASH_PRECISION = ${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION};
+my @GEOHASH_SOURCE_IDS = sort { $GEOHASH_PRECISION->{$a} <=> $GEOHASH_PRECISION->{$b} } keys %$GEOHASH_PRECISION;
+
+my $SCHEMA;
+my $TERM_SCHEMA = "SRES";
 
 my $argsDeclaration =
   [
@@ -82,6 +91,25 @@ my $argsDeclaration =
           isList => 0,
          }),
 
+      booleanArg({name => 'loadProtocolTypeAsVariable',
+          descr => 'should we add protocol types in processattributes',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+   stringArg({name           => 'protocolVariableSourceId',
+            descr          => 'If set, will load protocol names as values attached to this term',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 1, }),
+
+      booleanArg({name => 'useOntologyTermTableForTaxonTerms',
+          descr => 'should we use sres.ontologyterm instead of sres.taxonname',
+          reqd => 0,
+          constraintFunc => undef,
+          isList => 0,
+         }),
 
 
    fileArg({name           => 'ontologyMappingFile',
@@ -115,6 +143,29 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
+
+   # for testing you can use /home/bmaccallum/gadm on yew
+   directoryArg({name           => 'shapeFilesDirectory',
+            descr          => 'Location of GADM shape files for geocoding placename look-up. Optional. No look-up if omitted.',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+   stringArg({name         => 'shapeFilePrefix',
+	      descr        => "Prefix before the '_[012].shp', defaults to 'gadm36_' in ApiCommonData::Load::GeoLookup",
+	      reqd         => 0,
+	      constraintFunc => undef,
+	      isList       => 0,
+	     }),
+
+   stringArg({name         => 'VEuGEO_extDbRlsSpec',
+	      descr        => 'External database release spec for the VEuGEO ontology, needed for looking up disambiguated place names',
+	      reqd         => 1,
+	      constraintFunc => undef,
+	      isList       => 0,
+	     }),
   ];
 
 our $documentation = { purpose          => "",
@@ -126,11 +177,22 @@ our $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
+# our @UNDO_TABLES =qw(
+#   ProcessAttributes
+#   EntityAttributes
+#   EntityClassification
+#   AttributeUnit
+#   ProcessTypeComponent
+#   EntityType
+#   Study
+# ); ## undo is not run on ProcessType
+
 
 our @REQUIRE_TABLES = qw(
   Study
   EntityType
   EntityAttributes
+  EntityClassification
   AttributeUnit
   ProcessAttributes
   ProcessType
@@ -144,8 +206,7 @@ our @UNDO_TABLES = grep {$_ ne 'ProcessType' } reverse @REQUIRE_TABLES;
 
 sub new {
   my ($class) = @_;
-  my $self = {};
-  bless($self,$class);
+  my $self = bless({},$class);
 
   $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
@@ -154,6 +215,7 @@ sub new {
                       documentation     => $documentation});
   $self->{_require_tables} = \@REQUIRE_TABLES;
   $self->{_undo_tables} = \@UNDO_TABLES;
+
   return $self;
 }
 
@@ -163,6 +225,20 @@ sub run {
   my ($self) = @_;
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
+
+  if (my $shapeFilesDirectory = $self->getArg('shapeFilesDirectory')) {
+    # only provide this argument to GeoLookup if we have it
+    my $shapefile_prefix = $self->getArg('shapeFilePrefix');
+    $self->{_geolookup} = ApiCommonData::Load::GeoLookup->new(shapefiles_directory => $shapeFilesDirectory,
+							      # next line is a bit ugly, but Moose won't automatically assign the default
+							      # value if you pass undefined
+							      $shapefile_prefix ? (shapefile_prefix => $shapefile_prefix) : (),
+							      levels => 3,
+							      dbh => $self->getQueryHandle(),
+							      VEuGEO_extDbRlsId => $self->getArg('VEuGEO_extDbRlsId'),
+							     );
+  }
+
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -180,7 +256,12 @@ sub run {
   }
   $self->userError("No investigation files") unless @investigationFiles;
 
-  my $schema = $self->getArg('schema');
+  $SCHEMA = $self->getArg('schema');
+
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
@@ -202,7 +283,7 @@ sub run {
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
-    $self->loadInvestigation($investigation, $extDbRlsId, $schema);
+    $self->loadInvestigation($investigation, $extDbRlsId);
     $investigationCount++;
   }
   $self->logRowsInserted() if($self->getArg('commit'));
@@ -213,7 +294,7 @@ sub run {
 # called by the run methods
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
-  my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  my ($self, $investigation, $extDbRlsId) = @_;
   do {
     my %errors;
     my $c = $investigation->{_on_error};
@@ -230,12 +311,13 @@ sub loadInvestigation {
     my $studies = $investigation->getStudies();
 
     my $nodeToIdMap = {};
-    
+    my $seenProcessMap = {};
+
     foreach my $study (@$studies) {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
 
       # add the user_dataset_id if we are in that mode
-      if(uc($schema) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+      if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
         $gusStudy->setUserDatasetId($self->getArg("userDatasetId"));
       }
 
@@ -248,18 +330,26 @@ sub loadInvestigation {
         $investigation->dealWithAllOntologies();
 
         my $nodes = $study->getNodes();
-        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols(), $schema);
+        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
         my $edges = $study->getEdges();
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadBatchOfStudyData($ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudy->getId, $nodes, $protocols, $edges, $nodeToIdMap)
+        $self->loadBatchOfStudyData($ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudy->getId, $nodes, $protocols, $edges, $nodeToIdMap, $seenProcessMap)
          unless %errors;
       }
       $self->ifNeededUpdateStudyMaxAttrLength($gusStudy);
       $self->updateEntityCardinality($gusStudy->getId);
+    }
+
+    foreach my $output (keys %$seenProcessMap) {
+      foreach my $input (keys %{$seenProcessMap->{$output}}) {
+        if(keys %{$seenProcessMap->{$output}} > 1) {
+          $self->userError("Entity [$output] has multiple inputs");
+        }
+      }
     }
 
     my $errorCount = scalar keys %errors;
@@ -280,9 +370,9 @@ sub countLines {
 
 
 sub protocolsCheckProcessTypesAndSetIds {
-  my ($self, $protocols, $schema) = @_;
+  my ($self, $protocols) = @_;
 
-  my $sql = "select name, process_type_id from $schema.processtype";
+  my $sql = "select name, process_type_id from $SCHEMA.processtype";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
@@ -311,7 +401,7 @@ sub createGusStudy {
   my $identifier = $study->getIdentifier();
   my $description = $study->getDescription();
   my $studyInternalAbbrev = $identifier;
-  $studyInternalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
+  $studyInternalAbbrev =~ s/[-\.\s]/_/g; #clean name/id for use in oracle table name
   return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
@@ -324,11 +414,11 @@ sub ifNeededUpdateStudyMaxAttrLength {
 
 sub loadBatchOfStudyData {
   my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudyId,
-   $nodes, $protocols, $edges, $nodeToIdMap) = @_;
+   $nodes, $protocols, $edges, $nodeToIdMap, $seenProcessMap) = @_;
 
   $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap);
   my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
-  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap, $seenProcessMap);
 
 }
 
@@ -425,7 +515,7 @@ sub loadNodes {
       if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
         # Wojtek: this can happen if parsing study in batches, and a new batch contains a previously seen node
         #         I worked around it in MBioInsertEntityGraph with a $investigation->setRowLimit(999999999); 
-        $self->userError("Cannot append Characteristics to Existing Node". $node->getValue());
+        $self->log("Characteristics for node ". $node->getValue() . " were defined on multiple rows.  Only loading the first");
       }
       next;
     }
@@ -433,14 +523,13 @@ sub loadNodes {
     my $entity = $self->getGusModelClass('EntityAttributes')->new({stable_id => $node->getValue()});
 
     my $entityTypeId = $self->addEntityTypeForNode($ontologyTermToIdentifiers, $node, $gusStudyId);
-    $entity->setEntityTypeId($entityTypeId);
 
     my $characteristics = $node->getCharacteristics() // [];
     foreach my $characteristic (@$characteristics) {
 
       my ($charQualifierSourceId, $charValue);
 
-      if ($characteristic->getQualifier =~ m{ncbitaxon}i){
+      if ($characteristic->getQualifier =~ m{ncbitaxon}i && !$self->getArg('useOntologyTermTableForTaxonTerms')){
           # taxon id Wojtek: I think we don't want that
           # $charQualifierSourceId = $ontologyTermToIdentifiers->{QUALIFIER}->{$characteristic->getQualifier};
           # stable id
@@ -458,8 +547,15 @@ sub loadNodes {
         }
   
         if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) { #value is ontology term
-          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
-          $charValue = $valueOntologyTerm->getName();
+
+          if($characteristic->getTermSourceRef() eq 'NCBITaxon' && !$self->getArg('useOntologyTermTableForTaxonTerms')) {
+            my $valueTaxonName = $self->getTaxonNameGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+            $charValue = $valueTaxonName->getName();
+          }
+          else {
+            my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+            $charValue = $valueOntologyTerm->getName();
+          }
         }
         else {
           $charValue = $characteristic->getTerm();
@@ -489,14 +585,21 @@ sub loadNodes {
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
-    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);
+    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);  # TO DO: $ontologyTermToIdentifiers not used, remove?
+
+    if (my $shapeFileDirectory = $self->getArg('shapeFileDirectory')) {
+      $self->addLookedUpPlacenames($charsForLoader);
+    }
 
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts) unless($atts eq '{}');
-      ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
+    $entity->setEntityTypeId($entityTypeId);
+    ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
+
+    my $entityClassification = $self->getGusModelClass('EntityClassification')->new({entity_type_id => $entityTypeId});
+    $entityClassification->setParent($entity);
 
     $entity->submit(undef, 1);
-
 
     $nodeToIdMap->{$entity->getStableId()} = [$entity->getId(), $entity->getEntityTypeId()];
 
@@ -516,33 +619,30 @@ sub loadNodes {
 sub addGeohash {
   my ($self, $hash, $ontologyTermToIdentifiers) = @_;
 
-  my $geohashLength = 7;
+  my $geohashLength = scalar @GEOHASH_SOURCE_IDS;
 
-  my $latitudeSourceId = "OBI_0001620";
-  my $longitudeSourceId = "OBI_0001621";
+  my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
+  my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
 
-  return unless($hash->{$latitudeSourceId} && $hash->{$longitudeSourceId});
+  return unless(defined($hash->{$latitudeSourceId}) && defined($hash->{$longitudeSourceId}));
 
   my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}->[0], $hash->{$longitudeSourceId}->[0], $geohashLength);
 
-  my @geohashSourceIds = ('EUPATH_0043203', # GEOHASH 1
-                          'EUPATH_0043204', # GEOHASH 2
-                          'EUPATH_0043205', # GEOHASH 3
-                          'EUPATH_0043206', # GEOHASH 4
-                          'EUPATH_0043207', # GEOHASH 5
-                          'EUPATH_0043208', # GEOHASH 6
-                          'EUPATH_0043209', # GEOHASH 7
-      );
-
   for my $n (1 .. $geohashLength) {
     my $subvalue = substr($geohash, 0, $n);         
-    my $geohashSourceId = $geohashSourceIds[$n - 1];
-    next unless $ontologyTermToIdentifiers->{QUALIFIER}->{$geohashSourceId};
-    $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
-    $hash->{$geohashSourceId} = [$subvalue];
-  }           
-}
+    my $geohashSourceId = $GEOHASH_SOURCE_IDS[$n - 1];
 
+
+    unless($geohashSourceId) {
+      print Dumper \@GEOHASH_SOURCE_IDS;
+      print Dumper $GEOHASH_PRECISION;
+      $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n")
+    }
+
+
+    $hash->{$geohashSourceId} = [$subvalue];
+  }
+}
 
 sub encodeGeohash {
   my($self, $latitude, $longitude, $precision ) = @_;
@@ -570,7 +670,61 @@ sub encodeGeohash {
   return $enc
 }
 
+#
+# does GADM shapefile lookup at three levels and loads the string results (place names)
+# into the $hash of attributes
+#
+sub addLookedUpPlacenames {
+  my ($self, $hash) = @_;
 
+  # find $lat and $long from $hash
+  my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
+  my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
+  my $maxAdminLevelSourceId = ${ApiCommonData::Load::StudyUtils::maxAdminLevelSourceId};
+
+  my ($lat, $long) = ($hash->{$latitudeSourceId}[0], $hash->{$longitudeSourceId}[0]);
+  return unless(defined $lat && defined $long);
+
+  # maxAdminLevel is a per row value the data provider can use to control how many levels of placenames
+  # are looked up. It's OK to be undefined, will fall back to default (2) in lookup method:
+  my $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
+  my ($gadm_names, $gadm_ids, $veugeo_names) = @{$self->{_geolookup}->lookup($lat, $long, $maxAdminLevel)};
+  foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
+    my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
+    if ($variable_iri) {
+      ### TO DO: find disambiguated name
+      $hash->{$variable_iri} = [ $veugeo_names->[$level] ];
+    }
+  }
+}
+
+sub getTaxonNameGusObj {
+  my ($self, $ontologyTermToIdentifiers, $ontologyTerm) = @_;
+
+  my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber() || "";
+  my $ontologyTermSourceRef = $ontologyTerm->getTermSourceRef() || "";
+
+  unless($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
+    $self->error("OntologyTermAccessionNumber is required for NCBI Taxon Id Lookup");
+  }
+
+  my $taxonId = $ontologyTermToIdentifiers->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
+
+  $self->error("No Taxon ID for $ontologyTermAccessionNumber|$ontologyTermSourceRef") unless $taxonId;
+
+  if(my $gusObj = $self->{_gus_taxonname_objects}->{$taxonId}) {
+    return $gusObj;
+  }
+
+  my $gusTaxonName = GUS::Model::SRes::TaxonName->new({taxon_id => $taxonId, name_class => 'scientific name'});
+
+  unless($gusTaxonName->retrieveFromDB()) {
+    $self->error("ERROR:  Could not fine taxonname for taxon_id $taxonId; $ontologyTermAccessionNumber");
+  }
+
+  $self->{_gus_taxonname_objects}->{$taxonId} = $gusTaxonName;
+  return $gusTaxonName;
+}
 
 sub getOntologyTermGusObj {
     my ($self, $ontologyTermToIdentifiers, $ontologyTerm, $useQualifier) = @_;
@@ -601,8 +755,17 @@ sub getOntologyTermGusObj {
       return $gusObj;
     }
 
-    my $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    my $gusOntologyTerm;
+    if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+      $gusOntologyTerm = GUS::Model::ApidbUserDatasets::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    }
+    else {
+      $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    }
+
     unless($gusOntologyTerm->retrieveFromDB()) {
+      print Dumper $ontologyTerm;
+
       $self->error("ERROR:  Found TaxonID ($ontologyTermId).  Was expecting OntologyTerm ID");
     }
 
@@ -715,6 +878,17 @@ sub getProcessAttributesHash {
     my $protocol = $protocolApp->getProtocol();
     my $protocolName = $protocol->getProtocolName();
 
+    if(my $protocolSourceId = $self->getArg('protocolVariableSourceId')) {
+      push @{$rv{$protocolSourceId}}, $protocolName;
+    }
+
+    if($self->getArg('loadProtocolTypeAsVariable')) {
+      my $protocolType = $protocol->getProtocolType();
+      my $protocolTypeSourceId = $protocolType->getTermAccessionNumber();
+      my $protocolTypeValue = $protocolType->getTerm();
+      push @{$rv{$protocolTypeSourceId}}, $protocolTypeValue;
+    }
+
     foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
       my $ppValue = $parameterValue->getTerm();
       my $ppQualifier = $parameterValue->getQualifier();
@@ -738,7 +912,7 @@ sub getProcessAttributesHash {
 
 
 sub loadProcesses {
-  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
+  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap, $seenProcessMap) = @_;
 
   my $processCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
@@ -753,7 +927,12 @@ sub loadProcesses {
       ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
 
     foreach my $output (@{$process->getOutputs()}) {
+      my $outputName = $output->getValue();
       foreach my $input (@{$process->getInputs()}) {
+        my $inputName = $input->getValue();
+
+        next if($seenProcessMap->{$outputName} && $seenProcessMap->{$outputName}->{$inputName});
+
         my $inId = $self->getGusEntityId($input, $nodeNameToIdMap);
         my $outId = $self->getGusEntityId($output, $nodeNameToIdMap);
 
@@ -771,6 +950,8 @@ sub loadProcesses {
           # $self->log("Loaded $processCount processes");
           $self->getDb()->manageTransaction(0, 'begin');
         }
+
+        $seenProcessMap->{$outputName}->{$inputName}++;
       }
     }
   }
@@ -782,18 +963,39 @@ sub loadProcesses {
 sub checkOntologyTermsAndFetchIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
 
+  my $ncbiTaxon = 'ncbitaxon%';
+  if($self->getArg('useOntologyTermTableForTaxonTerms')) {
+    $ncbiTaxon = 'PREFIX_WE_DONT_WANT';
+  }
+
+
+
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
-from sres.ontologyterm ot
+from ${TERM_SCHEMA}.ontologyterm ot
 where ot.source_id = ?
-and lower(ot.source_id) not like 'ncbitaxon%'
+and lower(ot.source_id) not like '$ncbiTaxon'
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
 from sres.taxon t, sres.taxonname tn
 where 'NCBITaxon_' || t.ncbi_tax_id = ?
-and lower(?) like  'ncbitaxon%'
+and lower(?) like  '$ncbiTaxon'
 and t.taxon_id = tn.taxon_id
 and tn.name_class = 'scientific name'
 ";
+
+
+  # ensure the database has the geo hash ids
+  if(defined($iOntologyTermAccessionsHash->{QUALIFIER}->{OBI_0001620}) && defined($iOntologyTermAccessionsHash->{QUALIFIER}->{OBI_0001621})){
+    foreach(@GEOHASH_SOURCE_IDS) {
+      $iOntologyTermAccessionsHash->{"QUALIFIER"}->{$_}++;
+    }
+  }
+  # TO DO?
+  # check that $latitudeSourceId, $longitudeSourceId
+  # and @adminLevelSourceIds
+  # are in the database?
+  # presumably these are only needed if geohashing
+  # or geocoding is needed (if $shapeFilesDirectory is defined)
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);

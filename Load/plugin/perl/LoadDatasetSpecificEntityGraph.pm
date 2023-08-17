@@ -6,6 +6,8 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
+use ApiCommonData::Load::StudyUtils qw/dropTablesLike/;
+
 use Data::Dumper;
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
@@ -40,11 +42,21 @@ my $argsDeclaration =
             descr          => 'GUS::Model schema for entity tables',
             reqd           => 1,
             constraintFunc => undef,
+              isList         => 0, }),
+    fileArg({name           => 'collectionsYaml',
+            descr          => 'optional yaml file which defines collection ontology terms (and optionally children + ranges)',
+            reqd           => 0,
+        mustExist      => 1,
+        format         => '',
+            constraintFunc => undef,
             isList         => 0, }),
+
 
 ];
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
+
 my @UNDO_TABLES;
 my @REQUIRE_TABLES;
 
@@ -73,6 +85,9 @@ sub run {
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   $SCHEMA = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
@@ -81,39 +96,46 @@ sub run {
 
   $self->dropTables($extDbRlsSpec);
 
+  my $collectionsYamlFile = $self->getArg('collectionsYaml');
+
+
+  my $collections = {};
+  if($collectionsYamlFile) {
+    $collections = ApiCommonData::Load::StudyUtils::parseCollectionsConfig($collectionsYamlFile);
+  }
+
   my $dbh = $self->getDbHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel query") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
 
-
-  my @tables;
-
-  my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
-  foreach my $studyId (keys %$studies) {
+    foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
     $self->log("Loading Study: $studyAbbrev");
-    my $entityTypeIds = $self->entityTypeIdsFromStudyId($studyId);
+    my $entityTypeInfo = $self->setEntityTypeInfoFromStudyId($studyId);
 
-    foreach my $entityTypeId (keys %$entityTypeIds) {
-      my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId};
+    foreach my $entityTypeId (keys %$entityTypeInfo) {
+      my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
-      my $tallTableName = $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
-      my $ancestorsTableName = $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
-      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
-      my $wideTableName;
+      $self->createAncestorsTable($studyId, $entityTypeId, $studyAbbrev);
+      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId, $extDbRlsId);
+
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
-        $wideTableName = $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+        $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       }
-      my ($collectionTableName, $collectionAttributesTableName) = $self->maybeCreateCollectionsForMBioNodes($attributeGraphTableName);
-      push @tables, $tallTableName, $ancestorsTableName, $wideTableName, $collectionTableName, $collectionAttributesTableName; 
+
+      if(scalar(keys(%$collections)) > 0) {
+        if($self->maybeCreateCollections($attributeGraphTableName, $collections)) {
+          $dbh->do("update ${SCHEMA}.EntityTypeGraph set has_attribute_collections = 1 where entity_type_id = $entityTypeId");
+        }
+      }
     }
   }
-  my $numTablesMade = grep {$_} @tables;
-  return("Created $numTablesMade tables");
+
+    return("Created Dataset specific tables");
 }
 
 
@@ -180,20 +202,18 @@ sub createWideTable {
   my $entityColumns = join("\n,", @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
+
   my $entitySql = "select ea.stable_id, eaa.*
-                   from $SCHEMA.entityattributes ea,
+                   from $SCHEMA.entityattributes_bfv ea,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
                    where ea.entity_type_id = $entityTypeId";
 
-
   my $processSql = "with process_attributes as (select ea.stable_id, nvl(pa.atts, '{}') as atts
-                                                from ${SCHEMA}.processattributes pa,
-                                                     (select entity_attributes_id
-                                                           , stable_id 
-                                                      from ${SCHEMA}.entityattributes 
-                                                      where entity_type_id = $entityTypeId) ea
-                                                where ea.entity_attributes_id = pa.out_entity_id (+)
+                                                from ${SCHEMA}.processattributes pa
+                                                   , ${SCHEMA}.entityattributes_bfv ea,
+                                                where ea.entity_type_id = $entityTypeId
+                                                 and ea.entity_attributes_id = pa.out_entity_id (+)
                                                )
                     select pa.stable_id, paa.*
                     from process_attributes pa,
@@ -215,7 +235,10 @@ sub createWideTable {
     $sql = $processSql;
   }
   else {
-    $sql = "select stable_id from ${SCHEMA}.entityattributes where entity_type_id = $entityTypeId";
+    $sql = "select ea.stable_id 
+            from ${SCHEMA}.entityattributes_bfv ea
+            where ea.entity_type_id = $entityTypeId
+             ";
   }
 
   my $dbh = $self->getDbHandle();
@@ -235,24 +258,31 @@ AND table_name='$tableName'");
 
 
 sub createAncestorsTable {
-  my ($self, $studyId, $entityTypeId, $entityTypeIds, $studyAbbrev) = @_;
+  my ($self, $studyId, $entityTypeId, $studyAbbrev) = @_;
 
-  my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId};
+  my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
   my $tableName = "${SCHEMA}.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
   my $fieldSuffix = "_stable_id";
 
   $self->log("Creating TABLE: $tableName");
 
-  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
-  $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
-  return $tableName;
+
+  # my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
+  # $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
+  # return $tableName;
+
+  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix);
+
+  $self->populateAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId);
+
+
 }
 
 sub populateAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeAbbrevs) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId) = @_;
 
-  my $stableIdField = $entityTypeAbbrevs->{$entityTypeId} . $fieldSuffix;
+  my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
   my $sql = "select * from (
   with f as 
@@ -263,23 +293,21 @@ sub populateAncestorsTable {
         , o.entity_type_id out_type_id
         , o.stable_id out_stable_id
   from ${SCHEMA}.processattributes p
-     , ${SCHEMA}.entityattributes i
-     , ${SCHEMA}.entityattributes o
-     , ${SCHEMA}.entitytype et
-     , ${SCHEMA}.study s
-  where p.in_entity_id = i.entity_attributes_id
+     , ${SCHEMA}.entityattributes_bfv i
+     , ${SCHEMA}.entityattributes_bfv o
+where p.in_entity_id = i.entity_attributes_id
   and p.out_entity_id = o.entity_attributes_id
-  and i.entity_type_id = et.entity_type_id
-  and et.study_id = s.study_id
-  and s.study_id = $studyId
+  and o.study_id = $studyId
+  and i.study_id = $studyId
   )
   select connect_by_root out_stable_id stable_id,  in_stable_id, in_type_id
   from f
   start with f.out_type_id = $entityTypeId
   connect by prior in_entity_id = out_entity_id
   union
-  select stable_id, null, null
-  from ${SCHEMA}.entityattributes where entity_type_id = $entityTypeId
+  select ea.stable_id, null, null
+  from ${SCHEMA}.entityattributes_bfv ea
+  where ea.entity_type_id = $entityTypeId
 ) order by stable_id";
 
   my $dbh = $self->getDbHandle();
@@ -288,7 +316,7 @@ sub populateAncestorsTable {
 
   my $hasFields = scalar @$ancestorEntityTypeIds > 0;
 
-  my @fields = map { $entityTypeAbbrevs->{$_} . $fieldSuffix } @$ancestorEntityTypeIds;
+  my @fields = map { $self->getEntityTypeInfo($_, "internal_abbrev") . $fieldSuffix } @$ancestorEntityTypeIds;
 
   my $fieldsString = $hasFields ? "$stableIdField, " . join(",",  @fields) : $stableIdField;
 
@@ -311,7 +339,13 @@ sub populateAncestorsTable {
       %entities = ();
     }
 
-    $entities{$parentTypeId} = $parentId if ($parentId);    
+    if ($parentId) {
+      # for mega study, the query above will return the internal entity type which needs to be mapped
+      # for the standard study, use the identity mapping
+      #my $mappedParentTypeId = $self->mapEntityTypeId($parentTypeId);
+      #$entities{$mappedParentTypeId} = $parentId;
+      $entities{$parentTypeId} = $parentId;
+    }
     $prevId = $entityId;
 
     if(++$count % 1000 == 0) {
@@ -332,9 +366,10 @@ sub insertAncestorRow {
 }
 
 sub createEmptyAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $fieldSuffix, $entityTypeIds) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix) = @_;
 
-  my $stableIdField = $entityTypeIds->{$entityTypeId} . $fieldSuffix;
+
+  my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
   my $sql = "select entity_type_id
 from ${SCHEMA}.entitytypegraph
@@ -347,8 +382,7 @@ connect by prior parent_id = entity_type_id";
   
   my (@fields, @ancestorEntityTypeIds);  
   while(my ($id) = $sh->fetchrow_array()) {
-    my $entityTypeAbbrev = $entityTypeIds->{$id};
-    $self->error("Could not determine entityType abbrev for entit_Type_id=$id") unless($id);
+    my $entityTypeAbbrev = $self->getEntityTypeInfo($id, "internal_abbrev");
     push @fields, $entityTypeAbbrev unless($id == $entityTypeId);
     push @ancestorEntityTypeIds, $id unless($id == $entityTypeId);
   }
@@ -377,19 +411,74 @@ PRIMARY KEY ($stableIdField)
 
 
 
-sub entityTypeIdsFromStudyId {
+sub setEntityTypeInfoFromStudyId {
   my ($self, $studyId) = @_;
 
-  return $self->sqlAsDictionary( Sql => "select t.entity_type_id, t.internal_abbrev from ${SCHEMA}.entitytype t where t.study_id = $studyId" );
+  my $sql = "select t.entity_type_id, t.internal_abbrev, t.type_id, t.entity_type_id from ${SCHEMA}.entitytype t where t.study_id = $studyId";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my $entityTypeInfo = {};
+
+  while(my ($entityTypeId, $internalAbbrev, $typeId, $internalEntityTypeIds) = $sh->fetchrow_array()) {
+    $entityTypeInfo->{$entityTypeId}->{internal_abbrev} = $internalAbbrev;
+    $entityTypeInfo->{$entityTypeId}->{type_id} = $typeId;
+  }
+  $sh->finish();
+
+  $self->{_entity_type_info} = $entityTypeInfo;
+
+  return $entityTypeInfo;
 }
 
+# sub mapEntityTypeId {
+#   my ($self, $entityTypeId) = @_;
+
+#   my $mappedId = $self->{_entity_type_id_map}->{$entityTypeId};
+
+#   unless($mappedId) {
+#     $self->error("Could not map entityTypeId: $entityTypeId");
+#   }
+
+#   return $mappedId
+# }
+
+sub getEntityTypeInfo {
+  my ($self, $entityTypeId, $key) = @_;
+
+  my @allowedKeys = ("internal_abbrev", "type_id");
+
+  unless(grep(/$key/, @allowedKeys)) {
+    $self->error("Invalid hash key:  $key");
+  }
+
+  my $et = $self->{_entity_type_info}->{$entityTypeId};
+
+  unless($et) {
+    $self->error("no entity type info for entity type id:  $entityTypeId");
+  }
+
+  my $value = $et->{$key};
+
+  unless(defined $value) {
+    $self->error("no value for entity type id [$entityTypeId] and key [$key]");
+  }
+
+  return $value;
+}
+
+
+
 sub createAttributeGraphTable {
-  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId) = @_;
+  my ($self, $entityTypeId, $studyAbbrev, $studyId, $extDbRlsId) = @_;
+
+  my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
   my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
   $self->log("Creating TABLE:  $tableName");
-
 
   # ${SCHEMA}.attribute stable_id could be from sres.ontologyterm, or not
   # if yes, it could also be another term's parent
@@ -399,8 +488,10 @@ sub createAttributeGraphTable {
   # careful: att.ontology_term_id doesn't have to exist
 
   my $sql = "CREATE TABLE $tableName as
-  WITH att AS
-  (SELECT a.*, t.source_id as unit_stable_id FROM ${SCHEMA}.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
+  WITH attAnnProps AS
+  (select ontology_term_id, json_value(props, '\$.unitLabel[0]') as unit_override from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId)
+   , att AS
+  (SELECT a.*, t.unit_override FROM ${SCHEMA}.attribute a, attAnnProps t WHERE a.ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
    , satg AS
   (SELECT atg.*
    FROM ${SCHEMA}.attributegraph atg
@@ -409,7 +500,7 @@ sub createAttributeGraphTable {
    , atg AS
   (select * from satg
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
-    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
+    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing' and study_id = $studyId
   )
 -- this bit gets the internal nodes
 SELECT --  distinct
@@ -418,7 +509,7 @@ SELECT --  distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , atg.ordinal_values as vocabulary
+     , null as vocabulary
      , atg.display_type
      , atg.hidden
      , atg.display_order
@@ -443,6 +534,7 @@ SELECT --  distinct
      , null as is_multi_valued
      , null as data_shape
      , null as unit
+     , null as scale
      , null as precision
 FROM atg, att
 where atg.stable_id = att.stable_id (+) and att.stable_id is null
@@ -454,11 +546,7 @@ SELECT -- distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , CASE
-         WHEN atg.ordinal_values IS NULL
-           THEN att.ordered_values
-         ELSE atg.ordinal_values
-       END as vocabulary
+     , nvl(atg.ordinal_values, att.ordered_values) as vocabulary
      , atg.display_type display_type
      , atg.hidden
      , atg.display_order
@@ -482,7 +570,8 @@ SELECT -- distinct
      , att.distinct_values_count
      , att.is_multi_valued
      , att.data_shape
-     , att.unit
+     , nvl(att.unit_override, att.unit) as unit
+     , atg.scale
      , att.precision
 FROM atg, att
 where atg.stable_id = att.stable_id
@@ -520,104 +609,80 @@ SQL
 }
 
 
-sub createTallTable {
-  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
-
-  my $tableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
-
-  $self->log("Creating TABLE: $tableName");
-
-  my $sql = <<CREATETABLE;
-CREATE TABLE $tableName 
-nologging as
-SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
-     , av.attribute_stable_id
-     , string_value
-     , number_value
-     , date_value
-FROM ${SCHEMA}.attributevalue av, ${SCHEMA}.entityattributes ea
-WHERE av.entity_type_id = $entityTypeId
-and av.entity_attributes_id = ea.entity_attributes_id
-CREATETABLE
-
-  my $dbh = $self->getDbHandle();
-
-  $dbh->do($sql) or die $dbh->errstr;
-
-
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
-  return $tableName;
-}
-
-sub dropTablesLike {
-  my ($self, $pattern) = @_;
-  my $dbh = $self->getDbHandle();
-  my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '%s')", $pattern);
-  $self->log("Finding tables to drop with SQL: $sql");
-  my $sth = $dbh->prepare($sql);
-  $sth->execute();
-  while(my ($table_name) = $sth->fetchrow_array()){
-    $self->log("dropping table ${SCHEMA}.${table_name}");
-    $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
-  }
-  $sth->finish();
-}
-
 sub dropTables {
   my ($self, $extDbRlsSpec) = @_;
   my $dbh = $self->getDbHandle();
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
-  
-  my $sql1 = "select distinct s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s
+
+  my $sql1 = "select distinct s.internal_abbrev from ${TERM_SCHEMA}.externaldatabase d, ${TERM_SCHEMA}.externaldatabaserelease r, ${SCHEMA}.study s
  where d.external_database_id = r.external_database_id
-and d.name = '$dbName' and r.version = '$dbVersion' 
+and d.name = '$dbName' and r.version = '$dbVersion'
 and r.external_database_release_id = s.external_database_release_id";
   $self->log("Looking for tables belonging to $extDbRlsSpec :\n$sql1");
   my $sh = $dbh->prepare($sql1);
   $sh->execute();
 
-  while(my ($studyAbbrev) = $sh->fetchrow_array()) {
-    my $s = uc $studyAbbrev;
+  while(my ($s) = $sh->fetchrow_array()) {
     # collection tables have foreign keys - drop them first
-    $self->dropTablesLike("COLLECTIONATTRIBUTE_${s}");
-    $self->dropTablesLike("COLLECTION_${s}");
-    $self->dropTablesLike("(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_${s}");
+    &dropTablesLike($SCHEMA, "COLLECTIONATTRIBUTE_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "COLLECTION_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "(ATTRIBUTES|ANCESTORS|ATTRIBUTEGRAPH)_${s}", $dbh);
+
+
+    &dropTablesLike($SCHEMA, "ATTRIBUTES_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "ANCESTORS_${s}", $dbh);
+    &dropTablesLike($SCHEMA, "ATTRIBUTEGRAPH_${s}", $dbh);
   }
   $sh->finish();
 }
 
-sub maybeCreateCollectionsForMBioNodes {
 
-  my ($self, $attributeGraphTableName) = @_;
+sub makeCollectionsFromWhereSql {
+  my ($self, $attributeGraphTableName, $collections) = @_;
+
+  my @collectionsWithTBDVariables;
+
+  my $collectionsWithVariablesString;
+
+  foreach my $stableId (keys %$collections) {
+    if($collections->{variables}) {
+      foreach my $variable (@{$collections->{variables}}) {
+        $collectionsWithVariablesString .= " OR (child.parent_stable_id = '$stableId' and child.stable_id = '$variable')";
+      }
+    }
+    else {
+      push @collectionsWithTBDVariables, $stableId;
+    }
+  }
+
+  my $collectionsWithTBDVariablesString = join(',', map { "'" . $_ . "'" } @collectionsWithTBDVariables);
+
+  my $fromWhereSql = <<"EOF";
+FROM   $attributeGraphTableName child, $attributeGraphTableName parent
+WHERE child.parent_stable_id = parent.stable_id
+and (child.parent_stable_id IN ( '_DUMMY_', $collectionsWithTBDVariablesString)
+     $collectionsWithVariablesString
+    )
+EOF
+
+  return $fromWhereSql;
+}
+
+sub maybeCreateCollections {
+  my ($self, $attributeGraphTableName, $collections) = @_;
+
   my $dbh = $self->getDbHandle();
-
 
   my ($collectionTableName, $collectionAttributesTableName) = collectionTableNames($attributeGraphTableName);
 
   my $sth;
 
-  my $fromWhereSql = <<"EOF";
-FROM   $attributeGraphTableName child, $attributeGraphTableName parent
-WHERE  child.parent_stable_id IN ( 'EUPATH_0009247', 'EUPATH_0009248',
-                             'EUPATH_0009249',
-                             'EUPATH_0009252', 'EUPATH_0009253',
-                             'EUPATH_0009254', 'EUPATH_0009255',
-                             'EUPATH_0009256', 'EUPATH_0009257',
-                             'EUPATH_0009269')
-and child.parent_stable_id = parent.stable_id
-EOF
+  my $fromWhereSql = $self->makeCollectionsFromWhereSql($attributeGraphTableName, $collections);
 
   $sth = $dbh->prepare("select 1 $fromWhereSql fetch next 1 row only");
   $sth->execute();
   return unless $sth->fetchrow_arrayref();
 
-  
   $self->log("Creating TABLE: $collectionTableName");
   my $getCollectionsSql = <<"EOF";
 SELECT parent.stable_id       as stable_id,
@@ -650,6 +715,25 @@ EOF
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
+  $dbh->do("ALTER TABLE $collectionTableName add (member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
+
+  # update some things from the yaml.
+  foreach my $stableId (keys %$collections) {
+    if(my $rangeMin = $collections->{$stableId}->{range_min}) {
+      $dbh->do("update $collectionTableName set display_range_min = $rangeMin");
+    }
+    if(my $rangeMax = $collections->{$stableId}->{range_max}) {
+      $dbh->do("update $collectionTableName set display_range_max = $rangeMax");
+    }
+
+    if(my $member = $collections->{$stableId}->{member}) {
+      $dbh->do("update $collectionTableName set member = '$member' where stable_id = '$stableId'");
+
+      if(my $memberPlural = $collections->{$stableId}->{memberPlural}) {
+        $dbh->do("update $collectionTableName set member_plural = '$memberPlural' where stable_id = '$stableId'");
+      }
+    }
+  }
 
   $self->log("Creating TABLE: $collectionAttributesTableName");
 
