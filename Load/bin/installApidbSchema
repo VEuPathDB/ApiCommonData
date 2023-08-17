@@ -8,7 +8,7 @@ use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $allowFailures, $verbose);
+my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $dbVendor, $allowFailures, $verbose);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
            "dropApiDB!" => \$dropApiDB,
@@ -55,6 +55,8 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
+my $dbVendor = $gusconfig->getDatabaseVendor();
+my $dbiDsn = $gusconfig->getDbiDsn();
 
 
 # PLEASE READ BEFORE ADDING TO @create
@@ -74,99 +76,133 @@ my $password = $gusconfig->getDatabasePassword();
 #       so that if needed, the create can be manually reversed
 
 my @create = qw(
-               removeNullConstraintsFromSimilarityTables.sql
-               createGusTuning.sql
-               createApidbTuningSchema.sql
-               createApidbUserDatasetsSchema.sql
-               createTestTuningSchema.sql
-               createApidbSchema.sql
-               createChebiSchema.sql
-               createHmdbSchema.sql
-               createEdaSchema.sql
-               createHMDBTables.sql
-	       createAnalysisMethodInvocation.sql
-	       createDatasource.sql
-	       createDbLinks.sql
-               createSnpTables.sql
-	       createGeneInteractionTables.sql
-	       createGeneFeatureProduct.sql
-	       createGeneFeatureName.sql
-	       createOrthologGroup.sql
-	       createPhylogeneticProfile.sql
-	       createPhylogeneticTree.sql
-	       createRelatedNaFeature.sql
-	       createReportCache.sql
-	       createSequenceAttributeTables.sql
-	       createOrganism.sql
-	       createStoredProcedures.sql
-               createPivotProcedure.sql
-	       createSyntenyTables.sql
-	       createSpliceSiteFeature.sql
-	       createPubChemSubstance.sql
-	       createPubChemCompound.sql
-	       createDbRefCompound.sql
-	       createOldAnnotation.sql
-	       createOldCodingSequence.sql
-	       createTuningManager.sql
-	       createWorkflow.sql
-	       createIntronJunction.sql
-	       createNAFeatureHaploblock.sql
-               createBlatProteinAlignment.sql
-	       createGFF3Table.sql
-	       createEcNumberGenus.sql
-	       createSpliceSiteGenes.sql
-	       createPolyAGenes.sql
-               createMassSpecSummary.sql
-               createCompoundMassSpec.sql
-               createPathwayTables.sql
-               createTranscriptProduct.sql
-               createIsolateGPS.sql
-               createPhenotype.sql
-               createNAFeaturePhenotype.sql
-               createPhenotypeScore.sql
-               createPhenotypeMutants.sql
-               createPhenotypeGrowthRate.sql
-               createHaplotypeResult.sql
-               createOntologyTermResult.sql
-               createSubjectResult.sql
-               createSeqEdit.sql
-               createWHOStandards.sql
-               createLOPITResults.sql
-               createWGCNAResults.sql
-               createWGCNAModuleEigengeneResults.sql
-               createNAFeatureMetaCycle.sql
-               createCNVTables.sql
-               createRflpTables.sql
-               createNAFeatureImage.sql
-               createSequenceTaxon.sql
-               createFeatureLocation.sql
-               createCrisprPhenotype.sql 
-               createGoSubset.sql
-               createUserDatasetCoreTables.sql
-               createUserDatasetTypeTables.sql
-               createDatabaseTableMapping.sql
-               createEntityGraphTables.sql
-               createEdaUdModifications.sql
-               createExternalResourceUrl.sql
-               createAGPPiece.sql
-	       createAlphaFoldTable.sql
-	     );
+  removeNullConstraintsFromSimilarityTables.sql
+  createGusTuning.sql
+  createApidbTuningSchema.sql
+  createApidbUserDatasetsSchema.sql
+  createTestTuningSchema.sql
+  createApidbSchema.sql
+  createChebiSchema.sql
+  createHmdbSchema.sql
+  createEdaSchema.sql
+  createHMDBTables.sql
+  createAnalysisMethodInvocation.sql
+  createDatasource.sql
+  createSnpTables.sql
+  createGeneInteractionTables.sql
+  createGeneFeatureProduct.sql
+  createGeneFeatureName.sql
+  createOrthologGroup.sql
+  createPhylogeneticProfile.sql
+  createPhylogeneticTree.sql
+  createRelatedNaFeature.sql
+  createReportCache.sql
+  createSequenceAttributeTables.sql
+  createOrganism.sql
+  createStoredProcedures.sql
+  createPivotProcedure.sql
+  createSyntenyTables.sql
+  createSpliceSiteFeature.sql
+  createPubChemSubstance.sql
+  createPubChemCompound.sql
+  createDbRefCompound.sql
+  createOldAnnotation.sql
+  createOldCodingSequence.sql
+  createTuningManager.sql
+  createWorkflow.sql
+  createIntronJunction.sql
+  createNAFeatureHaploblock.sql
+  createBlatProteinAlignment.sql
+  createGFF3Table.sql
+  createEcNumberGenus.sql
+  createSpliceSiteGenes.sql
+  createPolyAGenes.sql
+  createMassSpecSummary.sql
+  createCompoundMassSpec.sql
+  createPathwayTables.sql
+  createTranscriptProduct.sql
+  createIsolateGPS.sql
+  createPhenotype.sql
+  createNAFeaturePhenotype.sql
+  createPhenotypeScore.sql
+  createPhenotypeMutants.sql
+  createPhenotypeGrowthRate.sql
+  createHaplotypeResult.sql
+  createOntologyTermResult.sql
+  createSubjectResult.sql
+  createSeqEdit.sql
+  createWHOStandards.sql
+  createLOPITResults.sql
+  createWGCNAResults.sql
+  createWGCNAModuleEigengeneResults.sql
+  createNAFeatureMetaCycle.sql
+  createCNVTables.sql
+  createRflpTables.sql
+  createNAFeatureImage.sql
+  createSequenceTaxon.sql
+  createFeatureLocation.sql
+  createCrisprPhenotype.sql
+  createGoSubset.sql
+  createVdiControlTables.sql
+  createUserDatasetCoreTables.sql
+  createUserDatasetTypeTables.sql
+  createDatabaseTableMapping.sql
+  createEntityGraphTables.sql
+  createEdaUdModifications.sql
+  createExternalResourceUrl.sql
+  createAGPPiece.sql
+  createAlphaFoldTable.sql
+  createLegacyDatasetNames.sql
+  createBusco.sql
+  createCellxgene.sql
+  grantChebiTables.sql
+);
 
 
 # drop GUS first, then ApidbTuning, then Apidb (reverse of order they were created in).
 # for GUS, we only drop the tuning indexes, as the other GUS changes don't
 # need to be reversed.  The trick here is to order these to avoid failures
-my @delete = qw( restoreNullConstraintsFromSimilarityTables.sql
-                 dropGusTuning.sql
-      	         dropDbLinks.sql
-                 dropTestTuningSchema.sql
-                 dropApidbTuningSchema.sql
-                 dropApidbUserDatasetsSchema.sql
-                 dropApidbSchema.sql
-			     dropChebiSchema.sql
-				 dropHMDBSchema.sql
-                 dropExternalResourceUrl.sql
-               );
+my @delete = qw(
+  restoreNullConstraintsFromSimilarityTables.sql
+  dropGusTuning.sql
+  dropDbLinks.sql
+  dropTestTuningSchema.sql
+  dropApidbTuningSchema.sql
+  dropApidbUserDatasetsSchema.sql
+  dropVdiControlTables.sql
+  dropApidbSchema.sql
+  dropChebiSchema.sql
+  dropHMDBSchema.sql
+  dropExternalResourceUrl.sql
+);
+
+my @gusSchemas = qw(
+  CORE
+  DOTS
+  MODEL
+  PLATFORM
+  RESULTS
+  SRES
+  STUDY
+  COREVER
+  DOTSVER
+  MODELVER
+  PLATFORMVER
+  RESULTSVER
+  SRESVER
+  STUDYVER
+);
+
+my @apiDbSchemas = qw(
+  APIDB
+  APIDBTUNING
+  APIDBUSERDATASETS
+  CHEBI
+  HMDB
+  EDA
+  EDA_UD
+  TESTTUNING
+);
 
 if ($create) {
   for my $sql (@create) {
@@ -178,33 +214,57 @@ if ($create) {
      if($sql eq 'createEntityGraphTables.sql') {
        $sqlplusParamValues[0] = "EDA";
        $sqlplusParamValues[1] = "SRES";
-       &runSql($login, $password, $db, $sql, @sqlplusParamValues);
+       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
+
+
 
        $sqlplusParamValues[0] = "ApidbUserDatasets";
        $sqlplusParamValues[1] = "ApidbUserDatasets";
-       &runSql($login, $password, $db, $sql, @sqlplusParamValues);
+       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
      }
 
      else {
-       &runSql($login, $password, $db, $sql, @sqlplusParamValues);
+       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
      }
-
-
   }
-
 } elsif ($dropApiDB) {
-  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB', 'EDA', 'EDA_UD'");
-
+  # &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB', 'EDA', 'EDA_UD'");
+    if (lc $dbVendor eq 'oracle') {
+      my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
+      &dropSchemaSetTables($login, $password, $db, $schemaSetStr);
+    } elsif (lc $dbVendor eq 'postgres') {
+      &dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @apiDbSchemas);
+    } else {
+      die "Unsupported dbVendor:$dbVendor.";
+    }
 } elsif ($dropGUS) {
-  &dropSchemaSet($login, $password, $db,
-                 "'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY','COREVER','DOTSVER','MODELVER','PLATFORMVER','RESULTSVER','SRESVER','STUDYVER'");
-
+  # &dropSchemaSet($login, $password, $db,"'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY','COREVER','DOTSVER','MODELVER','PLATFORMVER','RESULTSVER','SRESVER','STUDYVER'");
+  if (lc $dbVendor eq 'oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @gusSchemas;
+    &dropSchemaSetOracle($login, $password, $db, $schemaSetStr);
+  } elsif (lc $dbVendor eq 'postgres') {
+    &dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @gusSchemas);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
 }
 
 print STDERR "\nDone.\n";
 
 sub runSql {
-  my ($login, $password, $db, $file, @sqlplusParamValues) = @_;
+  my ($login, $password, $db, $file, $dbVendor, @params) = @_;
+  
+  if (lc $dbVendor eq 'oracle') { 
+    &runSqlOracle($login, $password, $db, $file, @params);
+  } elsif (lc $dbVendor eq 'postgres') {
+    &runSqlPostgres($login, $password, $db, $file, @params);
+  } else { 
+    die "Unsupported dbVendor:$dbVendor."; 
+  }
+}
+
+sub runSqlOracle {
+  my ($login, $password, $db, $file, @params) = @_;
 
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
 
@@ -223,8 +283,8 @@ sub runSql {
   $cmd = "cat $fullFile >> $tmpFile";
   runCmd($cmd, $tmpFile);
 
-  my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
-  $cmd = "sqlplus $login\@$db/$password \@$tmpFile $sqlplusParamValuesString";
+  # my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
+  $cmd = "sqlplus $login\@$db/$password \@$tmpFile " . join(' ', @params);
   print STDOUT "\n==============================================================\n";
   print STDOUT "Running $tmpFile\n";
   print STDOUT "==============================================================\n";
@@ -233,13 +293,47 @@ sub runSql {
   unlink($tmpFile);
 }
 
+sub runSqlPostgres {
+  my ($login, $password, $db, $file, @params) = @_;
+  
+  my $folder_prefix = "pgsql";
+  my $psql_params = "";
+  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
+  my $hostname = $2;
+  my $connectionString = "postgresql://$login:$password\@$hostname/$db";
+  
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$folder_prefix/$file";
+  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
+
+  my $cmd;
+  if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
+
+  if (scalar @params > 0) {
+    my @paramsFull;
+    for(my $i = 0; $i < scalar @params; $i++) {
+      my $n = $i +1;
+      my $p = "VAR${n}";
+      push @paramsFull, "-v ${p}=$params[$i]";
+    }
+
+    $psql_params = "$psql_params " . join(" ", @paramsFull);
+  }
+
+  $cmd = "psql --echo-all -f $fullFile $psql_params $connectionString";
+  print STDOUT "\n==============================================================\n";
+  print STDOUT "Running $fullFile\n";
+  print STDOUT "==============================================================\n";
+
+  runCmd($cmd, $fullFile);
+}
+
 sub runCmd {
     my ($cmd, $tmpFile) = @_;
     print STDERR "\nrunning command: $cmd\n" if $verbose;
     system($cmd);
     my $status = $? >> 8;
     if ($status) {
-      unlink($tmpFile);
+      unlink($tmpFile) if $cmd =~ /^sqlplus/;
       die "Failed with status '$status running cmd: \n$cmd'\n";
     }
 }
@@ -269,8 +363,7 @@ SQL
   my $objectsToDrop = 1;
 
   while ($objectsToDrop) {
-    $stmt->execute()
-      or addErrorLog("\n" . $dbh->errstr . "\n");
+    $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
     if (my ($dropStmtSql) = $stmt->fetchrow_array()) {
       print STDERR "running statement: $dropStmtSql\n" if $verbose;
@@ -282,7 +375,7 @@ SQL
 
 }
 
-sub dropSchemaSet {
+sub dropSchemaSetOracle {
   my ($login, $password, $db, $schemaSet) = @_;
 
   my $dsn = "dbi:Oracle:" . $db;
@@ -301,12 +394,36 @@ sub dropSchemaSet {
     where username in ($schemaSet)
 SQL
 
-  $stmt->execute()
-    or addErrorLog("\n" . $dbh->errstr . "\n");
+  $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
   while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
     print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
     $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
   }
+}
 
+sub dropSchemaSetPostgres {
+  my ($dbiDsn, $login, $password, $db, @schemaSet) = @_;
+
+  my $dbh = DBI->connect(
+                $dbiDsn,
+                $login,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n" if $verbose;
+
+  for my $schema (@schemaSet) {
+    my $stmt = $dbh->prepare(<<SQL);
+    DROP SCHEMA $schema CASCADE;
+SQL
+
+    $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
+
+    while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
+      print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
+      $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+    }
+  }
 }

@@ -13,6 +13,7 @@ agg_follow_up::response_person	EUPATH_0010123	3	Other immediate family member
 agg_follow_up::response_person	EUPATH_0010123	NA	:::UNDEF:::		
 agg_follow_up::delivery_type	agg_follow_up::delivery_type	1	Vaginal	
 agg_follow_up::delivery_type	agg_follow_up::delivery_type	2	Caesarean section	
+agg_follow_up::delivery_type	agg_follow_up::delivery_type	3	:::UNDEF:::	
 agg_follow_up::delivery_type	agg_follow_up::delivery_type	NA	:::UNDEF:::	
 agg_follow_up::num_of_births	agg_follow_up::num_of_births	NA	:::UNDEF:::	
 agg_follow_up::baby_alive_at_discharge	agg_follow_up::baby_alive_at_discharge	0	No	
@@ -216,7 +217,6 @@ dim_baby_outcomes_noconflict_var::baby_death_day_0_location_2	dim_baby_outcomes_
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	BB Facility	BetterBirth facility
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	Referral Facility	Referral facility
 dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	dim_baby_outcomes_noconflict_var::baby_death_day_0_location_3	NA	:::UNDEF:::
-
 dim_fada_single_row::fada_op1_assisted_by_doctor	dim_fada_single_row::fada_op1_assisted_by_doctor	0	No	
 dim_fada_single_row::fada_op1_assisted_by_doctor	dim_fada_single_row::fada_op1_assisted_by_doctor	1	Yes	
 dim_fada_single_row::fada_op1_assisted_by_doctor	dim_fada_single_row::fada_op1_assisted_by_doctor	NA	:::UNDEF:::	
@@ -471,8 +471,9 @@ dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	POST	2 months (i
 dim_fada_single_row::fada_phase	dim_fada_single_row::fada_phase	PRE	Baseline	1
 dim_fada_single_row::datatype	dim_fada_single_row::datatype	Observed birth and outcome data	Observed birth and outcome data	
 dim_fada_single_row::datatype	dim_fada_single_row::datatype	Observed birth data	Observed birth data	
-dim_fada_single_row::clinepi_id	dim_fada_single_row::clinepi_id	Yes	Yes
-dim_fada_single_row::lighttouch	dim_fada_single_row::lighttouch	No	No
+dim_fada_single_row::clinepi_id	dim_fada_single_row::clinepi_id	Yes	Yes	
+dim_fada_single_row::clinepi_id	dim_fada_single_row::clinepi_id	NA	:::UNDEF:::	
+dim_fada_single_row::lighttouch	dim_fada_single_row::lighttouch	No	No	
 dim_mom_outcomes::mom_dead_day_0	dim_mom_outcomes::mom_dead_day_0	0	No	
 dim_mom_outcomes::mom_dead_day_0	dim_mom_outcomes::mom_dead_day_0	1	Yes	
 dim_mom_outcomes::mom_dead_day_0	dim_mom_outcomes::mom_dead_day_0	NA	:::UNDEF:::	
@@ -522,7 +523,7 @@ dim_mom_outcomes::mom_site_moved_omit_data	dim_mom_outcomes::mom_site_moved_omit
 dim_mom_outcomes::mom_site_moved_omit_data	dim_mom_outcomes::mom_site_moved_omit_data	1	Yes	
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	1	Vaginal	
 dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	2	Caesarean section	
-dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	3		
+dim_mom_outcomes::mom_delivery_type	dim_mom_outcomes::mom_delivery_type	3	:::UNDEF:::	
 dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	intensive	Intensive coaching intervention (2x per week)	1
 dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	post	Post coaching intervention	3
 dim_mom_outcomes::otis_phase_name	dim_mom_outcomes::otis_phase_name	taper	Tapered coaching intervention (1x per week or less)	2		
@@ -819,6 +820,7 @@ lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	tran
 lt_dim_fada_single_row::comment_notes	lt_dim_fada_single_row::comment_notes	twins	Twins	
 lt_dim_fada_single_row::datatype	lt_dim_fada_single_row::datatype	Observed birth data	Observed birth data	
 Lt_dim_fada_single_row::clinepi_id	lt_dim_fada_single_row::clinepi_id	Yes	Yes
+Lt_dim_fada_single_row::clinepi_id	lt_dim_fada_single_row::clinepi_id	NA	:::UNDEF:::	
 lt_dim_fada_single_row::lighttouch	lt_dim_fada_single_row::lighttouch	Yes	Yes
 lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	0	No	
 lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	lt_raw_coach_tl_sbs::otis_sl_aer_thermometer_avail	1	Yes, supplied from facility	
@@ -947,7 +949,7 @@ lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	lt_raw_coach_tl_sbs::coach_tl_fp_
 lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	lt_raw_coach_tl_sbs::coach_tl_fp_female_steril	1	Yes	
 lt_raw_coach_tl_sbs::coach_tl_fp_other	lt_raw_coach_tl_sbs::coach_tl_fp_other	0	No	
 lt_raw_coach_tl_sbs::coach_tl_fp_other	lt_raw_coach_tl_sbs::coach_tl_fp_other	1	Yes	
-lt_raw_coach_tl_sbs::datatype	lt_raw_coach_tl_sbs::datatype	Coach	Coach	
+lt_raw_coach_tl_sbs::datatype	lt_raw_coach_tl_sbs::datatype	Coach	Coaching and/or OTIS process
 lt_raw_coach_tl_sbs::lighttouch	lt_raw_coach_tl_sbs::lighttouch	No	No		
 lt_raw_otis_process_tl::otis_pt_visit_number	lt_raw_otis_process_tl::otis_pt_visit_number	1		
 lt_raw_otis_process_tl::otis_pt_visit_number	lt_raw_otis_process_tl::otis_pt_visit_number	2		
@@ -969,8 +971,9 @@ lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	lt_raw_otis_process_tl::oti
 lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	lt_raw_otis_process_tl::otis_pt_data_sharing_meeting	NA	:::UNDEF:::	
 lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	0	No	
 lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	1	Yes	
+lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	lt_raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	NA	:::UNDEF:::	
 lt_raw_otis_process_tl::lighttouch	lt_raw_otis_process_tl::lighttouch	Yes	Yes	
-lt_raw_otis_process_tl::datatype	lt_raw_otis_process_tl::datatype	otis process	OTIS process			
+lt_raw_otis_process_tl::datatype	lt_raw_otis_process_tl::datatype	otis process	Coaching and/or OTIS process			
 lt_raw_otis_visit::otis_op1_observed	lt_raw_otis_visit::otis_op1_observed	0	No	
 lt_raw_otis_visit::otis_op1_observed	lt_raw_otis_visit::otis_op1_observed	1	Yes	
 lt_raw_otis_visit::otis_op2_observed	lt_raw_otis_visit::otis_op2_observed	0	No	
@@ -984,6 +987,7 @@ lt_raw_otis_visit::otis_op5_observed	lt_raw_otis_visit::otis_op5_observed	1	Yes
 lt_raw_otis_visit::otis_op1_mother_temp	lt_raw_otis_visit::otis_op1_mother_temp	0	No	
 lt_raw_otis_visit::otis_op1_mother_temp	lt_raw_otis_visit::otis_op1_mother_temp	1	Yes	
 lt_raw_otis_visit::otis_op1_mother_temp	lt_raw_otis_visit::otis_op1_mother_temp	2	Yes, with prompt		
+lt_raw_otis_visit::otis_op1_mother_temp	lt_raw_otis_visit::otis_op1_mother_temp	NA	:::UNDEF:::
 lt_raw_otis_visit::otis_op1_mother_temp_value	lt_raw_otis_visit::otis_op1_mother_temp_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_mother_temp_no_supplies	lt_raw_otis_visit::otis_op1_mother_temp_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_mother_temp_no_supplies	lt_raw_otis_visit::otis_op1_mother_temp_no_supplies	1	Yes	
@@ -1000,6 +1004,7 @@ lt_raw_otis_visit::otis_op1_mother_temp_no_opp	lt_raw_otis_visit::otis_op1_mothe
 lt_raw_otis_visit::otis_op1_mother_bp	lt_raw_otis_visit::otis_op1_mother_bp	0	No	
 lt_raw_otis_visit::otis_op1_mother_bp	lt_raw_otis_visit::otis_op1_mother_bp	1	Yes	
 lt_raw_otis_visit::otis_op1_mother_bp	lt_raw_otis_visit::otis_op1_mother_bp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_mother_bp	lt_raw_otis_visit::otis_op1_mother_bp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_mother_bp_systolic	lt_raw_otis_visit::otis_op1_mother_bp_systolic	NA	:::UNDEF:::		
 lt_raw_otis_visit::otis_op1_mother_bp_diastolic	lt_raw_otis_visit::otis_op1_mother_bp_diastolic	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_mother_bp_no_supplies	lt_raw_otis_visit::otis_op1_mother_bp_no_supplies	0	No	
@@ -1017,6 +1022,7 @@ lt_raw_otis_visit::otis_op1_mother_bp_no_opp	lt_raw_otis_visit::otis_op1_mother_
 lt_raw_otis_visit::otis_op1_fhs	lt_raw_otis_visit::otis_op1_fhs	0	No	
 lt_raw_otis_visit::otis_op1_fhs	lt_raw_otis_visit::otis_op1_fhs	1	Yes	
 lt_raw_otis_visit::otis_op1_fhs	lt_raw_otis_visit::otis_op1_fhs	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_fhs	lt_raw_otis_visit::otis_op1_fhs	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_fhs_no_supplies	lt_raw_otis_visit::otis_op1_fhs_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_fhs_no_supplies	lt_raw_otis_visit::otis_op1_fhs_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op1_fhs_no_supplies	lt_raw_otis_visit::otis_op1_fhs_no_supplies	NA	:::UNDEF:::	
@@ -1031,7 +1037,8 @@ lt_raw_otis_visit::otis_op1_fhs_no_opp	lt_raw_otis_visit::otis_op1_fhs_no_opp	1	
 lt_raw_otis_visit::otis_op1_fhs_no_opp	lt_raw_otis_visit::otis_op1_fhs_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_exam	lt_raw_otis_visit::otis_op1_exam	0	No	
 lt_raw_otis_visit::otis_op1_exam	lt_raw_otis_visit::otis_op1_exam	1	Yes	
-lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	0		
+lt_raw_otis_visit::otis_op1_exam	lt_raw_otis_visit::otis_op1_exam	NA	:::UNDEF:::	
+lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	lt_raw_otis_visit::otis_op1_vag_exam_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_vag_exam_no_skills	lt_raw_otis_visit::otis_op1_vag_exam_no_skills	0	No	
 lt_raw_otis_visit::otis_op1_vag_exam_no_skills	lt_raw_otis_visit::otis_op1_vag_exam_no_skills	NA	:::UNDEF:::	
@@ -1042,6 +1049,7 @@ lt_raw_otis_visit::otis_op1_vag_exam_no_opp	lt_raw_otis_visit::otis_op1_vag_exam
 lt_raw_otis_visit::otis_op1_exam_water	lt_raw_otis_visit::otis_op1_exam_water	0	No	
 lt_raw_otis_visit::otis_op1_exam_water	lt_raw_otis_visit::otis_op1_exam_water	1	Yes	
 lt_raw_otis_visit::otis_op1_exam_water	lt_raw_otis_visit::otis_op1_exam_water	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_exam_water	lt_raw_otis_visit::otis_op1_exam_water	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_water_no_supplies	lt_raw_otis_visit::otis_op1_water_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_water_no_supplies	lt_raw_otis_visit::otis_op1_water_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op1_water_no_supplies	lt_raw_otis_visit::otis_op1_water_no_supplies	NA	:::UNDEF:::	
@@ -1057,6 +1065,7 @@ lt_raw_otis_visit::otis_op1_water_no_opp	lt_raw_otis_visit::otis_op1_water_no_op
 lt_raw_otis_visit::otis_op1_exam_soap	lt_raw_otis_visit::otis_op1_exam_soap	0	No	
 lt_raw_otis_visit::otis_op1_exam_soap	lt_raw_otis_visit::otis_op1_exam_soap	1	Yes	
 lt_raw_otis_visit::otis_op1_exam_soap	lt_raw_otis_visit::otis_op1_exam_soap	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_exam_soap	lt_raw_otis_visit::otis_op1_exam_soap	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_soap_no_supplies	lt_raw_otis_visit::otis_op1_soap_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_soap_no_supplies	lt_raw_otis_visit::otis_op1_soap_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op1_soap_no_supplies	lt_raw_otis_visit::otis_op1_soap_no_supplies	NA	:::UNDEF:::	
@@ -1072,6 +1081,7 @@ lt_raw_otis_visit::otis_op1_soap_no_opp	lt_raw_otis_visit::otis_op1_soap_no_opp	
 lt_raw_otis_visit::otis_op1_exam_gloves	lt_raw_otis_visit::otis_op1_exam_gloves	0	No	
 lt_raw_otis_visit::otis_op1_exam_gloves	lt_raw_otis_visit::otis_op1_exam_gloves	1	Yes	
 lt_raw_otis_visit::otis_op1_exam_gloves	lt_raw_otis_visit::otis_op1_exam_gloves	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_exam_gloves	lt_raw_otis_visit::otis_op1_exam_gloves	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_gloves_no_supplies	lt_raw_otis_visit::otis_op1_gloves_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_gloves_no_supplies	lt_raw_otis_visit::otis_op1_gloves_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op1_gloves_no_supplies	lt_raw_otis_visit::otis_op1_gloves_no_supplies	NA	:::UNDEF:::	
@@ -1086,6 +1096,7 @@ lt_raw_otis_visit::otis_op1_gloves_no_opp	lt_raw_otis_visit::otis_op1_gloves_no_
 lt_raw_otis_visit::otis_op1_danger_signs_mother	lt_raw_otis_visit::otis_op1_danger_signs_mother	0	No	
 lt_raw_otis_visit::otis_op1_danger_signs_mother	lt_raw_otis_visit::otis_op1_danger_signs_mother	1	Yes	
 lt_raw_otis_visit::otis_op1_danger_signs_mother	lt_raw_otis_visit::otis_op1_danger_signs_mother	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_danger_signs_mother	lt_raw_otis_visit::otis_op1_danger_signs_mother	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_signs_mother_no_skills	lt_raw_otis_visit::otis_op1_signs_mother_no_skills	0	No	
 lt_raw_otis_visit::otis_op1_signs_mother_no_skills	lt_raw_otis_visit::otis_op1_signs_mother_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op1_signs_mother_no_skills	lt_raw_otis_visit::otis_op1_signs_mother_no_skills	NA	:::UNDEF:::	
@@ -1098,6 +1109,7 @@ lt_raw_otis_visit::otis_op1_signs_mother_no_opp	lt_raw_otis_visit::otis_op1_sign
 lt_raw_otis_visit::otis_op1_danger_signs_bc	lt_raw_otis_visit::otis_op1_danger_signs_bc	0	No	
 lt_raw_otis_visit::otis_op1_danger_signs_bc	lt_raw_otis_visit::otis_op1_danger_signs_bc	1	Yes	
 lt_raw_otis_visit::otis_op1_danger_signs_bc	lt_raw_otis_visit::otis_op1_danger_signs_bc	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_danger_signs_bc	lt_raw_otis_visit::otis_op1_danger_signs_bc	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_signs_bc_no_skills	lt_raw_otis_visit::otis_op1_signs_bc_no_skills	0	No	
 lt_raw_otis_visit::otis_op1_signs_bc_no_skills	lt_raw_otis_visit::otis_op1_signs_bc_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op1_signs_bc_no_skills	lt_raw_otis_visit::otis_op1_signs_bc_no_skills	NA	:::UNDEF:::	
@@ -1110,6 +1122,7 @@ lt_raw_otis_visit::otis_op1_signs_bc_no_opp	lt_raw_otis_visit::otis_op1_signs_bc
 lt_raw_otis_visit::otis_op1_checklist	lt_raw_otis_visit::otis_op1_checklist	0	No	
 lt_raw_otis_visit::otis_op1_checklist	lt_raw_otis_visit::otis_op1_checklist	1	Yes	
 lt_raw_otis_visit::otis_op1_checklist	lt_raw_otis_visit::otis_op1_checklist	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op1_checklist	lt_raw_otis_visit::otis_op1_checklist	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_checklist_no_supplies	lt_raw_otis_visit::otis_op1_checklist_no_supplies	0	No	
 lt_raw_otis_visit::otis_op1_checklist_no_supplies	lt_raw_otis_visit::otis_op1_checklist_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op1_checklist_no_skills	lt_raw_otis_visit::otis_op1_checklist_no_skills	0	No	
@@ -1122,7 +1135,8 @@ lt_raw_otis_visit::otis_op1_checklist_no_opp	lt_raw_otis_visit::otis_op1_checkli
 lt_raw_otis_visit::otis_op1_checklist_no_opp	lt_raw_otis_visit::otis_op1_checklist_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_mother_temp	lt_raw_otis_visit::otis_op2_mother_temp	0	No	
 lt_raw_otis_visit::otis_op2_mother_temp	lt_raw_otis_visit::otis_op2_mother_temp	1	Yes	
-lt_raw_otis_visit::otis_op2_mother_temp	lt_raw_otis_visit::otis_op2_mother_temp	2	Yes, with prompt		
+lt_raw_otis_visit::otis_op2_mother_temp	lt_raw_otis_visit::otis_op2_mother_temp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_mother_temp	lt_raw_otis_visit::otis_op2_mother_temp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_mother_temp_value	lt_raw_otis_visit::otis_op2_mother_temp_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_mother_temp_no_supplies	lt_raw_otis_visit::otis_op2_mother_temp_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_mother_temp_no_supplies	lt_raw_otis_visit::otis_op2_mother_temp_no_supplies	1	Yes	
@@ -1139,6 +1153,7 @@ lt_raw_otis_visit::otis_op2_mother_temp_no_opp	lt_raw_otis_visit::otis_op2_mothe
 lt_raw_otis_visit::otis_op2_mother_bp	lt_raw_otis_visit::otis_op2_mother_bp	0	No	
 lt_raw_otis_visit::otis_op2_mother_bp	lt_raw_otis_visit::otis_op2_mother_bp	1	Yes	
 lt_raw_otis_visit::otis_op2_mother_bp	lt_raw_otis_visit::otis_op2_mother_bp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_mother_bp	lt_raw_otis_visit::otis_op2_mother_bp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_mother_bp_systolic	lt_raw_otis_visit::otis_op2_mother_bp_systolic	NA	:::UNDEF:::		
 lt_raw_otis_visit::otis_op2_mother_bp_diastolic	lt_raw_otis_visit::otis_op2_mother_bp_diastolic	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_mother_bp_no_supplies	lt_raw_otis_visit::otis_op2_mother_bp_no_supplies	0	No	
@@ -1156,6 +1171,7 @@ lt_raw_otis_visit::otis_op2_mother_bp_no_opp	lt_raw_otis_visit::otis_op2_mother_
 lt_raw_otis_visit::otis_op2_towel	lt_raw_otis_visit::otis_op2_towel	0	No	
 lt_raw_otis_visit::otis_op2_towel	lt_raw_otis_visit::otis_op2_towel	1	Yes	
 lt_raw_otis_visit::otis_op2_towel	lt_raw_otis_visit::otis_op2_towel	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_towel	lt_raw_otis_visit::otis_op2_towel	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_towel_no_supplies	lt_raw_otis_visit::otis_op2_towel_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_towel_no_supplies	lt_raw_otis_visit::otis_op2_towel_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_towel_no_supplies	lt_raw_otis_visit::otis_op2_towel_no_supplies	NA	:::UNDEF:::	
@@ -1171,6 +1187,7 @@ lt_raw_otis_visit::otis_op2_towel_no_opp	lt_raw_otis_visit::otis_op2_towel_no_op
 lt_raw_otis_visit::otis_op2_gloves	lt_raw_otis_visit::otis_op2_gloves	0	No	
 lt_raw_otis_visit::otis_op2_gloves	lt_raw_otis_visit::otis_op2_gloves	1	Yes	
 lt_raw_otis_visit::otis_op2_gloves	lt_raw_otis_visit::otis_op2_gloves	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_gloves	lt_raw_otis_visit::otis_op2_gloves	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_gloves_no_supplies	lt_raw_otis_visit::otis_op2_gloves_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_gloves_no_supplies	lt_raw_otis_visit::otis_op2_gloves_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_gloves_no_supplies	lt_raw_otis_visit::otis_op2_gloves_no_supplies	NA	:::UNDEF:::	
@@ -1186,6 +1203,7 @@ lt_raw_otis_visit::otis_op2_gloves_no_opp	lt_raw_otis_visit::otis_op2_gloves_no_
 lt_raw_otis_visit::otis_op2_pads	lt_raw_otis_visit::otis_op2_pads	0	No	
 lt_raw_otis_visit::otis_op2_pads	lt_raw_otis_visit::otis_op2_pads	1	Yes	
 lt_raw_otis_visit::otis_op2_pads	lt_raw_otis_visit::otis_op2_pads	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_pads	lt_raw_otis_visit::otis_op2_pads	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_pads_no_supplies	lt_raw_otis_visit::otis_op2_pads_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_pads_no_supplies	lt_raw_otis_visit::otis_op2_pads_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_pads_no_supplies	lt_raw_otis_visit::otis_op2_pads_no_supplies	NA	:::UNDEF:::	
@@ -1201,6 +1219,7 @@ lt_raw_otis_visit::otis_op2_pads_no_opp	lt_raw_otis_visit::otis_op2_pads_no_opp	
 lt_raw_otis_visit::otis_op2_oxy	lt_raw_otis_visit::otis_op2_oxy	0	No	
 lt_raw_otis_visit::otis_op2_oxy	lt_raw_otis_visit::otis_op2_oxy	1	Yes	
 lt_raw_otis_visit::otis_op2_oxy	lt_raw_otis_visit::otis_op2_oxy	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_oxy	lt_raw_otis_visit::otis_op2_oxy	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_oxytocin_no_supplies	lt_raw_otis_visit::otis_op2_oxytocin_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_oxytocin_no_supplies	lt_raw_otis_visit::otis_op2_oxytocin_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_oxytocin_no_skills	lt_raw_otis_visit::otis_op2_oxytocin_no_skills	0	No	
@@ -1215,6 +1234,7 @@ lt_raw_otis_visit::otis_op2_oxytocin_no_opp	lt_raw_otis_visit::otis_op2_oxytocin
 lt_raw_otis_visit::otis_op2_blade	lt_raw_otis_visit::otis_op2_blade	0	No	
 lt_raw_otis_visit::otis_op2_blade	lt_raw_otis_visit::otis_op2_blade	1	Yes	
 lt_raw_otis_visit::otis_op2_blade	lt_raw_otis_visit::otis_op2_blade	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_blade	lt_raw_otis_visit::otis_op2_blade	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_blade_no_supplies	lt_raw_otis_visit::otis_op2_blade_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_blade_no_supplies	lt_raw_otis_visit::otis_op2_blade_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_blade_no_supplies	lt_raw_otis_visit::otis_op2_blade_no_supplies	NA	:::UNDEF:::	
@@ -1230,6 +1250,7 @@ lt_raw_otis_visit::otis_op2_blade_no_opp	lt_raw_otis_visit::otis_op2_blade_no_op
 lt_raw_otis_visit::otis_op2_cord	lt_raw_otis_visit::otis_op2_cord	0	No	
 lt_raw_otis_visit::otis_op2_cord	lt_raw_otis_visit::otis_op2_cord	1	Yes	
 lt_raw_otis_visit::otis_op2_cord	lt_raw_otis_visit::otis_op2_cord	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_cord	lt_raw_otis_visit::otis_op2_cord	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_cord_no_supplies	lt_raw_otis_visit::otis_op2_cord_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_cord_no_supplies	lt_raw_otis_visit::otis_op2_cord_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_cord_no_supplies	lt_raw_otis_visit::otis_op2_cord_no_supplies	NA	:::UNDEF:::	
@@ -1244,6 +1265,7 @@ lt_raw_otis_visit::otis_op2_cord_no_opp	lt_raw_otis_visit::otis_op2_cord_no_opp	
 lt_raw_otis_visit::otis_op2_suction	lt_raw_otis_visit::otis_op2_suction	0	No	
 lt_raw_otis_visit::otis_op2_suction	lt_raw_otis_visit::otis_op2_suction	1	Yes	
 lt_raw_otis_visit::otis_op2_suction	lt_raw_otis_visit::otis_op2_suction	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_suction	lt_raw_otis_visit::otis_op2_suction	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_suction_no_supplies	lt_raw_otis_visit::otis_op2_suction_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_suction_no_supplies	lt_raw_otis_visit::otis_op2_suction_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_suction_no_supplies	lt_raw_otis_visit::otis_op2_suction_no_supplies	NA	:::UNDEF:::	
@@ -1258,6 +1280,7 @@ lt_raw_otis_visit::otis_op2_suction_no_opp	lt_raw_otis_visit::otis_op2_suction_n
 lt_raw_otis_visit::otis_op2_bag	lt_raw_otis_visit::otis_op2_bag	0	No	
 lt_raw_otis_visit::otis_op2_bag	lt_raw_otis_visit::otis_op2_bag	1	Yes	
 lt_raw_otis_visit::otis_op2_bag	lt_raw_otis_visit::otis_op2_bag	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_bag	lt_raw_otis_visit::otis_op2_bag	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_bag_no_supplies	lt_raw_otis_visit::otis_op2_bag_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_bag_no_supplies	lt_raw_otis_visit::otis_op2_bag_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_bag_no_supplies	lt_raw_otis_visit::otis_op2_bag_no_supplies	NA	:::UNDEF:::	
@@ -1272,6 +1295,7 @@ lt_raw_otis_visit::otis_op2_bag_no_opp	lt_raw_otis_visit::otis_op2_bag_no_opp	NA
 lt_raw_otis_visit::otis_op2_water	lt_raw_otis_visit::otis_op2_water	0	No	
 lt_raw_otis_visit::otis_op2_water	lt_raw_otis_visit::otis_op2_water	1	Yes	
 lt_raw_otis_visit::otis_op2_water	lt_raw_otis_visit::otis_op2_water	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_water	lt_raw_otis_visit::otis_op2_water	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_water_no_supplies	lt_raw_otis_visit::otis_op2_water_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_water_no_supplies	lt_raw_otis_visit::otis_op2_water_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_water_no_supplies	lt_raw_otis_visit::otis_op2_water_no_supplies	NA	:::UNDEF:::	
@@ -1287,6 +1311,7 @@ lt_raw_otis_visit::otis_op2_water_no_opp	lt_raw_otis_visit::otis_op2_water_no_op
 lt_raw_otis_visit::otis_op2_soap	lt_raw_otis_visit::otis_op2_soap	0	No	
 lt_raw_otis_visit::otis_op2_soap	lt_raw_otis_visit::otis_op2_soap	1	Yes,	
 lt_raw_otis_visit::otis_op2_soap	lt_raw_otis_visit::otis_op2_soap	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_soap	lt_raw_otis_visit::otis_op2_soap	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_soap_no_supplies	lt_raw_otis_visit::otis_op2_soap_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_soap_no_supplies	lt_raw_otis_visit::otis_op2_soap_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_soap_no_supplies	lt_raw_otis_visit::otis_op2_soap_no_supplies	NA	:::UNDEF:::	
@@ -1302,6 +1327,7 @@ lt_raw_otis_visit::otis_op2_soap_no_opp	lt_raw_otis_visit::otis_op2_soap_no_opp	
 lt_raw_otis_visit::otis_op2_checklist	lt_raw_otis_visit::otis_op2_checklist	0	No	
 lt_raw_otis_visit::otis_op2_checklist	lt_raw_otis_visit::otis_op2_checklist	1	Yes	
 lt_raw_otis_visit::otis_op2_checklist	lt_raw_otis_visit::otis_op2_checklist	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op2_checklist	lt_raw_otis_visit::otis_op2_checklist	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op2_checklist_no_supplies	lt_raw_otis_visit::otis_op2_checklist_no_supplies	0	No	
 lt_raw_otis_visit::otis_op2_checklist_no_supplies	lt_raw_otis_visit::otis_op2_checklist_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op2_checklist_no_supplies	lt_raw_otis_visit::otis_op2_checklist_no_supplies	NA	:::UNDEF:::	
@@ -1315,6 +1341,7 @@ lt_raw_otis_visit::otis_op2_checklist_no_opp	lt_raw_otis_visit::otis_op2_checkli
 lt_raw_otis_visit::otis_op2_checklist_no_opp	lt_raw_otis_visit::otis_op2_checklist_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_gloves	lt_raw_otis_visit::otis_op3_gloves	0	No	
 lt_raw_otis_visit::otis_op3_gloves	lt_raw_otis_visit::otis_op3_gloves	1	Yes	
+lt_raw_otis_visit::otis_op3_gloves	lt_raw_otis_visit::otis_op3_gloves	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_gloves_no_supplies	lt_raw_otis_visit::otis_op3_gloves_no_supplies	0	No	
 lt_raw_otis_visit::otis_op3_gloves_no_supplies	lt_raw_otis_visit::otis_op3_gloves_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_gloves_no_skills	lt_raw_otis_visit::otis_op3_gloves_no_skills	0	No	
@@ -1329,6 +1356,7 @@ lt_raw_otis_visit::otis_op3_gloves_no_opp	lt_raw_otis_visit::otis_op3_gloves_no_
 lt_raw_otis_visit::otis_op3_eval_breathing	lt_raw_otis_visit::otis_op3_eval_breathing	0	No	
 lt_raw_otis_visit::otis_op3_eval_breathing	lt_raw_otis_visit::otis_op3_eval_breathing	1	Yes	
 lt_raw_otis_visit::otis_op3_eval_breathing	lt_raw_otis_visit::otis_op3_eval_breathing	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op3_eval_breathing	lt_raw_otis_visit::otis_op3_eval_breathing	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_breathing_no_skills	lt_raw_otis_visit::otis_op3_breathing_no_skills	0	No	
 lt_raw_otis_visit::otis_op3_breathing_no_skills	lt_raw_otis_visit::otis_op3_breathing_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op3_breathing_no_skills	lt_raw_otis_visit::otis_op3_breathing_no_skills	NA	:::UNDEF:::	
@@ -1340,8 +1368,10 @@ lt_raw_otis_visit::otis_op3_breathing_no_opp	lt_raw_otis_visit::otis_op3_breathi
 lt_raw_otis_visit::otis_op3_breathing_no_opp	lt_raw_otis_visit::otis_op3_breathing_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_breathing	lt_raw_otis_visit::otis_op3_breathing	0	No	
 lt_raw_otis_visit::otis_op3_breathing	lt_raw_otis_visit::otis_op3_breathing	1	Yes	
+lt_raw_otis_visit::otis_op3_breathing	lt_raw_otis_visit::otis_op3_breathing	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_airway	lt_raw_otis_visit::otis_op3_airway	0	No	
 lt_raw_otis_visit::otis_op3_airway	lt_raw_otis_visit::otis_op3_airway	1	Yes	
+lt_raw_otis_visit::otis_op3_airway	lt_raw_otis_visit::otis_op3_airway	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_airway_no_supplies	lt_raw_otis_visit::otis_op3_airway_no_supplies	0	No	
 lt_raw_otis_visit::otis_op3_airway_no_supplies	lt_raw_otis_visit::otis_op3_airway_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_airway_no_skills	lt_raw_otis_visit::otis_op3_airway_no_skills	0	No	
@@ -1353,6 +1383,7 @@ lt_raw_otis_visit::otis_op3_airway_no_opp	lt_raw_otis_visit::otis_op3_airway_no_
 lt_raw_otis_visit::otis_op3_bag	lt_raw_otis_visit::otis_op3_bag	0	No	
 lt_raw_otis_visit::otis_op3_bag	lt_raw_otis_visit::otis_op3_bag	1	Yes	
 lt_raw_otis_visit::otis_op3_bag	lt_raw_otis_visit::otis_op3_bag	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op3_bag	lt_raw_otis_visit::otis_op3_bag	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_bag_no_supplies	lt_raw_otis_visit::otis_op3_bag_no_supplies	0	No	
 lt_raw_otis_visit::otis_op3_bag_no_supplies	lt_raw_otis_visit::otis_op3_bag_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_bag_no_skills	lt_raw_otis_visit::otis_op3_bag_no_skills	0	No	
@@ -1363,6 +1394,7 @@ lt_raw_otis_visit::otis_op3_bag_no_opp	lt_raw_otis_visit::otis_op3_bag_no_opp	1	
 lt_raw_otis_visit::otis_op3_bag_no_opp	lt_raw_otis_visit::otis_op3_bag_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_resuscitate_effort	lt_raw_otis_visit::otis_op3_resuscitate_effort	0	No	
 lt_raw_otis_visit::otis_op3_resuscitate_effort	lt_raw_otis_visit::otis_op3_resuscitate_effort	1	Yes	
+lt_raw_otis_visit::otis_op3_resuscitate_effort	lt_raw_otis_visit::otis_op3_resuscitate_effort	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_effort_no_supplies	lt_raw_otis_visit::otis_op3_effort_no_supplies	0	No	
 lt_raw_otis_visit::otis_op3_effort_no_supplies	lt_raw_otis_visit::otis_op3_effort_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_effort_no_skills	lt_raw_otis_visit::otis_op3_effort_no_skills	0	No	
@@ -1374,6 +1406,7 @@ lt_raw_otis_visit::otis_op3_effort_no_opp	lt_raw_otis_visit::otis_op3_effort_no_
 lt_raw_otis_visit::otis_op3_skin_to_skin	lt_raw_otis_visit::otis_op3_skin_to_skin	0	No	
 lt_raw_otis_visit::otis_op3_skin_to_skin	lt_raw_otis_visit::otis_op3_skin_to_skin	1	Yes	
 lt_raw_otis_visit::otis_op3_skin_to_skin	lt_raw_otis_visit::otis_op3_skin_to_skin	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op3_skin_to_skin	lt_raw_otis_visit::otis_op3_skin_to_skin	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_skin2skin_no_skills	lt_raw_otis_visit::otis_op3_skin2skin_no_skills	0	No	
 lt_raw_otis_visit::otis_op3_skin2skin_no_skills	lt_raw_otis_visit::otis_op3_skin2skin_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op3_skin2skin_no_skills	lt_raw_otis_visit::otis_op3_skin2skin_no_skills	NA	:::UNDEF:::	
@@ -1386,6 +1419,7 @@ lt_raw_otis_visit::otis_op3_skin2skin_no_opp	lt_raw_otis_visit::otis_op3_skin2sk
 lt_raw_otis_visit::otis_op3_oxy	lt_raw_otis_visit::otis_op3_oxy	0	No	
 lt_raw_otis_visit::otis_op3_oxy	lt_raw_otis_visit::otis_op3_oxy	1	Yes	
 lt_raw_otis_visit::otis_op3_oxy	lt_raw_otis_visit::otis_op3_oxy	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op3_oxy	lt_raw_otis_visit::otis_op3_oxy	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op3_oxytocin_no_supplies	lt_raw_otis_visit::otis_op3_oxytocin_no_supplies	0	No	
 lt_raw_otis_visit::otis_op3_oxytocin_no_supplies	lt_raw_otis_visit::otis_op3_oxytocin_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op3_oxytocin_no_supplies	lt_raw_otis_visit::otis_op3_oxytocin_no_supplies	NA	:::UNDEF:::	
@@ -1401,6 +1435,7 @@ lt_raw_otis_visit::otis_op3_oxytocin_no_opp	lt_raw_otis_visit::otis_op3_oxytocin
 lt_raw_otis_visit::otis_op4_bleeding	lt_raw_otis_visit::otis_op4_bleeding	0	No	
 lt_raw_otis_visit::otis_op4_bleeding	lt_raw_otis_visit::otis_op4_bleeding	1	Yes	
 lt_raw_otis_visit::otis_op4_bleeding	lt_raw_otis_visit::otis_op4_bleeding	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_bleeding	lt_raw_otis_visit::otis_op4_bleeding	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_bleeding_no_skills	lt_raw_otis_visit::otis_op4_bleeding_no_skills	0	No	
 lt_raw_otis_visit::otis_op4_bleeding_no_skills	lt_raw_otis_visit::otis_op4_bleeding_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op4_bleeding_no_skills	lt_raw_otis_visit::otis_op4_bleeding_no_skills	NA	:::UNDEF:::	
@@ -1412,7 +1447,8 @@ lt_raw_otis_visit::otis_op4_bleeding_no_opp	lt_raw_otis_visit::otis_op4_bleeding
 lt_raw_otis_visit::otis_op4_bleeding_no_opp	lt_raw_otis_visit::otis_op4_bleeding_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_mother_temp	lt_raw_otis_visit::otis_op4_mother_temp	0	No	
 lt_raw_otis_visit::otis_op4_mother_temp	lt_raw_otis_visit::otis_op4_mother_temp	1	Yes	
-lt_raw_otis_visit::otis_op4_mother_temp	lt_raw_otis_visit::otis_op4_mother_temp	2	Yes, with prompt		
+lt_raw_otis_visit::otis_op4_mother_temp	lt_raw_otis_visit::otis_op4_mother_temp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_mother_temp	lt_raw_otis_visit::otis_op4_mother_temp	NA	:::UNDEF:::		
 lt_raw_otis_visit::otis_op4_mother_temp_value	lt_raw_otis_visit::otis_op4_mother_temp_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_mother_temp_no_supplies	lt_raw_otis_visit::otis_op4_mother_temp_no_supplies	0	No	
 lt_raw_otis_visit::otis_op4_mother_temp_no_supplies	lt_raw_otis_visit::otis_op4_mother_temp_no_supplies	1	Yes	
@@ -1428,7 +1464,8 @@ lt_raw_otis_visit::otis_op4_mother_temp_no_opp	lt_raw_otis_visit::otis_op4_mothe
 lt_raw_otis_visit::otis_op4_mother_temp_no_opp	lt_raw_otis_visit::otis_op4_mother_temp_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_mother_bp	lt_raw_otis_visit::otis_op4_mother_bp	0	No	
 lt_raw_otis_visit::otis_op4_mother_bp	lt_raw_otis_visit::otis_op4_mother_bp	1	Yes	
-lt_raw_otis_visit::otis_op4_mother_bp	lt_raw_otis_visit::otis_op4_mother_bp	2	Yes, with prompt		
+lt_raw_otis_visit::otis_op4_mother_bp	lt_raw_otis_visit::otis_op4_mother_bp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_mother_bp	lt_raw_otis_visit::otis_op4_mother_bp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_mother_bp_systolic	lt_raw_otis_visit::otis_op4_mother_bp_systolic	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_mother_bp_diastolic	lt_raw_otis_visit::otis_op4_mother_bp_diastolic	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_mother_bp_no_supplies	lt_raw_otis_visit::otis_op4_mother_bp_no_supplies	0	No	
@@ -1446,6 +1483,7 @@ lt_raw_otis_visit::otis_op4_mother_bp_no_opp	lt_raw_otis_visit::otis_op4_mother_
 lt_raw_otis_visit::otis_op4_baby_temp	lt_raw_otis_visit::otis_op4_baby_temp	0	No	
 lt_raw_otis_visit::otis_op4_baby_temp	lt_raw_otis_visit::otis_op4_baby_temp	1	Yes	
 lt_raw_otis_visit::otis_op4_baby_temp	lt_raw_otis_visit::otis_op4_baby_temp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_baby_temp	lt_raw_otis_visit::otis_op4_baby_temp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_baby_temp_value	lt_raw_otis_visit::otis_op4_baby_temp_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_baby_temp_no_supplies	lt_raw_otis_visit::otis_op4_baby_temp_no_supplies	0	No	
 lt_raw_otis_visit::otis_op4_baby_temp_no_supplies	lt_raw_otis_visit::otis_op4_baby_temp_no_supplies	1	Yes	
@@ -1461,7 +1499,8 @@ lt_raw_otis_visit::otis_op4_baby_temp_no_opp	lt_raw_otis_visit::otis_op4_baby_te
 lt_raw_otis_visit::otis_op4_baby_temp_no_opp	lt_raw_otis_visit::otis_op4_baby_temp_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_baby_weight	lt_raw_otis_visit::otis_op4_baby_weight	0	No	
 lt_raw_otis_visit::otis_op4_baby_weight	lt_raw_otis_visit::otis_op4_baby_weight	1	Yes	
-lt_raw_otis_visit::otis_op4_baby_weight	lt_raw_otis_visit::otis_op4_baby_weight	2	Yes, with prompt		
+lt_raw_otis_visit::otis_op4_baby_weight	lt_raw_otis_visit::otis_op4_baby_weight	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_baby_weight	lt_raw_otis_visit::otis_op4_baby_weight	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_baby_weight_value	lt_raw_otis_visit::otis_op4_baby_weight_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_baby_weight_no_supplies	lt_raw_otis_visit::otis_op4_baby_weight_no_supplies	0	No	
 lt_raw_otis_visit::otis_op4_baby_weight_no_supplies	lt_raw_otis_visit::otis_op4_baby_weight_no_supplies	NA	:::UNDEF:::	
@@ -1476,6 +1515,7 @@ lt_raw_otis_visit::otis_op4_baby_weight_no_opp	lt_raw_otis_visit::otis_op4_baby_
 lt_raw_otis_visit::otis_op4_bf	lt_raw_otis_visit::otis_op4_bf	0	No	
 lt_raw_otis_visit::otis_op4_bf	lt_raw_otis_visit::otis_op4_bf	1	Yes	
 lt_raw_otis_visit::otis_op4_bf	lt_raw_otis_visit::otis_op4_bf	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_bf	lt_raw_otis_visit::otis_op4_bf	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_b_feeding_no_skills	lt_raw_otis_visit::otis_op4_b_feeding_no_skills	0	No	
 lt_raw_otis_visit::otis_op4_b_feeding_no_skills	lt_raw_otis_visit::otis_op4_b_feeding_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op4_b_feeding_no_skills	lt_raw_otis_visit::otis_op4_b_feeding_no_skills	NA	:::UNDEF:::	
@@ -1488,6 +1528,7 @@ lt_raw_otis_visit::otis_op4_b_feeding_no_opp	lt_raw_otis_visit::otis_op4_b_feedi
 lt_raw_otis_visit::otis_op4_danger_signs_mother	lt_raw_otis_visit::otis_op4_danger_signs_mother	0	No	
 lt_raw_otis_visit::otis_op4_danger_signs_mother	lt_raw_otis_visit::otis_op4_danger_signs_mother	1	Yes	
 lt_raw_otis_visit::otis_op4_danger_signs_mother	lt_raw_otis_visit::otis_op4_danger_signs_mother	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_danger_signs_mother	lt_raw_otis_visit::otis_op4_danger_signs_mother	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_signs_mother_no_skills	lt_raw_otis_visit::otis_op4_signs_mother_no_skills	0	No	
 lt_raw_otis_visit::otis_op4_signs_mother_no_skills	lt_raw_otis_visit::otis_op4_signs_mother_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op4_signs_mother_no_skills	lt_raw_otis_visit::otis_op4_signs_mother_no_skills	NA	:::UNDEF:::	
@@ -1500,6 +1541,7 @@ lt_raw_otis_visit::otis_op4_signs_mother_no_opp	lt_raw_otis_visit::otis_op4_sign
 lt_raw_otis_visit::otis_op4_danger_signs_bc	lt_raw_otis_visit::otis_op4_danger_signs_bc	0	No	
 lt_raw_otis_visit::otis_op4_danger_signs_bc	lt_raw_otis_visit::otis_op4_danger_signs_bc	1	Yes	
 lt_raw_otis_visit::otis_op4_danger_signs_bc	lt_raw_otis_visit::otis_op4_danger_signs_bc	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_danger_signs_bc	lt_raw_otis_visit::otis_op4_danger_signs_bc	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_signs_bc_no_skills	lt_raw_otis_visit::otis_op4_signs_bc_no_skills	0	No	
 lt_raw_otis_visit::otis_op4_signs_bc_no_skills	lt_raw_otis_visit::otis_op4_signs_bc_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op4_signs_bc_no_skills	lt_raw_otis_visit::otis_op4_signs_bc_no_skills	NA	:::UNDEF:::	
@@ -1512,6 +1554,7 @@ lt_raw_otis_visit::otis_op4_signs_bc_no_opp	lt_raw_otis_visit::otis_op4_signs_bc
 lt_raw_otis_visit::otis_op4_skin_to_skin	lt_raw_otis_visit::otis_op4_skin_to_skin	0	No	
 lt_raw_otis_visit::otis_op4_skin_to_skin	lt_raw_otis_visit::otis_op4_skin_to_skin	1	Yes	
 lt_raw_otis_visit::otis_op4_skin_to_skin	lt_raw_otis_visit::otis_op4_skin_to_skin	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_skin_to_skin	lt_raw_otis_visit::otis_op4_skin_to_skin	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_skin2skin_no_skills	lt_raw_otis_visit::otis_op4_skin2skin_no_skills	0	No	
 lt_raw_otis_visit::otis_op4_skin2skin_no_skills	lt_raw_otis_visit::otis_op4_skin2skin_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op4_skin2skin_no_skills	lt_raw_otis_visit::otis_op4_skin2skin_no_skills	NA	:::UNDEF:::	
@@ -1524,6 +1567,7 @@ lt_raw_otis_visit::otis_op4_skin2skin_no_opp	lt_raw_otis_visit::otis_op4_skin2sk
 lt_raw_otis_visit::otis_op4_checklist	lt_raw_otis_visit::otis_op4_checklist	0	No	
 lt_raw_otis_visit::otis_op4_checklist	lt_raw_otis_visit::otis_op4_checklist	1	Yes	
 lt_raw_otis_visit::otis_op4_checklist	lt_raw_otis_visit::otis_op4_checklist	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op4_checklist	lt_raw_otis_visit::otis_op4_checklist	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_checklist_no_supplies	lt_raw_otis_visit::otis_op4_checklist_no_supplies	0	No	
 lt_raw_otis_visit::otis_op4_checklist_no_supplies	lt_raw_otis_visit::otis_op4_checklist_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op4_checklist_no_skills	lt_raw_otis_visit::otis_op4_checklist_no_skills	0	No	
@@ -1537,6 +1581,7 @@ lt_raw_otis_visit::otis_op4_checklist_no_opp	lt_raw_otis_visit::otis_op4_checkli
 lt_raw_otis_visit::otis_op5_bleeding	lt_raw_otis_visit::otis_op5_bleeding	0	No	
 lt_raw_otis_visit::otis_op5_bleeding	lt_raw_otis_visit::otis_op5_bleeding	1	Yes	
 lt_raw_otis_visit::otis_op5_bleeding	lt_raw_otis_visit::otis_op5_bleeding	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_bleeding	lt_raw_otis_visit::otis_op5_bleeding	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_bleeding_no_skills	lt_raw_otis_visit::otis_op5_bleeding_no_skills	0	No	
 lt_raw_otis_visit::otis_op5_bleeding_no_skills	lt_raw_otis_visit::otis_op5_bleeding_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op5_bleeding_no_skills	lt_raw_otis_visit::otis_op5_bleeding_no_skills	NA	:::UNDEF:::	
@@ -1547,7 +1592,8 @@ lt_raw_otis_visit::otis_op5_bleeding_no_opp	lt_raw_otis_visit::otis_op5_bleeding
 lt_raw_otis_visit::otis_op5_bleeding_no_opp	lt_raw_otis_visit::otis_op5_bleeding_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_mother_temp	lt_raw_otis_visit::otis_op5_mother_temp	0	No	
 lt_raw_otis_visit::otis_op5_mother_temp	lt_raw_otis_visit::otis_op5_mother_temp	1	Yes	
-lt_raw_otis_visit::otis_op5_mother_temp	lt_raw_otis_visit::otis_op5_mother_temp	2	Yes, with prompt			
+lt_raw_otis_visit::otis_op5_mother_temp	lt_raw_otis_visit::otis_op5_mother_temp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_mother_temp	lt_raw_otis_visit::otis_op5_mother_temp	NA	:::UNDEF:::			
 lt_raw_otis_visit::otis_op5_mother_temp_value	lt_raw_otis_visit::otis_op5_mother_temp_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_mother_temp_no_supplies	lt_raw_otis_visit::otis_op5_mother_temp_no_supplies	0	No	
 lt_raw_otis_visit::otis_op5_mother_temp_no_supplies	lt_raw_otis_visit::otis_op5_mother_temp_no_supplies	1	Yes	
@@ -1563,7 +1609,8 @@ lt_raw_otis_visit::otis_op5_mother_temp_no_opp	lt_raw_otis_visit::otis_op5_mothe
 lt_raw_otis_visit::otis_op5_mother_temp_no_opp	lt_raw_otis_visit::otis_op5_mother_temp_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_baby_temp	lt_raw_otis_visit::otis_op5_baby_temp	0	No	
 lt_raw_otis_visit::otis_op5_baby_temp	lt_raw_otis_visit::otis_op5_baby_temp	1	Yes	
-lt_raw_otis_visit::otis_op5_baby_temp	lt_raw_otis_visit::otis_op5_baby_temp	2	Yes, with prompt		
+lt_raw_otis_visit::otis_op5_baby_temp	lt_raw_otis_visit::otis_op5_baby_temp	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_baby_temp	lt_raw_otis_visit::otis_op5_baby_temp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_baby_temp_value	lt_raw_otis_visit::otis_op5_baby_temp_value	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_baby_temp_no_supplies	lt_raw_otis_visit::otis_op5_baby_temp_no_supplies	0	No	
 lt_raw_otis_visit::otis_op5_baby_temp_no_supplies	lt_raw_otis_visit::otis_op5_baby_temp_no_supplies	1	Yes	
@@ -1580,6 +1627,7 @@ lt_raw_otis_visit::otis_op5_baby_temp_no_opp	lt_raw_otis_visit::otis_op5_baby_te
 lt_raw_otis_visit::otis_op5_breathing	lt_raw_otis_visit::otis_op5_breathing	0	No	
 lt_raw_otis_visit::otis_op5_breathing	lt_raw_otis_visit::otis_op5_breathing	1	Yes	
 lt_raw_otis_visit::otis_op5_breathing	lt_raw_otis_visit::otis_op5_breathing	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_breathing	lt_raw_otis_visit::otis_op5_breathing	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_breathing_no_skills	lt_raw_otis_visit::otis_op5_breathing_no_skills	0	No	
 lt_raw_otis_visit::otis_op5_breathing_no_skills	lt_raw_otis_visit::otis_op5_breathing_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op5_breathing_no_skills	lt_raw_otis_visit::otis_op5_breathing_no_skills	NA	:::UNDEF:::	
@@ -1592,6 +1640,7 @@ lt_raw_otis_visit::otis_op5_breathing_no_opp	lt_raw_otis_visit::otis_op5_breathi
 lt_raw_otis_visit::otis_op5_feeding	lt_raw_otis_visit::otis_op5_feeding	0	No	
 lt_raw_otis_visit::otis_op5_feeding	lt_raw_otis_visit::otis_op5_feeding	1	Yes	
 lt_raw_otis_visit::otis_op5_feeding	lt_raw_otis_visit::otis_op5_feeding	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_feeding	lt_raw_otis_visit::otis_op5_feeding	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_feeding_no_skills	lt_raw_otis_visit::otis_op5_feeding_no_skills	0	No	
 lt_raw_otis_visit::otis_op5_feeding_no_skills	lt_raw_otis_visit::otis_op5_feeding_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op5_feeding_no_skills	lt_raw_otis_visit::otis_op5_feeding_no_skills	NA	:::UNDEF:::	
@@ -1603,6 +1652,7 @@ lt_raw_otis_visit::otis_op5_feeding_no_opp	lt_raw_otis_visit::otis_op5_feeding_n
 lt_raw_otis_visit::otis_op5_feeding_no_opp	lt_raw_otis_visit::otis_op5_feeding_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_bcg	lt_raw_otis_visit::otis_op5_bcg	0	No	
 lt_raw_otis_visit::otis_op5_bcg	lt_raw_otis_visit::otis_op5_bcg	1	Yes	
+lt_raw_otis_visit::otis_op5_bcg	lt_raw_otis_visit::otis_op5_bcg	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_bcg_no_supplies	lt_raw_otis_visit::otis_op5_bcg_no_supplies	0	No	
 lt_raw_otis_visit::otis_op5_bcg_no_supplies	lt_raw_otis_visit::otis_op5_bcg_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op5_bcg_no_supplies	lt_raw_otis_visit::otis_op5_bcg_no_supplies	NA	:::UNDEF:::	
@@ -1617,6 +1667,7 @@ lt_raw_otis_visit::otis_op5_bcg_no_opp	lt_raw_otis_visit::otis_op5_bcg_no_opp	1	
 lt_raw_otis_visit::otis_op5_bcg_no_opp	lt_raw_otis_visit::otis_op5_bcg_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_opv	lt_raw_otis_visit::otis_op5_opv	0	No	
 lt_raw_otis_visit::otis_op5_opv	lt_raw_otis_visit::otis_op5_opv	1	Yes	
+lt_raw_otis_visit::otis_op5_opv	lt_raw_otis_visit::otis_op5_opv	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_opv_no_supplies	lt_raw_otis_visit::otis_op5_opv_no_supplies	0	No	
 lt_raw_otis_visit::otis_op5_opv_no_supplies	lt_raw_otis_visit::otis_op5_opv_no_supplies	1	Yes	
 lt_raw_otis_visit::otis_op5_opv_no_supplies	lt_raw_otis_visit::otis_op5_opv_no_supplies	NA	:::UNDEF:::	
@@ -1631,6 +1682,7 @@ lt_raw_otis_visit::otis_op5_opv_no_opp	lt_raw_otis_visit::otis_op5_opv_no_opp	NA
 lt_raw_otis_visit::otis_op5_planning	lt_raw_otis_visit::otis_op5_planning	0	No	
 lt_raw_otis_visit::otis_op5_planning	lt_raw_otis_visit::otis_op5_planning	1	Yes	
 lt_raw_otis_visit::otis_op5_planning	lt_raw_otis_visit::otis_op5_planning	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_planning	lt_raw_otis_visit::otis_op5_planning	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_planning_no_skills	lt_raw_otis_visit::otis_op5_planning_no_skills	0	No	
 lt_raw_otis_visit::otis_op5_planning_no_skills	lt_raw_otis_visit::otis_op5_planning_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op5_planning_no_skills	lt_raw_otis_visit::otis_op5_planning_no_skills	NA	:::UNDEF:::	
@@ -1642,6 +1694,7 @@ lt_raw_otis_visit::otis_op5_planning_no_opp	lt_raw_otis_visit::otis_op5_planning
 lt_raw_otis_visit::otis_op5_danger_signs	lt_raw_otis_visit::otis_op5_danger_signs	0	No	
 lt_raw_otis_visit::otis_op5_danger_signs	lt_raw_otis_visit::otis_op5_danger_signs	1	Yes	
 lt_raw_otis_visit::otis_op5_danger_signs	lt_raw_otis_visit::otis_op5_danger_signs	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_danger_signs	lt_raw_otis_visit::otis_op5_danger_signs	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_signs_no_skills	lt_raw_otis_visit::otis_op5_signs_no_skills	0	No	
 lt_raw_otis_visit::otis_op5_signs_no_skills	lt_raw_otis_visit::otis_op5_signs_no_skills	1	Yes	
 lt_raw_otis_visit::otis_op5_signs_no_skills	lt_raw_otis_visit::otis_op5_signs_no_skills	NA	:::UNDEF:::	
@@ -1653,6 +1706,7 @@ lt_raw_otis_visit::otis_op5_signs_no_opp	lt_raw_otis_visit::otis_op5_signs_no_op
 lt_raw_otis_visit::otis_op5_checklist	lt_raw_otis_visit::otis_op5_checklist	0	No	
 lt_raw_otis_visit::otis_op5_checklist	lt_raw_otis_visit::otis_op5_checklist	1	Yes	
 lt_raw_otis_visit::otis_op5_checklist	lt_raw_otis_visit::otis_op5_checklist	2	Yes, with prompt	
+lt_raw_otis_visit::otis_op5_checklist	lt_raw_otis_visit::otis_op5_checklist	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_checklist_no_supplies	lt_raw_otis_visit::otis_op5_checklist_no_supplies	0	No	
 lt_raw_otis_visit::otis_op5_checklist_no_supplies	lt_raw_otis_visit::otis_op5_checklist_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_op5_checklist_no_skills	lt_raw_otis_visit::otis_op5_checklist_no_skills	0	No	
@@ -1665,19 +1719,25 @@ lt_raw_otis_visit::otis_op5_checklist_no_opp	lt_raw_otis_visit::otis_op5_checkli
 lt_raw_otis_visit::otis_op5_checklist_no_opp	lt_raw_otis_visit::otis_op5_checklist_no_opp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_csection	lt_raw_otis_visit::otis_anyt_csection	0	No	
 lt_raw_otis_visit::otis_anyt_csection	lt_raw_otis_visit::otis_anyt_csection	1	Yes	
+lt_raw_otis_visit::otis_anyt_csection	lt_raw_otis_visit::otis_anyt_csection	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_baby_death	lt_raw_otis_visit::otis_anyt_baby_death	0	No	
 lt_raw_otis_visit::otis_anyt_baby_death	lt_raw_otis_visit::otis_anyt_baby_death	1	Yes	
 lt_raw_otis_visit::otis_anyt_baby_death	lt_raw_otis_visit::otis_anyt_baby_death	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_baby_death_pp	lt_raw_otis_visit::otis_anyt_baby_death_pp	2		
 lt_raw_otis_visit::otis_anyt_baby_death_pp	lt_raw_otis_visit::otis_anyt_baby_death_pp	3		
 lt_raw_otis_visit::otis_anyt_baby_death_pp	lt_raw_otis_visit::otis_anyt_baby_death_pp	not_sure	Not sure	
+lt_raw_otis_visit::otis_anyt_baby_death_pp	lt_raw_otis_visit::otis_anyt_baby_death_pp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_mother_death	lt_raw_otis_visit::otis_anyt_mother_death	0	No	
+lt_raw_otis_visit::otis_anyt_mother_death	lt_raw_otis_visit::otis_anyt_mother_death	NA	:::UNDEF:::	
+lt_raw_otis_visit::otis_anyt_mother_death_pp	lt_raw_otis_visit::otis_anyt_mother_death_pp	0	No	
+lt_raw_otis_visit::otis_anyt_mother_death_pp	lt_raw_otis_visit::otis_anyt_mother_death_pp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_mother_referred_out	lt_raw_otis_visit::otis_anyt_mother_referred_out	0	No	
 lt_raw_otis_visit::otis_anyt_mother_referred_out	lt_raw_otis_visit::otis_anyt_mother_referred_out	1	Yes	
 lt_raw_otis_visit::otis_anyt_mother_referral_pp	lt_raw_otis_visit::otis_anyt_mother_referral_pp	1		
 lt_raw_otis_visit::otis_anyt_mother_referral_pp	lt_raw_otis_visit::otis_anyt_mother_referral_pp	2		
 lt_raw_otis_visit::otis_anyt_mother_referral_pp	lt_raw_otis_visit::otis_anyt_mother_referral_pp	3		
 lt_raw_otis_visit::otis_anyt_mother_referral_pp	lt_raw_otis_visit::otis_anyt_mother_referral_pp	4		
+lt_raw_otis_visit::otis_anyt_mother_referral_pp	lt_raw_otis_visit::otis_anyt_mother_referral_pp	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_ms	lt_raw_otis_visit::otis_anyt_ms	0	No	
 lt_raw_otis_visit::otis_anyt_ms	lt_raw_otis_visit::otis_anyt_ms	1	Yes	
 lt_raw_otis_visit::otis_anyt_mother_ms_no_supplies	lt_raw_otis_visit::otis_anyt_mother_ms_no_supplies	0	No	
@@ -1695,6 +1755,7 @@ lt_raw_otis_visit::otis_anyt_mother_ms_no_need	lt_raw_otis_visit::otis_anyt_moth
 lt_raw_otis_visit::otis_anyt_mother_ms_no_need	lt_raw_otis_visit::otis_anyt_mother_ms_no_need	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_ab_mother	lt_raw_otis_visit::otis_anyt_ab_mother	0	No	
 lt_raw_otis_visit::otis_anyt_ab_mother	lt_raw_otis_visit::otis_anyt_ab_mother	1	Yes	
+lt_raw_otis_visit::otis_anyt_ab_mother	lt_raw_otis_visit::otis_anyt_ab_mother	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_mother_abx_no_supplies	lt_raw_otis_visit::otis_anyt_mother_abx_no_supplies	0	No	
 lt_raw_otis_visit::otis_anyt_mother_abx_no_supplies	lt_raw_otis_visit::otis_anyt_mother_abx_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_mother_abx_no_skills	lt_raw_otis_visit::otis_anyt_mother_abx_no_skills	0	No	
@@ -1710,6 +1771,7 @@ lt_raw_otis_visit::otis_anyt_mother_abx_no_need	lt_raw_otis_visit::otis_anyt_mot
 lt_raw_otis_visit::otis_anyt_ab_baby	lt_raw_otis_visit::otis_anyt_ab_baby	0	No	
 lt_raw_otis_visit::otis_anyt_ab_baby	lt_raw_otis_visit::otis_anyt_ab_baby	1	Yes	
 lt_raw_otis_visit::otis_anyt_ab_baby	lt_raw_otis_visit::otis_anyt_ab_baby	2	Yes, with prompt	
+lt_raw_otis_visit::otis_anyt_ab_baby	lt_raw_otis_visit::otis_anyt_ab_baby	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_baby_abx_no_supplies	lt_raw_otis_visit::otis_anyt_baby_abx_no_supplies	0	No	
 lt_raw_otis_visit::otis_anyt_baby_abx_no_supplies	lt_raw_otis_visit::otis_anyt_baby_abx_no_supplies	NA	:::UNDEF:::	
 lt_raw_otis_visit::otis_anyt_baby_abx_no_skills	lt_raw_otis_visit::otis_anyt_baby_abx_no_skills	0	No	
@@ -1901,7 +1963,7 @@ raw_coach_tl_sbs::coach_tl_fp_female_steril	raw_coach_tl_sbs::coach_tl_fp_female
 raw_coach_tl_sbs::coach_tl_fp_female_steril	raw_coach_tl_sbs::coach_tl_fp_female_steril	1	Yes	
 raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	0	No	
 raw_coach_tl_sbs::coach_tl_fp_other	raw_coach_tl_sbs::coach_tl_fp_other	1	Yes
-raw_coach_tl_sbs::datatype	raw_coach_tl_sbs::datatype	Coach	Coach	
+raw_coach_tl_sbs::datatype	raw_coach_tl_sbs::datatype	Coach	Coaching and/or OTIS process	
 raw_coach_tl_sbs::lighttouch	raw_coach_tl_sbs::lighttouch	No	No	
 raw_coach_tl_sbs::otis_phase_name	raw_coach_tl_sbs::otis_phase_name	intensive	Intensive coaching intervention (2x per week)	1
 raw_coach_tl_sbs::otis_phase_name	raw_coach_tl_sbs::otis_phase_name	post	Post coaching intervention	3
@@ -1924,7 +1986,7 @@ raw_fida_birth_registration::sbr_mother_referred_in	raw_fida_birth_registration:
 raw_fida_birth_registration::sbr_mother_referred_in	raw_fida_birth_registration::sbr_mother_referred_in	1	Yes	
 raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	1	Vaginal	
 raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	2	Caesarean section
-raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	3	Referred	
+raw_fida_birth_registration::sbr_delivery_type	raw_fida_birth_registration::sbr_delivery_type	3	:::UNDEF:::	
 raw_fida_birth_registration::sbr_delivery_datetime	raw_fida_birth_registration::sbr_delivery_datetime	NA	:::UNDEF:::	
 raw_fida_birth_registration::sbr_referral_type	raw_fida_birth_registration::sbr_referral_type	0	No	
 raw_fida_birth_registration::sbr_referral_type	raw_fida_birth_registration::sbr_referral_type	1	Yes, before delivery	
@@ -2217,8 +2279,9 @@ raw_otis_process_tl::otis_pt_data_sharing_meeting	raw_otis_process_tl::otis_pt_d
 raw_otis_process_tl::otis_pt_data_sharing_meeting	raw_otis_process_tl::otis_pt_data_sharing_meeting	NA	:::UNDEF:::	
 raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	0	No	
 raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	1	Yes	
+raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	raw_otis_process_tl::otis_pt_transfer_skills_to_cqc	NA	:::UNDEF:::	
 raw_otis_process_tl::lighttouch	raw_otis_process_tl::lighttouch	No	No	
-raw_otis_process_tl::datatype	raw_otis_process_tl::datatype	otis process	OTIS process	
+raw_otis_process_tl::datatype	raw_otis_process_tl::datatype	otis process	Coaching and/or OTIS process	
 raw_otis_visit::otis_op1_observed	raw_otis_visit::otis_op1_observed	0	No	
 raw_otis_visit::otis_op1_observed	raw_otis_visit::otis_op1_observed	1	Yes	
 raw_otis_visit::otis_op2_observed	raw_otis_visit::otis_op2_observed	0	No	
@@ -2232,6 +2295,7 @@ raw_otis_visit::otis_op5_observed	raw_otis_visit::otis_op5_observed	1	Yes
 raw_otis_visit::otis_op1_mother_temp	raw_otis_visit::otis_op1_mother_temp	0	No	
 raw_otis_visit::otis_op1_mother_temp	raw_otis_visit::otis_op1_mother_temp	1	Yes	
 raw_otis_visit::otis_op1_mother_temp	raw_otis_visit::otis_op1_mother_temp	2	Yes, with prompt	
+raw_otis_visit::otis_op1_mother_temp	raw_otis_visit::otis_op1_mother_temp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_mother_temp_value	raw_otis_visit::otis_op1_mother_temp_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_mother_temp_no_supplies	raw_otis_visit::otis_op1_mother_temp_no_supplies	0	No	
 raw_otis_visit::otis_op1_mother_temp_no_supplies	raw_otis_visit::otis_op1_mother_temp_no_supplies	1	Yes	
@@ -2247,7 +2311,8 @@ raw_otis_visit::otis_op1_mother_temp_no_opp	raw_otis_visit::otis_op1_mother_temp
 raw_otis_visit::otis_op1_mother_temp_no_opp	raw_otis_visit::otis_op1_mother_temp_no_opp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_mother_bp	raw_otis_visit::otis_op1_mother_bp	0	No	
 raw_otis_visit::otis_op1_mother_bp	raw_otis_visit::otis_op1_mother_bp	1	Yes	
-raw_otis_visit::otis_op1_mother_bp	raw_otis_visit::otis_op1_mother_bp	2	Yes, with prompt		
+raw_otis_visit::otis_op1_mother_bp	raw_otis_visit::otis_op1_mother_bp	2	Yes, with prompt	
+raw_otis_visit::otis_op1_mother_bp	raw_otis_visit::otis_op1_mother_bp	NA	:::UNDEF:::		
 raw_otis_visit::otis_op1_mother_bp_systolic	raw_otis_visit::otis_op1_mother_bp_systolic	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_mother_bp_diastolic	raw_otis_visit::otis_op1_mother_bp_diastolic	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_mother_bp_no_supplies	raw_otis_visit::otis_op1_mother_bp_no_supplies	0	No	
@@ -2265,6 +2330,7 @@ raw_otis_visit::otis_op1_mother_bp_no_opp	raw_otis_visit::otis_op1_mother_bp_no_
 raw_otis_visit::otis_op1_fhs	raw_otis_visit::otis_op1_fhs	0	No	
 raw_otis_visit::otis_op1_fhs	raw_otis_visit::otis_op1_fhs	1	Yes	
 raw_otis_visit::otis_op1_fhs	raw_otis_visit::otis_op1_fhs	2	Yes, with prompt	
+raw_otis_visit::otis_op1_fhs	raw_otis_visit::otis_op1_fhs	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_fhs_no_supplies	raw_otis_visit::otis_op1_fhs_no_supplies	0	No	
 raw_otis_visit::otis_op1_fhs_no_supplies	raw_otis_visit::otis_op1_fhs_no_supplies	1	Yes	
 raw_otis_visit::otis_op1_fhs_no_supplies	raw_otis_visit::otis_op1_fhs_no_supplies	NA	:::UNDEF:::	
@@ -2280,6 +2346,7 @@ raw_otis_visit::otis_op1_fhs_no_opp	raw_otis_visit::otis_op1_fhs_no_opp	NA	:::UN
 raw_otis_visit::otis_op1_exam	raw_otis_visit::otis_op1_exam	0	No	
 raw_otis_visit::otis_op1_exam	raw_otis_visit::otis_op1_exam	1	Yes	
 raw_otis_visit::otis_op1_exam	raw_otis_visit::otis_op1_exam	2	Yes, with prompt	
+raw_otis_visit::otis_op1_exam	raw_otis_visit::otis_op1_exam	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_vag_exam_no_supplies	raw_otis_visit::otis_op1_vag_exam_no_supplies	0	No	
 raw_otis_visit::otis_op1_vag_exam_no_supplies	raw_otis_visit::otis_op1_vag_exam_no_supplies	1	Yes	
 raw_otis_visit::otis_op1_vag_exam_no_supplies	raw_otis_visit::otis_op1_vag_exam_no_supplies	NA	:::UNDEF:::	
@@ -2295,6 +2362,7 @@ raw_otis_visit::otis_op1_vag_exam_no_opp	raw_otis_visit::otis_op1_vag_exam_no_op
 raw_otis_visit::otis_op1_exam_water	raw_otis_visit::otis_op1_exam_water	0	No	
 raw_otis_visit::otis_op1_exam_water	raw_otis_visit::otis_op1_exam_water	1	Yes	
 raw_otis_visit::otis_op1_exam_water	raw_otis_visit::otis_op1_exam_water	2	Yes, with prompt	
+raw_otis_visit::otis_op1_exam_water	raw_otis_visit::otis_op1_exam_water	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_water_no_supplies	raw_otis_visit::otis_op1_water_no_supplies	0	No	
 raw_otis_visit::otis_op1_water_no_supplies	raw_otis_visit::otis_op1_water_no_supplies	1	Yes	
 raw_otis_visit::otis_op1_water_no_supplies	raw_otis_visit::otis_op1_water_no_supplies	NA	:::UNDEF:::	
@@ -2310,6 +2378,7 @@ raw_otis_visit::otis_op1_water_no_opp	raw_otis_visit::otis_op1_water_no_opp	NA	:
 raw_otis_visit::otis_op1_exam_soap	raw_otis_visit::otis_op1_exam_soap	0	No	
 raw_otis_visit::otis_op1_exam_soap	raw_otis_visit::otis_op1_exam_soap	1	Yes	
 raw_otis_visit::otis_op1_exam_soap	raw_otis_visit::otis_op1_exam_soap	2	Yes, with prompt	
+raw_otis_visit::otis_op1_exam_soap	raw_otis_visit::otis_op1_exam_soap	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_soap_no_supplies	raw_otis_visit::otis_op1_soap_no_supplies	0	No	
 raw_otis_visit::otis_op1_soap_no_supplies	raw_otis_visit::otis_op1_soap_no_supplies	1	Yes	
 raw_otis_visit::otis_op1_soap_no_supplies	raw_otis_visit::otis_op1_soap_no_supplies	NA	:::UNDEF:::	
@@ -2325,6 +2394,7 @@ raw_otis_visit::otis_op1_soap_no_opp	raw_otis_visit::otis_op1_soap_no_opp	NA	:::
 raw_otis_visit::otis_op1_exam_gloves	raw_otis_visit::otis_op1_exam_gloves	0	No	
 raw_otis_visit::otis_op1_exam_gloves	raw_otis_visit::otis_op1_exam_gloves	1	Yes	
 raw_otis_visit::otis_op1_exam_gloves	raw_otis_visit::otis_op1_exam_gloves	2	Yes, with prompt	
+raw_otis_visit::otis_op1_exam_gloves	raw_otis_visit::otis_op1_exam_gloves	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_gloves_no_supplies	raw_otis_visit::otis_op1_gloves_no_supplies	0	No	
 raw_otis_visit::otis_op1_gloves_no_supplies	raw_otis_visit::otis_op1_gloves_no_supplies	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_gloves_no_skills	raw_otis_visit::otis_op1_gloves_no_skills	0	No	
@@ -2339,6 +2409,7 @@ raw_otis_visit::otis_op1_gloves_no_opp	raw_otis_visit::otis_op1_gloves_no_opp	NA
 raw_otis_visit::otis_op1_danger_signs_mother	raw_otis_visit::otis_op1_danger_signs_mother	0	No	
 raw_otis_visit::otis_op1_danger_signs_mother	raw_otis_visit::otis_op1_danger_signs_mother	1	Yes	
 raw_otis_visit::otis_op1_danger_signs_mother	raw_otis_visit::otis_op1_danger_signs_mother	2	Yes, with prompt	
+raw_otis_visit::otis_op1_danger_signs_mother	raw_otis_visit::otis_op1_danger_signs_mother	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_signs_mother_no_skills	raw_otis_visit::otis_op1_signs_mother_no_skills	0	No	
 raw_otis_visit::otis_op1_signs_mother_no_skills	raw_otis_visit::otis_op1_signs_mother_no_skills	1	Yes	
 raw_otis_visit::otis_op1_signs_mother_no_skills	raw_otis_visit::otis_op1_signs_mother_no_skills	NA	:::UNDEF:::	
@@ -2351,6 +2422,7 @@ raw_otis_visit::otis_op1_signs_mother_no_opp	raw_otis_visit::otis_op1_signs_moth
 raw_otis_visit::otis_op1_danger_signs_bc	raw_otis_visit::otis_op1_danger_signs_bc	0	No	
 raw_otis_visit::otis_op1_danger_signs_bc	raw_otis_visit::otis_op1_danger_signs_bc	1	Yes	
 raw_otis_visit::otis_op1_danger_signs_bc	raw_otis_visit::otis_op1_danger_signs_bc	2	Yes, with prompt	
+raw_otis_visit::otis_op1_danger_signs_bc	raw_otis_visit::otis_op1_danger_signs_bc	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_signs_bc_no_skills	raw_otis_visit::otis_op1_signs_bc_no_skills	0	No	
 raw_otis_visit::otis_op1_signs_bc_no_skills	raw_otis_visit::otis_op1_signs_bc_no_skills	1	Yes	
 raw_otis_visit::otis_op1_signs_bc_no_skills	raw_otis_visit::otis_op1_signs_bc_no_skills	NA	:::UNDEF:::	
@@ -2363,6 +2435,7 @@ raw_otis_visit::otis_op1_signs_bc_no_opp	raw_otis_visit::otis_op1_signs_bc_no_op
 raw_otis_visit::otis_op1_checklist	raw_otis_visit::otis_op1_checklist	0	No	
 raw_otis_visit::otis_op1_checklist	raw_otis_visit::otis_op1_checklist	1	Yes	
 raw_otis_visit::otis_op1_checklist	raw_otis_visit::otis_op1_checklist	2	Yes, with prompt	
+raw_otis_visit::otis_op1_checklist	raw_otis_visit::otis_op1_checklist	NA	:::UNDEF:::	
 raw_otis_visit::otis_op1_checklist_no_supplies	raw_otis_visit::otis_op1_checklist_no_supplies	0	No	
 raw_otis_visit::otis_op1_checklist_no_supplies	raw_otis_visit::otis_op1_checklist_no_supplies	1	Yes	
 raw_otis_visit::otis_op1_checklist_no_supplies	raw_otis_visit::otis_op1_checklist_no_supplies	NA	:::UNDEF:::	
@@ -2378,6 +2451,7 @@ raw_otis_visit::otis_op1_checklist_no_opp	raw_otis_visit::otis_op1_checklist_no_
 raw_otis_visit::otis_op2_mother_temp	raw_otis_visit::otis_op2_mother_temp	0	No	
 raw_otis_visit::otis_op2_mother_temp	raw_otis_visit::otis_op2_mother_temp	1	Yes	
 raw_otis_visit::otis_op2_mother_temp	raw_otis_visit::otis_op2_mother_temp	2	Yes, with prompt	
+raw_otis_visit::otis_op2_mother_temp	raw_otis_visit::otis_op2_mother_temp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_mother_temp_value	raw_otis_visit::otis_op2_mother_temp_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_mother_temp_no_supplies	raw_otis_visit::otis_op2_mother_temp_no_supplies	0	No	
 raw_otis_visit::otis_op2_mother_temp_no_supplies	raw_otis_visit::otis_op2_mother_temp_no_supplies	1	Yes	
@@ -2393,7 +2467,8 @@ raw_otis_visit::otis_op2_mother_temp_no_opp	raw_otis_visit::otis_op2_mother_temp
 raw_otis_visit::otis_op2_mother_temp_no_opp	raw_otis_visit::otis_op2_mother_temp_no_opp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_mother_bp	raw_otis_visit::otis_op2_mother_bp	0	No	
 raw_otis_visit::otis_op2_mother_bp	raw_otis_visit::otis_op2_mother_bp	1	Yes	
-raw_otis_visit::otis_op2_mother_bp	raw_otis_visit::otis_op2_mother_bp	2	Yes, with prompt			
+raw_otis_visit::otis_op2_mother_bp	raw_otis_visit::otis_op2_mother_bp	2	Yes, with prompt	
+raw_otis_visit::otis_op2_mother_bp	raw_otis_visit::otis_op2_mother_bp	NA	:::UNDEF:::			
 raw_otis_visit::otis_op2_mother_bp_systolic	raw_otis_visit::otis_op2_mother_bp_systolic	NA	:::UNDEF:::		
 raw_otis_visit::otis_op2_mother_bp_diastolic	raw_otis_visit::otis_op2_mother_bp_diastolic	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_mother_bp_no_supplies	raw_otis_visit::otis_op2_mother_bp_no_supplies	0	No	
@@ -2411,6 +2486,7 @@ raw_otis_visit::otis_op2_mother_bp_no_opp	raw_otis_visit::otis_op2_mother_bp_no_
 raw_otis_visit::otis_op2_towel	raw_otis_visit::otis_op2_towel	0	No	
 raw_otis_visit::otis_op2_towel	raw_otis_visit::otis_op2_towel	1	Yes	
 raw_otis_visit::otis_op2_towel	raw_otis_visit::otis_op2_towel	2	Yes, with prompt	
+raw_otis_visit::otis_op2_towel	raw_otis_visit::otis_op2_towel	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_towel_no_supplies	raw_otis_visit::otis_op2_towel_no_supplies	0	No	
 raw_otis_visit::otis_op2_towel_no_supplies	raw_otis_visit::otis_op2_towel_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_towel_no_supplies	raw_otis_visit::otis_op2_towel_no_supplies	NA	:::UNDEF:::	
@@ -2426,6 +2502,7 @@ raw_otis_visit::otis_op2_towel_no_opp	raw_otis_visit::otis_op2_towel_no_opp	NA	:
 raw_otis_visit::otis_op2_gloves	raw_otis_visit::otis_op2_gloves	0	No	
 raw_otis_visit::otis_op2_gloves	raw_otis_visit::otis_op2_gloves	1	Yes	
 raw_otis_visit::otis_op2_gloves	raw_otis_visit::otis_op2_gloves	2	Yes, with prompt	
+raw_otis_visit::otis_op2_gloves	raw_otis_visit::otis_op2_gloves	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_gloves_no_supplies	raw_otis_visit::otis_op2_gloves_no_supplies	0	No	
 raw_otis_visit::otis_op2_gloves_no_supplies	raw_otis_visit::otis_op2_gloves_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_gloves_no_supplies	raw_otis_visit::otis_op2_gloves_no_supplies	NA	:::UNDEF:::	
@@ -2441,6 +2518,7 @@ raw_otis_visit::otis_op2_gloves_no_opp	raw_otis_visit::otis_op2_gloves_no_opp	NA
 raw_otis_visit::otis_op2_pads	raw_otis_visit::otis_op2_pads	0	No	
 raw_otis_visit::otis_op2_pads	raw_otis_visit::otis_op2_pads	1	Yes	
 raw_otis_visit::otis_op2_pads	raw_otis_visit::otis_op2_pads	2	Yes, with prompt	
+raw_otis_visit::otis_op2_pads	raw_otis_visit::otis_op2_pads	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_pads_no_supplies	raw_otis_visit::otis_op2_pads_no_supplies	0	No	
 raw_otis_visit::otis_op2_pads_no_supplies	raw_otis_visit::otis_op2_pads_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_pads_no_supplies	raw_otis_visit::otis_op2_pads_no_supplies	NA	:::UNDEF:::	
@@ -2456,6 +2534,7 @@ raw_otis_visit::otis_op2_pads_no_opp	raw_otis_visit::otis_op2_pads_no_opp	NA	:::
 raw_otis_visit::otis_op2_oxy	raw_otis_visit::otis_op2_oxy	0	No	
 raw_otis_visit::otis_op2_oxy	raw_otis_visit::otis_op2_oxy	1	Yes	
 raw_otis_visit::otis_op2_oxy	raw_otis_visit::otis_op2_oxy	2	Yes, with prompt	
+raw_otis_visit::otis_op2_oxy	raw_otis_visit::otis_op2_oxy	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_oxytocin_no_supplies	raw_otis_visit::otis_op2_oxytocin_no_supplies	0	No	
 raw_otis_visit::otis_op2_oxytocin_no_supplies	raw_otis_visit::otis_op2_oxytocin_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_oxytocin_no_supplies	raw_otis_visit::otis_op2_oxytocin_no_supplies	NA	:::UNDEF:::	
@@ -2471,6 +2550,7 @@ raw_otis_visit::otis_op2_oxytocin_no_opp	raw_otis_visit::otis_op2_oxytocin_no_op
 raw_otis_visit::otis_op2_blade	raw_otis_visit::otis_op2_blade	0	No	
 raw_otis_visit::otis_op2_blade	raw_otis_visit::otis_op2_blade	1	Yes	
 raw_otis_visit::otis_op2_blade	raw_otis_visit::otis_op2_blade	2	Yes, with prompt	
+raw_otis_visit::otis_op2_blade	raw_otis_visit::otis_op2_blade	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_blade_no_supplies	raw_otis_visit::otis_op2_blade_no_supplies	0	No	
 raw_otis_visit::otis_op2_blade_no_supplies	raw_otis_visit::otis_op2_blade_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_blade_no_supplies	raw_otis_visit::otis_op2_blade_no_supplies	NA	:::UNDEF:::	
@@ -2486,6 +2566,7 @@ raw_otis_visit::otis_op2_blade_no_opp	raw_otis_visit::otis_op2_blade_no_opp	NA	:
 raw_otis_visit::otis_op2_cord	raw_otis_visit::otis_op2_cord	0	No	
 raw_otis_visit::otis_op2_cord	raw_otis_visit::otis_op2_cord	1	Yes	
 raw_otis_visit::otis_op2_cord	raw_otis_visit::otis_op2_cord	2	Yes, with prompt	
+raw_otis_visit::otis_op2_cord	raw_otis_visit::otis_op2_cord	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_cord_no_supplies	raw_otis_visit::otis_op2_cord_no_supplies	0	No	
 raw_otis_visit::otis_op2_cord_no_supplies	raw_otis_visit::otis_op2_cord_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_cord_no_supplies	raw_otis_visit::otis_op2_cord_no_supplies	NA	:::UNDEF:::	
@@ -2501,6 +2582,7 @@ raw_otis_visit::otis_op2_cord_no_opp	raw_otis_visit::otis_op2_cord_no_opp	NA	:::
 raw_otis_visit::otis_op2_suction	raw_otis_visit::otis_op2_suction	0	No	
 raw_otis_visit::otis_op2_suction	raw_otis_visit::otis_op2_suction	1	Yes	
 raw_otis_visit::otis_op2_suction	raw_otis_visit::otis_op2_suction	2	Yes, with prompt	
+raw_otis_visit::otis_op2_suction	raw_otis_visit::otis_op2_suction	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_suction_no_supplies	raw_otis_visit::otis_op2_suction_no_supplies	0	No	
 raw_otis_visit::otis_op2_suction_no_supplies	raw_otis_visit::otis_op2_suction_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_suction_no_supplies	raw_otis_visit::otis_op2_suction_no_supplies	NA	:::UNDEF:::	
@@ -2516,6 +2598,7 @@ raw_otis_visit::otis_op2_suction_no_opp	raw_otis_visit::otis_op2_suction_no_opp	
 raw_otis_visit::otis_op2_bag	raw_otis_visit::otis_op2_bag	0	No	
 raw_otis_visit::otis_op2_bag	raw_otis_visit::otis_op2_bag	1	Yes	
 raw_otis_visit::otis_op2_bag	raw_otis_visit::otis_op2_bag	2	Yes, with prompt	
+raw_otis_visit::otis_op2_bag	raw_otis_visit::otis_op2_bag	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_bag_no_supplies	raw_otis_visit::otis_op2_bag_no_supplies	0	No	
 raw_otis_visit::otis_op2_bag_no_supplies	raw_otis_visit::otis_op2_bag_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_bag_no_supplies	raw_otis_visit::otis_op2_bag_no_supplies	NA	:::UNDEF:::	
@@ -2531,6 +2614,7 @@ raw_otis_visit::otis_op2_bag_no_opp	raw_otis_visit::otis_op2_bag_no_opp	NA	:::UN
 raw_otis_visit::otis_op2_water	raw_otis_visit::otis_op2_water	0	No	
 raw_otis_visit::otis_op2_water	raw_otis_visit::otis_op2_water	1	Yes	
 raw_otis_visit::otis_op2_water	raw_otis_visit::otis_op2_water	2	Yes, with prompt	
+raw_otis_visit::otis_op2_water	raw_otis_visit::otis_op2_water	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_water_no_supplies	raw_otis_visit::otis_op2_water_no_supplies	0	No	
 raw_otis_visit::otis_op2_water_no_supplies	raw_otis_visit::otis_op2_water_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_water_no_supplies	raw_otis_visit::otis_op2_water_no_supplies	NA	:::UNDEF:::	
@@ -2546,6 +2630,7 @@ raw_otis_visit::otis_op2_water_no_opp	raw_otis_visit::otis_op2_water_no_opp	NA	:
 raw_otis_visit::otis_op2_soap	raw_otis_visit::otis_op2_soap	0	No	
 raw_otis_visit::otis_op2_soap	raw_otis_visit::otis_op2_soap	1	Yes	
 raw_otis_visit::otis_op2_soap	raw_otis_visit::otis_op2_soap	2	Yes, with prompt	
+raw_otis_visit::otis_op2_soap	raw_otis_visit::otis_op2_soap	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_soap_no_supplies	raw_otis_visit::otis_op2_soap_no_supplies	0	No	
 raw_otis_visit::otis_op2_soap_no_supplies	raw_otis_visit::otis_op2_soap_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_soap_no_supplies	raw_otis_visit::otis_op2_soap_no_supplies	NA	:::UNDEF:::	
@@ -2561,6 +2646,7 @@ raw_otis_visit::otis_op2_soap_no_opp	raw_otis_visit::otis_op2_soap_no_opp	NA	:::
 raw_otis_visit::otis_op2_checklist	raw_otis_visit::otis_op2_checklist	0	No	
 raw_otis_visit::otis_op2_checklist	raw_otis_visit::otis_op2_checklist	1	Yes	
 raw_otis_visit::otis_op2_checklist	raw_otis_visit::otis_op2_checklist	2	Yes, with prompt	
+raw_otis_visit::otis_op2_checklist	raw_otis_visit::otis_op2_checklist	NA	:::UNDEF:::	
 raw_otis_visit::otis_op2_checklist_no_supplies	raw_otis_visit::otis_op2_checklist_no_supplies	0	No	
 raw_otis_visit::otis_op2_checklist_no_supplies	raw_otis_visit::otis_op2_checklist_no_supplies	1	Yes	
 raw_otis_visit::otis_op2_checklist_no_supplies	raw_otis_visit::otis_op2_checklist_no_supplies	NA	:::UNDEF:::	
@@ -2576,6 +2662,7 @@ raw_otis_visit::otis_op2_checklist_no_opp	raw_otis_visit::otis_op2_checklist_no_
 raw_otis_visit::otis_op3_gloves	raw_otis_visit::otis_op3_gloves	0	No	
 raw_otis_visit::otis_op3_gloves	raw_otis_visit::otis_op3_gloves	1	Yes	
 raw_otis_visit::otis_op3_gloves	raw_otis_visit::otis_op3_gloves	2	Yes, with prompt	
+raw_otis_visit::otis_op3_gloves	raw_otis_visit::otis_op3_gloves	2	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_gloves_no_supplies	raw_otis_visit::otis_op3_gloves_no_supplies	0	No	
 raw_otis_visit::otis_op3_gloves_no_supplies	raw_otis_visit::otis_op3_gloves_no_supplies	1	Yes	
 raw_otis_visit::otis_op3_gloves_no_supplies	raw_otis_visit::otis_op3_gloves_no_supplies	NA	:::UNDEF:::	
@@ -2591,6 +2678,7 @@ raw_otis_visit::otis_op3_gloves_no_opp	raw_otis_visit::otis_op3_gloves_no_opp	NA
 raw_otis_visit::otis_op3_eval_breathing	raw_otis_visit::otis_op3_eval_breathing	0	No	
 raw_otis_visit::otis_op3_eval_breathing	raw_otis_visit::otis_op3_eval_breathing	1	Yes	
 raw_otis_visit::otis_op3_eval_breathing	raw_otis_visit::otis_op3_eval_breathing	2	Yes, with prompt	
+raw_otis_visit::otis_op3_eval_breathing	raw_otis_visit::otis_op3_eval_breathing	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_breathing_no_skills	raw_otis_visit::otis_op3_breathing_no_skills	0	No	
 raw_otis_visit::otis_op3_breathing_no_skills	raw_otis_visit::otis_op3_breathing_no_skills	1	Yes	
 raw_otis_visit::otis_op3_breathing_no_skills	raw_otis_visit::otis_op3_breathing_no_skills	NA	:::UNDEF:::	
@@ -2602,9 +2690,11 @@ raw_otis_visit::otis_op3_breathing_no_opp	raw_otis_visit::otis_op3_breathing_no_
 raw_otis_visit::otis_op3_breathing_no_opp	raw_otis_visit::otis_op3_breathing_no_opp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_breathing	raw_otis_visit::otis_op3_breathing	0	No	
 raw_otis_visit::otis_op3_breathing	raw_otis_visit::otis_op3_breathing	1	Yes	
+raw_otis_visit::otis_op3_breathing	raw_otis_visit::otis_op3_breathing	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_airway	raw_otis_visit::otis_op3_airway	0	No	
 raw_otis_visit::otis_op3_airway	raw_otis_visit::otis_op3_airway	1	Yes	
 raw_otis_visit::otis_op3_airway	raw_otis_visit::otis_op3_airway	2	Yes, with prompt	
+raw_otis_visit::otis_op3_airway	raw_otis_visit::otis_op3_airway	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_airway_no_supplies	raw_otis_visit::otis_op3_airway_no_supplies	0	No	
 raw_otis_visit::otis_op3_airway_no_supplies	raw_otis_visit::otis_op3_airway_no_supplies	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_airway_no_skills	raw_otis_visit::otis_op3_airway_no_skills	0	No	
@@ -2618,6 +2708,7 @@ raw_otis_visit::otis_op3_airway_no_opp	raw_otis_visit::otis_op3_airway_no_opp	NA
 raw_otis_visit::otis_op3_bag	raw_otis_visit::otis_op3_bag	0	No	
 raw_otis_visit::otis_op3_bag	raw_otis_visit::otis_op3_bag	1	Yes	
 raw_otis_visit::otis_op3_bag	raw_otis_visit::otis_op3_bag	2	Yes, with prompt	
+raw_otis_visit::otis_op3_bag	raw_otis_visit::otis_op3_bag	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_bag_no_supplies	raw_otis_visit::otis_op3_bag_no_supplies	0	No	
 raw_otis_visit::otis_op3_bag_no_supplies	raw_otis_visit::otis_op3_bag_no_supplies	1	Yes	
 raw_otis_visit::otis_op3_bag_no_supplies	raw_otis_visit::otis_op3_bag_no_supplies	NA	:::UNDEF:::	
@@ -2632,6 +2723,7 @@ raw_otis_visit::otis_op3_bag_no_opp	raw_otis_visit::otis_op3_bag_no_opp	NA	:::UN
 raw_otis_visit::otis_op3_resuscitate_effort	raw_otis_visit::otis_op3_resuscitate_effort	0	No	
 raw_otis_visit::otis_op3_resuscitate_effort	raw_otis_visit::otis_op3_resuscitate_effort	1	Yes	
 raw_otis_visit::otis_op3_resuscitate_effort	raw_otis_visit::otis_op3_resuscitate_effort	2	Yes, with prompt	
+raw_otis_visit::otis_op3_resuscitate_effort	raw_otis_visit::otis_op3_resuscitate_effort	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_effort_no_supplies	raw_otis_visit::otis_op3_effort_no_supplies	0	No	
 raw_otis_visit::otis_op3_effort_no_supplies	raw_otis_visit::otis_op3_effort_no_supplies	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_effort_no_skills	raw_otis_visit::otis_op3_effort_no_skills	0	No	
@@ -2643,6 +2735,7 @@ raw_otis_visit::otis_op3_effort_no_opp	raw_otis_visit::otis_op3_effort_no_opp	NA
 raw_otis_visit::otis_op3_skin_to_skin	raw_otis_visit::otis_op3_skin_to_skin	0	No	
 raw_otis_visit::otis_op3_skin_to_skin	raw_otis_visit::otis_op3_skin_to_skin	1	Yes	
 raw_otis_visit::otis_op3_skin_to_skin	raw_otis_visit::otis_op3_skin_to_skin	2	Yes, with prompt	
+raw_otis_visit::otis_op3_skin_to_skin	raw_otis_visit::otis_op3_skin_to_skin	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_skin2skin_no_skills	raw_otis_visit::otis_op3_skin2skin_no_skills	0	No	
 raw_otis_visit::otis_op3_skin2skin_no_skills	raw_otis_visit::otis_op3_skin2skin_no_skills	1	Yes	
 raw_otis_visit::otis_op3_skin2skin_no_skills	raw_otis_visit::otis_op3_skin2skin_no_skills	NA	:::UNDEF:::	
@@ -2655,6 +2748,7 @@ raw_otis_visit::otis_op3_skin2skin_no_opp	raw_otis_visit::otis_op3_skin2skin_no_
 raw_otis_visit::otis_op3_oxy	raw_otis_visit::otis_op3_oxy	0	No	
 raw_otis_visit::otis_op3_oxy	raw_otis_visit::otis_op3_oxy	1	Yes	
 raw_otis_visit::otis_op3_oxy	raw_otis_visit::otis_op3_oxy	2	Yes, with prompt	
+raw_otis_visit::otis_op3_oxy	raw_otis_visit::otis_op3_oxy	NA	:::UNDEF:::	
 raw_otis_visit::otis_op3_oxytocin_no_supplies	raw_otis_visit::otis_op3_oxytocin_no_supplies	0	No	
 raw_otis_visit::otis_op3_oxytocin_no_supplies	raw_otis_visit::otis_op3_oxytocin_no_supplies	1	Yes	
 raw_otis_visit::otis_op3_oxytocin_no_supplies	raw_otis_visit::otis_op3_oxytocin_no_supplies	NA	:::UNDEF:::	
@@ -2670,6 +2764,7 @@ raw_otis_visit::otis_op3_oxytocin_no_opp	raw_otis_visit::otis_op3_oxytocin_no_op
 raw_otis_visit::otis_op4_bleeding	raw_otis_visit::otis_op4_bleeding	0	No	
 raw_otis_visit::otis_op4_bleeding	raw_otis_visit::otis_op4_bleeding	1	Yes	
 raw_otis_visit::otis_op4_bleeding	raw_otis_visit::otis_op4_bleeding	2	Yes, with prompt	
+raw_otis_visit::otis_op4_bleeding	raw_otis_visit::otis_op4_bleeding	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_bleeding_no_skills	raw_otis_visit::otis_op4_bleeding_no_skills	0	No	
 raw_otis_visit::otis_op4_bleeding_no_skills	raw_otis_visit::otis_op4_bleeding_no_skills	1	Yes	
 raw_otis_visit::otis_op4_bleeding_no_skills	raw_otis_visit::otis_op4_bleeding_no_skills	NA	:::UNDEF:::	
@@ -2682,6 +2777,7 @@ raw_otis_visit::otis_op4_bleeding_no_opp	raw_otis_visit::otis_op4_bleeding_no_op
 raw_otis_visit::otis_op4_mother_temp	raw_otis_visit::otis_op4_mother_temp	0	No	
 raw_otis_visit::otis_op4_mother_temp	raw_otis_visit::otis_op4_mother_temp	1	Yes	
 raw_otis_visit::otis_op4_mother_temp	raw_otis_visit::otis_op4_mother_temp	2	Yes, with prompt	
+raw_otis_visit::otis_op4_mother_temp	raw_otis_visit::otis_op4_mother_temp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_mother_temp_value	raw_otis_visit::otis_op4_mother_temp_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_mother_temp_no_supplies	raw_otis_visit::otis_op4_mother_temp_no_supplies	0	No	
 raw_otis_visit::otis_op4_mother_temp_no_supplies	raw_otis_visit::otis_op4_mother_temp_no_supplies	1	Yes	
@@ -2698,6 +2794,7 @@ raw_otis_visit::otis_op4_mother_temp_no_opp	raw_otis_visit::otis_op4_mother_temp
 raw_otis_visit::otis_op4_mother_bp	raw_otis_visit::otis_op4_mother_bp	0	No	
 raw_otis_visit::otis_op4_mother_bp	raw_otis_visit::otis_op4_mother_bp	1	Yes	
 raw_otis_visit::otis_op4_mother_bp	raw_otis_visit::otis_op4_mother_bp	2	Yes, with prompt	
+raw_otis_visit::otis_op4_mother_bp	raw_otis_visit::otis_op4_mother_bp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_mother_bp_systolic	raw_otis_visit::otis_op4_mother_bp_systolic	NA	:::UNDEF:::		
 raw_otis_visit::otis_op4_mother_bp_diastolic	raw_otis_visit::otis_op4_mother_bp_diastolic	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_mother_bp_no_supplies	raw_otis_visit::otis_op4_mother_bp_no_supplies	0	No	
@@ -2715,6 +2812,7 @@ raw_otis_visit::otis_op4_mother_bp_no_opp	raw_otis_visit::otis_op4_mother_bp_no_
 raw_otis_visit::otis_op4_baby_temp	raw_otis_visit::otis_op4_baby_temp	0	No	
 raw_otis_visit::otis_op4_baby_temp	raw_otis_visit::otis_op4_baby_temp	1	Yes	
 raw_otis_visit::otis_op4_baby_temp	raw_otis_visit::otis_op4_baby_temp	2	Yes, with prompt	
+raw_otis_visit::otis_op4_baby_temp	raw_otis_visit::otis_op4_baby_temp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_baby_temp_value	raw_otis_visit::otis_op4_baby_temp_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_baby_temp_no_supplies	raw_otis_visit::otis_op4_baby_temp_no_supplies	0	No	
 raw_otis_visit::otis_op4_baby_temp_no_supplies	raw_otis_visit::otis_op4_baby_temp_no_supplies	1	Yes	
@@ -2731,6 +2829,7 @@ raw_otis_visit::otis_op4_baby_temp_no_opp	raw_otis_visit::otis_op4_baby_temp_no_
 raw_otis_visit::otis_op4_baby_weight	raw_otis_visit::otis_op4_baby_weight	0	No	
 raw_otis_visit::otis_op4_baby_weight	raw_otis_visit::otis_op4_baby_weight	1	Yes	
 raw_otis_visit::otis_op4_baby_weight	raw_otis_visit::otis_op4_baby_weight	2	Yes, with prompt	
+raw_otis_visit::otis_op4_baby_weight	raw_otis_visit::otis_op4_baby_weight	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_baby_weight_value	raw_otis_visit::otis_op4_baby_weight_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_baby_weight_no_supplies	raw_otis_visit::otis_op4_baby_weight_no_supplies	0	No	
 raw_otis_visit::otis_op4_baby_weight_no_supplies	raw_otis_visit::otis_op4_baby_weight_no_supplies	1	Yes	
@@ -2747,6 +2846,7 @@ raw_otis_visit::otis_op4_baby_weight_no_opp	raw_otis_visit::otis_op4_baby_weight
 raw_otis_visit::otis_op4_bf	raw_otis_visit::otis_op4_bf	0	No	
 raw_otis_visit::otis_op4_bf	raw_otis_visit::otis_op4_bf	1	Yes	
 raw_otis_visit::otis_op4_bf	raw_otis_visit::otis_op4_bf	2	Yes, with prompt	
+raw_otis_visit::otis_op4_bf	raw_otis_visit::otis_op4_bf	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_b_feeding_no_skills	raw_otis_visit::otis_op4_b_feeding_no_skills	0	No	
 raw_otis_visit::otis_op4_b_feeding_no_skills	raw_otis_visit::otis_op4_b_feeding_no_skills	1	Yes	
 raw_otis_visit::otis_op4_b_feeding_no_skills	raw_otis_visit::otis_op4_b_feeding_no_skills	NA	:::UNDEF:::	
@@ -2759,6 +2859,7 @@ raw_otis_visit::otis_op4_b_feeding_no_opp	raw_otis_visit::otis_op4_b_feeding_no_
 raw_otis_visit::otis_op4_danger_signs_mother	raw_otis_visit::otis_op4_danger_signs_mother	0	No	
 raw_otis_visit::otis_op4_danger_signs_mother	raw_otis_visit::otis_op4_danger_signs_mother	1	Yes	
 raw_otis_visit::otis_op4_danger_signs_mother	raw_otis_visit::otis_op4_danger_signs_mother	2	Yes, with prompt	
+raw_otis_visit::otis_op4_danger_signs_mother	raw_otis_visit::otis_op4_danger_signs_mother	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_signs_mother_no_skills	raw_otis_visit::otis_op4_signs_mother_no_skills	0	No	
 raw_otis_visit::otis_op4_signs_mother_no_skills	raw_otis_visit::otis_op4_signs_mother_no_skills	1	Yes	
 raw_otis_visit::otis_op4_signs_mother_no_skills	raw_otis_visit::otis_op4_signs_mother_no_skills	NA	:::UNDEF:::	
@@ -2771,6 +2872,7 @@ raw_otis_visit::otis_op4_signs_mother_no_opp	raw_otis_visit::otis_op4_signs_moth
 raw_otis_visit::otis_op4_danger_signs_bc	raw_otis_visit::otis_op4_danger_signs_bc	0	No	
 raw_otis_visit::otis_op4_danger_signs_bc	raw_otis_visit::otis_op4_danger_signs_bc	1	Yes	
 raw_otis_visit::otis_op4_danger_signs_bc	raw_otis_visit::otis_op4_danger_signs_bc	2	Yes, with prompt	
+raw_otis_visit::otis_op4_danger_signs_bc	raw_otis_visit::otis_op4_danger_signs_bc	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_signs_bc_no_skills	raw_otis_visit::otis_op4_signs_bc_no_skills	0	No	
 raw_otis_visit::otis_op4_signs_bc_no_skills	raw_otis_visit::otis_op4_signs_bc_no_skills	1	Yes	
 raw_otis_visit::otis_op4_signs_bc_no_skills	raw_otis_visit::otis_op4_signs_bc_no_skills	NA	:::UNDEF:::	
@@ -2783,6 +2885,7 @@ raw_otis_visit::otis_op4_signs_bc_no_opp	raw_otis_visit::otis_op4_signs_bc_no_op
 raw_otis_visit::otis_op4_skin_to_skin	raw_otis_visit::otis_op4_skin_to_skin	0	No	
 raw_otis_visit::otis_op4_skin_to_skin	raw_otis_visit::otis_op4_skin_to_skin	1	Yes	
 raw_otis_visit::otis_op4_skin_to_skin	raw_otis_visit::otis_op4_skin_to_skin	2	Yes, with prompt	
+raw_otis_visit::otis_op4_skin_to_skin	raw_otis_visit::otis_op4_skin_to_skin	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_skin2skin_no_skills	raw_otis_visit::otis_op4_skin2skin_no_skills	0	No	
 raw_otis_visit::otis_op4_skin2skin_no_skills	raw_otis_visit::otis_op4_skin2skin_no_skills	1	Yes	
 raw_otis_visit::otis_op4_skin2skin_no_skills	raw_otis_visit::otis_op4_skin2skin_no_skills	NA	:::UNDEF:::	
@@ -2795,6 +2898,7 @@ raw_otis_visit::otis_op4_skin2skin_no_opp	raw_otis_visit::otis_op4_skin2skin_no_
 raw_otis_visit::otis_op4_checklist	raw_otis_visit::otis_op4_checklist	0	No	
 raw_otis_visit::otis_op4_checklist	raw_otis_visit::otis_op4_checklist	1	Yes	
 raw_otis_visit::otis_op4_checklist	raw_otis_visit::otis_op4_checklist	2	Yes, with prompt	
+raw_otis_visit::otis_op4_checklist	raw_otis_visit::otis_op4_checklist	NA	:::UNDEF:::	
 raw_otis_visit::otis_op4_checklist_no_supplies	raw_otis_visit::otis_op4_checklist_no_supplies	0	No	
 raw_otis_visit::otis_op4_checklist_no_supplies	raw_otis_visit::otis_op4_checklist_no_supplies	1	Yes	
 raw_otis_visit::otis_op4_checklist_no_supplies	raw_otis_visit::otis_op4_checklist_no_supplies	NA	:::UNDEF:::	
@@ -2810,6 +2914,7 @@ raw_otis_visit::otis_op4_checklist_no_opp	raw_otis_visit::otis_op4_checklist_no_
 raw_otis_visit::otis_op5_bleeding	raw_otis_visit::otis_op5_bleeding	0	No	
 raw_otis_visit::otis_op5_bleeding	raw_otis_visit::otis_op5_bleeding	1	Yes	
 raw_otis_visit::otis_op5_bleeding	raw_otis_visit::otis_op5_bleeding	2	Yes, with prompt	
+raw_otis_visit::otis_op5_bleeding	raw_otis_visit::otis_op5_bleeding	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_bleeding_no_skills	raw_otis_visit::otis_op5_bleeding_no_skills	0	No	
 raw_otis_visit::otis_op5_bleeding_no_skills	raw_otis_visit::otis_op5_bleeding_no_skills	1	Yes	
 raw_otis_visit::otis_op5_bleeding_no_skills	raw_otis_visit::otis_op5_bleeding_no_skills	NA	:::UNDEF:::	
@@ -2822,6 +2927,7 @@ raw_otis_visit::otis_op5_bleeding_no_opp	raw_otis_visit::otis_op5_bleeding_no_op
 raw_otis_visit::otis_op5_mother_temp	raw_otis_visit::otis_op5_mother_temp	0	No	
 raw_otis_visit::otis_op5_mother_temp	raw_otis_visit::otis_op5_mother_temp	1	Yes	
 raw_otis_visit::otis_op5_mother_temp	raw_otis_visit::otis_op5_mother_temp	2	Yes, with prompt	
+raw_otis_visit::otis_op5_mother_temp	raw_otis_visit::otis_op5_mother_temp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_mother_temp_value	raw_otis_visit::otis_op5_mother_temp_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_mother_temp_no_supplies	raw_otis_visit::otis_op5_mother_temp_no_supplies	0	No	
 raw_otis_visit::otis_op5_mother_temp_no_supplies	raw_otis_visit::otis_op5_mother_temp_no_supplies	1	Yes	
@@ -2838,6 +2944,7 @@ raw_otis_visit::otis_op5_mother_temp_no_opp	raw_otis_visit::otis_op5_mother_temp
 raw_otis_visit::otis_op5_baby_temp	raw_otis_visit::otis_op5_baby_temp	0	No	
 raw_otis_visit::otis_op5_baby_temp	raw_otis_visit::otis_op5_baby_temp	1	Yes	
 raw_otis_visit::otis_op5_baby_temp	raw_otis_visit::otis_op5_baby_temp	2	Yes, with prompt	
+raw_otis_visit::otis_op5_baby_temp	raw_otis_visit::otis_op5_baby_temp	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_baby_temp_value	raw_otis_visit::otis_op5_baby_temp_value	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_baby_temp_no_supplies	raw_otis_visit::otis_op5_baby_temp_no_supplies	0	No	
 raw_otis_visit::otis_op5_baby_temp_no_supplies	raw_otis_visit::otis_op5_baby_temp_no_supplies	1	Yes	
@@ -2854,6 +2961,7 @@ raw_otis_visit::otis_op5_baby_temp_no_opp	raw_otis_visit::otis_op5_baby_temp_no_
 raw_otis_visit::otis_op5_breathing	raw_otis_visit::otis_op5_breathing	0	No	
 raw_otis_visit::otis_op5_breathing	raw_otis_visit::otis_op5_breathing	1	Yes	
 raw_otis_visit::otis_op5_breathing	raw_otis_visit::otis_op5_breathing	2	Yes, with prompt	
+raw_otis_visit::otis_op5_breathing	raw_otis_visit::otis_op5_breathing	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_breathing_no_skills	raw_otis_visit::otis_op5_breathing_no_skills	0	No	
 raw_otis_visit::otis_op5_breathing_no_skills	raw_otis_visit::otis_op5_breathing_no_skills	1	Yes	
 raw_otis_visit::otis_op5_breathing_no_skills	raw_otis_visit::otis_op5_breathing_no_skills	NA	:::UNDEF:::
@@ -2866,6 +2974,7 @@ raw_otis_visit::otis_op5_breathing_no_opp	raw_otis_visit::otis_op5_breathing_no_
 raw_otis_visit::otis_op5_feeding	raw_otis_visit::otis_op5_feeding	0	No	
 raw_otis_visit::otis_op5_feeding	raw_otis_visit::otis_op5_feeding	1	Yes	
 raw_otis_visit::otis_op5_feeding	raw_otis_visit::otis_op5_feeding	2	Yes, with prompt	
+raw_otis_visit::otis_op5_feeding	raw_otis_visit::otis_op5_feeding	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_feeding_no_skills	raw_otis_visit::otis_op5_feeding_no_skills	0	No	
 raw_otis_visit::otis_op5_feeding_no_skills	raw_otis_visit::otis_op5_feeding_no_skills	1	Yes	
 raw_otis_visit::otis_op5_feeding_no_skills	raw_otis_visit::otis_op5_feeding_no_skills	NA	:::UNDEF:::	
@@ -2878,6 +2987,7 @@ raw_otis_visit::otis_op5_feeding_no_opp	raw_otis_visit::otis_op5_feeding_no_opp	
 raw_otis_visit::otis_op5_bcg	raw_otis_visit::otis_op5_bcg	0	No	
 raw_otis_visit::otis_op5_bcg	raw_otis_visit::otis_op5_bcg	1	Yes	
 raw_otis_visit::otis_op5_bcg	raw_otis_visit::otis_op5_bcg	2	Yes, with prompt	
+raw_otis_visit::otis_op5_bcg	raw_otis_visit::otis_op5_bcg	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_bcg_no_supplies	raw_otis_visit::otis_op5_bcg_no_supplies	0	No	
 raw_otis_visit::otis_op5_bcg_no_supplies	raw_otis_visit::otis_op5_bcg_no_supplies	1	Yes	
 raw_otis_visit::otis_op5_bcg_no_supplies	raw_otis_visit::otis_op5_bcg_no_supplies	NA	:::UNDEF:::	
@@ -2893,6 +3003,7 @@ raw_otis_visit::otis_op5_bcg_no_opp	raw_otis_visit::otis_op5_bcg_no_opp	NA	:::UN
 raw_otis_visit::otis_op5_opv	raw_otis_visit::otis_op5_opv	0	No	
 raw_otis_visit::otis_op5_opv	raw_otis_visit::otis_op5_opv	1	Yes	
 raw_otis_visit::otis_op5_opv	raw_otis_visit::otis_op5_opv	2	Yes, with prompt	
+raw_otis_visit::otis_op5_opv	raw_otis_visit::otis_op5_opv	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_opv_no_supplies	raw_otis_visit::otis_op5_opv_no_supplies	0	No	
 raw_otis_visit::otis_op5_opv_no_supplies	raw_otis_visit::otis_op5_opv_no_supplies	1	Yes	
 raw_otis_visit::otis_op5_opv_no_supplies	raw_otis_visit::otis_op5_opv_no_supplies	NA	:::UNDEF:::	
@@ -2908,6 +3019,7 @@ raw_otis_visit::otis_op5_opv_no_opp	raw_otis_visit::otis_op5_opv_no_opp	NA	:::UN
 raw_otis_visit::otis_op5_planning	raw_otis_visit::otis_op5_planning	0	No	
 raw_otis_visit::otis_op5_planning	raw_otis_visit::otis_op5_planning	1	Yes	
 raw_otis_visit::otis_op5_planning	raw_otis_visit::otis_op5_planning	2	Yes, with prompt	
+raw_otis_visit::otis_op5_planning	raw_otis_visit::otis_op5_planning	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_planning_no_skills	raw_otis_visit::otis_op5_planning_no_skills	0	No	
 raw_otis_visit::otis_op5_planning_no_skills	raw_otis_visit::otis_op5_planning_no_skills	1	Yes	
 raw_otis_visit::otis_op5_planning_no_skills	raw_otis_visit::otis_op5_planning_no_skills	NA	:::UNDEF:::	
@@ -2920,6 +3032,7 @@ raw_otis_visit::otis_op5_planning_no_opp	raw_otis_visit::otis_op5_planning_no_op
 raw_otis_visit::otis_op5_danger_signs	raw_otis_visit::otis_op5_danger_signs	0	No	
 raw_otis_visit::otis_op5_danger_signs	raw_otis_visit::otis_op5_danger_signs	1	Yes	
 raw_otis_visit::otis_op5_danger_signs	raw_otis_visit::otis_op5_danger_signs	2	Yes, with prompt	
+raw_otis_visit::otis_op5_danger_signs	raw_otis_visit::otis_op5_danger_signs	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_signs_no_skills	raw_otis_visit::otis_op5_signs_no_skills	0	No	
 raw_otis_visit::otis_op5_signs_no_skills	raw_otis_visit::otis_op5_signs_no_skills	1	Yes	
 raw_otis_visit::otis_op5_signs_no_skills	raw_otis_visit::otis_op5_signs_no_skills	NA	:::UNDEF:::	
@@ -2932,6 +3045,7 @@ raw_otis_visit::otis_op5_signs_no_opp	raw_otis_visit::otis_op5_signs_no_opp	NA	:
 raw_otis_visit::otis_op5_checklist	raw_otis_visit::otis_op5_checklist	0	No	
 raw_otis_visit::otis_op5_checklist	raw_otis_visit::otis_op5_checklist	1	Yes	
 raw_otis_visit::otis_op5_checklist	raw_otis_visit::otis_op5_checklist	2	Yes, with prompt	
+raw_otis_visit::otis_op5_checklist	raw_otis_visit::otis_op5_checklist	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_checklist_no_supplies	raw_otis_visit::otis_op5_checklist_no_supplies	0	No	
 raw_otis_visit::otis_op5_checklist_no_supplies	raw_otis_visit::otis_op5_checklist_no_supplies	NA	:::UNDEF:::	
 raw_otis_visit::otis_op5_checklist_no_skills	raw_otis_visit::otis_op5_checklist_no_skills	0	No	
@@ -2945,19 +3059,25 @@ raw_otis_visit::otis_op5_checklist_no_opp	raw_otis_visit::otis_op5_checklist_no_
 raw_otis_visit::otis_op5_checklist_no_opp	raw_otis_visit::otis_op5_checklist_no_opp	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_csection	raw_otis_visit::otis_anyt_csection	0	No	
 raw_otis_visit::otis_anyt_csection	raw_otis_visit::otis_anyt_csection	1	Yes	
+raw_otis_visit::otis_anyt_csection	raw_otis_visit::otis_anyt_csection	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_baby_death	raw_otis_visit::otis_anyt_baby_death	0	No	
 raw_otis_visit::otis_anyt_baby_death	raw_otis_visit::otis_anyt_baby_death	1	Yes	
 raw_otis_visit::otis_anyt_baby_death	raw_otis_visit::otis_anyt_baby_death	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_baby_death_pp	raw_otis_visit::otis_anyt_baby_death_pp	not_sure	Not sure	
+raw_otis_visit::otis_anyt_baby_death_pp	raw_otis_visit::otis_anyt_baby_death_pp	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_mother_death	raw_otis_visit::otis_anyt_mother_death	0	No	
+raw_otis_visit::otis_anyt_mother_death	raw_otis_visit::otis_anyt_mother_death	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_mother_referred_out	raw_otis_visit::otis_anyt_mother_referred_out	0	No	
 raw_otis_visit::otis_anyt_mother_referred_out	raw_otis_visit::otis_anyt_mother_referred_out	1	Yes	
+raw_otis_visit::otis_anyt_mother_referred_out	raw_otis_visit::otis_anyt_mother_referred_out	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_mother_referral_pp	raw_otis_visit::otis_anyt_mother_referral_pp	1		
 raw_otis_visit::otis_anyt_mother_referral_pp	raw_otis_visit::otis_anyt_mother_referral_pp	2		
 raw_otis_visit::otis_anyt_mother_referral_pp	raw_otis_visit::otis_anyt_mother_referral_pp	3		
-raw_otis_visit::otis_anyt_mother_referral_pp	raw_otis_visit::otis_anyt_mother_referral_pp	4		
+raw_otis_visit::otis_anyt_mother_referral_pp	raw_otis_visit::otis_anyt_mother_referral_pp	4	
+raw_otis_visit::otis_anyt_mother_referral_pp	raw_otis_visit::otis_anyt_mother_referral_pp	NA	:::UNDEF:::		
 raw_otis_visit::otis_anyt_ms	raw_otis_visit::otis_anyt_ms	0	No	
 raw_otis_visit::otis_anyt_ms	raw_otis_visit::otis_anyt_ms	1	Yes	
+raw_otis_visit::otis_anyt_ms	raw_otis_visit::otis_anyt_ms	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_mother_ms_no_supplies	raw_otis_visit::otis_anyt_mother_ms_no_supplies	0	No	
 raw_otis_visit::otis_anyt_mother_ms_no_supplies	raw_otis_visit::otis_anyt_mother_ms_no_supplies	1	Yes	
 raw_otis_visit::otis_anyt_mother_ms_no_supplies	raw_otis_visit::otis_anyt_mother_ms_no_supplies	NA	:::UNDEF:::	
@@ -2974,6 +3094,7 @@ raw_otis_visit::otis_anyt_mother_ms_no_need	raw_otis_visit::otis_anyt_mother_ms_
 raw_otis_visit::otis_anyt_mother_ms_no_need	raw_otis_visit::otis_anyt_mother_ms_no_need	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_ab_mother	raw_otis_visit::otis_anyt_ab_mother	0	No	
 raw_otis_visit::otis_anyt_ab_mother	raw_otis_visit::otis_anyt_ab_mother	1	Yes	
+raw_otis_visit::otis_anyt_ab_mother	raw_otis_visit::otis_anyt_ab_mother	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_mother_abx_no_supplies	raw_otis_visit::otis_anyt_mother_abx_no_supplies	0	No	
 raw_otis_visit::otis_anyt_mother_abx_no_supplies	raw_otis_visit::otis_anyt_mother_abx_no_supplies	1	Yes	
 raw_otis_visit::otis_anyt_mother_abx_no_supplies	raw_otis_visit::otis_anyt_mother_abx_no_supplies	NA	:::UNDEF:::	
@@ -2990,6 +3111,7 @@ raw_otis_visit::otis_anyt_mother_abx_no_need	raw_otis_visit::otis_anyt_mother_ab
 raw_otis_visit::otis_anyt_mother_abx_no_need	raw_otis_visit::otis_anyt_mother_abx_no_need	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_ab_baby	raw_otis_visit::otis_anyt_ab_baby	0	No	
 raw_otis_visit::otis_anyt_ab_baby	raw_otis_visit::otis_anyt_ab_baby	1	Yes	
+raw_otis_visit::otis_anyt_ab_baby	raw_otis_visit::otis_anyt_ab_baby	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_baby_abx_no_supplies	raw_otis_visit::otis_anyt_baby_abx_no_supplies	0	No	
 raw_otis_visit::otis_anyt_baby_abx_no_supplies	raw_otis_visit::otis_anyt_baby_abx_no_supplies	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_baby_abx_no_skills	raw_otis_visit::otis_anyt_baby_abx_no_skills	0	No	
@@ -3007,6 +3129,7 @@ raw_otis_visit::otis_anyt_baby_abx_no_need	raw_otis_visit::otis_anyt_baby_abx_no
 raw_otis_visit::otis_anyt_abnormal_breathing	raw_otis_visit::otis_anyt_abnormal_breathing	0	No	
 raw_otis_visit::otis_anyt_abnormal_breathing	raw_otis_visit::otis_anyt_abnormal_breathing	1	Yes	
 raw_otis_visit::otis_anyt_abnormal_breathing	raw_otis_visit::otis_anyt_abnormal_breathing	2	Yes, with prompt	
+raw_otis_visit::otis_anyt_abnormal_breathing	raw_otis_visit::otis_anyt_abnormal_breathing	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_abn_breath_no_supplies	raw_otis_visit::otis_anyt_abn_breath_no_supplies	0	No	
 raw_otis_visit::otis_anyt_abn_breath_no_supplies	raw_otis_visit::otis_anyt_abn_breath_no_supplies	NA	:::UNDEF:::	
 raw_otis_visit::otis_anyt_abn_breath_no_skills	raw_otis_visit::otis_anyt_abn_breath_no_skills	0	No	
@@ -3022,6 +3145,7 @@ raw_otis_visit::otis_anyt_abn_breath_no_need	raw_otis_visit::otis_anyt_abn_breat
 raw_otis_visit::otis_anyt_abn_breath_no_need	raw_otis_visit::otis_anyt_abn_breath_no_need	NA	:::UNDEF:::	
 raw_otis_visit::otis_highlight_record	raw_otis_visit::otis_highlight_record	0	No	
 raw_otis_visit::otis_highlight_record	raw_otis_visit::otis_highlight_record	1	Yes	
+raw_otis_visit::otis_highlight_record	raw_otis_visit::otis_highlight_record	NA	:::UNDEF:::	
 raw_otis_visit::otis_hl_leadership	raw_otis_visit::otis_hl_leadership	0	No	
 raw_otis_visit::otis_hl_leadership	raw_otis_visit::otis_hl_leadership	1	Yes	
 raw_otis_visit::otis_hl_leadership	raw_otis_visit::otis_hl_leadership	NA	:::UNDEF:::	
@@ -3052,8 +3176,9 @@ xls_ba_characteristics::highest_nursing_course	xls_ba_characteristics::highest_n
 xls_ba_characteristics::sba_training_flag	xls_ba_characteristics::sba_training_flag	0	No	
 xls_ba_characteristics::sba_training_flag	xls_ba_characteristics::sba_training_flag	1	Yes	
 xls_ba_characteristics::sba_training_year	xls_ba_characteristics::sba_training_year	NA	:::UNDEF:::		
-xls_ba_characteristics::ba_experience_length	xls_ba_characteristics::ba_experience_length	NA	:::UNDEF:::
+xls_ba_characteristics::ba_experience_length	xls_ba_characteristics::ba_experience_length	NA	:::UNDEF:::	
 xls_ba_characteristics::clinepi_id	xls_ba_characteristics::clinepi_id	Yes	Yes	
+xls_ba_characteristics::clinepi_id	xls_ba_characteristics::clinepi_id	NA	:::UNDEF:::	
 xls_ba_characteristics::datatype	xls_ba_characteristics::datatype	ba	Birth attendant characteristics			
 xls_baseline_mortality::tp1_iud_count_raw_int	xls_baseline_mortality::tp1_iud_count_raw_int	NA	:::UNDEF:::	
 xls_baseline_mortality::tp1_iud_count_months	xls_baseline_mortality::tp1_iud_count_months	NA	:::UNDEF:::		
@@ -3136,9 +3261,9 @@ xls_checklist_utilization::external_factors_difficulty	xls_checklist_utilization
 xls_checklist_utilization::external_factors_difficulty	xls_checklist_utilization::external_factors_difficulty	3. Neither Agree or Disagree	Neither agree or disagree	3
 xls_checklist_utilization::external_factors_difficulty	xls_checklist_utilization::external_factors_difficulty	4. Agree	Agree	4
 xls_checklist_utilization::external_factors_difficulty	xls_checklist_utilization::external_factors_difficulty	5. Strongly Agree	Strongly agree	5		
-xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	12 mo	12 months	
-xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	6 mo	6 months	
-xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	Baseline	Baseline
+xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	12 mo	12 months (intervention complete)	3
+xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	6 mo	6 months (intervention ongoing)	2
+xls_checklist_utilization::time_point	xls_checklist_utilization::time_point	Baseline	Baseline	1
 xls_checklist_utilization::datatype	xls_checklist_utilization::datatype	checklist utilization	Checklist utilization		
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	1.Doctor	Doctor	
 xls_safety_attitudes::role_at_facility	xls_safety_attitudes::role_at_facility	2. L.H.V	Lady health visitor	
@@ -3378,11 +3503,11 @@ xls_sbr_demographics::status_4	xls_sbr_demographics::status_4	12. Macerated chil
 xls_sbr_demographics::baby_needs_resuscitation	xls_sbr_demographics::baby_needs_resuscitation	NO	No	
 xls_sbr_demographics::baby_needs_resuscitation	xls_sbr_demographics::baby_needs_resuscitation	Not Captured/Unavailable	Not captured/unavailable	
 xls_sbr_demographics::baby_needs_resuscitation	xls_sbr_demographics::baby_needs_resuscitation	Yes	Yes	
-xls_site_attributes::hub_name	xls_site_attributes::hub_name	1		
-xls_site_attributes::hub_name	xls_site_attributes::hub_name	2		
-xls_site_attributes::hub_name	xls_site_attributes::hub_name	3		
-xls_site_attributes::hub_name	xls_site_attributes::hub_name	4		
-xls_site_attributes::hub_name	xls_site_attributes::hub_name	5		
+xls_site_attributes::hub_name	xls_site_attributes::hub_name	1	Agra		
+xls_site_attributes::hub_name	xls_site_attributes::hub_name	2	Gorakhpur		
+xls_site_attributes::hub_name	xls_site_attributes::hub_name	3	Lucknow	
+xls_site_attributes::hub_name	xls_site_attributes::hub_name	4	Meerut	
+xls_site_attributes::hub_name	xls_site_attributes::hub_name	5	Varanasi	
 xls_site_attributes::district_name	xls_site_attributes::district_name	1		
 xls_site_attributes::district_name	xls_site_attributes::district_name	10		
 xls_site_attributes::district_name	xls_site_attributes::district_name	11		
@@ -3425,29 +3550,40 @@ xls_site_attributes::when_initiate_sick_baby_unit	xls_site_attributes::when_init
 xls_site_attributes::when_initiate_sick_baby_unit	xls_site_attributes::when_initiate_sick_baby_unit	During the program	During BetterBirth program	
 xls_site_attributes::high_priority_district_flag	xls_site_attributes::high_priority_district_flag	0	No	
 xls_site_attributes::high_priority_district_flag	xls_site_attributes::high_priority_district_flag	1	Yes	
-xls_vasa_death_data::agedeath	xls_vasa_death_data::agedeath	NA	:::UNDEF:::	
+xls_vasa_death_data::agedeath_1	xls_vasa_death_data::agedeath_1	NA	:::UNDEF:::	
+xls_vasa_death_data::agedeath_2	xls_vasa_death_data::agedeath_2	NA	:::UNDEF:::	
 xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	11	Hindu	
 xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	12	Muslim	
 xls_vasa_death_data::ethnic	xls_vasa_death_data::ethnic	NA	:::UNDEF:::	
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Divorced	Divorced	
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Married	Married
 xls_vasa_death_data::maritalstat	xls_vasa_death_data::maritalstat	Never Married/Single	Never married/single	
-xls_vasa_death_data::type_death	xls_vasa_death_data::type_death	Neonatal	Neonatal	
-xls_vasa_death_data::type_death	xls_vasa_death_data::type_death	Stillbirth	Stillbirth	
-xls_vasa_death_data::finaltime_sb	xls_vasa_death_data::finaltime_sb	Intrapartum	Intrapartum	
-xls_vasa_death_data::finaltime_sb	xls_vasa_death_data::finaltime_sb	NA	:::UNDEF:::	
-xls_vasa_death_data::finaltime_sb	xls_vasa_death_data::finaltime_sb	antepartum	Antepartum	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Antepartum haemorrhage	Antepartum hemorrhage	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Cause not possible to determine from verbal autopsy	Cause not possible to determine from verbal autopsy	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Congenital malformations	Congenital malformations	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Maternal infections that can affect the foetus	Maternal infections that can affect the fetus	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Maternal medical conditions (Diabetes, Epilepsy, etc.)	Maternal medical conditions (diabetes, epilepsy, etc.)	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Meningitis	Meningitis	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Neonatal pneumonia	Neonatal pneumonia	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Obstructed labour	Obstructed labor	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Other obstetric complications (malpresentation, cord prolapse)	Other obstetric complications (malpresentation, cord prolapse)	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Other specific perinatal causes	Other specific perinatal causes	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Perinatal asphyxia	Perinatal asphyxia	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Pregnancy-induced hypertension	Pregnancy-induced hypertension	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Preterm birth complications	Preterm birth complications	
-xls_vasa_death_data::ucod_final	xls_vasa_death_data::ucod_final	Sepsis	Sepsis	
+xls_vasa_death_data::type_death_1	xls_vasa_death_data::type_death_1	Neonatal	Death after delivery	
+xls_vasa_death_data::type_death_1	xls_vasa_death_data::type_death_1	Stillbirth	Stillbirth	
+xls_vasa_death_data::type_death_2	xls_vasa_death_data::type_death_2	Neonatal	Death after delivery	
+xls_vasa_death_data::type_death_2	xls_vasa_death_data::type_death_2	Stillbirth	Stillbirth	
+xls_vasa_death_data::type_death_2	xls_vasa_death_data::type_death_2	NA	:::UNDEF:::
+xls_vasa_death_data::finaltime_sb_1	xls_vasa_death_data::finaltime_sb_1	Intrapartum	Intrapartum	
+xls_vasa_death_data::finaltime_sb_1	xls_vasa_death_data::finaltime_sb_1	NA	:::UNDEF:::	
+xls_vasa_death_data::finaltime_sb_1	xls_vasa_death_data::finaltime_sb_1	antepartum	Antepartum	
+xls_vasa_death_data::finaltime_sb_2	xls_vasa_death_data::finaltime_sb_2	Intrapartum	Intrapartum	
+xls_vasa_death_data::finaltime_sb_2	xls_vasa_death_data::finaltime_sb_2	NA	:::UNDEF:::	
+xls_vasa_death_data::finaltime_sb_2	xls_vasa_death_data::finaltime_sb_2	antepartum	Antepartum	
+xls_vasa_death_data::deathdate_2	xls_vasa_death_data::deathdate_2	NA	:::UNDEF:::	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Antepartum haemorrhage	Antepartum hemorrhage	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Cause not possible to determine from verbal autopsy	Cause not possible to determine from verbal autopsy	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Congenital malformations	Congenital malformations	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Maternal infections that can affect the foetus	Maternal infections that can affect the fetus	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Maternal medical conditions (Diabetes, Epilepsy, etc.)	Maternal medical conditions (diabetes, epilepsy, etc.)	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Meningitis	Meningitis	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Neonatal pneumonia	Neonatal pneumonia	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Obstructed labour	Obstructed labor	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Other obstetric complications (malpresentation, cord prolapse)	Other obstetric complications (malpresentation, cord prolapse)	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Other specific perinatal causes	Other specific perinatal causes	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Perinatal asphyxia	Perinatal asphyxia	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Pregnancy-induced hypertension	Pregnancy-induced hypertension	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Preterm birth complications	Preterm birth complications	
+xls_vasa_death_data::ucod_final_1	xls_vasa_death_data::ucod_final_1	Sepsis	Sepsis	
+xls_vasa_death_data::ucod_final_2	xls_vasa_death_data::ucod_final_2	NA	:::UNDEF:::	
+xls_vasa_death_data::ucod_final_2	xls_vasa_death_data::ucod_final_2	Other specific perinatal causes	Other specific perinatal causes	
+xls_vasa_death_data::ucod_final_2	xls_vasa_death_data::ucod_final_2	NA	:::UNDEF:::	

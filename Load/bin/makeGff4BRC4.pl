@@ -125,7 +125,7 @@ my $date = HTTP::Date::time2iso();
 print GFF "#created $date\n";
 
 
-foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
+foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
   my $features = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
 
   foreach my $feature (@$features) {

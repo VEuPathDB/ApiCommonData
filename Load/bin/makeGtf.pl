@@ -62,7 +62,14 @@ foreach my $geneSourceId (@geneSourceIds) {
 
     foreach my $subFeature (@{$feature}) {
         # Of bioperl features from GeneModelLocation, only CDS and exon are valid for gtf files
-        if ($subFeature->primary_tag() eq 'exon') {
+        if ($subFeature->primary_tag() eq 'protein_coding_gene') {
+	   writeGtfRow($subFeature, $project, $geneSourceId, 'gene') unless($cdsOnly);
+	}
+	if ($subFeature->primary_tag() eq 'mRNA') {
+	   writeGtfRow($subFeature, $project, $geneSourceId, 'transcript') unless($cdsOnly);
+        }
+	
+	elsif ($subFeature->primary_tag() eq 'exon') {
             writeGtfRow($subFeature, $project, $geneSourceId, 'exon') unless($cdsOnly);
         } elsif ($subFeature->primary_tag() eq 'CDS') {
             # Separate CDS features by parent
@@ -179,13 +186,32 @@ sub writeGtfRow {
         $phase = '.';
     }
     my $transcriptId;
-    my @values = $subFeature->get_tag_values('PARENT');
-    die "A feature belonging to gene $geneId has more than one parent\n" unless (scalar @values == 1);
-    foreach my $value ($subFeature->get_tag_values('PARENT')) {
-        $transcriptId = $value;
+    if ($type ne 'gene') {
+        my @values = $subFeature->get_tag_values('PARENT');
+        die "A feature belonging to gene $geneId has more than one parent\n" unless (scalar @values == 1);
+
+	if ($type eq 'transcript') {
+            my @transcriptIds = $subFeature->get_tag_values('ID');
+	    die "Transcript belonging to gene $geneId has more than one id\n" unless (scalar @transcriptIds == 1);
+            $transcriptId = $transcriptIds[0];
+        }
+        else {
+           foreach my $value ($subFeature->get_tag_values('PARENT')) {
+               $transcriptId = $value;
+	   }
+        }
     }
 
-    printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\ttranscript_id \"%s\"; gene_id \"%s\"; gene_name \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$transcriptId,$geneId,$geneId);
+    if ($type eq 'gene') {
+    		
+		printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\t gene_id \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$geneId);
+           				
+	}
+	
+	else {
+    		printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\tgene_name \"%s\"; gene_id \"%s\"; transcript_id \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$geneId,$geneId,$transcriptId);
+    		#printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\tgene_id \"%s\"; transcript_id \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$geneId,$transcriptId);
+	}
 }
     
 close (OUT);

@@ -218,7 +218,7 @@ sub printExternalLinks {
   print "    </link>\n";
   print "    <link>\n";
 #  print "      <text>GenBank Assembly page<\/text>\n";
-  ($assemblyId =~ /^GCF_/) ? print "      <text>RefSeq Assembly page<\/text>\n" : print "      <text>GenBank Assembly page<\/text>\n";
+  ($assemblyId =~ /^GCF_/) ? print "      <text>RefSeq Assembly<\/text>\n" : print "      <text>GenBank Assembly<\/text>\n";
   ($assemblyId) ? print "      <url>https:\/\/www.ncbi.nlm.nih.gov\/assembly\/$assemblyId</url>\n" : print "      <url></url>\n";
   print "    </link>\n";
 

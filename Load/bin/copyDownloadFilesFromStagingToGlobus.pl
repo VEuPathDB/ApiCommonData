@@ -70,6 +70,8 @@ while(my $row = $sth->fetchrow_arrayref) {
    my($project, $wf_version, $organism, $is_annotated, $build_number_introduced, $build_number_revised, $ds_name) = @$row;
    print "\n===========================================\n";
 
+   $build_number_revised =~ s/\.\d$//;
+
    # remove old genome and gff files if they exist
    my @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*Genome.fasta"); 
 
