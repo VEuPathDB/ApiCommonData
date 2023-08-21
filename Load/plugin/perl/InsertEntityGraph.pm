@@ -162,7 +162,7 @@ my $argsDeclaration =
 
    stringArg({name         => 'VEuGEO_extDbRlsSpec',
 	      descr        => 'External database release spec for the VEuGEO ontology, needed for looking up disambiguated place names',
-	      reqd         => 1,
+	      reqd         => 0,
 	      constraintFunc => undef,
 	      isList       => 0,
 	     }),
@@ -587,7 +587,7 @@ sub loadNodes {
 
     $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);  # TO DO: $ontologyTermToIdentifiers not used, remove?
 
-    if (my $shapeFileDirectory = $self->getArg('shapeFileDirectory')) {
+    if (my $shapeFilesDirectory = $self->getArg('shapeFilesDirectory')) {
       $self->addLookedUpPlacenames($charsForLoader);
     }
 
