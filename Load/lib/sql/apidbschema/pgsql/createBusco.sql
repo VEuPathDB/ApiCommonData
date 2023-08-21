@@ -8,7 +8,7 @@ CREATE TABLE ApiDB.Busco (
   F_score               NUMERIC(12),
   M_score               NUMERIC(12),
   external_database_release_id NUMERIC(10) NOT NULL,
-  MODIFICATION_DATE     DATE,
+  MODIFICATION_DATE     TIMESTAMP,
   USER_READ             NUMERIC(1),
   USER_WRITE            NUMERIC(1),
   GROUP_READ            NUMERIC(1),
