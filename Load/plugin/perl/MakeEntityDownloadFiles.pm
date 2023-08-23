@@ -226,10 +226,13 @@ sub createDownloadFile {
 
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
   my $sql = <<SQL_GETLABELS;
-SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL
+SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL and "SCALE" IS NULL
 and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 UNION
-SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL
+SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL and "SCALE" IS NULL
+and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
+UNION
+SELECT STABLE_ID, DISPLAY_NAME || ', ' || "SCALE" || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL and "SCALE" IS NOT NULL
 and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
