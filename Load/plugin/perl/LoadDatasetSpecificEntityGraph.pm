@@ -715,15 +715,39 @@ EOF
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
-  $dbh->do("ALTER TABLE $collectionTableName add (member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
+  $dbh->do("ALTER TABLE $collectionTableName add (is_proportion number(1), is_compositional number(1), normalization_method varchar(25), member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
 
   # update some things from the yaml.
   foreach my $stableId (keys %$collections) {
     if(my $rangeMin = $collections->{$stableId}->{range_min}) {
-      $dbh->do("update $collectionTableName set display_range_min = $rangeMin");
+      $dbh->do("update $collectionTableName set display_range_min = $rangeMin where stable_id = '$stableId'");
     }
     if(my $rangeMax = $collections->{$stableId}->{range_max}) {
-      $dbh->do("update $collectionTableName set display_range_max = $rangeMax");
+      $dbh->do("update $collectionTableName set display_range_max = $rangeMax where stable_id = '$stableId'");
+    }
+
+    if(my $isProportion = $collections->{$stableId}->{isProportion}) {
+      if(lc($isProportion) eq 'true') {
+        $dbh->do("update $collectionTableName set is_proportion = 1 where stable_id = '$stableId'");
+      }
+      if(lc($isProportion) eq 'false') {
+        $dbh->do("update $collectionTableName set is_proportion = 0 where stable_id = '$stableId'");
+      }
+    }
+
+    if(my $isCompositional = $collections->{$stableId}->{isCompositional}) {
+      if(lc($isCompositional) eq 'true') {
+        $dbh->do("update $collectionTableName set is_compositional = 1 where stable_id = '$stableId'");
+      }
+      if(lc($isCompositional) eq 'false') {
+        $dbh->do("update $collectionTableName set is_compositional = 0 where stable_id = '$stableId'");
+      }
+    }
+
+    if(my $normalizationMethod = $collections->{$stableId}->{normalizationMethod}) {
+      if($normalizationMethod && lc($normalizationMethod ne 'null')) {
+        $dbh->do("update $collectionTableName set normalization_method = '$normalizationMethod' where stable_id = '$stableId'");
+      }
     }
 
     if(my $member = $collections->{$stableId}->{member}) {
