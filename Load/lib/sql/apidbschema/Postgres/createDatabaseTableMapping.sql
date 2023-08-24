@@ -28,6 +28,9 @@ ON ApiDB.DatabaseTableMapping (database_orig, table_name, primary_key_orig, prim
 
 CREATE SEQUENCE apidb.DatabaseTableMapping_sq;
 
+ALTER TABLE apidb.databasetablemapping
+ALTER COLUMN database_table_mapping_id SET DEFAULT NEXTVAL('apidb.databasetablemapping_sq');
+
 GRANT SELECT ON apidb.DATABASETABLEMAPPING_sq TO gus_r;
 GRANT SELECT ON apidb.DATABASETABLEMAPPING_sq TO gus_w;
 
@@ -75,6 +78,9 @@ CREATE INDEX db_tbl_map_g_idx
 ON ApiDB.GlobalNaturalKey (table_name, global_natural_key, primary_key) tablespace indx;
 
 CREATE SEQUENCE apidb.GlobalNaturalKey_sq;
+
+ALTER TABLE apidb.globalnaturalkey
+ALTER COLUMN global_natural_key_id SET DEFAULT NEXTVAL('apidb.globalnaturalkey_sq');
 
 GRANT SELECT ON apidb.GlobalNaturalKey_sq TO gus_r;
 GRANT SELECT ON apidb.GlobalNaturalKey_sq TO gus_w;
