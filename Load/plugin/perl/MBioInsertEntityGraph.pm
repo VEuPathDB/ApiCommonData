@@ -12,6 +12,9 @@ use File::Basename;
 use JSON;
 use Carp;
 
+my $SCHEMA;
+my $TERM_SCHEMA = "SRES";
+
 my $argsDeclaration =
   [
 
@@ -119,6 +122,13 @@ my $argsDeclaration =
           constraintFunc => undef,
           isList => 0,
          }),
+   directoryArg({name           => 'shapeFilesDirectory',
+            descr          => 'Location of GADM shape files for geocoding placename look-up. Optional. No look-up if omitted.',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
 
   ];
 
@@ -155,7 +165,10 @@ sub run {
   my $onError = $self->getArg('dieOnFirstError') ? sub {confess @_}: undef;
   my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
-  my $schema = $self->getArg('schema');
+  $SCHEMA = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
   my $mbioResultsDir = $self->getArg('mbioResultsDir');
   my $isRelativeAbundance= $self->getArg('isRelativeAbundance');
   my $mbioResultsFileExtensions = $self->getArg('mbioResultsFileExtensions');
@@ -174,7 +187,7 @@ sub run {
   my $doPruneStudies = 1;
   my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, $onError, $isReporterMode, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl, $doPruneStudies);
   $investigation->setRowLimit(999999999); # Wojtek: work around a bug - entities must fit in batches and I don't know how to do that
-  ApiCommonData::Load::Plugin::InsertEntityGraph::loadInvestigation($self,$investigation, $extDbRlsId, $schema); 
+  ApiCommonData::Load::Plugin::InsertEntityGraph::loadInvestigation($self,$investigation, $extDbRlsId, $SCHEMA); 
 
   $self->logRowsInserted() if($self->getArg('commit'));
 
