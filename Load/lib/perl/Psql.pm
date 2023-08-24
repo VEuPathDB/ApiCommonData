@@ -81,9 +81,9 @@ sub getFields {$_[0]->{_fields} || []}
 sub setFields {$_[0]->{_fields} = $_[1]}
 
 sub addField {
-  my ($self, $field, $dataType) = @_;
+  my ($self, $field) = @_;
 
-  push @{$self->{_fields}}, "$field $dataType";
+  push @{$self->{_fields}}, "$field";
 }
 
 sub new {
