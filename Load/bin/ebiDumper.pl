@@ -170,8 +170,11 @@ and d.external_database_id = r.external_database_id";
   $sh->execute($dbName);
 
   my ($rv) = $sh->fetchrow_array();
-
   $sh->finish();
+
+  unless ( defined $rv ) {
+    $rv = "N/A";
+  }
 
   return $rv;
 }
