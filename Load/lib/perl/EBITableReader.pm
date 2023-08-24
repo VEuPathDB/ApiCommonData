@@ -104,7 +104,7 @@ sub loadRow {
 sub getDistinctTablesForTableIdField {
   my ($self, $field, $table) = @_;
 
-  print "Field=$field, table=$table\n";
+  # print "Field=$field, table=$table\n";
 
   my $fileName = "CORE.TABLEINFO";
   my $nameField = "name";
@@ -143,15 +143,15 @@ sub getDistinctTablesForTableIdField {
     }
     
   }
-  else {
-    print STDERR "Table $table is not handled for soft keys\n"
-  }
+  # else {
+  #   print STDERR "Table $table is not handled for soft keys\n"
+  # }
   
   close FILE;
 
-  unless(scalar(keys(%rv)) > 0) {
-    print STDERR  "Could not identify tables for soft key for $table, $field\n";
-  }
+  # unless(scalar(keys(%rv)) > 0) {
+  #   print STDERR  "Could not identify tables for soft key for $table, $field\n";
+  # }
 
   return \%rv;
 }
