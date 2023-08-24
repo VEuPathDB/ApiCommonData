@@ -8,7 +8,6 @@ use Getopt::Long;
 use File::Temp qw/ tempfile /;
 
 use DBI;
-use DBD::Oracle;
 
 use CBIL::Util::PropertySet;
 
@@ -32,11 +31,6 @@ my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $chromoso
             'gusConfigFile=s' => \$gusConfigFile,
             'organism_abbrev=s' => \$organismAbbrev,
             );
-
-##Create db handle
-if(!$gusConfigFile) {
-  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-}
 
 &usage("Config file $gusConfigFile does not exist.") unless -e $gusConfigFile;
 
