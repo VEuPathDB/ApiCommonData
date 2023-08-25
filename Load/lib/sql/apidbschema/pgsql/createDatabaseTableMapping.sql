@@ -53,7 +53,7 @@ CREATE TABLE apidb.GlobalNaturalKey (
        table_name varchar(35),
        primary_key NUMERIC(20),
        global_natural_key varchar(1000),
-       MODIFICATION_DATE     DATE,
+       MODIFICATION_DATE     TIMESTAMP,
        USER_READ             NUMERIC(1),
        USER_WRITE            NUMERIC(1),
        GROUP_READ            NUMERIC(1),

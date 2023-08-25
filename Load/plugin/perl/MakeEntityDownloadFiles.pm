@@ -113,7 +113,7 @@ sub run {
   foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
     $self->log("Loading Study: $studyAbbrev");
-    my $entityTypeIds = $self->entityTypeIdsFromStudyId($studyId,$ontologyId);
+    my $entityTypeIds = $self->entityTypeIdsFromStudyId($studyId);
     my %entityNames = map { uc($_->{ABBREV}) => $_->{LABEL} } values %$entityTypeIds;
   
     #  When generating R script these must be copied to a new column in each table: mergeKey
@@ -171,8 +171,42 @@ sub run {
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
   }
+
+
+  my $studiesFile = "studies.txt";
+  if($outputDir){
+    unless(-d $outputDir){
+      mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
+    }
+    $studiesFile = sprintf("%s/%s_Studies.txt", $outputDir, $fileBasename);
+  }
+  else{
+    $studiesFile = sprintf("%s_Studies.txt", $fileBasename);
+  }
+  $self->log("Makingfile $studiesFile");
+  $self->makeStudiesFile($studiesFile, ${SCHEMA}, $extDbRlsId);
+
   return("Created download files");
 }
+
+sub makeStudiesFile {
+  my ($self, $outputFile, $schema, $extDbRlsId) = @_;
+
+  my $sql = "select stable_id, internal_abbrev from ${schema}.study where external_database_release_id = $extDbRlsId";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute;
+
+  open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
+
+  while(my ($stableId, $internalAbbrev) = $sh->fetchrow_array()) {
+    print FH "$stableId\t$internalAbbrev\n";
+  }
+  close FH;
+}
+
+
 
 sub createDownloadFile {
  my ($self, $entityTypeId, $entityTypeAbbrev, $entityNames, $studyAbbrev, $outputFile) = @_;
@@ -192,10 +226,13 @@ sub createDownloadFile {
 
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
   my $sql = <<SQL_GETLABELS;
-SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL
+SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL and "SCALE" IS NULL
 and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 UNION
-SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL
+SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL and "SCALE" IS NULL
+and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
+UNION
+SELECT STABLE_ID, DISPLAY_NAME || ', ' || "SCALE" || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL and "SCALE" IS NOT NULL
 and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
@@ -286,20 +323,11 @@ sub formatValues {
 }
 
 sub entityTypeIdsFromStudyId {
-  my ($self, $studyId,$ontologyId) = @_;
+  my ($self, $studyId) = @_;
 
-  my $sql = "select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,os.ontology_synonym LABEL, os.plural PLURAL,
-regexp_replace(os.ONTOLOGY_SYNONYM ,'\s','_') || '_Id' ID_COLUMN
-from ${SCHEMA}.entitytype t
-left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
-where t.study_id = $studyId
-and os.external_database_release_id = $ontologyId
-UNION 
-select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,t.name LABEL, '' PLURAL,
-regexp_replace(t.name ,'\s','_') || '_Id' ID_COLUMN
-from EDA.entitytype t
-where t.study_id = $studyId
-AND t.TYPE_ID NOT IN (SELECT ontology_term_id FROM SRes.OntologySynonym WHERE EXTERNAL_DATABASE_RELEASE_ID = $ontologyId)";
+  my $sql = "SELECT ENTITY_TYPE_ID TYPE_ID, internal_abbrev ABBREV, DISPLAY_NAME LABEL, display_name_plural PLURAL, 
+regexp_replace(DISPLAY_NAME,'\s','_') || '_Id' ID_COLUMN
+FROM ${SCHEMA}.entitytypegraph WHERE STUDY_ID  = $studyId";
 
   my $dbh = $self->getQueryHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");

@@ -1,4 +1,10 @@
 package ApiCommonData::Load::Plugin::ParameterizedSchema;
+use base qw(GUS::PluginMgr::Plugin);
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+
+
 use strict;
 use warnings;
 use Data::Dumper;
@@ -27,6 +33,7 @@ sub requireModelObjects {
 
 sub undoTables {
   my ($self) = @_;
+
   return @{ $self->{_undo_tables} }
 }
 
@@ -50,6 +57,7 @@ sub getAlgorithmParam {
     $sh->finish();
   }
   my @values = keys %paramValues;
+
   return \@values;
 }
 
@@ -76,6 +84,11 @@ sub preprocessUndoGetSchemas {
  #my @schemas = keys %schemaNames;
  #return \@schemas;
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'schema');
+
+  unless(scalar @$schemas > 1) {
+      $schemas = ['EDA', 'ApiDBUserDatasets'];
+  }
+
   return $schemas;
 }
 
