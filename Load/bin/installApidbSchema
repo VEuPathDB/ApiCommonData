@@ -255,18 +255,18 @@ sub runSql {
   my ($login, $password, $db, $file, $dbVendor, @params) = @_;
   
   if (lc $dbVendor eq 'oracle') { 
-    &runSqlOracle($login, $password, $db, $file, @params);
+    &runSqlOracle($login, $password, $db, $dbVendor, $file, @params);
   } elsif (lc $dbVendor eq 'postgres') {
-    &runSqlPostgres($login, $password, $db, $file, @params);
+    &runSqlPostgres($login, $password, $db, $dbVendor, $file, @params);
   } else { 
     die "Unsupported dbVendor:$dbVendor."; 
   }
 }
 
 sub runSqlOracle {
-  my ($login, $password, $db, $file, @params) = @_;
+  my ($login, $password, $db, $dbVendor, $file, @params) = @_;
 
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
 
   -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
 
@@ -294,15 +294,14 @@ sub runSqlOracle {
 }
 
 sub runSqlPostgres {
-  my ($login, $password, $db, $file, @params) = @_;
+  my ($login, $password, $db, $dbVendor, $file, @params) = @_;
   
-  my $folder_prefix = "pgsql";
   my $psql_params = "";
   $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
   my $hostname = $2;
   my $connectionString = "postgresql://$login:$password\@$hostname/$db";
   
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$folder_prefix/$file";
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
   -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
 
   my $cmd;
