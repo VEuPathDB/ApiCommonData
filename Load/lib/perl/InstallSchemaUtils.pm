@@ -15,7 +15,7 @@ sub runSql {
   if (lc $dbVendor eq 'oracle') { 
     &runSqlOracle($login, $password, $db, $fullFile, $allowFailures, @params);
   } elsif (lc $dbVendor eq 'postgres') {
-    &runSqlPostgres($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures @params);
+    &runSqlPostgres($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures, @params);
   } else { 
     die "Unsupported dbVendor:$dbVendor."; 
   }
