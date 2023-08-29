@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use ApiCommonData::Load::InstallSchemaUtils;
+use DBI;
+
+$| = 1;
+
+my ($gusConfigFile, $drop, $create, $db, $dbVendor, $allowFailures, $verbose);
+
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "allowFailures!" => \$allowFailures,
+	    "create!" => \$create,
+	    "drop!" => \$drop,
+	    "vdiSchemaName=s" => $vdiSchemaName,
+	    "verbose!" => \$verbose,
+	    "db=s" => \$db);
+
+if ($create + $drop != 1) {
+  die "
+
+Install the VDI schema, tables, etc, into the specified VDI schema; or uninstall them.
+
+In the case of Oracle, the schema/user is managed by DBA, so only the tables are managed here.
+For Postgres, the schema and tables are both managed here.
+
+usage: installVdiSchema --db database [--create | --drop] --vdiSchemaName --gusConfigFile gus_config_file [--allowFailures] [--verbose]
+
+Caution: only use --allowFailures if you know what you are doing
+
+Log is printed to STDOUT
+
+Verbose prints commands run to STDERR
+
+";
+}
+
+if ($drop) {
+    print "\nYou are about to UNINSTALL the $vdiSchemaName schema on:\n  $db\nType the name of the instance to confirm: ";
+    my $confirm = <STDIN>;
+    chomp $confirm;
+    die "You did not correctly confirm the db instance\n" unless $db eq $confirm;
+}
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $dbVendor = $gusconfig->getDatabaseVendor();
+my $dbiDsn = $gusconfig->getDbiDsn();
+
+die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
+
+
+# This ordering helps ensure that when/if we drop, the dropping proceeds
+# in the correct order, avoiding bogus failures from dropping what was
+# not yet created.
+#
+# ALSO: if you are adding a create script for the Apidb schema
+#       it is good practice to write a parallel drop script
+#       so that if needed, the create can be manually reversed
+
+my @create = qw(
+  createVdiControlTables.sql
+  createUserDatasetTypeTables.sql
+  createEntityGraphTables.sql
+  createEdaUdModifications.sql
+);
+
+if ($create) {
+  for my $sqlFile (@create) {
+     print STDOUT "\n==============================================================\n";
+     print STDOUT "$sqlFile\n";
+     print STDOUT "==============================================================\n";
+     my @sqlPlusParamValues;
+     $sqlplusParamValues[0] = $vdiSchemaName;
+     runSql($login, $password, $db, $dbHostname, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+  }
+} else {
+  my @schemas = ($vdiSchemaName);
+  if ($dbVendor eq 'Oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @schemas;
+    dropSchemaSetTables($login, $password, $db, $schemaSetStr);
+  } else {
+    dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @schemas);
+  }
+}
+
+print STDERR "\nDone.\n";
