@@ -41,8 +41,8 @@ echo singularity exec --bind ${workDir}/postgresInit:/data --bind ${workDir}/pos
 singularity exec --bind ${workDir}/postgresInit:/data --bind ${workDir}/postgresSocket:/var/run/postgresql $GDAL_IMAGE ogr2ogr -f PostgreSQL PG:"dbname=${databaseName} user=postgres host=/var/run/postgresql port=${port}" /data/$gpkgFileBaseName
 
 
-echo singularity exec instance://$instanceName pg_ctl stop -D ${workDir}/postgresData -m smart
-singularity exec instance://$instanceName pg_ctl stop -D ${workDir}/postgresData -m smart
+echo singularity exec instance://$instanceName pg_ctl stop -D /var/lib/postgresql/data -m smart
+singularity exec instance://$instanceName pg_ctl stop -D /var/lib/postgresql/data -m smart
 
 echo singularity instance stop $instanceName
 singularity instance stop $instanceName
