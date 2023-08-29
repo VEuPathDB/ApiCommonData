@@ -15,11 +15,14 @@ my ($gusConfigFile, $drop, $create, $db, $dbVendor, $allowFailures, $verbose);
 	    "allowFailures!" => \$allowFailures,
 	    "create!" => \$create,
 	    "drop!" => \$drop,
-	    "vdiSchemaName=s" => $vdiSchemaName,
+	    "lifecycle=s" => $lifecycle,
+	    "campus=s" => $lifecycle,
 	    "verbose!" => \$verbose,
 	    "db=s" => \$db);
 
-if ($create + $drop != 1) {
+my @lifecycle = ('dev', 'qa', 'feat', 'beta', 'prod');
+my $lcStr = join(", ", @lifecycle);
+if ($create + $drop != 1) || !( grep( /^$lifecycle$/, @lifecycle )) || ($campus ne 'n' && $campus ne 's') {
   die "
 
 Install the VDI schema, tables, etc, into the specified VDI schema; or uninstall them.
@@ -27,7 +30,10 @@ Install the VDI schema, tables, etc, into the specified VDI schema; or uninstall
 In the case of Oracle, the schema/user is managed by DBA, so only the tables are managed here.
 For Postgres, the schema and tables are both managed here.
 
-usage: installVdiSchema --db database [--create | --drop] --vdiSchemaName --gusConfigFile gus_config_file [--allowFailures] [--verbose]
+usage: installVdiSchema --db database [--create | --drop] --lifecycleAbbrev --campusAbbrev --gusConfigFile gus_config_file [--allowFailures] [--verbose]
+where:
+  - lifecycle is one of: $lcStr
+  - campus is n or s
 
 Caution: only use --allowFailures if you know what you are doing
 
@@ -67,16 +73,14 @@ my @create = qw(
   createVdiControlTables.sql
   createUserDatasetTypeTables.sql
   createEntityGraphTables.sql
-  createEdaUdModifications.sql
 );
 
 if ($create) {
   for my $sqlFile (@create) {
      print STDOUT "\n==============================================================\n";
-     print STDOUT "$sqlFile\n";
+     print STDOUT "running $sqlFile for $lifecycle_$campus\n";
      print STDOUT "==============================================================\n";
-     my @sqlPlusParamValues;
-     $sqlplusParamValues[0] = $vdiSchemaName;
+     my @sqlPlusParamValues = ("$lifecycle_$campus");
      runSql($login, $password, $db, $dbHostname, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
   }
 } else {

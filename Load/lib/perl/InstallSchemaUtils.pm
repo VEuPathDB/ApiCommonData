@@ -9,8 +9,11 @@ our @EXPORT = qw( runSql dropSchemaSetTables dropSchemaSetPostgres );
 sub runSql {
   my ($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures, @params) = @_;
   
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
+  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
+
   if (lc $dbVendor eq 'oracle') { 
-    &runSqlOracle($login, $password, $db, $dbVendor, $file, $allowFailures, @params);
+    &runSqlOracle($login, $password, $db, $fullFile, $allowFailures, @params);
   } elsif (lc $dbVendor eq 'postgres') {
     &runSqlPostgres($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures @params);
   } else { 
@@ -19,11 +22,7 @@ sub runSql {
 }
 
 sub runSqlOracle {
-  my ($login, $password, $db, $dbVendor, $file, $allowFailures, @params) = @_;
-
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
-
-  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
+  my ($login, $password, $db, $fullFile, $allowFailures, @params) = @_;
 
   my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
@@ -49,14 +48,11 @@ sub runSqlOracle {
 }
 
 sub runSqlPostgres {
-  my ($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures, @params) = @_;
+  my ($login, $password, $db, $dbHostname, $fullFile, $allowFailures, @params) = @_;
   
   my $psql_params = "";
   my $connectionString = "postgresql://$login:$password\@$dbHostname/$db";
   
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
-  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
-
   my $cmd;
   if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
 
