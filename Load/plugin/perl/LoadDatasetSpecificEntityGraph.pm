@@ -158,6 +158,7 @@ where entity_type_id = $entityTypeId";
 
   my (@entityColumnStrings, @processColumnStrings);
   while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
+    my $ucStableId = uc($stableId);  # create an upper case version of the variable stable ID to use as a column name in the created table
     $stableId = qq/"$stableId"/;
     my $path = "\$.${stableId}[0]";
     $dataType = lc($dataType) eq 'string' ? "VARCHAR2" : uc($dataType);
@@ -170,13 +171,13 @@ where entity_type_id = $entityTypeId";
       $path = "\$.${stableId}";
     }
 
-    my $string = "${stableId} $dataType PATH '${path}'";
+    my $colDescriptor = "${ucStableId} $dataType PATH '${path}'";  # the first element of this string is used only for the column name, not for the path to the data
     if($tableType eq 'p') {
-      push @processColumnStrings, $string;
+      push @processColumnStrings, $colDescriptor;
     }
 
     elsif($tableType eq 'e') {
-      push @entityColumnStrings, $string;
+      push @entityColumnStrings, $colDescriptor;
     }
     else {
       $self->error("Unexpected table_type $tableType");
