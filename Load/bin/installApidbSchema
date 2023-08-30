@@ -230,7 +230,7 @@ if ($create) {
 } elsif ($dropApiDB) {
     if (lc $dbVendor eq 'oracle') {
       my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
-      dropSchemaSetTables($login, $password, $db, $schemaSetStr);
+      dropSchemaSetTables($login, $password, $db, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
     } elsif (lc $dbVendor eq 'postgres') {
       dropSchemaSetPostgres($dbiDsn, $login, $password, $db, $dbHostname, @apiDbSchemas);
     } else {
@@ -239,7 +239,7 @@ if ($create) {
 } elsif ($dropGUS) {
   if (lc $dbVendor eq 'oracle') {
     my $schemaSetStr = join ', ', map "'$_'", @gusSchemas;
-    dropSchemaSetOracle($login, $password, $db, $schemaSetStr);
+    dropSchemaSetOracle($login, $password, $db, $schemaSetStr);  # drop the users.  these will be recreated by the gus install program
   } elsif (lc $dbVendor eq 'postgres') {
     dropSchemaSetPostgres($dbiDsn, $login, $password, $db, $dbHostname, @gusSchemas);
   } else {
