@@ -21,15 +21,14 @@ sub getDbh {
 }
 
 sub runSql {
-  my ($login, $password, $dbh, $dbVendor, $file, $allowFailures, @params) = @_;
+  my ($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @params) = @_;
 
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
-  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
+  -e $filePath || die "File .sql file '$filePath' does not exist\n";
 
   if (lc $dbVendor eq 'oracle') {
-    &runSqlOracle($login, $password, $dbh->{name}, $fullFile, $allowFailures, @params);
+    &runSqlOracle($login, $password, $dbh->{name}, $filePath, $allowFailures, @params);
   } elsif (lc $dbVendor eq 'postgres') {
-    &runSqlPostgres($login, $password, $dbh->{pg_db}, $dbh->{pg_host}, $dbVendor, $file, $allowFailures, @params);
+    &runSqlPostgres($login, $password, $dbh->{pg_db}, $dbh->{pg_host}, $filePath, $allowFailures, @params);
   } else { 
     die "Unsupported dbVendor:$dbVendor.";
   }

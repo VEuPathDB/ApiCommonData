@@ -211,17 +211,19 @@ my @apiDbSchemas = qw(
 if ($create) {
   for my $sqlFile (@create) {
      print STDOUT "\n==============================================================\n";
-     print STDOUT "$sqlFile\n";     
+     print STDOUT "$sqlFile\n";
      print STDOUT "==============================================================\n";
-     
+
+     my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
+
      my @sqlplusParamValues;
      if($sqlFile eq 'createEntityGraphTables.sql') {
        $sqlplusParamValues[0] = "EDA";
        $sqlplusParamValues[1] = "SRES";
-       runSql($login, $password, $dbh, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
        $sqlplusParamValues[0] = "ApidbUserDatasets";
        $sqlplusParamValues[1] = "ApidbUserDatasets";
-       runSql($login, $password, $dbh, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
      }
 
      else {

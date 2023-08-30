@@ -91,7 +91,8 @@ if ($create) {
      print STDOUT "running $sqlFile for $schemaSuffix\n";
      print STDOUT "==============================================================\n";
      my @sqlplusParamValues = ($schemaSuffix);
-     runSql($login, $password, $dbh, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+     my $filePath = "$ENV{GUS_HOME}/lib/sql/vdischema/$dbVendor/$sqlFile";
+     runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
   }
 } else {
   my @schemas = ("VDI_DATASETS_$schemaSuffix", "VDI_CONTROL_$schemaSuffix");
