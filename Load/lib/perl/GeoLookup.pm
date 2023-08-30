@@ -1,74 +1,71 @@
 package ApiCommonData::Load::GeoLookup;
 
 #
-# TO DO: implement the VEuGEO lookup from GADM ID to ontology term name
+# TODO: implement the VEuGEO lookup from GADM ID to ontology term name
 #
 
+
+use Data::Dumper;
 use strict;
 use warnings;
 use Moose;
 
-# use Geo::ShapeFile;
-use Encode qw/decode/;
-use Encode::Detect::Detector qw/detect/;
+use Encode;
 
+# use Geo::ShapeFile;
 
 #
 # Usage:
 #
-# my $geolookup = ApiCommonData::Load::GeoLookup->new({ shapefiles_directory => '/path/...' });
+# my $geolookup = ApiCommonData::Load::GeoLookup->new({ gadmDsn => 'dbi:Pg:host=/path/to/socket;port=1234' });
+
 # my ($gadm_names, $gadm_ids, $veugeo_names) = $geolookup->lookup($lat, $long);
-# # returns in this order: country, admin1, admin2
-# # e.g.
-# ( [ 'United States', 'Illinois', 'Cook' ],
-#   [ 'USA', 'USA.14_1', 'USA.14.16_1' ],
-#   [ 'United States', 'Illinois', 'Cook (Illinois)' ]  )
-#
-# If 'dbh' and 'VEuGEO_extDbRlsId' are not given, the disambiguated veugeo_names
-# array (third arrayref of result) will be empty
-#
-#
 # Required constructor args:
 #
-# shapefiles_directory => 'PATH_TO_SHAPEFILES',
-#
-# # where the shapefiles are located at <shapefiles_directory>/<shapefile_prefix><LEVEL>.*
-# # where LEVEL is 0, 1 or 2
+# gadmDsn => 'dbi:Pg:host=/path/to/socket;port=1234',
 #
 # Optional constructor args (defaults shown):
 #
-# shapefile_prefix => 'gadm36_',
-# num_levels => 3,
-# max_radius_degress => 0.025
-# radius_steps => 10,
+# maxLevel => 2,
+# coordinateSystem => 4326,
 #
 # Optional, no defaults, but disambiguated name lookup won't work without them
-# dbh => GUS_database_handle,
 # VEuGEO_extDbRlsId => external database release ID for VEuGEO (TBC if ontologyterm or ontologytermrelationship table)
 #
 
-has 'shapefiles_directory' => (
-  is => 'ro',
-  required => 1,
+has 'gadmDsn' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'DBI:mysql:database=gadm;host=localhost',
 );
 
-has 'shapefile_prefix' => (
-  is => 'ro',
-  default => 'gadm36_',
-);
-
-has 'num_levels' => (
-  is => 'ro',
-  default => 3,
-);
-
-has 'max_radius_degrees' => (
-  is => 'ro',
-  default => 0.025,
-);
 
 has 'dbh' => (
+    is      => 'ro',
+    isa     => 'DBI::db',
+    lazy    => 1,
+    builder => '_build_dbh',
+);
+
+sub _build_dbh {
+  my $self = shift;
+  print STDERR "_BUILD_DBH\n";
+  return DBI->connect($self->gadmDsn, 'postgres') or die DBI->errstr;
+}
+
+sub disconnect {
+    my $self = shift;
+    $self->dbh()->disconnect();
+}
+
+has 'maxLevel' => (
   is => 'ro',
+  default => 2,
+);
+
+has 'coordinateSystem' => (
+  is => 'ro',
+  default => 4326,
 );
 
 has 'VEuGEO_extDbRlsId' => (
@@ -88,88 +85,58 @@ has '_cache' => (
   },
 );
 
-# private lazy attribute
-# cannot be provided to constructor
-has '_shapefiles' => (
-  is => 'ro',
-  lazy => 1,
-  builder => '_load_shapefiles',
-  init_arg => undef,
-);
-
-sub _load_shapefiles {
-  my $self = shift;
-  my $_shapefiles = [];
-  for (my $level = 0; $level < $self->num_levels; $level++) {
-    my $shapefile_stem = join '', $self->shapefiles_directory, '/', $self->shapefile_prefix, $level;
-    # $_shapefiles->[$level] = Geo::ShapeFile->new($shapefile_stem);
-  }
-  return $_shapefiles;
-}
-
 
 sub lookup {
   my ($self, $lat, $long, $max_level) = @_;
 
-  $max_level = 2 unless (defined $max_level && $max_level =~ /^[012]$/);
+  $max_level = $self->maxLevel unless (defined $max_level && $max_level =~ /^[012]$/);
 
   my $cache_key = "$lat:$long:$max_level";
   if ($self->check_cache($cache_key)) {
+    print STDERR "Found cache key $cache_key\n";
     return $self->get_cache($cache_key);
   }
 
-  # some default parameters that we may choose to add as command-line options later but they should be object-wide
-  # so that the cache works properly
-  my $max_radius_degrees = 0.025; # max distance in degrees to search around points that don't geocode (around 2.5 km)
-  my $radius_steps = 10; # how many steps to take expanding the search around the center point
+  my $dbh = $self->dbh();
+
+  my $coordinateSystem = $self->coordinateSystem();
+
+  my $sql = "select name_0 as admin0
+                  , name_1 || ' (' || name_0 || ')' as admin1
+                  , name_2 || ' (' ||name_1 || ' - ' ||name_0 || ')' as admin2
+                  , continent
+             FROM gadm_410
+             WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($long, $lat), $coordinateSystem))";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
 
   my $result_names = [];
-  my $result_ids = [];
-  my $result_veugeo_names = [];
-  my $pi = 3.14159265358979;
- RADIUS:
-  for (my $radius=0; $radius<$self->max_radius_degrees; $radius += $self->max_radius_degrees/$self->radius_steps) {
-    for (my $angle = 0; $radius==0 ? $angle<=0 : $angle<2*$pi; $angle += 2*$pi/8) { # try N, NE, E, SE, S etc
-      # do the geocoding lookup
-      my $query_point = Geo::ShapeFile::Point->new(X => $long + cos($angle)*$radius,
-						   Y => $lat + sin($angle)*$radius);
-      my $parent_id; # the ID, e.g. AFG of the higher level term that was geocoded
+  my $rows;
+  while(my @ar = $sh->fetchrow_array()) {
+    my @cleaned = map { cleanup($_)} @ar;
 
-      foreach my $level (0 .. $max_level) {
-	last if ($level > 0 && !defined $parent_id);
-	# print "Scanning level $level\n" if $verbose;
-	my $shapefile = $self->_shapefiles->[$level];
-	my $num_shapes = $shapefile->shapes;
-	my @found_indices;
-	foreach my $index (1 .. $num_shapes) {
-	  if ($level == 0 || is_child_of_previous($index, $shapefile, $parent_id, $level-1)) {
-	    my $shape = $shapefile->get_shp_record($index);
-	    if ($shape->contains_point($query_point)) {
-	      push @found_indices, $index;
-	    }
-	  }
-	}
-	if (@found_indices == 1) {
-	  my $index = shift @found_indices;
-	  my $dbf = $shapefile->get_dbf_record($index);
-	  my $gadm_id = $dbf->{"GID_$level"};
-	  push @{$result_ids}, $gadm_id;
-	  push @{$result_names}, cleanup($dbf->{"NAME_$level"});
-	  if ($self->dbh && $self->VEuGEO_extDbRlsId) {
-	    my $veugeo_name = $self->getVEuGEOname($gadm_id);
-	    push @{$result_veugeo_names}, $veugeo_name;
-	  }
-	  $parent_id = $gadm_id;
+    my ($admin0, $admin1, $admin2, $continent) = @cleaned;
 
-	} elsif (@found_indices > 0) {
-	  warn "Warning: multiple polygons matched for ($lat, $long) at level $level\n";
-	}
+    if($max_level < 2) {
+      $admin2 = undef;
+      if($max_level < 1) {
+        $admin1 = undef;
       }
-      last RADIUS if (@{$result_ids} > 0);
     }
+
+    $result_names = \@cleaned;
+    $rows++;
   }
+
+  unless($rows == 1) {
+    die "GeoLookup for $cache_key failed";
+  }
+
+
+  my $result_veugeo_names = [];
   # returns the just-set value
-  return $self->set_cache($cache_key => [ $result_names, $result_ids, $result_veugeo_names ]);
+  return $self->set_cache($cache_key => [ $result_names, $result_veugeo_names ]);
 }
 
 sub getVEuGEOname {
@@ -183,26 +150,17 @@ sub getVEuGEOname {
 }
 
 
+
+1;
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
-
-# regular functions follow
-
-sub is_child_of_previous {
-  my ($index, $shapefile, $parent_id, $level) = @_;
-  my $dbf = $shapefile->get_dbf_record($index);
-  return $dbf->{"GID_$level"} eq $parent_id;
-}
-
 
 # fix some issues with encodings and whitespace in place names
 sub cleanup {
   my $string = shift;
-  my $charset = detect($string);
-  if ($charset) {
-    # if anything non-standard, use UTF-8
-    $string = decode("UTF-8", $string);
-  }
+  $string = decode("UTF-8", $string);
+
   # remove leading and trailing whitespace
   $string =~ s/^\s+//;
   $string =~ s/\s+$//;
@@ -210,3 +168,5 @@ sub cleanup {
   $string =~ s/\s+/ /g;
   return $string;
 }
+
+1;
