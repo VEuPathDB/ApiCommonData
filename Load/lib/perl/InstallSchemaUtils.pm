@@ -13,7 +13,7 @@ sub getDbh {
 
   my $dbiDsn = $dbVendor eq 'Oracle'? "dbi:Oracle:$dbName" : "dbiDsn=dbi:Pg:dbname=$dbName;host=$host";
 
-  return DBI->connect($gusconfig->getDbiDsn(),
+  return DBI->connect($dbiDsn,
 		      $gusconfig->getDatabaseLogin(),
 		      $gusconfig->getDatabasePassword(),
 		      { PrintError => 1, RaiseError => 0})
@@ -26,7 +26,7 @@ sub runSql {
   -e $filePath || die "File .sql file '$filePath' does not exist\n";
 
   if (lc $dbVendor eq 'oracle') {
-    &runSqlOracle($login, $password, $dbh->{name}, $filePath, $allowFailures, @params);
+    &runSqlOracle($login, $password, $dbh->{Name}, $filePath, $allowFailures, @params);
   } elsif (lc $dbVendor eq 'postgres') {
     &runSqlPostgres($login, $password, $dbh->{pg_db}, $dbh->{pg_host}, $filePath, $allowFailures, @params);
   } else { 
@@ -95,7 +95,7 @@ sub runCmd {
     my $status = $? >> 8;
     if ($status) {
       unlink($tmpFile) if $cmd =~ /^sqlplus/;
-      die "Failed with status '$status running cmd: \n$cmd'\n";
+      die "Failed with status '$status' running cmd: \n$cmd\n";
     }
 }
 
