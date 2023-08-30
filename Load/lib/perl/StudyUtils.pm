@@ -96,6 +96,9 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , json_query(ap.props, '\$.variable') as provider_label -- gives json array
                   , json_query(ap.props, '\$.ordinal_values') as ordinal_values -- gives json array
                   , json_value(ap.props, '\$.scale[0]') as scale
+                  , nvl(json_value(ap.props, '\$.variableSpecToImputeZeroesFor[0]'), json_value(os.annotation_properties, '\$.variableSpecToImputeZeroesFor[0]')) as variable_spec_to_impute_zeroes_for
+                  , nvl(json_value(ap.props, '\$.hasStudyDependentVocabulary[0]'), json_value(os.annotation_properties, '\$.hasStudyDependentVocabulary[0]')) as has_study_dependent_vocabulary
+                  , nvl(json_value(ap.props, '\$.weightingVariableSpec[0]'), json_value(os.annotation_properties, '\$.weightingVariableSpec[0]')) as weighting_variable_spec
 from ${termSchema}.ontologyrelationship r
    , ${termSchema}.ontologyterm s
    , ${termSchema}.ontologyterm o

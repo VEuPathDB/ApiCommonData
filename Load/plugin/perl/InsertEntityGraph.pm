@@ -104,7 +104,7 @@ my $argsDeclaration =
             descr          => 'If set, will load protocol names as values attached to this term',
             reqd           => 0,
             constraintFunc => undef,
-            isList         => 1, }),
+            isList         => 0, }),
 
       booleanArg({name => 'useOntologyTermTableForTaxonTerms',
           descr => 'should we use sres.ontologyterm instead of sres.taxonname',
