@@ -36,9 +36,20 @@ use Encode;
 has 'gadmDsn' => (
     is      => 'ro',
     isa     => 'Str',
-    default => 'DBI:mysql:database=gadm;host=localhost',
+    default => 'dbi:Pg:database=gadm;host=localhost',
 );
 
+has 'gadmTable' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'gadm_410',
+);
+
+has 'dbiUser' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => 'postgres',
+);
 
 has 'dbh' => (
     is      => 'ro',
@@ -49,8 +60,8 @@ has 'dbh' => (
 
 sub _build_dbh {
   my $self = shift;
-  print STDERR "_BUILD_DBH\n";
-  return DBI->connect($self->gadmDsn, 'postgres') or die DBI->errstr;
+
+  return DBI->connect($self->gadmDsn, $self->dbiUser) or die DBI->errstr;
 }
 
 sub disconnect {
@@ -100,12 +111,13 @@ sub lookup {
   my $dbh = $self->dbh();
 
   my $coordinateSystem = $self->coordinateSystem();
+  my $gadmTable = $self->gadmTable();
 
   my $sql = "select name_0 as admin0
                   , name_1 || ' (' || name_0 || ')' as admin1
                   , name_2 || ' (' ||name_1 || ' - ' ||name_0 || ')' as admin2
                   , continent
-             FROM gadm_410
+             FROM $gadmTable
              WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint($long, $lat), $coordinateSystem))";
 
   my $sh = $dbh->prepare($sql);
