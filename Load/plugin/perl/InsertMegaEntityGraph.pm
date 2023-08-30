@@ -7,6 +7,8 @@ use ApiCommonData::Load::Plugin::InsertEntityGraph;
 use strict;
 use warnings;
 
+use Encode;
+
 use ApiCommonData::Load::StudyUtils qw(parseMegaStudyConfig);
 
 use YAML::Tiny;
@@ -280,6 +282,8 @@ order by ot.source_id, sc.value";
   while(my ($otSourceId, $value) = $sh->fetchrow_array()) {
     push @{$atts->{$otSourceId}}, $value;
   }
+
+  $atts = decode("UTF-8", $atts);
 
   return encode_json($atts);
 }

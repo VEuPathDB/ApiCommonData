@@ -23,6 +23,8 @@ use ApiCommonData::Load::StudyUtils;
 use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
 
+use Encode;
+
 use JSON;
 
 use ApiCommonData::Load::GeoLookup;
@@ -144,28 +146,12 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   # for testing you can use /home/bmaccallum/gadm on yew
-   directoryArg({name           => 'shapeFilesDirectory',
-            descr          => 'Location of GADM shape files for geocoding placename look-up. Optional. No look-up if omitted.',
+
+   stringArg({name           => 'gadmDsn',
+            descr          => 'dbi dsn for gadm postgres database',
             reqd           => 0,
-            mustExist      => 1,
-            format         => '',
             constraintFunc => undef,
             isList         => 0, }),
-
-   stringArg({name         => 'shapeFilePrefix',
-	      descr        => "Prefix before the '_[012].shp', defaults to 'gadm36_' in ApiCommonData::Load::GeoLookup",
-	      reqd         => 0,
-	      constraintFunc => undef,
-	      isList       => 0,
-	     }),
-
-   stringArg({name         => 'VEuGEO_extDbRlsSpec',
-	      descr        => 'External database release spec for the VEuGEO ontology, needed for looking up disambiguated place names',
-	      reqd         => 0,
-	      constraintFunc => undef,
-	      isList       => 0,
-	     }),
   ];
 
 our $documentation = { purpose          => "",
@@ -226,17 +212,8 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
 
-  if (my $shapeFilesDirectory = $self->getArg('shapeFilesDirectory')) {
-    # only provide this argument to GeoLookup if we have it
-    my $shapefile_prefix = $self->getArg('shapeFilePrefix');
-    $self->{_geolookup} = ApiCommonData::Load::GeoLookup->new(shapefiles_directory => $shapeFilesDirectory,
-							      # next line is a bit ugly, but Moose won't automatically assign the default
-							      # value if you pass undefined
-							      $shapefile_prefix ? (shapefile_prefix => $shapefile_prefix) : (),
-							      levels => 3,
-							      dbh => $self->getQueryHandle(),
-							      VEuGEO_extDbRlsId => $self->getArg('VEuGEO_extDbRlsId'),
-							     );
+  if (my $gadmDsn = $self->getArg('gadmDsn')) {
+    $self->{_geolookup} = ApiCommonData::Load::GeoLookup->new(gadmDsn => $gadmDsn);
   }
 
   my $metaDataRoot = $self->getArg('metaDataRoot');
@@ -287,6 +264,10 @@ sub run {
     $investigationCount++;
   }
   $self->logRowsInserted() if($self->getArg('commit'));
+
+  if(my $gl = $self->{_geolookup}) {
+    $gl->disconnect();
+  }
 
   $self->log("Processed $investigationCount Investigations.");
 }
@@ -585,13 +566,11 @@ sub loadNodes {
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
-    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);  # TO DO: $ontologyTermToIdentifiers not used, remove?
-
-    if (my $shapeFilesDirectory = $self->getArg('shapeFilesDirectory')) {
-      $self->addLookedUpPlacenames($charsForLoader);
-    }
+    $self->addGeohashAndGadm($charsForLoader,$ontologyTermToIdentifiers);  # TO DO: $ontologyTermToIdentifiers not used, remove?
 
     my $atts = encode_json($charsForLoader);
+    $atts = decode("UTF-8", $atts);
+
     $entity->setAtts($atts) unless($atts eq '{}');
     $entity->setEntityTypeId($entityTypeId);
     ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
@@ -616,7 +595,7 @@ sub loadNodes {
   #$self->log("Loaded $nodeCount nodes");
 }
 
-sub addGeohash {
+sub addGeohashAndGadm {
   my ($self, $hash, $ontologyTermToIdentifiers) = @_;
 
   my $geohashLength = scalar @GEOHASH_SOURCE_IDS;
@@ -642,6 +621,11 @@ sub addGeohash {
 
     $hash->{$geohashSourceId} = [$subvalue];
   }
+  if ($self->getArg('gadmDsn')) {
+    $self->addLookedUpPlacenames($hash);
+  }
+
+
 }
 
 sub encodeGeohash {
@@ -670,10 +654,6 @@ sub encodeGeohash {
   return $enc
 }
 
-#
-# does GADM shapefile lookup at three levels and loads the string results (place names)
-# into the $hash of attributes
-#
 sub addLookedUpPlacenames {
   my ($self, $hash) = @_;
 
@@ -687,13 +667,19 @@ sub addLookedUpPlacenames {
 
   # maxAdminLevel is a per row value the data provider can use to control how many levels of placenames
   # are looked up. It's OK to be undefined, will fall back to default (2) in lookup method:
-  my $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
+
+  my $maxAdminLevel;
+  if($hash->{$maxAdminLevelSourceId}) {
+    $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
+  }
+
   my ($gadm_names, $gadm_ids, $veugeo_names) = @{$self->{_geolookup}->lookup($lat, $long, $maxAdminLevel)};
   foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
+    next unless(defined $gadm_names->[$level]);
     my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
     if ($variable_iri) {
-      ### TO DO: find disambiguated name
-      $hash->{$variable_iri} = [ $veugeo_names->[$level] ];
+      ### TODO: find disambiguated name with vgeo
+      $hash->{$variable_iri} = [ $gadm_names->[$level] ];
     }
   }
 }
@@ -923,6 +909,7 @@ sub loadProcesses {
     my $processAttributesHash = $self->getProcessAttributesHash($ontologyTermToIdentifiers, $process, $nodeNameToIdMap);
 
     my $atts = encode_json($processAttributesHash);
+    $atts = decode("UTF-8", $atts);
     if($atts eq '{}'){ $atts = undef }
       ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
 
