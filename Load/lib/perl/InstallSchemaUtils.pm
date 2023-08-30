@@ -4,25 +4,39 @@ use Exporter;
 use DBI;
 
 our @ISA= qw( Exporter );
-our @EXPORT = qw( runSql dropSchemaSetTables dropSchemaSetPostgres );
+our @EXPORT = qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh );
+
+sub getDbh {
+  my ($gusconfig, $dbName, $dbHost, $dbVendor) = @_;
+
+  die "illegal dbVendor: $dbVendor" unless $dbVendor eq 'Oracle' || $dbVendor eq 'Postgres';
+
+  my $dbiDsn = $dbVendor eq 'Oracle'? "dbi:Oracle:$dbName" : "dbiDsn=dbi:Pg:dbname=$dbName;host=$host";
+
+  return DBI->connect($gusconfig->getDbiDsn(),
+		      $gusconfig->getDatabaseLogin(),
+		      $gusconfig->getDatabasePassword(),
+		      { PrintError => 1, RaiseError => 0})
+    or die "Can't connect to database: $DBI::errstr\n";
+}
 
 sub runSql {
-  my ($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures, @params) = @_;
-  
+  my ($login, $password, $dbh, $dbVendor, $file, $allowFailures, @params) = @_;
+
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
   -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
 
-  if (lc $dbVendor eq 'oracle') { 
-    &runSqlOracle($login, $password, $db, $fullFile, $allowFailures, @params);
+  if (lc $dbVendor eq 'oracle') {
+    &runSqlOracle($login, $password, $dbh->{name}, $fullFile, $allowFailures, @params);
   } elsif (lc $dbVendor eq 'postgres') {
-    &runSqlPostgres($login, $password, $db, $dbHostname, $dbVendor, $file, $allowFailures, @params);
+    &runSqlPostgres($login, $password, $dbh->{pg_db}, $dbh->{pg_host}, $dbVendor, $file, $allowFailures, @params);
   } else { 
-    die "Unsupported dbVendor:$dbVendor."; 
+    die "Unsupported dbVendor:$dbVendor.";
   }
 }
 
 sub runSqlOracle {
-  my ($login, $password, $db, $fullFile, $allowFailures, @params) = @_;
+  my ($login, $password, $dbName, $fullFile, $allowFailures, @params) = @_;
 
   my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
@@ -38,7 +52,7 @@ sub runSqlOracle {
   runCmd($cmd, $tmpFile);
 
   # my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
-  $cmd = "sqlplus $login\@$db/$password \@$tmpFile " . join(' ', @params);
+  $cmd = "sqlplus $login\@$dbName/$password \@$tmpFile " . join(' ', @params);
   print STDOUT "\n==============================================================\n";
   print STDOUT "Running $tmpFile\n";
   print STDOUT "==============================================================\n";
@@ -48,10 +62,10 @@ sub runSqlOracle {
 }
 
 sub runSqlPostgres {
-  my ($login, $password, $db, $dbHostname, $fullFile, $allowFailures, @params) = @_;
+  my ($login, $password, $dbName, $dbHostname, $fullFile, $allowFailures, @params) = @_;
   
   my $psql_params = "";
-  my $connectionString = "postgresql://$login:$password\@$dbHostname/$db";
+  my $connectionString = "postgresql://$login:$password\@$dbHostname/$dbName";
   
   my $cmd;
   if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
@@ -87,15 +101,7 @@ sub runCmd {
 }
 
 sub dropSchemaSetTables {
-  my ($login, $password, $db, $schemaSet) = @_;
-
-  my $dsn = "dbi:Oracle:" . $db;
-  my $dbh = DBI->connect(
-                $dsn,
-                $login,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
+  my ($dbh, $schemaSet) = @_;
 
   print STDERR "\nfixing to drop objectss in schema set \"$schemaSet\"\n" if $verbose;
 
@@ -124,15 +130,7 @@ SQL
 }
 
 sub dropSchemaSetOracle {
-  my ($login, $password, $db, $schemaSet) = @_;
-
-  my $dsn = "dbi:Oracle:" . $db;
-  my $dbh = DBI->connect(
-                $dsn,
-                $login,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
+  my ($dbh, $schemaSet) = @_;
 
   print STDERR "\nfixing to drop schemas in set \"$schemaSet\"\n" if $verbose;
 
@@ -151,14 +149,7 @@ SQL
 }
 
 sub dropSchemaSetPostgres {
-  my ($dbiDsn, $login, $password, $db, @schemaSet) = @_;
-
-  my $dbh = DBI->connect(
-                $dbiDsn,
-                $login,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
+  my ($dbh, @schemaSet) = @_;
 
   print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n" if $verbose;
 

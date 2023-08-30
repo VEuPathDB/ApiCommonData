@@ -9,16 +9,17 @@ use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $drop, $create, $db, $dbVendor, $lifecycle, $campus, $allowFailures, $verbose);
+my ($gusConfigFile, $dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allowFailures, $verbose);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "dbName=s" => \$dbName,
+	    "dbHost=s" => \$dbHost,
 	    "allowFailures!" => \$allowFailures,
 	    "create!" => \$create,
 	    "drop!" => \$drop,
 	    "lifecycle=s" => \$lifecycle,
 	    "campus=s" => \$campus,
-	    "verbose!" => \$verbose,
-	    "db=s" => \$db);
+	    "verbose!" => \$verbose);
 
 my @lifecycle = ('dev', 'qa', 'feat', 'beta', 'prod');
 my $lcStr = join(", ", @lifecycle);
@@ -30,9 +31,15 @@ Install the VDI control and dataset schemas, tables, etc, into the database spec
 In the case of Oracle, the schema/user is managed by DBA, so only the tables are managed here.
 For Postgres, the schema and tables are both managed here.
 
-usage: installVdiSchema --db database [--create | --drop] --lifecycleAbbrev --campusAbbrev --gusConfigFile gus_config_file [--allowFailures] [--verbose]
-where:
-  - gusConfigFile: a standard gus.config file
+Usage: installVdiSchema --dbName name --dbHost host [--create | --drop] --lifecycleAbbrev --campusAbbrev [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+
+Where:
+  - dbName: database to connect to, eg, toxo-inc
+  - dbHost: database server, eg, ares10.penn.apidb.org
+  - gusConfigFile: a standard gus.config file (defaults to \$GUS_HOME/gus.config).  Used for db login, password and vendor.
+  - create: creates the VDI schemas
+  - drop: drops the VDI schemas
+  - allowFailures: ignores SQL failures.
   - lifecycle is one of: $lcStr
   - campus is n or s
 
@@ -45,12 +52,21 @@ Verbose prints commands run to STDERR
 ";
 }
 
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $dbVendor = $gusconfig->getDatabaseVendor();
+die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
+
+my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
+
 my $schemaSuffix = "${lifecycle}_${campus}";
 if ($drop) {
-    print "\nYou are about to UNINSTALL the VDI_DATASETS_$schemaSuffix and VDI_CONTROL_$schemaSuffix schemas on database:\n  $db\nType the name of the database to confirm: ";
+    print "\nYou are about to UNINSTALL the VDI_DATASETS_$schemaSuffix and VDI_CONTROL_$schemaSuffix schemas on database:\n  $dbName\nType the name of the database to confirm: ";
     my $confirm = <STDIN>;
     chomp $confirm;
-    die "You did not correctly confirm the db instance\n" unless $db eq $confirm;
+    die "You did not correctly confirm the db instance\n" unless $dbName eq $confirm;
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -75,15 +91,15 @@ if ($create) {
      print STDOUT "running $sqlFile for $schemaSuffix\n";
      print STDOUT "==============================================================\n";
      my @sqlplusParamValues = ($schemaSuffix);
-     runSql($login, $password, $db, $dbHostname, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+     runSql($login, $password, $dbh, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
   }
 } else {
   my @schemas = ("VDI_DATASETS_$schemaSuffix", "VDI_CONTROL_$schemaSuffix");
   if ($dbVendor eq 'Oracle') {
     my $schemaSetStr = join ', ', map "'$_'", @schemas;
-    dropSchemaSetTables($login, $password, $db, $schemaSetStr);
+    dropSchemaSetTables($dbh, $schemaSetStr);
   } else {
-    dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @schemas);
+    dropSchemaSetPostgres($dbh, @schemas);
   }
 }
 

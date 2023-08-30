@@ -4,36 +4,39 @@ use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
-use ApiCommonData::Load::InstallSchemaUtils qw( runSql dropSchemaSetTables dropSchemaSetPostgres );
+use ApiCommonData::Load::InstallSchemaUtils qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh );
 use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $dbVendor, $allowFailures, $verbose);
+my ($gusConfigFile, $dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailures, $verbose);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-           "dropApiDB!" => \$dropApiDB,
-           "dropGUS!" => \$dropGUS,
-           "allowFailures!" => \$allowFailures,
-           "create!" => \$create,
-           "verbose!" => \$verbose,
-           "db=s" => \$db);
+	    "dbName=s" => \$dbName,
+	    "dbHost=s" => \$dbHost,
+	    "dropApiDB!" => \$dropApiDB,
+	    "dropGUS!" => \$dropGUS,
+	    "allowFailures!" => \$allowFailures,
+	    "create!" => \$create,
+	    "verbose!" => \$verbose);
 
 my $x = $dropApiDB + $dropGUS + $create;
-if (!$db || ($x != 1)) {
+if (!$dbName || !$dbHost || ($x != 1)) {
   die "
-
 Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS, or uninstall them (or uninstall the GUS schemas)
 
-usage: installApidbSchema --db database [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+Usage: installApidbSchema --dbName name --dbHost host [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+
+Where:
+  - dbName: database to connect to, eg, toxo-inc
+  - dbHost: database server, eg, ares10.penn.apidb.org
+  - gusConfigFile: a standard gus.config file (defaults to \$GUS_HOME/gus.config).  Used for db login, password and vendor.
+  - create: creates the ApiDB and ApiDBTuning schemas and patches GUS.
+  - dropApiDB: drops the ApiDB and ApiDBTuning schemas, and ApiDB patches to GUS.
+  - dropGUS: drops the Core, DoTS, PROT, RAD, SRes, STUDY, TESS (and all VER) schemas
+  - allowFailures: ignores SQL failures.
 
 Caution: only use --allowFailures if you know what you are doing
-
-create - creates the ApiDB and ApiDBTuning schemas and patches GUS.
-
-dropApiDB - drops the ApiDB and ApiDBTuning schemas, and ApiDB patches to GUS.
-
-dropGUS - drops the Core, DoTS, PROT, RAD, SRes, STUDY, TESS (and all VER) schemas
 
 Log is printed to STDOUT
 
@@ -42,26 +45,24 @@ Verbose prints commands run to STDERR
 ";
 }
 
-my $d = 'GUS schema';
-$d = 'ApiDB and ApiDBTuning schemas' if $dropApiDB;
-
-if ($dropApiDB || $dropGUS) {
-    print "\nYou are about to UNINSTALL the $d on:\n  $db\nType the name of the instance to confirm: ";
-    my $confirm = <STDIN>;
-    chomp $confirm;
-    die "You did not correctly confirm the db instance\n" unless $db eq $confirm;
-}
-
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
 my $dbVendor = $gusconfig->getDatabaseVendor();
-my $dbiDsn = $gusconfig->getDbiDsn();
-$dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
-my $dbHostname = $2;   # needed to connect to postgres
 die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
 
+my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
+
+my $d = 'GUS schema';
+$d = 'ApiDB and ApiDBTuning schemas' if $dropApiDB;
+
+if ($dropApiDB || $dropGUS) {
+    print "\nYou are about to UNINSTALL the $d on:\n  $dbName\nType the name of the instance to confirm: ";
+    my $confirm = <STDIN>;
+    chomp $confirm;
+    die "You did not correctly confirm the db instance\n" unless $dbName eq $confirm;
+}
 
 # PLEASE READ BEFORE ADDING TO @create
 #
@@ -217,31 +218,31 @@ if ($create) {
      if($sqlFile eq 'createEntityGraphTables.sql') {
        $sqlplusParamValues[0] = "EDA";
        $sqlplusParamValues[1] = "SRES";
-       runSql($login, $password, $db, $dbHostname, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
        $sqlplusParamValues[0] = "ApidbUserDatasets";
        $sqlplusParamValues[1] = "ApidbUserDatasets";
-       runSql($login, $password, $db, $dbHostname, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $sqlFile, $allowFailures, @sqlplusParamValues);
      }
 
      else {
-       runSql($login, $password, $db, $dbHostname, $dbVendor, $sqlFile, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $sqlFile, @sqlplusParamValues);
      }
   }
 } elsif ($dropApiDB) {
     if (lc $dbVendor eq 'oracle') {
       my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
-      dropSchemaSetTables($login, $password, $db, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
+      dropSchemaSetTables($dbh, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
     } elsif (lc $dbVendor eq 'postgres') {
-      dropSchemaSetPostgres($dbiDsn, $login, $password, $db, $dbHostname, @apiDbSchemas);
+      dropSchemaSetPostgres($dbh, @apiDbSchemas);
     } else {
       die "Unsupported dbVendor:$dbVendor.";
     }
 } elsif ($dropGUS) {
   if (lc $dbVendor eq 'oracle') {
     my $schemaSetStr = join ', ', map "'$_'", @gusSchemas;
-    dropSchemaSetOracle($login, $password, $db, $schemaSetStr);  # drop the users.  these will be recreated by the gus install program
+    dropSchemaSetOracle($dbh, $schemaSetStr);  # drop the users.  these will be recreated by the gus install program
   } elsif (lc $dbVendor eq 'postgres') {
-    dropSchemaSetPostgres($dbiDsn, $login, $password, $db, $dbHostname, @gusSchemas);
+    dropSchemaSetPostgres($dbh, @gusSchemas);
   } else {
     die "Unsupported dbVendor:$dbVendor.";
   }
