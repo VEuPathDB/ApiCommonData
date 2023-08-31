@@ -528,6 +528,9 @@ SELECT --  distinct
      , atg.is_merge_key
      , atg.impute_zero
      , atg.is_repeated
+     , atg.variable_spec_to_impute_zeroes_for
+     , atg.has_study_dependent_vocabulary
+     , weighting_variable_spec
      , 0 as has_values
      , null as data_type
      , null as distinct_values_count
@@ -565,11 +568,17 @@ SELECT -- distinct
      , atg.is_merge_key
      , atg.impute_zero
      , atg.is_repeated
+     , atg.variable_spec_to_impute_zeroes_for
+     , atg.has_study_dependent_vocabulary
+     , weighting_variable_spec
      , 1 as has_values
      , att.data_type
      , att.distinct_values_count
      , att.is_multi_valued
-     , att.data_shape
+     , case when (att.data_shape = 'categorical' and (atg.ordinal_values is not null OR lower(atg.force_string_type) = 'yes'))
+            then 'ordinal'
+            else att.data_shape
+       end as data_shape
      , nvl(att.unit_override, att.unit) as unit
      , atg.scale
      , att.precision
