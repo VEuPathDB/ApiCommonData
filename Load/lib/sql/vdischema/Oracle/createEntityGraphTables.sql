@@ -7,7 +7,7 @@ CREATE TABLE VDI_DATASETS_&1..Study (
  max_attr_length              number(4),
  modification_date            DATE NOT NULL,
  PRIMARY KEY (study_id),
- CONSTRAINT unique_stable_id UNIQUE (stable_id)
+ CONSTRAINT unique_stable_id UNIQUE (stable_id),
  FOREIGN KEY (user_dataset_id) REFERENCES VDI_CONTROL_&1..dataset(dataset_id)
 );
 
