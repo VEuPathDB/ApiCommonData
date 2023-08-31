@@ -9,7 +9,7 @@ use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailures, $verbose);
+my ($gusConfigFile, $dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailures);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "dbName=s" => \$dbName,
@@ -17,15 +17,14 @@ my ($gusConfigFile, $dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailu
 	    "dropApiDB!" => \$dropApiDB,
 	    "dropGUS!" => \$dropGUS,
 	    "allowFailures!" => \$allowFailures,
-	    "create!" => \$create,
-	    "verbose!" => \$verbose);
+	    "create!" => \$create);
 
 my $x = $dropApiDB + $dropGUS + $create;
 if (!$dbName || !$dbHost || ($x != 1)) {
   die "
 Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS, or uninstall them (or uninstall the GUS schemas)
 
-Usage: installApidbSchema --dbName name --dbHost host [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+Usage: installApidbSchema --dbName name --dbHost host [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures]
 
 Where:
   - dbName: database to connect to, eg, toxo-inc
@@ -38,10 +37,7 @@ Where:
 
 Caution: only use --allowFailures if you know what you are doing
 
-Log is printed to STDOUT
-
-Verbose prints commands run to STDERR
-
+Log is printed to STDERR
 ";
 }
 
@@ -210,9 +206,9 @@ my @apiDbSchemas = qw(
 
 if ($create) {
   for my $sqlFile (@create) {
-     print STDOUT "\n==============================================================\n";
-     print STDOUT "$sqlFile\n";
-     print STDOUT "==============================================================\n";
+     print STDERR "\n==============================================================\n";
+     print STDERR "$sqlFile\n";
+     print STDERR "==============================================================\n";
 
      my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
 
@@ -227,7 +223,7 @@ if ($create) {
      }
 
      else {
-       runSql($login, $password, $dbh, $dbVendor, $sqlFile, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
      }
   }
 } elsif ($dropApiDB) {

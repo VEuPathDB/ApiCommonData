@@ -23,7 +23,7 @@ sub getDbh {
 sub runSql {
   my ($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @params) = @_;
 
-  -e $filePath || die "File .sql file '$filePath' does not exist\n";
+  -e $filePath || die "File '$filePath' does not exist\n";
 
   if (lc $dbVendor eq 'oracle') {
     &runSqlOracle($login, $password, $dbh->{Name}, $filePath, $allowFailures, @params);
