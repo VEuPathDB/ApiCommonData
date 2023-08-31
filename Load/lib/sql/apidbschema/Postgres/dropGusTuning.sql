@@ -41,7 +41,3 @@ DROP CONSTRAINT alg_imp_uniq;
 
 alter table dots.NaSequenceImp
 drop constraint source_id_uniq;
-
-exec dbms_stats.drop_extended_stats('DOTS', 'NAFEATUREIMP', '(SUBCLASS_VIEW, EXTERNAL_DATABASE_RELEASE_ID)');
-
-exit;
