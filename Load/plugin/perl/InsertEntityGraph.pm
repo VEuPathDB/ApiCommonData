@@ -399,7 +399,7 @@ sub loadBatchOfStudyData {
 
   $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap);
   my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
-  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap, $seenProcessMap);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap, $seenProcessMap, $ontologyTermToNames);
 
 }
 
@@ -846,7 +846,7 @@ sub getGusEntityId {
 
 
 sub getProcessAttributesHash {
-  my ($self,$ontologyTermToIdentifiers, $process, $nodeNameToIdMap) = @_;
+  my ($self,$ontologyTermToIdentifiers, $process, $nodeNameToIdMap, $ontologyTermToNames) = @_;
 
   my %rv;
 
@@ -865,15 +865,28 @@ sub getProcessAttributesHash {
     my $protocolName = $protocol->getProtocolName();
 
     if(my $protocolSourceId = $self->getArg('protocolVariableSourceId')) {
-      push @{$rv{$protocolSourceId}}, $protocolName;
+#      push @{$rv{$protocolSourceId}}, $protocolName; #this is not reliable
+
+       my $protocolType = $protocol->getProtocolType();
+       my $protocolTypeSourceId = $protocolType->getTermAccessionNumber();
+       my $protocolTypeOntologyValue = $ontologyTermToNames->{$protocolTypeSourceId};
+
+       $self->error("No Ontology term found for protocol type source id:  $protocolTypeSourceId") unless($protocolTypeOntologyValue);
+
+       #my $protocolTypeValue = $protocolType->getTerm(); # this is not reliable
+
+       # :tada: :crossed_fingers:
+       push @{$rv{$protocolSourceId}}, $protocolTypeOntologyValue;
+
+       $self->updateMaxAttrValue($protocolTypeOntologyValue);
     }
 
-    if($self->getArg('loadProtocolTypeAsVariable')) {
-      my $protocolType = $protocol->getProtocolType();
-      my $protocolTypeSourceId = $protocolType->getTermAccessionNumber();
-      my $protocolTypeValue = $protocolType->getTerm();
-      push @{$rv{$protocolTypeSourceId}}, $protocolTypeValue;
-    }
+    # if($self->getArg('loadProtocolTypeAsVariable')) {
+    #   my $protocolType = $protocol->getProtocolType();
+    #   my $protocolTypeSourceId = $protocolType->getTermAccessionNumber();
+    #   my $protocolTypeValue = $protocolType->getTerm();
+    #   push @{$rv{$protocolTypeSourceId}}, $protocolTypeValue;
+    # }
 
     foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
       my $ppValue = $parameterValue->getTerm();
@@ -898,7 +911,7 @@ sub getProcessAttributesHash {
 
 
 sub loadProcesses {
-  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap, $seenProcessMap) = @_;
+  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap, $seenProcessMap, $ontologyTermToNames) = @_;
 
   my $processCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
@@ -906,7 +919,7 @@ sub loadProcesses {
   foreach my $process (@$processes) {
     my $gusProcessTypeId = $self->getOrMakeProcessTypeId($process, $processTypeNamesToIdMap);
 
-    my $processAttributesHash = $self->getProcessAttributesHash($ontologyTermToIdentifiers, $process, $nodeNameToIdMap);
+    my $processAttributesHash = $self->getProcessAttributesHash($ontologyTermToIdentifiers, $process, $nodeNameToIdMap, $ontologyTermToNames);
 
     my $atts = encode_json($processAttributesHash);
     $atts = decode("UTF-8", $atts);
@@ -1008,7 +1021,7 @@ and tn.name_class = 'scientific name'
       $sh->finish();
       if($count == 1) {
         $ontologyTermToIdentifiers->{$os}->{$ota} = $ontologyTermId;
-        $ontologyTermToNames->{$os}->{$ota} = $ontologyTermName;
+        $ontologyTermToNames->{$ota} = $ontologyTermName;
       }
       elsif($count > 1) {
         push (@multipleCounts, "$accessionOrName ($ota)");
