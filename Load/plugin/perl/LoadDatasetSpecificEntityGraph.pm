@@ -575,7 +575,7 @@ SELECT -- distinct
      , att.data_type
      , att.distinct_values_count
      , att.is_multi_valued
-     , case when (att.data_shape = 'categorical' and (atg.ordinal_values is not null OR lower(atg.force_string_type) = 'yes'))
+     , case when (atg.ordinal_values is not null OR lower(atg.force_string_type) = 'yes')
             then 'ordinal'
             else att.data_shape
        end as data_shape
