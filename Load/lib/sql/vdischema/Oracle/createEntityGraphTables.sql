@@ -1,6 +1,7 @@
 set CONCAT OFF;
 
 CREATE TABLE VDI_DATASETS_&1..Study (
+ USER_DATASET_ID     CHAR(32),     
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
@@ -9,6 +10,7 @@ CREATE TABLE VDI_DATASETS_&1..Study (
  modification_date            DATE NOT NULL,
  PRIMARY KEY (study_id),
  CONSTRAINT unique_stable_id UNIQUE (stable_id)
+ FOREIGN KEY (user_dataset_id) REFERENCES VDI_CONTROL_&1..dataset(dataset_id)
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON VDI_DATASETS_&1..Study TO gus_w;

@@ -1,5 +1,5 @@
 create table VDI_DATASETS_&1..UD_GeneId (
-USER_DATASET_ID          NUMBER(20),     
+USER_DATASET_ID          CHAR(32),     
 gene_SOURCE_ID                             VARCHAR2(100),  
 FOREIGN KEY (user_dataset_id) REFERENCES VDI_CONTROL_&1..dataset(dataset_id)
 );
@@ -13,7 +13,7 @@ GRANT select ON VDI_DATASETS_&1..UD_GeneId TO gus_r;
 
 create table VDI_DATASETS_&1..UD_ProfileSet (
  profile_set_id  number(20),
- user_dataset_id number(20),
+ user_dataset_id char(32),
  name            varchar2(200) not null,  
  unit            varchar2(4),
  foreign key (user_dataset_id) references VDI_CONTROL_&1..DATASET(dataset_id),
@@ -124,7 +124,7 @@ GRANT SELECT ON VDI_DATASETS_&1..ud_NaFeatureDiffResult_sq TO gus_w;
 -- These are editable by the user, so there is no consistent way to keep them here
 
 create table VDI_DATASETS_&1..UD_Presenter (
-  user_dataset_id number(20) not null,
+  user_dataset_id char(32) not null,
   property_name varchar2(200) not null,  
   property_value varchar2(200) not null,  
   foreign key (user_dataset_id) references VDI_CONTROL_&1..DATASET(dataset_id),
@@ -136,7 +136,7 @@ grant select on VDI_DATASETS_&1..UD_Presenter to gus_r;
 
 
 create table VDI_DATASETS_&1..UD_Sample (
-user_dataset_id                        NUMBER(20) not null, 
+user_dataset_id                        CHAR(32) not null, 
 sample_id                             NUMBER(10) not null,     
 name                                  VARCHAR2(200) not null,  
 display_name                                  VARCHAR2(200),  
@@ -160,7 +160,7 @@ GRANT select ON VDI_DATASETS_&1..UD_Sample_sq TO gus_w;
 -- --    description => "$property: $valuesSummary",
 -- -- skipped: property_source_id, I think it's the ontology term for property
 -- create table VDI_DATASETS_&1..ud_Property (
---   user_dataset_id number(20) not null,
+--   user_dataset_id char(32) not null,
 --   PROPERTY_ID                                        NUMBER(10) not null,
 --   PROPERTY                                           VARCHAR2(400),
 --   TYPE                                               VARCHAR2(6),
@@ -184,7 +184,7 @@ GRANT select ON VDI_DATASETS_&1..UD_Sample_sq TO gus_w;
 -- -- a bit like apidbtuning.metadata
 -- -- user_dataset_id not needed but makes deleting simpler
 -- create table VDI_DATASETS_&1..ud_SampleDetail (
---  user_dataset_id number(20) not null,
+--  user_dataset_id char(32) not null,
 --   sample_id                      NUMBER(10) NOT NULL,
 --   PROPERTY_ID                                        NUMBER(10) not null,
 --   DATE_VALUE                                         DATE,
@@ -206,7 +206,7 @@ GRANT select ON VDI_DATASETS_&1..UD_Sample_sq TO gus_w;
 -- -- wider columns: allows 200 characters per term to better handle whatever people try to store in there
 -- -- lineage is 1406 chars long to match the max width of all columns plus six semicolons
 -- CREATE TABLE VDI_DATASETS_&1..ud_Abundance (
---  user_dataset_id number(20) not null,
+--  user_dataset_id char(32) not null,
 --  SAMPLE_ID                      NUMBER(10) NOT NULL,
 --  LINEAGE                                  VARCHAR2(1406) NOT NULL,
 --  RELATIVE_ABUNDANCE                                 FLOAT(126),
@@ -233,7 +233,7 @@ GRANT select ON VDI_DATASETS_&1..UD_Sample_sq TO gus_w;
 -- -- category -> taxon_level_name
 
 -- CREATE TABLE  VDI_DATASETS_&1..ud_AggregatedAbundance (
---  user_dataset_id number(20) not null,
+--  user_dataset_id char(32) not null,
 --  SAMPLE_ID                      NUMBER(10) NOT NULL,
 --  TAXON_LEVEL_NAME                                           VARCHAR2(10),
 --  TAXON_LEVEL                                        NUMBER,
