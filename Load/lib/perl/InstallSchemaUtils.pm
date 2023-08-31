@@ -108,7 +108,7 @@ sub runCmd {
 sub dropSchemaSetTables {
   my ($dbh, $schemaSet) = @_;
 
-  print STDERR "\nfixing to drop objectss in schema set \"$schemaSet\"\n";
+  print STDERR "\nFixing to drop objects in schema set \"$schemaSet\"\n";
 
   # drop everything
   my $stmt = $dbh->prepare(<<SQL);
@@ -137,7 +137,7 @@ SQL
 sub dropSchemaSetOracle {
   my ($dbh, $schemaSet) = @_;
 
-  print STDERR "\nfixing to drop schemas in set \"$schemaSet\"\n";
+  print STDERR "\nFixing to drop schemas in set \"$schemaSet\"\n";
 
   my $stmt = $dbh->prepare(<<SQL);
     select 'drop user ' || username || ' cascade'
@@ -156,7 +156,7 @@ SQL
 sub dropSchemaSetPostgres {
   my ($dbh, @schemaSet) = @_;
 
-  print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n";
+  print STDERR "\nFixing to drop schemas in set \"@schemaSet\"\n";
 
   for my $schema (@schemaSet) {
     my $stmt = $dbh->prepare(<<SQL);
