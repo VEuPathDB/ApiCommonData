@@ -158,10 +158,6 @@ my @create = qw(
   grantChebiTables.sql
 );
 
-
-# drop GUS first, then ApidbTuning, then Apidb (reverse of order they were created in).
-# for GUS, we only drop the tuning indexes, as the other GUS changes don't
-# need to be reversed.  The trick here is to order these to avoid failures
 my @delete = qw(
   restoreNullConstraintsFromSimilarityTables.sql
   dropGusTuning.sql
@@ -227,19 +223,27 @@ if ($create) {
      }
   }
 } elsif ($dropApiDB) {
-    if (lc $dbVendor eq 'oracle') {
-      my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
-      dropSchemaSetTables($dbh, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
-    } elsif (lc $dbVendor eq 'postgres') {
-      dropSchemaSetPostgres($dbh, @apiDbSchemas);
-    } else {
-      die "Unsupported dbVendor:$dbVendor.";
-    }
+  if ($dbVendor eq 'Oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
+    dropSchemaSetTables($dbh, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
+  } elsif ($dbVendor eq 'Postgres') {
+    dropSchemaSetPostgres($dbh, @apiDbSchemas);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
+  for my $sqlFile (@delete) {
+    print STDERR "\n==============================================================\n";
+    print STDERR "$sqlFile\n";
+    print STDERR "==============================================================\n";
+
+    my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
+    runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+  }
 } elsif ($dropGUS) {
-  if (lc $dbVendor eq 'oracle') {
+  if ($dbVendor eq 'Oracle') {
     my $schemaSetStr = join ', ', map "'$_'", @gusSchemas;
     dropSchemaSetOracle($dbh, $schemaSetStr);  # drop the users.  these will be recreated by the gus install program
-  } elsif (lc $dbVendor eq 'postgres') {
+  } elsif ($dbVendor eq 'Postgres') {
     dropSchemaSetPostgres($dbh, @gusSchemas);
   } else {
     die "Unsupported dbVendor:$dbVendor.";
