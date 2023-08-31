@@ -4,51 +4,41 @@ use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
+use ApiCommonData::Load::InstallSchemaUtils qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh );
 use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $dbVendor, $allowFailures, $verbose);
+my ($gusConfigFile, $dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailures);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-           "dropApiDB!" => \$dropApiDB,
-           "dropGUS!" => \$dropGUS,
-           "allowFailures!" => \$allowFailures,
-           "create!" => \$create,
-           "verbose!" => \$verbose,
-           "db=s" => \$db);
+	    "dbName=s" => \$dbName,
+	    "dbHost=s" => \$dbHost,
+	    "dropApiDB!" => \$dropApiDB,
+	    "dropGUS!" => \$dropGUS,
+	    "allowFailures!" => \$allowFailures,
+	    "create!" => \$create);
 
 my $x = $dropApiDB + $dropGUS + $create;
-if (!$db || ($x != 1)) {
+if (!$dbName || !$dbHost || ($x != 1)) {
   die "
-
 Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS, or uninstall them (or uninstall the GUS schemas)
 
-usage: installApidbSchema --db database [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+Usage: installApidbSchema --dbName name --dbHost host [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures]
+
+Where:
+  - dbName: database to connect to, eg, toxo-inc
+  - dbHost: database server, eg, ares10.penn.apidb.org
+  - gusConfigFile: a standard gus.config file (defaults to \$GUS_HOME/gus.config).  Used for db login, password and vendor.
+  - create: creates the ApiDB and ApiDBTuning schemas and patches GUS.
+  - dropApiDB: drops the ApiDB and ApiDBTuning schemas, and ApiDB patches to GUS.
+  - dropGUS: drops the Core, DoTS, PROT, RAD, SRes, STUDY, TESS (and all VER) schemas
+  - allowFailures: ignores SQL failures.
 
 Caution: only use --allowFailures if you know what you are doing
 
-create - creates the ApiDB and ApiDBTuning schemas and patches GUS.
-
-dropApiDB - drops the ApiDB and ApiDBTuning schemas, and ApiDB patches to GUS.
-
-dropGUS - drops the Core, DoTS, PROT, RAD, SRes, STUDY, TESS (and all VER) schemas
-
-Log is printed to STDOUT
-
-Verbose prints commands run to STDERR
-
+Log is printed to STDERR
 ";
-}
-
-my $d = 'GUS schema';
-$d = 'ApiDB and ApiDBTuning schemas' if $dropApiDB;
-
-if ($dropApiDB || $dropGUS) {
-    print "\nYou are about to UNINSTALL the $d on:\n  $db\nType the name of the instance to confirm: ";
-    my $confirm = <STDIN>;
-    chomp $confirm;
-    die "You did not correctly confirm the db instance\n" unless $db eq $confirm;
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -56,8 +46,19 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
 my $dbVendor = $gusconfig->getDatabaseVendor();
-my $dbiDsn = $gusconfig->getDbiDsn();
+die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
 
+my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
+
+my $d = 'GUS schema';
+$d = 'ApiDB and ApiDBTuning schemas' if $dropApiDB;
+
+if ($dropApiDB || $dropGUS) {
+    print "\nYou are about to UNINSTALL the $d on:\n  $dbName\nType the name of the instance to confirm: ";
+    my $confirm = <STDIN>;
+    chomp $confirm;
+    die "You did not correctly confirm the db instance\n" unless $dbName eq $confirm;
+}
 
 # PLEASE READ BEFORE ADDING TO @create
 #
@@ -143,7 +144,6 @@ my @create = qw(
   createFeatureLocation.sql
   createCrisprPhenotype.sql
   createGoSubset.sql
-  createVdiControlTables.sql
   createUserDatasetCoreTables.sql
   createUserDatasetTypeTables.sql
   createDatabaseTableMapping.sql
@@ -158,10 +158,6 @@ my @create = qw(
   grantChebiTables.sql
 );
 
-
-# drop GUS first, then ApidbTuning, then Apidb (reverse of order they were created in).
-# for GUS, we only drop the tuning indexes, as the other GUS changes don't
-# need to be reversed.  The trick here is to order these to avoid failures
 my @delete = qw(
   restoreNullConstraintsFromSimilarityTables.sql
   dropGusTuning.sql
@@ -205,224 +201,53 @@ my @apiDbSchemas = qw(
 );
 
 if ($create) {
-  for my $sql (@create) {
-     print STDOUT "\n==============================================================\n";
-     print STDOUT "$sql\n";     
-     print STDOUT "==============================================================\n";
-     
+  for my $sqlFile (@create) {
+     print STDERR "\n==============================================================\n";
+     print STDERR "$sqlFile\n";
+     print STDERR "==============================================================\n";
+
+     my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
+
      my @sqlplusParamValues;
-     if($sql eq 'createEntityGraphTables.sql') {
+     if($sqlFile eq 'createEntityGraphTables.sql') {
        $sqlplusParamValues[0] = "EDA";
        $sqlplusParamValues[1] = "SRES";
-       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
-
-
-
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
        $sqlplusParamValues[0] = "ApidbUserDatasets";
        $sqlplusParamValues[1] = "ApidbUserDatasets";
-       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
      }
 
      else {
-       &runSql($login, $password, $db, $sql, $dbVendor, @sqlplusParamValues);
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
      }
   }
 } elsif ($dropApiDB) {
-  # &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB', 'EDA', 'EDA_UD'");
-    if (lc $dbVendor eq 'oracle') {
-      my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
-      &dropSchemaSetTables($login, $password, $db, $schemaSetStr);
-    } elsif (lc $dbVendor eq 'postgres') {
-      &dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @apiDbSchemas);
-    } else {
-      die "Unsupported dbVendor:$dbVendor.";
-    }
+  if ($dbVendor eq 'Oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
+    dropSchemaSetTables($dbh, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
+  } elsif ($dbVendor eq 'Postgres') {
+    dropSchemaSetPostgres($dbh, @apiDbSchemas);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
+  for my $sqlFile (@delete) {
+    print STDERR "\n==============================================================\n";
+    print STDERR "$sqlFile\n";
+    print STDERR "==============================================================\n";
+
+    my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
+    runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures);
+  }
 } elsif ($dropGUS) {
-  # &dropSchemaSet($login, $password, $db,"'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY','COREVER','DOTSVER','MODELVER','PLATFORMVER','RESULTSVER','SRESVER','STUDYVER'");
-  if (lc $dbVendor eq 'oracle') {
+  if ($dbVendor eq 'Oracle') {
     my $schemaSetStr = join ', ', map "'$_'", @gusSchemas;
-    &dropSchemaSetOracle($login, $password, $db, $schemaSetStr);
-  } elsif (lc $dbVendor eq 'postgres') {
-    &dropSchemaSetPostgres($dbiDsn, $login, $password, $db, @gusSchemas);
+    dropSchemaSetOracle($dbh, $schemaSetStr);  # drop the users.  these will be recreated by the gus install program
+  } elsif ($dbVendor eq 'Postgres') {
+    dropSchemaSetPostgres($dbh, @gusSchemas);
   } else {
     die "Unsupported dbVendor:$dbVendor.";
   }
 }
 
 print STDERR "\nDone.\n";
-
-sub runSql {
-  my ($login, $password, $db, $file, $dbVendor, @params) = @_;
-  
-  if (lc $dbVendor eq 'oracle') { 
-    &runSqlOracle($login, $password, $db, $dbVendor, $file, @params);
-  } elsif (lc $dbVendor eq 'postgres') {
-    &runSqlPostgres($login, $password, $db, $dbVendor, $file, @params);
-  } else { 
-    die "Unsupported dbVendor:$dbVendor."; 
-  }
-}
-
-sub runSqlOracle {
-  my ($login, $password, $db, $dbVendor, $file, @params) = @_;
-
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
-
-  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
-
-  my $tmpFile = "/tmp/$file.$$";  # append the process id
-  unlink($tmpFile);  # in case of a old one
-  my $cmd;
-  if (!$allowFailures) {
-      $cmd = "echo 'whenever sqlerror exit sql.sqlcode;' > $tmpFile";
-      runCmd($cmd, $tmpFile);
-  }
-  $cmd = "echo 'set echo on;' >> $tmpFile";
-  runCmd($cmd, $tmpFile);
-
-  $cmd = "cat $fullFile >> $tmpFile";
-  runCmd($cmd, $tmpFile);
-
-  # my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
-  $cmd = "sqlplus $login\@$db/$password \@$tmpFile " . join(' ', @params);
-  print STDOUT "\n==============================================================\n";
-  print STDOUT "Running $tmpFile\n";
-  print STDOUT "==============================================================\n";
-
-  runCmd($cmd, $tmpFile);
-  unlink($tmpFile);
-}
-
-sub runSqlPostgres {
-  my ($login, $password, $db, $dbVendor, $file, @params) = @_;
-  
-  my $psql_params = "";
-  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
-  my $hostname = $2;
-  my $connectionString = "postgresql://$login:$password\@$hostname/$db";
-  
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$file";
-  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
-
-  my $cmd;
-  if (!$allowFailures) { $psql_params = "-v ON_ERROR_STOP=1"; }
-
-  if (scalar @params > 0) {
-    my @paramsFull;
-    for(my $i = 0; $i < scalar @params; $i++) {
-      my $n = $i +1;
-      my $p = "VAR${n}";
-      push @paramsFull, "-v ${p}=$params[$i]";
-    }
-
-    $psql_params = "$psql_params " . join(" ", @paramsFull);
-  }
-
-  $cmd = "psql --echo-all -f $fullFile $psql_params $connectionString";
-  print STDOUT "\n==============================================================\n";
-  print STDOUT "Running $fullFile\n";
-  print STDOUT "==============================================================\n";
-
-  runCmd($cmd, $fullFile);
-}
-
-sub runCmd {
-    my ($cmd, $tmpFile) = @_;
-    print STDERR "\nrunning command: $cmd\n" if $verbose;
-    system($cmd);
-    my $status = $? >> 8;
-    if ($status) {
-      unlink($tmpFile) if $cmd =~ /^sqlplus/;
-      die "Failed with status '$status running cmd: \n$cmd'\n";
-    }
-}
-
-sub dropSchemaSetTables {
-  my ($login, $password, $db, $schemaSet) = @_;
-
-  my $dsn = "dbi:Oracle:" . $db;
-  my $dbh = DBI->connect(
-                $dsn,
-                $login,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
-
-  print STDERR "\nfixing to drop objectss in schema set \"$schemaSet\"\n" if $verbose;
-
-  # drop everything
-  my $stmt = $dbh->prepare(<<SQL);
-    select 'drop ' || object_type || ' ' || owner || '.' || object_name
-           || decode(object_type, 'TABLE', ' CASCADE CONSTRAINTS', '')
-    from all_objects
-    where owner in ($schemaSet)
-      and object_type not in ('INDEX', 'TRIGGER', 'TYPE BODY')
-SQL
-
-  my $objectsToDrop = 1;
-
-  while ($objectsToDrop) {
-    $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
-
-    if (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-      print STDERR "running statement: $dropStmtSql\n" if $verbose;
-      $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
-    } else {
-      $objectsToDrop = 0;
-    }
-  }
-
-}
-
-sub dropSchemaSetOracle {
-  my ($login, $password, $db, $schemaSet) = @_;
-
-  my $dsn = "dbi:Oracle:" . $db;
-  my $dbh = DBI->connect(
-                $dsn,
-                $login,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
-
-  print STDERR "\nfixing to drop schemas in set \"$schemaSet\"\n" if $verbose;
-
-  my $stmt = $dbh->prepare(<<SQL);
-    select 'drop user ' || username || ' cascade'
-    from all_users
-    where username in ($schemaSet)
-SQL
-
-  $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
-
-  while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-    print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
-    $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
-  }
-}
-
-sub dropSchemaSetPostgres {
-  my ($dbiDsn, $login, $password, $db, @schemaSet) = @_;
-
-  my $dbh = DBI->connect(
-                $dbiDsn,
-                $login,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
-
-  print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n" if $verbose;
-
-  for my $schema (@schemaSet) {
-    my $stmt = $dbh->prepare(<<SQL);
-    DROP SCHEMA $schema CASCADE;
-SQL
-
-    $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
-
-    while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-      print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
-      $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
-    }
-  }
-}

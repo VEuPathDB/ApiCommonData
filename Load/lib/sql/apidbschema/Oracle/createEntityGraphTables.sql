@@ -1,10 +1,8 @@
-set CONCAT OFF;
-
 -- so the foreign key constraints are allowed
-grant references on &2.OntologyTerm to &1;
-grant references on &2.ExternalDatabaseRelease to &1;
+grant references on &2..OntologyTerm to &1;
+grant references on &2..ExternalDatabaseRelease to &1;
 
-CREATE TABLE &1.Study (
+CREATE TABLE &1..Study (
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
@@ -21,19 +19,19 @@ CREATE TABLE &1.Study (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (external_database_release_id) REFERENCES &2.ExternalDatabaseRelease,
+ FOREIGN KEY (external_database_release_id) REFERENCES &2..ExternalDatabaseRelease,
  PRIMARY KEY (study_id),
  CONSTRAINT unique_stable_id UNIQUE (stable_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.Study TO gus_w;
-GRANT SELECT ON &1.Study TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..Study TO gus_w;
+GRANT SELECT ON &1..Study TO gus_r;
 
-CREATE SEQUENCE &1.Study_sq;
-GRANT SELECT ON &1.Study_sq TO gus_w;
-GRANT SELECT ON &1.Study_sq TO gus_r;
+CREATE SEQUENCE &1..Study_sq;
+GRANT SELECT ON &1..Study_sq TO gus_w;
+GRANT SELECT ON &1..Study_sq TO gus_r;
 
-CREATE INDEX &1.study_ix_1 ON &1.study (external_database_release_id, stable_id, internal_abbrev, study_id) TABLESPACE indx;
+CREATE INDEX &1..study_ix_1 ON &1..study (external_database_release_id, stable_id, internal_abbrev, study_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -53,7 +51,7 @@ WHERE 'study' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.EntityType (
+CREATE TABLE &1..EntityType (
  entity_type_id            NUMBER(12) NOT NULL,
  name                      VARCHAR2(200) NOT NULL,
  type_id                   NUMBER(10),
@@ -72,21 +70,21 @@ CREATE TABLE &1.EntityType (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (study_id) REFERENCES &1.study,
- FOREIGN KEY (type_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (study_id) REFERENCES &1..study,
+ FOREIGN KEY (type_id) REFERENCES &2..ontologyterm,
  PRIMARY KEY (entity_type_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.EntityType TO gus_w;
-GRANT SELECT ON &1.EntityType TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..EntityType TO gus_w;
+GRANT SELECT ON &1..EntityType TO gus_r;
 
-CREATE SEQUENCE &1.EntityType_sq;
-GRANT SELECT ON &1.EntityType_sq TO gus_w;
-GRANT SELECT ON &1.EntityType_sq TO gus_r;
+CREATE SEQUENCE &1..EntityType_sq;
+GRANT SELECT ON &1..EntityType_sq TO gus_w;
+GRANT SELECT ON &1..EntityType_sq TO gus_r;
 
-CREATE UNIQUE INDEX &1.entitytype_ix_1 ON &1.entitytype (study_id, entity_type_id) TABLESPACE indx;
-CREATE UNIQUE INDEX &1.entitytype_ix_2 ON &1.entitytype (type_id, entity_type_id) TABLESPACE indx;
-CREATE UNIQUE INDEX &1.entitytype_ix_3 ON &1.entitytype (study_id, internal_abbrev) TABLESPACE indx;
+CREATE UNIQUE INDEX &1..entitytype_ix_1 ON &1..entitytype (study_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1..entitytype_ix_2 ON &1..entitytype (type_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1..entitytype_ix_3 ON &1..entitytype (study_id, internal_abbrev) TABLESPACE indx;
 
 
 INSERT INTO core.TableInfo
@@ -107,7 +105,7 @@ WHERE 'entitytype' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.ProcessType (
+CREATE TABLE &1..ProcessType (
  process_type_id            NUMBER(12) NOT NULL,
  name                         VARCHAR2(200) NOT NULL,
  description                  VARCHAR2(4000),
@@ -123,18 +121,18 @@ CREATE TABLE &1.ProcessType (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
-FOREIGN KEY (type_id) REFERENCES &2.ontologyterm,
+FOREIGN KEY (type_id) REFERENCES &2..ontologyterm,
  PRIMARY KEY (process_type_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.ProcessType TO gus_w;
-GRANT SELECT ON &1.ProcessType TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..ProcessType TO gus_w;
+GRANT SELECT ON &1..ProcessType TO gus_r;
 
-CREATE SEQUENCE &1.ProcessType_sq;
-GRANT SELECT ON &1.ProcessType_sq TO gus_w;
-GRANT SELECT ON &1.ProcessType_sq TO gus_r;
+CREATE SEQUENCE &1..ProcessType_sq;
+GRANT SELECT ON &1..ProcessType_sq TO gus_w;
+GRANT SELECT ON &1..ProcessType_sq TO gus_r;
 
-CREATE INDEX &1.processtype_ix_1 ON &1.processtype (type_id, process_type_id) TABLESPACE indx;
+CREATE INDEX &1..processtype_ix_1 ON &1..processtype (type_id, process_type_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -154,7 +152,7 @@ WHERE 'processtype' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.EntityAttributes (
+CREATE TABLE &1..EntityAttributes (
  entity_attributes_id         NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  entity_type_id               NUMBER(12) NOT NULL,
@@ -171,21 +169,21 @@ CREATE TABLE &1.EntityAttributes (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  PRIMARY KEY (entity_attributes_id),
-FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
+FOREIGN KEY (entity_type_id) REFERENCES &1..EntityType,
 CONSTRAINT ensure_va_json CHECK (atts is json)
 );
 
 -- 
---CREATE SEARCH INDEX &1.va_search_ix ON &1.entityattributes (atts) FOR JSON;
+--CREATE SEARCH INDEX &1..va_search_ix ON &1..entityattributes (atts) FOR JSON;
 
-CREATE INDEX &1.entityattributes_ix_1 ON &1.entityattributes (entity_type_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX &1..entityattributes_ix_1 ON &1..entityattributes (entity_type_id, entity_attributes_id) TABLESPACE indx;
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.EntityAttributes TO gus_w;
-GRANT SELECT ON &1.EntityAttributes TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..EntityAttributes TO gus_w;
+GRANT SELECT ON &1..EntityAttributes TO gus_r;
 
-CREATE SEQUENCE &1.EntityAttributes_sq;
-GRANT SELECT ON &1.EntityAttributes_sq TO gus_w;
-GRANT SELECT ON &1.EntityAttributes_sq TO gus_r;
+CREATE SEQUENCE &1..EntityAttributes_sq;
+GRANT SELECT ON &1..EntityAttributes_sq TO gus_w;
+GRANT SELECT ON &1..EntityAttributes_sq TO gus_r;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -205,7 +203,7 @@ WHERE 'entityattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.EntityClassification (
+CREATE TABLE &1..EntityClassification (
  entity_classification_id         NUMBER(12) NOT NULL,
  entity_attributes_id         NUMBER(12) NOT NULL,
  entity_type_id               NUMBER(12) NOT NULL,
@@ -220,20 +218,20 @@ CREATE TABLE &1.EntityClassification (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
- FOREIGN KEY (entity_attributes_id) REFERENCES &1.EntityAttributes,
+ FOREIGN KEY (entity_type_id) REFERENCES &1..EntityType,
+ FOREIGN KEY (entity_attributes_id) REFERENCES &1..EntityAttributes,
  PRIMARY KEY (entity_classification_id)
 );
 
-CREATE INDEX &1.entityclassification_ix_1 ON &1.entityclassification (entity_type_id, entity_attributes_id) TABLESPACE indx;
-CREATE INDEX &1.entityclassification_ix_2 ON &1.entityclassification (entity_attributes_id, entity_type_id) TABLESPACE indx;
+CREATE INDEX &1..entityclassification_ix_1 ON &1..entityclassification (entity_type_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX &1..entityclassification_ix_2 ON &1..entityclassification (entity_attributes_id, entity_type_id) TABLESPACE indx;
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.EntityClassification TO gus_w;
-GRANT SELECT ON &1.EntityClassification TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..EntityClassification TO gus_w;
+GRANT SELECT ON &1..EntityClassification TO gus_r;
 
-CREATE SEQUENCE &1.EntityClassification_sq;
-GRANT SELECT ON &1.EntityClassification_sq TO gus_w;
-GRANT SELECT ON &1.EntityClassification_sq TO gus_r;
+CREATE SEQUENCE &1..EntityClassification_sq;
+GRANT SELECT ON &1..EntityClassification_sq TO gus_w;
+GRANT SELECT ON &1..EntityClassification_sq TO gus_r;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -253,7 +251,7 @@ WHERE 'entityclassification' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.ProcessAttributes (
+CREATE TABLE &1..ProcessAttributes (
  process_attributes_id           NUMBER(12) NOT NULL,
  process_type_id                NUMBER(12) NOT NULL,
  in_entity_id                 NUMBER(12) NOT NULL,
@@ -270,24 +268,24 @@ CREATE TABLE &1.ProcessAttributes (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (in_entity_id) REFERENCES &1.entityattributes,
- FOREIGN KEY (out_entity_id) REFERENCES &1.entityattributes,
- FOREIGN KEY (process_type_id) REFERENCES &1.processtype,
+ FOREIGN KEY (in_entity_id) REFERENCES &1..entityattributes,
+ FOREIGN KEY (out_entity_id) REFERENCES &1..entityattributes,
+ FOREIGN KEY (process_type_id) REFERENCES &1..processtype,
  PRIMARY KEY (process_attributes_id),
  CONSTRAINT ensure_ea_json CHECK (atts is json)   
 );
 
-CREATE INDEX &1.ea_in_ix ON &1.processattributes (in_entity_id, out_entity_id, process_attributes_id) tablespace indx;
-CREATE INDEX &1.ea_out_ix ON &1.processattributes (out_entity_id, in_entity_id, process_attributes_id) tablespace indx;
+CREATE INDEX &1..ea_in_ix ON &1..processattributes (in_entity_id, out_entity_id, process_attributes_id) tablespace indx;
+CREATE INDEX &1..ea_out_ix ON &1..processattributes (out_entity_id, in_entity_id, process_attributes_id) tablespace indx;
 
-CREATE INDEX &1.ea_ix_1 ON &1.processattributes (process_type_id, process_attributes_id) TABLESPACE indx;
+CREATE INDEX &1..ea_ix_1 ON &1..processattributes (process_type_id, process_attributes_id) TABLESPACE indx;
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.ProcessAttributes TO gus_w;
-GRANT SELECT ON &1.ProcessAttributes TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..ProcessAttributes TO gus_w;
+GRANT SELECT ON &1..ProcessAttributes TO gus_r;
 
-CREATE SEQUENCE &1.ProcessAttributes_sq;
-GRANT SELECT ON &1.ProcessAttributes_sq TO gus_w;
-GRANT SELECT ON &1.ProcessAttributes_sq TO gus_r;
+CREATE SEQUENCE &1..ProcessAttributes_sq;
+GRANT SELECT ON &1..ProcessAttributes_sq TO gus_w;
+GRANT SELECT ON &1..ProcessAttributes_sq TO gus_r;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -307,7 +305,7 @@ WHERE 'processattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.EntityTypeGraph (
+CREATE TABLE &1..EntityTypeGraph (
  entity_type_graph_id           NUMBER(12) NOT NULL,
  study_id                       NUMBER(12) NOT NULL,
  study_stable_id                varchar2(200),
@@ -333,22 +331,22 @@ CREATE TABLE &1.EntityTypeGraph (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (study_id) REFERENCES &1.study,
- FOREIGN KEY (parent_id) REFERENCES &1.entitytype,
- FOREIGN KEY (entity_type_id) REFERENCES &1.entitytype,
+ FOREIGN KEY (study_id) REFERENCES &1..study,
+ FOREIGN KEY (parent_id) REFERENCES &1..entitytype,
+ FOREIGN KEY (entity_type_id) REFERENCES &1..entitytype,
  PRIMARY KEY (entity_type_graph_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.EntityTypeGraph TO gus_w;
-GRANT SELECT ON &1.EntityTypeGraph TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..EntityTypeGraph TO gus_w;
+GRANT SELECT ON &1..EntityTypeGraph TO gus_r;
 
-CREATE SEQUENCE &1.EntityTypeGraph_sq;
-GRANT SELECT ON &1.EntityTypeGraph_sq TO gus_w;
-GRANT SELECT ON &1.EntityTypeGraph_sq TO gus_r;
+CREATE SEQUENCE &1..EntityTypeGraph_sq;
+GRANT SELECT ON &1..EntityTypeGraph_sq TO gus_w;
+GRANT SELECT ON &1..EntityTypeGraph_sq TO gus_r;
 
-CREATE INDEX &1.entitytypegraph_ix_1 ON &1.entitytypegraph (study_id, entity_type_id, parent_id, entity_type_graph_id) TABLESPACE indx;
-CREATE INDEX &1.entitytypegraph_ix_2 ON &1.entitytypegraph (parent_id, entity_type_graph_id) TABLESPACE indx;
-CREATE INDEX &1.entitytypegraph_ix_3 ON &1.entitytypegraph (entity_type_id, entity_type_graph_id) TABLESPACE indx;
+CREATE INDEX &1..entitytypegraph_ix_1 ON &1..entitytypegraph (study_id, entity_type_id, parent_id, entity_type_graph_id) TABLESPACE indx;
+CREATE INDEX &1..entitytypegraph_ix_2 ON &1..entitytypegraph (parent_id, entity_type_graph_id) TABLESPACE indx;
+CREATE INDEX &1..entitytypegraph_ix_3 ON &1..entitytypegraph (entity_type_id, entity_type_graph_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -369,7 +367,7 @@ WHERE 'entitytypegraph' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.AttributeUnit (
+CREATE TABLE &1..AttributeUnit (
  attribute_unit_id                NUMBER(12) NOT NULL,
  entity_type_id                      NUMBER(12) NOT NULL,
  attr_ontology_term_id               NUMBER(10) NOT NULL,
@@ -385,22 +383,22 @@ CREATE TABLE &1.AttributeUnit (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
-FOREIGN KEY (attr_ontology_term_id) REFERENCES &2.ontologyterm,
-FOREIGN KEY (unit_ontology_term_id) REFERENCES &2.ontologyterm,
+ FOREIGN KEY (entity_type_id) REFERENCES &1..EntityType,
+FOREIGN KEY (attr_ontology_term_id) REFERENCES &2..ontologyterm,
+FOREIGN KEY (unit_ontology_term_id) REFERENCES &2..ontologyterm,
  PRIMARY KEY (attribute_unit_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeUnit TO gus_w;
-GRANT SELECT ON &1.AttributeUnit TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..AttributeUnit TO gus_w;
+GRANT SELECT ON &1..AttributeUnit TO gus_r;
 
-CREATE SEQUENCE &1.AttributeUnit_sq;
-GRANT SELECT ON &1.AttributeUnit_sq TO gus_w;
-GRANT SELECT ON &1.AttributeUnit_sq TO gus_r;
+CREATE SEQUENCE &1..AttributeUnit_sq;
+GRANT SELECT ON &1..AttributeUnit_sq TO gus_w;
+GRANT SELECT ON &1..AttributeUnit_sq TO gus_r;
 
-CREATE INDEX &1.attributeunit_ix_1 ON &1.attributeunit (entity_type_id, attr_ontology_term_id, unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
-CREATE INDEX &1.attributeunit_ix_2 ON &1.attributeunit (attr_ontology_term_id, attribute_unit_id) TABLESPACE indx;
-CREATE INDEX &1.attributeunit_ix_3 ON &1.attributeunit (unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
+CREATE INDEX &1..attributeunit_ix_1 ON &1..attributeunit (entity_type_id, attr_ontology_term_id, unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
+CREATE INDEX &1..attributeunit_ix_2 ON &1..attributeunit (attr_ontology_term_id, attribute_unit_id) TABLESPACE indx;
+CREATE INDEX &1..attributeunit_ix_3 ON &1..attributeunit (unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -421,7 +419,7 @@ WHERE 'attributeunit' NOT IN (SELECT lower(name) FROM core.TableInfo
 -----------------------------------------------------------
 
 
-CREATE TABLE &1.ProcessTypeComponent (
+CREATE TABLE &1..ProcessTypeComponent (
  process_type_component_id       NUMBER(12) NOT NULL,
  process_type_id                 NUMBER(12) NOT NULL,
  component_id                 NUMBER(12) NOT NULL,
@@ -437,20 +435,20 @@ CREATE TABLE &1.ProcessTypeComponent (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (process_type_id) REFERENCES &1.ProcessType,
- FOREIGN KEY (component_id) REFERENCES &1.ProcessType,
+ FOREIGN KEY (process_type_id) REFERENCES &1..ProcessType,
+ FOREIGN KEY (component_id) REFERENCES &1..ProcessType,
  PRIMARY KEY (process_type_component_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.ProcessTypeComponent TO gus_w;
-GRANT SELECT ON &1.ProcessTypeComponent TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..ProcessTypeComponent TO gus_w;
+GRANT SELECT ON &1..ProcessTypeComponent TO gus_r;
 
-CREATE SEQUENCE &1.ProcessTypeComponent_sq;
-GRANT SELECT ON &1.ProcessTypeComponent_sq TO gus_w;
-GRANT SELECT ON &1.ProcessTypeComponent_sq TO gus_r;
+CREATE SEQUENCE &1..ProcessTypeComponent_sq;
+GRANT SELECT ON &1..ProcessTypeComponent_sq TO gus_w;
+GRANT SELECT ON &1..ProcessTypeComponent_sq TO gus_r;
 
-CREATE INDEX &1.ptc_ix_1 ON &1.processtypecomponent (process_type_id, component_id, order_num, process_type_component_id) TABLESPACE indx;
-CREATE INDEX &1.ptc_ix_2 ON &1.processtypecomponent (component_id, process_type_component_id) TABLESPACE indx;
+CREATE INDEX &1..ptc_ix_1 ON &1..processtypecomponent (process_type_id, component_id, order_num, process_type_component_id) TABLESPACE indx;
+CREATE INDEX &1..ptc_ix_2 ON &1..processtypecomponent (component_id, process_type_component_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -472,7 +470,7 @@ WHERE 'processtypecomponent' NOT IN (SELECT lower(name) FROM core.TableInfo
 -----------------------------------------------------------
 
 
-CREATE TABLE &1.Attribute (
+CREATE TABLE &1..Attribute (
   attribute_id                  NUMBER(12) NOT NULL,
   entity_type_id                NUMBER(12) not null,
   entity_type_stable_id         varchar2(255),
@@ -508,22 +506,22 @@ CREATE TABLE &1.Attribute (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
-  FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
-  FOREIGN KEY (process_type_id) REFERENCES &1.ProcessType,
- FOREIGN KEY (ontology_term_id) REFERENCES &2.ontologyterm,
- FOREIGN KEY (unit_ontology_term_id) REFERENCES &2.ontologyterm,
+  FOREIGN KEY (entity_type_id) REFERENCES &1..EntityType,
+  FOREIGN KEY (process_type_id) REFERENCES &1..ProcessType,
+ FOREIGN KEY (ontology_term_id) REFERENCES &2..ontologyterm,
+ FOREIGN KEY (unit_ontology_term_id) REFERENCES &2..ontologyterm,
   PRIMARY KEY (attribute_id),
   CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.Attribute TO gus_w;
-GRANT SELECT ON &1.Attribute TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..Attribute TO gus_w;
+GRANT SELECT ON &1..Attribute TO gus_r;
 
-CREATE SEQUENCE &1.Attribute_sq;
-GRANT SELECT ON &1.Attribute_sq TO gus_w;
-GRANT SELECT ON &1.Attribute_sq TO gus_r;
+CREATE SEQUENCE &1..Attribute_sq;
+GRANT SELECT ON &1..Attribute_sq TO gus_w;
+GRANT SELECT ON &1..Attribute_sq TO gus_r;
 
-CREATE INDEX &1.attribute_ix_1 ON &1.attribute (entity_type_id, process_type_id, stable_id, attribute_id) TABLESPACE indx;
+CREATE INDEX &1..attribute_ix_1 ON &1..attribute (entity_type_id, process_type_id, stable_id, attribute_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -545,7 +543,7 @@ WHERE 'attribute' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.AttributeGraph (
+CREATE TABLE &1..AttributeGraph (
   attribute_graph_id                  NUMBER(12) NOT NULL,
   study_id            NUMBER(12) NOT NULL, 
   ontology_term_id         NUMBER(10),
@@ -582,22 +580,22 @@ CREATE TABLE &1.AttributeGraph (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (ontology_term_id) REFERENCES &2.ontologyterm,
- FOREIGN KEY (parent_ontology_term_id) REFERENCES &2.ontologyterm,
-  FOREIGN KEY (study_id) REFERENCES &1.study,
+ FOREIGN KEY (ontology_term_id) REFERENCES &2..ontologyterm,
+ FOREIGN KEY (parent_ontology_term_id) REFERENCES &2..ontologyterm,
+  FOREIGN KEY (study_id) REFERENCES &1..study,
   PRIMARY KEY (attribute_graph_id),
   CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json),
   CONSTRAINT ensure_prolbl_json CHECK (provider_label is json)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeGraph TO gus_w;
-GRANT SELECT ON &1.AttributeGraph TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..AttributeGraph TO gus_w;
+GRANT SELECT ON &1..AttributeGraph TO gus_r;
 
-CREATE SEQUENCE &1.AttributeGraph_sq;
-GRANT SELECT ON &1.AttributeGraph_sq TO gus_w;
-GRANT SELECT ON &1.AttributeGraph_sq TO gus_r;
+CREATE SEQUENCE &1..AttributeGraph_sq;
+GRANT SELECT ON &1..AttributeGraph_sq TO gus_w;
+GRANT SELECT ON &1..AttributeGraph_sq TO gus_r;
 
-CREATE INDEX &1.attributegraph_ix_1 ON &1.attributegraph (study_id, ontology_term_id, parent_ontology_term_id, attribute_graph_id) TABLESPACE indx;
+CREATE INDEX &1..attributegraph_ix_1 ON &1..attributegraph (study_id, ontology_term_id, parent_ontology_term_id, attribute_graph_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -616,7 +614,7 @@ WHERE 'attributegraph' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 
-CREATE TABLE &1.StudyCharacteristic (
+CREATE TABLE &1..StudyCharacteristic (
   study_characteristic_id      NUMBER(5) NOT NULL,
   study_id                     NUMBER(12) NOT NULL, 
   attribute_id                 NUMBER(12) NOT NULL,
@@ -633,20 +631,20 @@ CREATE TABLE &1.StudyCharacteristic (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (value_ontology_term_id) REFERENCES &2.ontologyterm,
- FOREIGN KEY (attribute_id) REFERENCES &2.ontologyterm,
-  FOREIGN KEY (study_id) REFERENCES &1.study,
+ FOREIGN KEY (value_ontology_term_id) REFERENCES &2..ontologyterm,
+ FOREIGN KEY (attribute_id) REFERENCES &2..ontologyterm,
+  FOREIGN KEY (study_id) REFERENCES &1..study,
   PRIMARY KEY (study_characteristic_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.StudyCharacteristic TO gus_w;
-GRANT SELECT ON &1.StudyCharacteristic TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON &1..StudyCharacteristic TO gus_w;
+GRANT SELECT ON &1..StudyCharacteristic TO gus_r;
 
-CREATE SEQUENCE &1.StudyCharacteristic_sq;
-GRANT SELECT ON &1.StudyCharacteristic_sq TO gus_w;
-GRANT SELECT ON &1.StudyCharacteristic_sq TO gus_r;
+CREATE SEQUENCE &1..StudyCharacteristic_sq;
+GRANT SELECT ON &1..StudyCharacteristic_sq TO gus_w;
+GRANT SELECT ON &1..StudyCharacteristic_sq TO gus_r;
 
-CREATE INDEX &1.StudyCharacteristic_ix_1 ON &1.StudyCharacteristic (study_id, attribute_id, value) TABLESPACE indx;
+CREATE INDEX &1..StudyCharacteristic_ix_1 ON &1..StudyCharacteristic (study_id, attribute_id, value) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -666,7 +664,7 @@ WHERE 'study_characteristic_id' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 
 -- for mega study, we need to prefix the stable id with the study stable id (bfv=big fat view)
-create or replace view &1.entityattributes_bfv as
+create or replace view &1..entityattributes_bfv as
 select ea.entity_attributes_id
      ,  case when ec.entity_type_id = ea.entity_type_id
             then ea.stable_id
@@ -680,22 +678,22 @@ select ea.entity_attributes_id
      , s.stable_id as study_stable_id
      , s.INTERNAL_ABBREV as study_internal_abbrev
      , s.study_id as study_id
-from &1.entityclassification ec
-   , &1.entityattributes ea
-   , &1.entitytype et
-   , &1.study s
-   , &1.entitytype et2
-   , &1.study s2
+from &1..entityclassification ec
+   , &1..entityattributes ea
+   , &1..entitytype et
+   , &1..study s
+   , &1..entitytype et2
+   , &1..study s2
  where ec.entity_attributes_id = ea.entity_attributes_id
 and ec.entity_type_id = et.entity_type_id
 and et.study_id = s.study_id
 and ea.ENTITY_TYPE_ID = et2.entity_type_id
 and et2.study_id = s2.study_id;
 
-GRANT select ON &1.entityattributes_bfv TO gus_r;
-GRANT select ON &1.entityattributes_bfv TO gus_w;
+GRANT select ON &1..entityattributes_bfv TO gus_r;
+GRANT select ON &1..entityattributes_bfv TO gus_w;
 
-CREATE TABLE &1.AnnotationProperties (
+CREATE TABLE &1..AnnotationProperties (
   annotation_properties_id   NUMBER(10) NOT NULL,
   ontology_term_id       NUMBER(10) NOT NULL,
   study_id            NUMBER(12) NOT NULL,
@@ -712,18 +710,18 @@ MODIFICATION_DATE     DATE,
   ROW_GROUP_ID          NUMBER(3),
   ROW_PROJECT_ID        NUMBER(4),
   ROW_ALG_INVOCATION_ID NUMBER(12),
-  FOREIGN KEY (ontology_term_id) REFERENCES &2.OntologyTerm (ontology_term_id),
-  FOREIGN KEY (study_id) REFERENCES &1.study (study_id),
- FOREIGN KEY (external_database_release_id) REFERENCES &2.ExternalDatabaseRelease,
+  FOREIGN KEY (ontology_term_id) REFERENCES &2..OntologyTerm (ontology_term_id),
+  FOREIGN KEY (study_id) REFERENCES &1..study (study_id),
+ FOREIGN KEY (external_database_release_id) REFERENCES &2..ExternalDatabaseRelease,
 PRIMARY KEY (annotation_properties_id),
   CONSTRAINT ensure_anp_json CHECK (props is json)
 );
 
-CREATE SEQUENCE &1.AnnotationProperties_sq;
+CREATE SEQUENCE &1..AnnotationProperties_sq;
 
-GRANT insert, select, update, delete ON &1.AnnotationProperties TO gus_w;
-GRANT select ON &1.AnnotationProperties TO gus_r;
-GRANT select ON &1.AnnotationProperties_sq TO gus_w;
+GRANT insert, select, update, delete ON &1..AnnotationProperties TO gus_w;
+GRANT select ON &1..AnnotationProperties TO gus_r;
+GRANT select ON &1..AnnotationProperties_sq TO gus_w;
 
 
 INSERT INTO core.TableInfo
