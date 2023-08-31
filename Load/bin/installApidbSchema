@@ -237,7 +237,7 @@ if ($create) {
     print STDERR "==============================================================\n";
 
     my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
-    runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+    runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures);
   }
 } elsif ($dropGUS) {
   if ($dbVendor eq 'Oracle') {
