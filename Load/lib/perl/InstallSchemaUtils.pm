@@ -47,6 +47,12 @@ sub runSqlOracle {
   $cmd = "echo 'set echo on;' >> $tmpFile";
   runCmd($cmd, $tmpFile);
 
+  # Turn off the default parameter concat character, which is a period. (Otherwise we'd have to use '&1.' as the parameter macro.)
+  # Because we assume, for now, that our parameters are always schema names, their placement is always followed by white space or a period,
+  # which is not a valid parameter character, effectively terminating the parameter macro, so we don't need a concat character.
+ # $cmd = "echo 'set concat off;' >> $tmpFile";
+ # runCmd($cmd, $tmpFile);
+
   $cmd = "cat $fullFile >> $tmpFile";
   runCmd($cmd, $tmpFile);
 
