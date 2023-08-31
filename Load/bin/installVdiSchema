@@ -1,0 +1,105 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use ApiCommonData::Load::InstallSchemaUtils;
+use DBI;
+
+$| = 1;
+
+my ($gusConfigFile, $dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allowFailures);
+
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "dbName=s" => \$dbName,
+	    "dbHost=s" => \$dbHost,
+	    "allowFailures!" => \$allowFailures,
+	    "create!" => \$create,
+	    "drop!" => \$drop,
+	    "lifecycle=s" => \$lifecycle,
+	    "campus=s" => \$campus);
+
+my @lifecycle = ('dev', 'qa', 'feat', 'beta', 'prod');
+my $lcStr = join(", ", @lifecycle);
+if (($create + $drop != 1) || !( grep( /^$lifecycle$/, @lifecycle )) || ($campus ne 'n' && $campus ne 's')) {
+  die "
+
+Install the VDI control and dataset schemas, tables, etc, into the database specified in the gusConfigFile argument; or uninstall them.
+
+In the case of Oracle, the schema/user is managed by DBA, so only the tables are managed here.
+For Postgres, the schema and tables are both managed here.
+
+Usage: installVdiSchema --dbName name --dbHost host [--create | --drop] --lifecycleAbbrev --campusAbbrev [--gusConfigFile gus_config_file] [--allowFailures]
+
+Where:
+  - dbName: database to connect to, eg, toxo-inc
+  - dbHost: database server, eg, ares10.penn.apidb.org
+  - gusConfigFile: a standard gus.config file (defaults to \$GUS_HOME/gus.config).  Used for db login, password and vendor.
+  - create: creates the VDI schemas
+  - drop: drops the VDI schemas
+  - allowFailures: ignores SQL failures.
+  - lifecycle is one of: $lcStr
+  - campus is n or s
+
+Caution: only use --allowFailures if you know what you are doing
+
+Log is printed to STDERR
+";
+}
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $dbVendor = $gusconfig->getDatabaseVendor();
+die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
+
+my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
+
+my $schemaSuffix = uc("${lifecycle}_${campus}");
+if ($drop) {
+    print "\nYou are about to UNINSTALL the VDI_DATASETS_$schemaSuffix and VDI_CONTROL_$schemaSuffix schemas on database:\n  $dbName\nType the name of the database to confirm: ";
+    my $confirm = <STDIN>;
+    chomp $confirm;
+    die "You did not correctly confirm the db instance\n" unless $dbName eq $confirm;
+}
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $dbVendor = $gusconfig->getDatabaseVendor();
+my $dbiDsn = $gusconfig->getDbiDsn();
+$dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
+my $dbHostname = $2;   # needed to connect to postgres
+die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
+
+my @create = qw(
+  createVdiControlTables.sql
+  createUserDatasetTypeTables.sql
+  createEntityGraphTables.sql
+);
+
+if ($create) {
+  for my $sqlFile (@create) {
+     print STDERR "\n==============================================================\n";
+     print STDERR "running $sqlFile for $schemaSuffix\n";
+     print STDERR "==============================================================\n";
+     my @sqlplusParamValues = ($schemaSuffix);
+     my $filePath = "$ENV{GUS_HOME}/lib/sql/vdischema/$dbVendor/$sqlFile";
+     runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+  }
+} else {
+  my @schemas = ("VDI_DATASETS_$schemaSuffix", "VDI_CONTROL_$schemaSuffix");
+  if ($dbVendor eq 'Oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @schemas;
+    my $count = dropSchemaSetTables($dbh, $schemaSetStr);
+    print STDERR "Dropped $count objects\n";
+  } else {
+    my $count = dropSchemaSetPostgres($dbh, @schemas);
+    print STDERR "Dropped $count schemas\n";
+  }
+}
+
+print STDERR "\nDone.\n";
