@@ -96,7 +96,7 @@ sub runSqlPostgres {
 
 sub runCmd {
     my ($cmd, $tmpFile) = @_;
-    print STDERR "\nrunning command: $cmd\n" if $verbose;
+    #print STDERR "\nrunning command: $cmd\n";
     system($cmd);
     my $status = $? >> 8;
     if ($status) {
@@ -108,7 +108,7 @@ sub runCmd {
 sub dropSchemaSetTables {
   my ($dbh, $schemaSet) = @_;
 
-  print STDERR "\nfixing to drop objectss in schema set \"$schemaSet\"\n" if $verbose;
+  print STDERR "\nfixing to drop objectss in schema set \"$schemaSet\"\n";
 
   # drop everything
   my $stmt = $dbh->prepare(<<SQL);
@@ -125,7 +125,7 @@ SQL
     $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
     if (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-      print STDERR "running statement: $dropStmtSql\n" if $verbose;
+      print STDERR "running statement: $dropStmtSql\n";
       $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
     } else {
       $objectsToDrop = 0;
@@ -137,7 +137,7 @@ SQL
 sub dropSchemaSetOracle {
   my ($dbh, $schemaSet) = @_;
 
-  print STDERR "\nfixing to drop schemas in set \"$schemaSet\"\n" if $verbose;
+  print STDERR "\nfixing to drop schemas in set \"$schemaSet\"\n";
 
   my $stmt = $dbh->prepare(<<SQL);
     select 'drop user ' || username || ' cascade'
@@ -148,7 +148,7 @@ SQL
   $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
   while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-    print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
+    print STDERR "\nrunning statement: $dropStmtSql\n";
     $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
   }
 }
@@ -156,7 +156,7 @@ SQL
 sub dropSchemaSetPostgres {
   my ($dbh, @schemaSet) = @_;
 
-  print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n" if $verbose;
+  print STDERR "\nfixing to drop schemas in set \"@schemaSet\"\n";
 
   for my $schema (@schemaSet) {
     my $stmt = $dbh->prepare(<<SQL);
@@ -166,7 +166,7 @@ SQL
     $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
     while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-      print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
+      print STDERR "\nrunning statement: $dropStmtSql\n";
       $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
     }
   }

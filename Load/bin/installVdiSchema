@@ -9,7 +9,7 @@ use DBI;
 
 $| = 1;
 
-my ($gusConfigFile, $dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allowFailures, $verbose);
+my ($gusConfigFile, $dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allowFailures);
 
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "dbName=s" => \$dbName,
@@ -18,8 +18,7 @@ my ($gusConfigFile, $dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allo
 	    "create!" => \$create,
 	    "drop!" => \$drop,
 	    "lifecycle=s" => \$lifecycle,
-	    "campus=s" => \$campus,
-	    "verbose!" => \$verbose);
+	    "campus=s" => \$campus);
 
 my @lifecycle = ('dev', 'qa', 'feat', 'beta', 'prod');
 my $lcStr = join(", ", @lifecycle);
@@ -31,7 +30,7 @@ Install the VDI control and dataset schemas, tables, etc, into the database spec
 In the case of Oracle, the schema/user is managed by DBA, so only the tables are managed here.
 For Postgres, the schema and tables are both managed here.
 
-Usage: installVdiSchema --dbName name --dbHost host [--create | --drop] --lifecycleAbbrev --campusAbbrev [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+Usage: installVdiSchema --dbName name --dbHost host [--create | --drop] --lifecycleAbbrev --campusAbbrev [--gusConfigFile gus_config_file] [--allowFailures]
 
 Where:
   - dbName: database to connect to, eg, toxo-inc
@@ -45,10 +44,7 @@ Where:
 
 Caution: only use --allowFailures if you know what you are doing
 
-Log is printed to STDOUT
-
-Verbose prints commands run to STDERR
-
+Log is printed to STDERR
 ";
 }
 
@@ -87,9 +83,9 @@ my @create = qw(
 
 if ($create) {
   for my $sqlFile (@create) {
-     print STDOUT "\n==============================================================\n";
-     print STDOUT "running $sqlFile for $schemaSuffix\n";
-     print STDOUT "==============================================================\n";
+     print STDERR "\n==============================================================\n";
+     print STDERR "running $sqlFile for $schemaSuffix\n";
+     print STDERR "==============================================================\n";
      my @sqlplusParamValues = ($schemaSuffix);
      my $filePath = "$ENV{GUS_HOME}/lib/sql/vdischema/$dbVendor/$sqlFile";
      runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
