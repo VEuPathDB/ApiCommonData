@@ -120,18 +120,19 @@ sub dropSchemaSetTables {
 SQL
 
   my $objectsToDrop = 1;
-
+  my $count = 0;
   while ($objectsToDrop) {
     $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
     if (my ($dropStmtSql) = $stmt->fetchrow_array()) {
       print STDERR "running statement: $dropStmtSql\n";
       $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+      $count += 1;
     } else {
       $objectsToDrop = 0;
     }
   }
-
+  return $count;
 }
 
 sub dropSchemaSetOracle {
@@ -146,11 +147,13 @@ sub dropSchemaSetOracle {
 SQL
 
   $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
-
+  my $count = 0;
   while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
     print STDERR "\nrunning statement: $dropStmtSql\n";
     $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+    $count++;
   }
+  return $count;
 }
 
 sub dropSchemaSetPostgres {
@@ -165,10 +168,13 @@ SQL
 
     $stmt->execute() or print STDERR "\n" . $dbh->errstr . "\n";
 
+    my $count = 0;
     while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
       print STDERR "\nrunning statement: $dropStmtSql\n";
       $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+      $count++;
     }
+    return $count;
   }
 }
 

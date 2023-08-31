@@ -57,7 +57,7 @@ die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless 
 
 my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
 
-my $schemaSuffix = "${lifecycle}_${campus}";
+my $schemaSuffix = uc("${lifecycle}_${campus}");
 if ($drop) {
     print "\nYou are about to UNINSTALL the VDI_DATASETS_$schemaSuffix and VDI_CONTROL_$schemaSuffix schemas on database:\n  $dbName\nType the name of the database to confirm: ";
     my $confirm = <STDIN>;
@@ -94,9 +94,11 @@ if ($create) {
   my @schemas = ("VDI_DATASETS_$schemaSuffix", "VDI_CONTROL_$schemaSuffix");
   if ($dbVendor eq 'Oracle') {
     my $schemaSetStr = join ', ', map "'$_'", @schemas;
-    dropSchemaSetTables($dbh, $schemaSetStr);
+    my $count = dropSchemaSetTables($dbh, $schemaSetStr);
+    print STDERR "Dropped $count objects\n";
   } else {
-    dropSchemaSetPostgres($dbh, @schemas);
+    my $count = dropSchemaSetPostgres($dbh, @schemas);
+    print STDERR "Dropped $count schemas\n";
   }
 }
 
