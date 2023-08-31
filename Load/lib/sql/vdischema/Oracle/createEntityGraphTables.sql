@@ -1,5 +1,3 @@
-set CONCAT OFF;
-
 CREATE TABLE VDI_DATASETS_&1..Study (
  USER_DATASET_ID     CHAR(32),     
  study_id            NUMBER(12) NOT NULL,
