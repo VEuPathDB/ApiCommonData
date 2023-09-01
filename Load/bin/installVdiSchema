@@ -1,18 +1,20 @@
 #!/usr/bin/perl
 
 use strict;
-use lib "$ENV{GUS_HOME}/lib/perl";
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
 use Getopt::Long;
-use GUS::Supported::GusConfig;
-use ApiCommonData::Load::InstallSchemaUtils;
+use InstallSchemaUtils qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh ); # do not use $GUS_HOME
 use DBI;
+use Cwd;
 
 $| = 1;
 
-my ($gusConfigFile, $dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allowFailures);
+my @envVars = ('DB_PLATFORM', 'DB_USER', 'DB_PASS');
+my $envStr = '$' . join(", \$", @envVars);
+my ($dbName, $dbHost, $drop, $create, $lifecycle, $campus, $allowFailures);
 
-&GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	    "dbName=s" => \$dbName,
+&GetOptions("dbName=s" => \$dbName,
 	    "dbHost=s" => \$dbHost,
 	    "allowFailures!" => \$allowFailures,
 	    "create!" => \$create,
@@ -25,17 +27,16 @@ my $lcStr = join(", ", @lifecycle);
 if (($create + $drop != 1) || !( grep( /^$lifecycle$/, @lifecycle )) || ($campus ne 'n' && $campus ne 's')) {
   die "
 
-Install the VDI control and dataset schemas, tables, etc, into the database specified in the gusConfigFile argument; or uninstall them.
+Install the VDI control and dataset schemas, tables, etc, or uninstall them
 
 In the case of Oracle, the schema/user is managed by DBA, so only the tables are managed here.
 For Postgres, the schema and tables are both managed here.
 
-Usage: installVdiSchema --dbName name --dbHost host [--create | --drop] --lifecycleAbbrev --campusAbbrev [--gusConfigFile gus_config_file] [--allowFailures]
+Usage: installVdiSchema --dbName name --dbHost host [--create | --drop] --lifecycle --campus [--allowFailures]
 
 Where:
   - dbName: database to connect to, eg, toxo-inc
   - dbHost: database server, eg, ares10.penn.apidb.org
-  - gusConfigFile: a standard gus.config file (defaults to \$GUS_HOME/gus.config).  Used for db login, password and vendor.
   - create: creates the VDI schemas
   - drop: drops the VDI schemas
   - allowFailures: ignores SQL failures.
@@ -44,18 +45,25 @@ Where:
 
 Caution: only use --allowFailures if you know what you are doing
 
+Required environment variables: $envStr
+
 Log is printed to STDERR
+
+Include the following in your bash environment or on the command line preceding the command below:
+export DB_PLATFORM=Oracle; export DB_USER=MY-LOGIN; export DB_PASS=MY-PASSWORD;
+
+Example: ./installVdiSchema --dbName rm8711 --dbHost ares10.penn.apidb.org --create --lifecycle dev --campus n
 ";
 }
 
-my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+for my $envVar (@envVars) { die "Missing env variable '$envVar'\n" unless $ENV{$envVar}; }
 
-my $login = $gusconfig->getDatabaseLogin();
-my $password = $gusconfig->getDatabasePassword();
-my $dbVendor = $gusconfig->getDatabaseVendor();
-die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
+my $login = $ENV{DB_USER};
+my $password = $ENV{DB_PASS};
+my $dbVendor = $ENV{DB_PLATFORM};
+die "DB Platform must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
 
-my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
+my $dbh = getDbh($dbName, $dbHost, $dbVendor, $login, $password);
 
 my $schemaSuffix = uc("${lifecycle}_${campus}");
 if ($drop) {
@@ -64,16 +72,6 @@ if ($drop) {
     chomp $confirm;
     die "You did not correctly confirm the db instance\n" unless $dbName eq $confirm;
 }
-
-my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
-
-my $login = $gusconfig->getDatabaseLogin();
-my $password = $gusconfig->getDatabasePassword();
-my $dbVendor = $gusconfig->getDatabaseVendor();
-my $dbiDsn = $gusconfig->getDbiDsn();
-$dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
-my $dbHostname = $2;   # needed to connect to postgres
-die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
 
 my @create = qw(
   createVdiControlTables.sql
@@ -87,7 +85,7 @@ if ($create) {
      print STDERR "running $sqlFile for $schemaSuffix\n";
      print STDERR "==============================================================\n";
      my @sqlplusParamValues = ($schemaSuffix);
-     my $filePath = "$ENV{GUS_HOME}/lib/sql/vdischema/$dbVendor/$sqlFile";
+     my $filePath = cwd() . "/../lib/sql/vdischema/$dbVendor/$sqlFile";
      runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
   }
 } else {

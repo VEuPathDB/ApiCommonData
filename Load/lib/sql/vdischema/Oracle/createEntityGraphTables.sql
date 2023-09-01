@@ -335,7 +335,7 @@ select ea.entity_attributes_id
         end as stable_id
      , ea.entity_type_id as orig_entity_type_id
      , ea.atts
-     , ea.row_project_id
+--     , ea.row_project_id
      , et.type_id as entity_type_ontology_term_id
      , ec.entity_type_id
      , s.stable_id as study_stable_id

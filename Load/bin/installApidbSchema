@@ -1,18 +1,20 @@
 #!/usr/bin/perl
 
 use strict;
-use lib "$ENV{GUS_HOME}/lib/perl";
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
 use Getopt::Long;
-use GUS::Supported::GusConfig;
-use ApiCommonData::Load::InstallSchemaUtils qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh );
+use InstallSchemaUtils qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh );
 use DBI;
+use Cwd;
 
 $| = 1;
 
-my ($gusConfigFile, $dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailures);
+my @envVars = ('DB_PLATFORM', 'DB_USER', 'DB_PASS');
+my $envStr = '$' . join(", \$", @envVars);
+my ($dbName, $dbHost, $dropApiDB, $dropGUS, $create, $allowFailures);
 
-&GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	    "dbName=s" => \$dbName,
+&GetOptions("dbName=s" => \$dbName,
 	    "dbHost=s" => \$dbHost,
 	    "dropApiDB!" => \$dropApiDB,
 	    "dropGUS!" => \$dropGUS,
@@ -24,12 +26,11 @@ if (!$dbName || !$dbHost || ($x != 1)) {
   die "
 Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS, or uninstall them (or uninstall the GUS schemas)
 
-Usage: installApidbSchema --dbName name --dbHost host [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures]
+Usage: installApidbSchema --dbName name --dbHost host [--create | --dropApiDB | --dropGUS] [--allowFailures]
 
 Where:
   - dbName: database to connect to, eg, toxo-inc
   - dbHost: database server, eg, ares10.penn.apidb.org
-  - gusConfigFile: a standard gus.config file (defaults to \$GUS_HOME/gus.config).  Used for db login, password and vendor.
   - create: creates the ApiDB and ApiDBTuning schemas and patches GUS.
   - dropApiDB: drops the ApiDB and ApiDBTuning schemas, and ApiDB patches to GUS.
   - dropGUS: drops the Core, DoTS, PROT, RAD, SRes, STUDY, TESS (and all VER) schemas
@@ -38,17 +39,20 @@ Where:
 Caution: only use --allowFailures if you know what you are doing
 
 Log is printed to STDERR
+
+Include the following in your bash environment or on the command line preceding the command below:
+export DB_PLATFORM=Oracle; export DB_USER=MY-LOGIN; export DB_PASS=MY-PASSWORD;
+
+Example: ./installApidbSchema --dbName rm8711 --dbHost ares10.penn.apidb.org --create
 ";
 }
 
-my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+my $login = $ENV{DB_USER};
+my $password = $ENV{DB_PASS};
+my $dbVendor = $ENV{DB_PLATFORM};
+die "DB Platform must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
 
-my $login = $gusconfig->getDatabaseLogin();
-my $password = $gusconfig->getDatabasePassword();
-my $dbVendor = $gusconfig->getDatabaseVendor();
-die "dbVendor in $gusConfigFile must be either 'Oracle' or 'Postgres'\n" unless ($dbVendor eq 'Oracle' || $dbVendor eq 'Postgres');
-
-my $dbh = getDbh($gusconfig, $dbName, $dbHost, $dbVendor);
+my $dbh = getDbh($dbName, $dbHost, $dbVendor, $login, $password);
 
 my $d = 'GUS schema';
 $d = 'ApiDB and ApiDBTuning schemas' if $dropApiDB;
@@ -192,13 +196,15 @@ my @apiDbSchemas = qw(
   TESTTUNING
 );
 
+my $filesDir = cwd() . "/../lib/sql/apidbschema/$dbVendor/";
+
 if ($create) {
   for my $sqlFile (@create) {
      print STDERR "\n==============================================================\n";
      print STDERR "$sqlFile\n";
      print STDERR "==============================================================\n";
 
-     my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
+     my $filePath = "$filesDir/$sqlFile";
 
      my @sqlplusParamValues;
      if($sqlFile eq 'createEntityGraphTables.sql') {
@@ -228,7 +234,67 @@ if ($create) {
     print STDERR "$sqlFile\n";
     print STDERR "==============================================================\n";
 
-    my $filePath = "$ENV{GUS_HOME}/lib/sql/apidbschema/$dbVendor/$sqlFile";
+     my $filePath = "$filesDir/$sqlFile";
+
+     my @sqlplusParamValues;
+     if($sqlFile eq 'createEntityGraphTables.sql') {
+       $sqlplusParamValues[0] = "EDA";
+       $sqlplusParamValues[1] = "SRES";
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+       $sqlplusParamValues[0] = "ApidbUserDatasets";
+       $sqlplusParamValues[1] = "ApidbUserDatasets";
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+     }
+
+     else {
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+     }
+  }
+} elsif ($dropApiDB) {
+  if ($dbVendor eq 'Oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
+    dropSchemaSetTables($dbh, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
+  } elsif ($dbVendor eq 'Postgres') {
+    dropSchemaSetPostgres($dbh, @apiDbSchemas);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
+  for my $sqlFile (@delete) {
+    print STDERR "\n==============================================================\n";
+    print STDERR "$sqlFile\n";
+    print STDERR "==============================================================\n";
+
+     my $filePath = "$filesDir/$sqlFile";
+
+     my @sqlplusParamValues;
+     if($sqlFile eq 'createEntityGraphTables.sql') {
+       $sqlplusParamValues[0] = "EDA";
+       $sqlplusParamValues[1] = "SRES";
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+       $sqlplusParamValues[0] = "ApidbUserDatasets";
+       $sqlplusParamValues[1] = "ApidbUserDatasets";
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+     }
+
+     else {
+       runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures, @sqlplusParamValues);
+     }
+  }
+} elsif ($dropApiDB) {
+  if ($dbVendor eq 'Oracle') {
+    my $schemaSetStr = join ', ', map "'$_'", @apiDbSchemas;
+    dropSchemaSetTables($dbh, $schemaSetStr);  # drop only the tables, etc, not the users which are managed by DBA
+  } elsif ($dbVendor eq 'Postgres') {
+    dropSchemaSetPostgres($dbh, @apiDbSchemas);
+  } else {
+    die "Unsupported dbVendor:$dbVendor.";
+  }
+  for my $sqlFile (@delete) {
+    print STDERR "\n==============================================================\n";
+    print STDERR "$sqlFile\n";
+    print STDERR "==============================================================\n";
+
+    my $filePath = "$filesDir/$sqlFile";
     runSql($login, $password, $dbh, $dbVendor, $filePath, $allowFailures);
   }
 } elsif ($dropGUS) {

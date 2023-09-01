@@ -1,4 +1,6 @@
-package ApiCommonData::Load::InstallSchemaUtils;
+# NOTE: this package is intended to be imported directly from the source code location, not from $GUS_HOME/lib perl.
+# do not include ApiCommonData::Load in this package name.
+package InstallSchemaUtils; 
 
 use Exporter;
 use DBI;
@@ -7,15 +9,15 @@ our @ISA= qw( Exporter );
 our @EXPORT = qw( runSql dropSchemaSetTables dropSchemaSetPostgres getDbh );
 
 sub getDbh {
-  my ($gusconfig, $dbName, $dbHost, $dbVendor) = @_;
+  my ($dbName, $dbHost, $dbVendor, $dbLogin, $dbPassword) = @_;
 
   die "illegal dbVendor: $dbVendor" unless $dbVendor eq 'Oracle' || $dbVendor eq 'Postgres';
 
   my $dbiDsn = $dbVendor eq 'Oracle'? "dbi:Oracle:$dbName" : "dbiDsn=dbi:Pg:dbname=$dbName;host=$host";
 
   return DBI->connect($dbiDsn,
-		      $gusconfig->getDatabaseLogin(),
-		      $gusconfig->getDatabasePassword(),
+		      $dbLogin,
+		      $dbPassword,
 		      { PrintError => 1, RaiseError => 0})
     or die "Can't connect to database: $DBI::errstr\n";
 }
