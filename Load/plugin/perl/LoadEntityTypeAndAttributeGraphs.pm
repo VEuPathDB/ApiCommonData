@@ -244,6 +244,7 @@ sub createAttributeGraph {
                                                                  has_study_dependent_vocabulary => $ontologyTerm->{HAS_STUDY_DEPENDENT_VOCABULARY},
                                                                  weighting_variable_spec => $ontologyTerm->{WEIGHTING_VARIABLE_SPEC},
                                                                  display_order => $ontologyTerm->{DISPLAY_ORDER},
+                                                                 force_string_type => $ontologyTerm->{FORCE_STRING_TYPE},
                                                                  definition => $ontologyTerm->{DEFINITION},
                                                                  ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
                                                                  scale => $ontologyTerm->{SCALE}

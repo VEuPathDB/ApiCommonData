@@ -257,7 +257,7 @@ sub statsForPlots {
 
   print $rCommandsFh $self->rCommandsForStats();
 
-  my $singularity =  "singularity exec docker://veupathdb/rserve";
+  my $singularity =  "singularity exec docker://veupathdb/rserve:2.1.3";
   if($self->getArg("runRLocally")) {
     $singularity = "";
   }
