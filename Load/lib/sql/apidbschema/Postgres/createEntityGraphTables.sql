@@ -560,6 +560,7 @@ CREATE TABLE :VAR1.AttributeGraph (
   display_range_min            varchar(16),
   display_range_max            varchar(16),
   is_merge_key                 numeric(1),
+  force_string_type            varchar(10),
   variable_spec_to_impute_zeroes_for     varchar(200),
   has_study_dependent_vocabulary         varchar(20),
   weighting_variable_spec                varchar(200),

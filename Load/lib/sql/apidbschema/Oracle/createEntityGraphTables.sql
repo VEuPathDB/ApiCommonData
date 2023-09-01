@@ -560,6 +560,7 @@ CREATE TABLE &1..AttributeGraph (
   display_range_max            varchar2(16),
   is_merge_key                 number(1),
   impute_zero                  number(1),
+  force_string_type            varchar2(10),
   variable_spec_to_impute_zeroes_for     varchar2(200),
   has_study_dependent_vocabulary         varchar2(20),
   weighting_variable_spec                varchar2(200),
