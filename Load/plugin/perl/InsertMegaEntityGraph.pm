@@ -283,9 +283,7 @@ order by ot.source_id, sc.value";
     push @{$atts->{$otSourceId}}, $value;
   }
 
-  $atts = decode("UTF-8", $atts);
-
-  return encode_json($atts);
+  return decode("UTF-8", encode_json($atts));
 }
 
 

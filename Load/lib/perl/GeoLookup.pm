@@ -141,11 +141,6 @@ sub lookup {
     $rows++;
   }
 
-  unless($rows == 1) {
-    die "GeoLookup for $cache_key failed";
-  }
-
-
   my $result_veugeo_names = [];
   # returns the just-set value
   return $self->set_cache($cache_key => [ $result_names, $result_veugeo_names ]);

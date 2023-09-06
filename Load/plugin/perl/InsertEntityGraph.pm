@@ -24,6 +24,7 @@ use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
 
 use Encode;
+use Text::Unidecode;
 
 use JSON;
 
@@ -380,10 +381,14 @@ sub protocolsCheckProcessTypesAndSetIds {
 sub createGusStudy {
   my ($self, $extDbRlsId, $study) = @_;
   my $identifier = $study->getIdentifier();
+  my $cleanedIdentifier = unidecode($identifier);
+  # Remove punctuation and non-word characters
+  $cleanedIdentifier =~ s/[^\w]/-/g;
+
   my $description = $study->getDescription();
-  my $studyInternalAbbrev = $identifier;
+  my $studyInternalAbbrev = $cleanedIdentifier;
   $studyInternalAbbrev =~ s/[-\.\s]/_/g; #clean name/id for use in oracle table name
-  return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
+  return $self->getGusModelClass('Study')->new({stable_id => $cleanedIdentifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
   my ($self, $gusStudy) = @_;
@@ -412,14 +417,18 @@ sub addEntityTypeForNode {
 
   my $materialOrAssayType;
   if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay' and $node->getStudyAssay()) {
+    print STDERR "ASSAY!\n";
     $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
   }
   else {
+    print STDERR "NOT ASSAY!\n";
     $materialOrAssayType = $node->getMaterialType();
   }
 
-  $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId")
-    unless $materialOrAssayType;
+  unless($materialOrAssayType) {
+    print STDERR Dumper $node;
+    $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId");
+  }
 
   my $mtKey = join("_", $materialOrAssayType->getTerm, $isaType);
 

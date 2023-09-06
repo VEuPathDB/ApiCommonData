@@ -703,17 +703,16 @@ SELECT parent.stable_id       as stable_id,
        Max(child.range_max)         AS range_max,
        child.impute_zero,
        child.data_type,
-       child.data_shape,
+       decode(child.data_shape, 'binary', 'categorical', child.data_shape) AS data_shape,
        child.unit,
-       child.precision
+       Min(child.PRECISION) AS precision
 $fromWhereSql
 GROUP BY  parent.stable_id,
           parent.display_name,
           child.impute_zero,
           child.data_type,
-          child.data_shape,
-          child.unit,
-          child.precision
+          decode(child.data_shape, 'binary', 'categorical', child.data_shape),
+          child.unit
 EOF
 
   $dbh->do("CREATE TABLE $collectionTableName as ($getCollectionsSql)") or die $dbh->errstr;
