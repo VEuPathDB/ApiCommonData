@@ -424,7 +424,6 @@ sub addEntityTypeForNode {
     $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
   }
   else {
-    print STDERR "NOT ASSAY!\n";
     $materialOrAssayType = $node->getMaterialType();
   }
 
