@@ -42,13 +42,6 @@ DROP CONSTRAINT alg_imp_uniq;
 alter table dots.NaSequenceImp
 drop constraint source_id_uniq;
 
-alter table dots.sequencePiece DROP ( start_position, end_position );
-
-alter table sres.ExternalDatabaseRelease
- drop (data_type,
-      data_subtype,
-      taxon_id);
-
 exec dbms_stats.drop_extended_stats('DOTS', 'NAFEATUREIMP', '(SUBCLASS_VIEW, EXTERNAL_DATABASE_RELEASE_ID)');
 
-exit
+exit;

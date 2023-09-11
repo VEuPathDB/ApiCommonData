@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+use strict;
+use FindBin qw($Bin);
+
+my ($dropOrCreate, @dbNames) = @ARGV;
+
+if ($dropOrCreate ne '--create' && $dropOrCreate ne '--drop') {
+die "
+Usage: vdiBulkSchemaInstall --create | --drop tnsname1 tnsname2 etc
+
+See installVdiSchema for required ENV vars
+
+(Only works for Oracle, because uses tnsnames)
+
+";
+}
+
+my @life = ('prod', 'qa', 'dev', 'feat', 'beta');
+my @camp = ('n', 's');
+
+for my $db (@dbNames) {
+  for my $l (@life) {
+    for my $c (@camp) {
+      my $cmd = "$Bin/installVdiSchema --dbName $db --dbHost dontcare $dropOrCreate --lifecycle $l --campus $c";
+      print STDERR "RUNNING COMMAND $cmd\n";
+      system($cmd);
+      my $status = $? >> 8;
+      if ($status) {
+        die "Failed with status '$status' running cmd: \n$cmd\n";
+      }
+    }
+  }
+}

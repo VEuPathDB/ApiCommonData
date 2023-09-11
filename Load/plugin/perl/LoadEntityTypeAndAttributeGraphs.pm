@@ -240,7 +240,11 @@ sub createAttributeGraph {
                                                                  is_repeated => $ontologyTerm->{IS_REPEATED},
                                                                  is_merge_key => $ontologyTerm->{IS_MERGE_KEY},
                                                                  impute_zero => $ontologyTerm->{IMPUTE_ZERO},
+                                                                 variable_spec_to_impute_zeroes_for => $ontologyTerm->{VARIABLE_SPEC_TO_IMPUTE_ZEROES_FOR},
+                                                                 has_study_dependent_vocabulary => $ontologyTerm->{HAS_STUDY_DEPENDENT_VOCABULARY},
+                                                                 weighting_variable_spec => $ontologyTerm->{WEIGHTING_VARIABLE_SPEC},
                                                                  display_order => $ontologyTerm->{DISPLAY_ORDER},
+                                                                 force_string_type => $ontologyTerm->{FORCE_STRING_TYPE},
                                                                  definition => $ontologyTerm->{DEFINITION},
                                                                  ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
                                                                  scale => $ontologyTerm->{SCALE}
