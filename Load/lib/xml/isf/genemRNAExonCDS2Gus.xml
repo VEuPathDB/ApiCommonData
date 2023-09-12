@@ -91,6 +91,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Partial"      ignore="true"/>
     <qualifier name="partial"      ignore="true"/>
     <qualifier name="transl_table" ignore="true"/>
+    <qualifier name="valid_ORFs" ignore="true"/>
   </feature>
 
   <feature name="mRNA" so="mRNA">
@@ -120,6 +121,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="involved" ignore="true"/>
     <qualifier name="matches" ignore="true"/>
     <qualifier name="mismatches" ignore="true"/>
+    <qualifier name="missing_stop_codon" ignore="true"/>
     <qualifier name="unknowns" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
@@ -143,6 +145,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Loading_note" ignore="true"/>
+    <qualifier name="matches_ref_protein" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
@@ -169,6 +172,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcriptId" ignore="true"/>
     <qualifier name="version" ignore="true"/>
+    <qualifier name="valid_ORF" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
     <qualifier name="partial"     handler="api"    method="setPartial"/>
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
@@ -240,6 +244,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="_AED" ignore="true"/>
     <qualifier name="_eAED" ignore="true"/>
     <qualifier name="_QI" ignore="true"/>
+    <qualifier name="aa" ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Aliases" ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
@@ -253,6 +258,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gc_content" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
@@ -1401,6 +1407,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="fasta_file"             ignore="true"/>
     <qualifier name="FEAT_NAME"              ignore="true"/>
     <qualifier name="satellite"              ignore="true"/>
+  </feature> 
+
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="ID"                 column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
   </feature> 
 
 </mapping>
