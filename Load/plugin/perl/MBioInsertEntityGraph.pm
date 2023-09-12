@@ -129,6 +129,11 @@ my $argsDeclaration =
             format         => '',
             constraintFunc => undef,
             isList         => 0, }),
+   stringArg({name           => 'gadmDsn',
+            descr          => 'dbi dsn for gadm postgres database',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
 
   ];
 
