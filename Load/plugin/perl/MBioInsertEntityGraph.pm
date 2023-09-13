@@ -159,7 +159,12 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables();
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  $SCHEMA = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
   my $investigationFile = $self->getArg('investigationFile');
   my $namesPrefixForOwl = basename $self->getArg('sampleDetailsFile');
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
@@ -170,10 +175,7 @@ sub run {
   my $onError = $self->getArg('dieOnFirstError') ? sub {confess @_}: undef;
   my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
-  $SCHEMA = $self->getArg('schema');
-  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
-    $TERM_SCHEMA = 'APIDBUSERDATASETS';
-  }
+
   my $mbioResultsDir = $self->getArg('mbioResultsDir');
   my $isRelativeAbundance= $self->getArg('isRelativeAbundance');
   my $mbioResultsFileExtensions = $self->getArg('mbioResultsFileExtensions');

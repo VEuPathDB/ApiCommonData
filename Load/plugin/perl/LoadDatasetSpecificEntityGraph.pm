@@ -81,13 +81,15 @@ sub new {
 
 sub run {
   my ($self) = @_;
-  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   $SCHEMA = $self->getArg('schema');
   if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
+
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec, undef, $TERM_SCHEMA);
+
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 

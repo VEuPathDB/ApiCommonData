@@ -127,8 +127,8 @@ sub run {
 
   chdir $self->getArg('logDir');
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
+  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from $SCHEMA.study where external_database_release_id = $extDbRlsId");
 
@@ -292,8 +292,8 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
   my $dbh = $self->getQueryHandle();
   $dbh->{FetchHashKeyName} = 'NAME_lc';
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
+  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
 
   if(my $collectionsYamlFile = $self->getArg('collectionsYamlFile')) {
     my $yaml = YAML::Tiny->read();

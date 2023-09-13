@@ -241,7 +241,7 @@ sub run {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
     my $dirname = dirname $investigationFile;

@@ -142,7 +142,7 @@ sub run {
 
   my $termFile = $self->getArg('termFile');
 
-  my $extDbRls = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $extDbRls = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, 'apidbuserdatasets');
   my $relFile = $self->getArg('relFile');
 
   my $resultDescr = $self->insertTerms($termFile, $extDbRls);
@@ -153,7 +153,6 @@ sub run {
   $self->setResultDescr($resultDescr);
   $self->logData($resultDescr);
 }
-
 
 sub insertTerms {
   my ($self, $file, $extDbRls) = @_;  
@@ -252,7 +251,7 @@ sub insertRelationships {
     $ontologyRelationship->setExternalDatabaseReleaseId($extDbRls);
 
     if($relationshipTypeId) {
-      my $relTypeExtDbRls = $self->getExtDbRlsId($self->getArg('relTypeExtDbRlsSpec'));
+      my $relTypeExtDbRls = $self->getExtDbRlsId($self->getArg('relTypeExtDbRlsSpec'), undef, 'apidbuserdatasets');
       $relationshipType = GUS::Model::ApidbUserDatasets::OntologyTerm->new({external_database_release_id => $relTypeExtDbRls, source_id => $relationshipTypeId});
       if(!$relationshipType->retrieveFromDB()) {
         $self->userError("Failure retrieving relationshipType ontology term \"$relationshipTypeId\"");
