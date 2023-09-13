@@ -162,6 +162,7 @@ sub insertTerms {
 
   my $isPreferred = $self->getArg('isPreferred') eq 'true' ? 1 : 0;
 
+  my $line;
   while ($line=<$fh>) {
     next if ($line =~ /^#|^\s*$/);
     chomp($line);
@@ -217,6 +218,7 @@ sub insertRelationships {
   my $fh = IO::File->new("<$file");
   my $countRels = 0;
 
+  my $line;
   while ($line=<$fh>) {
     next if ($line =~ /^#/);
     chomp($line);
