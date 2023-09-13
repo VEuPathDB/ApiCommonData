@@ -3,7 +3,7 @@
 ## $Id: InsertOntologyFromTabDelim.pm manduchi $
 ##
 
-package GUS::Supported::Plugin::InsertOntologyFromTabDelimUD;
+package ApiCommonData::Load::Plugin::InsertOntologyFromTabDelimUD;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
