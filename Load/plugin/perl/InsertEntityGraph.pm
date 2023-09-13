@@ -17,7 +17,7 @@ use GUS::Model::SRes::TaxonName;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
-n
+
 use ApiCommonData::Load::StudyUtils;
 
 use Scalar::Util qw(blessed);
