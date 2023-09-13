@@ -265,12 +265,14 @@ sub statsForPlots {
   printf STDERR ("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
   my $numberSysResult = system("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
   if($numberSysResult) {
+    system("cat $rCommandsFileName $numericValsFileName >&2");
     $self->error("Error Running Rscript for numericFile");
   }
 
   printf STDERR ("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
   my $dateSysResult = system("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
   if($dateSysResult) {
+    system("cat $rCommandsFileName $dateValsFileName >&2");
     $self->error("Error Running Rscript for datesFile");
   }
 
@@ -881,7 +883,7 @@ sub typedValueForAttribute {
   # }
   #####################################################
 
-  if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
+  if(looks_like_number($valueNoCommas) && !defined($GEOHASH_PRECISION->{$attributeStableId}) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
     # looks_like_number() considers these numbers: nan=not a number, inf=infinity 
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;

@@ -17,7 +17,7 @@ use GUS::Model::SRes::TaxonName;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
-
+n
 use ApiCommonData::Load::StudyUtils;
 
 use Scalar::Util qw(blessed);
@@ -417,11 +417,9 @@ sub addEntityTypeForNode {
 
   my $materialOrAssayType;
   if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay' and $node->getStudyAssay()) {
-    print STDERR "ASSAY!\n";
     $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
   }
   else {
-    print STDERR "NOT ASSAY!\n";
     $materialOrAssayType = $node->getMaterialType();
   }
 
@@ -817,7 +815,8 @@ sub getOrMakeProcessTypeId {
     $protocolName = join("; ", @seriesProtocolNames);
   }
   else {
-    $protocolName = $process->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
+    my $protocolApplication = $process->getProtocolApplications()->[0];
+    $protocolName = $protocolApplication->getProtocol() ? $protocolApplication->getProtocol()->getProtocolName() : $protocolApplication->getValue();
   }
   
   my $gusProcessTypeId = $processTypeNamesToIdMap->{$protocolName};
@@ -871,6 +870,12 @@ sub getProcessAttributesHash {
 
   foreach my $protocolApp (@{$process->getProtocolApplications()}) {
     my $protocol = $protocolApp->getProtocol();
+    unless($protocol) {
+      my $processValue = $protocolApp->getValue();
+      $self->log("WARN: Skipping protocol value for process: $processValue");
+      next;
+    }
+
     my $protocolName = $protocol->getProtocolName();
 
     if(my $protocolSourceId = $self->getArg('protocolVariableSourceId')) {
