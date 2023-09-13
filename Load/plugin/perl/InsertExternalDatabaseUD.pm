@@ -1,13 +1,4 @@
-#######################################################################
-##                 InsertExternalDatabase.pm
-##
-## Creates a new entry in table SRes.ExternalDatabase to represent
-## a new source of data imported into GUS
-## $Id$
-##
-#######################################################################
- 
-package GUS::Supported::Plugin::InsertExternalDatabaseUD;
+package ApiCommonData::Load::Plugin::InsertExternalDatabaseUD;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
 use strict 'vars';
