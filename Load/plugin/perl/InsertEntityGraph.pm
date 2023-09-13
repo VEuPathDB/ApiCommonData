@@ -235,6 +235,7 @@ sub run {
   $self->userError("No investigation files") unless @investigationFiles;
 
   $SCHEMA = $self->getArg('schema');
+  $SCHEMA ||= 'EDA';
 
   if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
@@ -276,7 +277,9 @@ sub run {
 # called by the run methods
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
-  my ($self, $investigation, $extDbRlsId) = @_;
+  my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  # function may be called from MBioIsertEntityGraph, bypassing this package run()
+  if($schema){ $SCHEMA = $schema }
   do {
     my %errors;
     my $c = $investigation->{_on_error};
