@@ -985,7 +985,9 @@ sub checkOntologyTermsAndFetchIds {
     $ncbiTaxon = 'PREFIX_WE_DONT_WANT';
   }
 
-
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
 
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from ${TERM_SCHEMA}.ontologyterm ot
