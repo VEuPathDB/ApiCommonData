@@ -55,21 +55,21 @@ CREATE TABLE VDI_CONTROL_&1..dataset_project (
 
 -- convenience view showing datasets visible to a user that are fully installed, and not deleted
 -- application code should use this view to find datasets a user can use
-CREATE VIEW vdi_control_dev_n.dataset_availability AS
+CREATE VIEW vdi_control_&1..dataset_availability AS
 SELECT
     v.dataset_id,
     v.user_id,
     d.name
 FROM
-    vdi_control_dev_n.dataset_visibility v,
-    vdi_control_dev_n.dataset d,
+    vdi_control_&1..dataset_visibility v,
+    vdi_control_&1..dataset d,
     (SELECT dataset_id
-     FROM vdi_control_dev_n.dataset_install_message
+     FROM vdi_control_&1..dataset_install_message
      WHERE install_type = 'meta'
      AND status = 'complete'
      INTERSECT
      SELECT dataset_id
-     FROM vdi_control_dev_n.dataset_install_message
+     FROM vdi_control_&1..dataset_install_message
      WHERE install_type = 'data'
      AND status = 'complete'
     ) i                                  
