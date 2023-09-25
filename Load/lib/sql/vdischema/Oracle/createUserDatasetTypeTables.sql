@@ -1,5 +1,5 @@
 create table VDI_DATASETS_&1..UD_GeneId (
-USER_DATASET_ID          CHAR(32),
+USER_DATASET_ID          VARCHAR2(32),
 gene_SOURCE_ID                             VARCHAR2(100),
 FOREIGN KEY (user_dataset_id) REFERENCES VDI_CONTROL_&1..dataset(dataset_id)
 );
@@ -136,7 +136,7 @@ grant select on VDI_DATASETS_&1..UD_Presenter to gus_r;
 
 
 create table VDI_DATASETS_&1..UD_Sample (
-user_dataset_id                        CHAR(32) not null,
+user_dataset_id                       VARCHAR2(32) not null,
 sample_id                             NUMBER(10) not null,
 name                                  VARCHAR2(200) not null,
 display_name                                  VARCHAR2(200),
