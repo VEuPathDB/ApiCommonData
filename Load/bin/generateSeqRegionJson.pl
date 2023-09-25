@@ -290,6 +290,7 @@ sub getGeneticCodeFromOrganismAbbrev {
 	    || $organismAbbrev eq "laetL147"
 	    || $organismAbbrev eq "lbraMHOMBR75M2903"
 	    || $organismAbbrev eq "tevaSTIB805"
+	    || $organismAbbrev eq "lamaPH8"
 	    ) {
       $projectName = "TriTrypDB";
     } else {
