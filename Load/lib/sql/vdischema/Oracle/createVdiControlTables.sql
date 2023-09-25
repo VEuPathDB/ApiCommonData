@@ -16,7 +16,7 @@ CREATE TABLE VDI_CONTROL_&1..dataset (
 CREATE TABLE VDI_CONTROL_&1..dataset_meta (
   dataset_id  VARCHAR2(32)   NOT NULL
 , name        VARCHAR2(1024) NOT NULL
-, description VARCHAR2(4000) NOT NULL
+, description VARCHAR2(4000)
 , FOREIGN KEY (dataset_id) REFERENCES VDI_CONTROL_&1..dataset (dataset_id)
 );
 
