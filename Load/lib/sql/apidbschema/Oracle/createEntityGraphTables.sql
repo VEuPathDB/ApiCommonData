@@ -562,7 +562,7 @@ CREATE TABLE &1..AttributeGraph (
   impute_zero                  number(1),
   force_string_type            varchar2(10),
   variable_spec_to_impute_zeroes_for     varchar2(200),
-  has_study_dependent_vocabulary         varchar2(20),
+  has_study_dependent_vocabulary         number(1),
   weighting_variable_spec                varchar2(200),
   is_repeated                  number(1),
   bin_width_override           varchar2(16),
