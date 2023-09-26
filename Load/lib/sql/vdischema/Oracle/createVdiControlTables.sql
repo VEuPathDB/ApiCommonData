@@ -57,7 +57,7 @@ CREATE TABLE VDI_CONTROL_&1..dataset_project (
 -- application code should use this view to find datasets a user can use
 CREATE VIEW vdi_control_&1..dataset_availability AS
 SELECT
-    v.dataset_id,
+    v.dataset_id as user_dataset_id,
     v.user_id,
     d.name
 FROM
