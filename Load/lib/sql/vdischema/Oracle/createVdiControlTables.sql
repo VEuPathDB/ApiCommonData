@@ -58,8 +58,7 @@ CREATE TABLE VDI_CONTROL_&1..dataset_project (
 CREATE VIEW vdi_control_&1..dataset_availability AS
 SELECT
     v.dataset_id as user_dataset_id,
-    v.user_id,
-    d.name
+    v.user_id
 FROM
     vdi_control_&1..dataset_visibility v,
     vdi_control_&1..dataset d,
