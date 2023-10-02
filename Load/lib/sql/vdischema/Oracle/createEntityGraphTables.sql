@@ -1,5 +1,5 @@
 CREATE TABLE VDI_DATASETS_&1..Study (
- USER_DATASET_ID     CHAR(32),     
+ USER_DATASET_ID     VARCHAR2(32),
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE VDI_DATASETS_&1..EntityAttributes (
  CONSTRAINT ensure_va_json CHECK (atts is json)
 );
 
--- 
+--
 --CREATE SEARCH INDEX VDI_DATASETS_&1..va_search_ix ON VDI_DATASETS_&1..entityattributes (atts) FOR JSON;
 
 CREATE INDEX VDI_DATASETS_&1..entityattributes_ix_1 ON VDI_DATASETS_&1..entityattributes (entity_type_id, entity_attributes_id) TABLESPACE indx;
@@ -121,7 +121,7 @@ CREATE TABLE VDI_DATASETS_&1..ProcessAttributes (
  FOREIGN KEY (out_entity_id) REFERENCES VDI_DATASETS_&1..entityattributes,
  FOREIGN KEY (process_type_id) REFERENCES VDI_DATASETS_&1..processtype,
  PRIMARY KEY (process_attributes_id),
- CONSTRAINT ensure_ea_json CHECK (atts is json)   
+ CONSTRAINT ensure_ea_json CHECK (atts is json)
 );
 
 CREATE INDEX VDI_DATASETS_&1..ea_in_ix ON VDI_DATASETS_&1..processattributes (in_entity_id, out_entity_id, process_attributes_id) tablespace indx;
@@ -239,7 +239,7 @@ CREATE TABLE VDI_DATASETS_&1..Attribute (
   unit                          varchar2(400),
   unit_ontology_term_id         NUMBER(10),
   precision                     integer,
-  ordered_values                CLOB,    
+  ordered_values                CLOB,
   range_min                     varchar2(16),
   range_max                     varchar2(16),
   bin_width                    varchar2(16),
@@ -250,7 +250,7 @@ CREATE TABLE VDI_DATASETS_&1..Attribute (
   FOREIGN KEY (entity_type_id) REFERENCES VDI_DATASETS_&1..EntityType,
   FOREIGN KEY (process_type_id) REFERENCES VDI_DATASETS_&1..ProcessType,
   PRIMARY KEY (attribute_id),
-  CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
+  CONSTRAINT ensure_ov_json CHECK (ordered_values is json)
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON VDI_DATASETS_&1..Attribute TO gus_w;
@@ -267,7 +267,7 @@ CREATE INDEX VDI_DATASETS_&1..attribute_ix_1 ON VDI_DATASETS_&1..attribute (enti
 
 CREATE TABLE VDI_DATASETS_&1..AttributeGraph (
   attribute_graph_id                  NUMBER(12) NOT NULL,
-  study_id            NUMBER(12) NOT NULL, 
+  study_id            NUMBER(12) NOT NULL,
   ontology_term_id         NUMBER(10),
   stable_id                varchar2(255) NOT NULL,
   parent_stable_id              varchar2(255) NOT NULL,
@@ -307,7 +307,7 @@ CREATE INDEX VDI_DATASETS_&1..attributegraph_ix_1 ON VDI_DATASETS_&1..attributeg
 
 CREATE TABLE VDI_DATASETS_&1..StudyCharacteristic (
   study_characteristic_id      NUMBER(5) NOT NULL,
-  study_id                     NUMBER(12) NOT NULL, 
+  study_id                     NUMBER(12) NOT NULL,
   attribute_id                 NUMBER(12) NOT NULL,
   value_ontology_term_id       NUMBER(10),
   value                        VARCHAR2(300) NOT NULL,

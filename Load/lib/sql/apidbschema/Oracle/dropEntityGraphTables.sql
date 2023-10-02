@@ -34,14 +34,6 @@ WHERE lower(name) =  'attribute'
                       FROM core.DatabaseInfo
                       WHERE lower(name) = lower('&1'));
 
-DROP TABLE &1.AttributeValue;
-DROP SEQUENCE &1.AttributeValue_sq;
-DELETE FROM core.TableInfo
-WHERE lower(name) =  'attributevalue'
-  AND database_id IN (SELECT database_id
-                      FROM core.DatabaseInfo
-                      WHERE lower(name) = lower('&1'));
-
 DROP TABLE &1.ProcessAttributes;
 DROP SEQUENCE &1.ProcessAttributes_sq;
 DELETE FROM core.TableInfo

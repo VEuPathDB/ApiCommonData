@@ -1,13 +1,4 @@
-#######################################################################
-##                InsertExternalDatabaseRls.pm
-##
-## Creates new entry in table ApidbUserDatasets.ExternalDatabaseRelease
-## for new external database versions
-## $Id$
-##
-#######################################################################
- 
-package GUS::Supported::Plugin::InsertExternalDatabaseRls;
+package ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
 

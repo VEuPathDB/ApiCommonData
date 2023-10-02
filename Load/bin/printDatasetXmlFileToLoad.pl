@@ -234,9 +234,12 @@ printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "annotationIncludesTRNAs");
 printLinesBasedProject ($projectName);
 
 printRegularLine (\%excelInfo, $organismAbbrev, "genomeVersion");
-printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "isFamilyRepresentative");
-printSpecialFamilyRepLines (\%excelInfo, $organismAbbrev);
-
+if ($excelInfo{$organismAbbrev}{'isFamilyRepresentative'}) {
+  printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "isFamilyRepresentative");
+  printSpecialFamilyRepLines (\%excelInfo, $organismAbbrev);
+} else {
+## TODO, get familyRepresentative from dataset xml file or database
+}
 printTailerLine();
 
 printRefStrainLines (\%excelInfo, $organismAbbrev);
@@ -385,7 +388,7 @@ sub printPrimaryFasta {
   printNameWithDollarSign ($fh, 'soTerm');
   printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
   printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  ($genomeVersion =~ /^\d+/) ? printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion') : printNameWithEmptyValue ($fh, 'releaseDate');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -427,7 +430,7 @@ sub printEmblAnnotation {
   printNameWithDollarSign ($fh, 'version', 'genomeVersion');
   printNameWithDollarSign ($fh, 'soTerm');
   printNameWithValue ($fh, 'mapFile', "$isfMappingFile");
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  ($genomeVersion =~ /^\d+/) ? printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion') : printNameWithEmptyValue ($fh, 'releaseDate');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -477,7 +480,7 @@ sub printGff3Annotation {
   printNameWithDollarSign ($fh, 'soTerm');
   printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
   printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  ($genomeVersion =~ /^\d+/) ? printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion') : printNameWithEmptyValue ($fh, 'releaseDate');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -563,7 +566,7 @@ sub printGeneDBAnnotation {
   printNameWithDollarSign ($fh, 'soTerm');
   printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
   printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  ($genomeVersion =~ /^\d+/) ? printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion') : printNameWithEmptyValue ($fh, 'releaseDate');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -644,7 +647,7 @@ sub printGenBankAnnotation {
   printNameWithDollarSign ($fh, 'version', 'genomeVersion');
   printNameWithDollarSign ($fh, 'soTerm');
   printNameWithValue ($fh, 'mapFile', $isfMappingFile);
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  ($genomeVersion =~ /^\d+/) ? printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion') : printNameWithEmptyValue ($fh, 'releaseDate');
   print $fh "  </dataset>\n";
   print $fh "\n";
 

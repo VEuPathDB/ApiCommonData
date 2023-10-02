@@ -173,7 +173,7 @@ sub run {
   chdir $self->getArg('logDir');
 
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
 
   $self->dropTables($extDbRlsId);
 
@@ -194,7 +194,7 @@ sub run {
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
 
   my $dbh = $self->getQueryHandle();
-  my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
+  my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
 
   my $studiesCount;
 
@@ -265,12 +265,14 @@ sub statsForPlots {
   printf STDERR ("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
   my $numberSysResult = system("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
   if($numberSysResult) {
+    system("cat $rCommandsFileName $numericValsFileName >&2");
     $self->error("Error Running Rscript for numericFile");
   }
 
   printf STDERR ("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
   my $dateSysResult = system("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
   if($dateSysResult) {
+    system("cat $rCommandsFileName $dateValsFileName >&2");
     $self->error("Error Running Rscript for datesFile");
   }
 
@@ -881,7 +883,7 @@ sub typedValueForAttribute {
   # }
   #####################################################
 
-  if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
+  if(looks_like_number($valueNoCommas) && !defined($GEOHASH_PRECISION->{$attributeStableId}) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
     # looks_like_number() considers these numbers: nan=not a number, inf=infinity 
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;

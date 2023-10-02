@@ -81,13 +81,15 @@ sub new {
 
 sub run {
   my ($self) = @_;
-  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   $SCHEMA = $self->getArg('schema');
   if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
+
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec, undef, $TERM_SCHEMA);
+
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
@@ -203,39 +205,51 @@ sub createWideTable {
   my $processColumns = join("\n,", @$processColumnStrings);
 
 
-  my $entitySql = "select ea.stable_id, eaa.*
-                   from $SCHEMA.entityattributes_bfv ea,
-                        json_table(atts, '\$'
+  my $entitySql = "json_table(entity_atts, '\$'
                          columns ( $entityColumns )) eaa
-                   where ea.entity_type_id = $entityTypeId";
+                         ";
 
-  my $processSql = "with process_attributes as (select ea.stable_id, nvl(pa.atts, '{}') as atts
-                                                from ${SCHEMA}.processattributes pa
-                                                   , ${SCHEMA}.entityattributes_bfv ea
-                                                where ea.entity_type_id = $entityTypeId
-                                                 and ea.entity_attributes_id = pa.out_entity_id (+)
-                                               )
-                    select pa.stable_id, paa.*
-                    from process_attributes pa,
-                         json_table(atts, '\$'
-                          columns ( $processColumns)) paa";
+  my $processSql = "json_table(process_atts, '\$'
+                          columns ( $processColumns)) paa
+                         ";
 
-  my @drops;
+  my $withAllAttsSql = "
+with all_atts as (
+select ea.stable_id
+     , nvl(pa.atts, '{}') as process_atts
+     , nvl(ea.atts, '{}') as entity_atts
+from EDA.processattributes pa
+   , EDA.EntityAttributes_bfv ea
+where ea.entity_type_id = $entityTypeId
+and ea.entity_attributes_id = pa.out_entity_id (+)
+)
+  ";
 
   my $sql;
   if(scalar @$entityColumnStrings > 0 && scalar @$processColumnStrings > 0) {
-    $processSql =~ s{select pa.stable_id}{select pa.stable_id as stable_id_pa};
-    $sql = "select e.*, p.* from ($entitySql) e, ($processSql) p where e.stable_id = p.stable_id_pa";
-    push @drops, "drop column stable_id_pa";
+    $sql = "$withAllAttsSql
+            select  all_atts.stable_id, eaa.*, paa.*
+            from all_atts,
+            $entitySql,
+            $processSql
+            ";
+
   }
   elsif(scalar @$entityColumnStrings > 0) {
-    $sql = $entitySql;
+    $sql = "$withAllAttsSql
+            select  all_atts.stable_id, eaa.*
+            from all_atts,
+            $entitySql";
   }
   elsif(scalar @$processColumnStrings > 0) {
-    $sql = $processSql;
+    $sql = "$withAllAttsSql
+            select  all_atts.stable_id, paa.*
+            from all_atts,
+            $processSql
+            ";
   }
   else {
-    $sql = "select ea.stable_id 
+    $sql = "select ea.stable_id
             from ${SCHEMA}.entityattributes_bfv ea
             where ea.entity_type_id = $entityTypeId
              ";
@@ -243,7 +257,7 @@ sub createWideTable {
 
   my $dbh = $self->getDbHandle();
   $dbh->do("CREATE TABLE $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
-  $dbh->do("ALTER TABLE $SCHEMA.$tableName $_") for @drops;
+
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
   # Check for stable_id (entities with no attributes will have none)
@@ -702,18 +716,17 @@ SELECT parent.stable_id       as stable_id,
        Min(child.range_min)         AS range_min,
        Max(child.range_max)         AS range_max,
        child.impute_zero,
-       child.data_type,
-       child.data_shape,
+       decode(child.data_type, 'integer', 'number', child.data_type) as data_type,
+       decode(child.data_shape, 'binary', 'categorical', child.data_shape) AS data_shape,
        child.unit,
-       child.precision
+       Min(child.PRECISION) AS precision
 $fromWhereSql
 GROUP BY  parent.stable_id,
           parent.display_name,
           child.impute_zero,
-          child.data_type,
-          child.data_shape,
-          child.unit,
-          child.precision
+          decode(child.data_type, 'integer', 'number', child.data_type),
+          decode(child.data_shape, 'binary', 'categorical', child.data_shape),
+          child.unit
 EOF
 
   $dbh->do("CREATE TABLE $collectionTableName as ($getCollectionsSql)") or die $dbh->errstr;

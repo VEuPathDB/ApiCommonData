@@ -2128,6 +2128,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0043237 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043237">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000272"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>tick specimen collection process by citizen scientists</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043238 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043238">
@@ -2237,10 +2247,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043256 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043256">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
+        <obo:IAO_0000115>The date on which specimen collection began</obo:IAO_0000115>
         <rdfs:label>specimen collection start date</rdfs:label>
     </owl:Class>
     
@@ -2249,10 +2261,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043257 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043257">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
+        <obo:IAO_0000115>The date on which specimen collection ended</obo:IAO_0000115>
         <rdfs:label>specimen collection end date</rdfs:label>
     </owl:Class>
     
@@ -2261,10 +2275,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043258 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043258">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>indicator of specimen collection date discontinuity</rdfs:label>
+        <obo:IAO_0000115>If there was a period of time between the start and end dates that no collections were made, this will be indicated by &apos;Yes&apos;.</obo:IAO_0000115>
+        <rdfs:label>dates are discontinuous</rdfs:label>
     </owl:Class>
     
 
@@ -2997,6 +3013,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0000066 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000066">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000208"/>
+        <rdfs:label>investigation</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0000070 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000070">
@@ -3262,11 +3287,13 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001508 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001508">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Either an hour of the day (24 hour clock) or a time range during which the specimen collection was undertaken</obo:IAO_0000115>
         <obo:clinEpi_label>Study timepoint</obo:clinEpi_label>
-        <rdfs:label>sampling time measurement datum</rdfs:label>
+        <rdfs:label>collection time of day</rdfs:label>
     </owl:Class>
     
 
@@ -3285,10 +3312,12 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">100</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
+        <obo:IAO_0000115>The raw date range(s) as provided or curated by our team. If the dates are &quot;discontinuous&quot; (see other variable) then this variable will show the exact dates.</obo:IAO_0000115>
         <obo:clinEpi_label>Sample collection date</obo:clinEpi_label>
         <rdfs:label>specimen collection date(s) (raw)</rdfs:label>
     </owl:Class>
@@ -4339,9 +4368,11 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0002988 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002988">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Duration of specimen collection in days</obo:IAO_0000115>
         <rdfs:label>duration of specimen collection</rdfs:label>
     </owl:Class>
     
@@ -4706,7 +4737,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0001152">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000207"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/SO_0001769"/>
         <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
@@ -4719,7 +4749,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0001178">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000207"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/SO_0001769"/>
         <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
@@ -4958,6 +4987,7 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000017">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0001013>everywhere</obo:EUPATH_0001013>
         <obo:IAO_0000115>The number of specimens collected during routine, unbiased surveillance.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">unbiased specimen count</rdfs:label>
     </owl:Class>
@@ -4967,7 +4997,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     <!-- http://purl.obolibrary.org/obo/POPBIO_8000018 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000018">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002728"/>
         <obo:IAO_0000115>The number of specimens used in an assay that provides quantitative results. For example the percentage of infected specimens.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">number of input specimens to quantitative assay</rdfs:label>
     </owl:Class>
@@ -4977,7 +5006,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     <!-- http://purl.obolibrary.org/obo/POPBIO_8000019 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000019">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002728"/>
         <obo:IAO_0000115>The number of specimens used in an assay that provides qualitative results. For example 50 mosquitoes could be mashed up and assayed for pathogen detection by PCR and the result is &apos;present&apos; or &apos;absent&apos; and there is no indication of how many of the input specimens were postiive.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">number of input specimens to qualitative assay</rdfs:label>
     </owl:Class>
@@ -6878,6 +6906,25 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     
 
 
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000208 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000208">
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Processes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000209 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000209">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">specimen collection date and time</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/POPBIO_8000210 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000210">
@@ -8589,5 +8636,5 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
 
 
-<!-- Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 

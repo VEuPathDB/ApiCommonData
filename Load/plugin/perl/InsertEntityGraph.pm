@@ -24,6 +24,7 @@ use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
 
 use Encode;
+use Text::Unidecode;
 
 use JSON;
 
@@ -234,12 +235,13 @@ sub run {
   $self->userError("No investigation files") unless @investigationFiles;
 
   $SCHEMA = $self->getArg('schema');
+  $SCHEMA ||= 'EDA';
 
   if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
     my $dirname = dirname $investigationFile;
@@ -275,7 +277,9 @@ sub run {
 # called by the run methods
 # here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
-  my ($self, $investigation, $extDbRlsId) = @_;
+  my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  # function may be called from MBioIsertEntityGraph, bypassing this package run()
+  if($schema){ $SCHEMA = $schema }
   do {
     my %errors;
     my $c = $investigation->{_on_error};
@@ -380,10 +384,14 @@ sub protocolsCheckProcessTypesAndSetIds {
 sub createGusStudy {
   my ($self, $extDbRlsId, $study) = @_;
   my $identifier = $study->getIdentifier();
+  my $cleanedIdentifier = unidecode($identifier);
+  # Remove punctuation and non-word characters
+  $cleanedIdentifier =~ s/[^\w]/-/g;
+
   my $description = $study->getDescription();
-  my $studyInternalAbbrev = $identifier;
+  my $studyInternalAbbrev = $cleanedIdentifier;
   $studyInternalAbbrev =~ s/[-\.\s]/_/g; #clean name/id for use in oracle table name
-  return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
+  return $self->getGusModelClass('Study')->new({stable_id => $cleanedIdentifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
   my ($self, $gusStudy) = @_;
@@ -418,8 +426,10 @@ sub addEntityTypeForNode {
     $materialOrAssayType = $node->getMaterialType();
   }
 
-  $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId")
-    unless $materialOrAssayType;
+  unless($materialOrAssayType) {
+    print STDERR Dumper $node;
+    $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId");
+  }
 
   my $mtKey = join("_", $materialOrAssayType->getTerm, $isaType);
 
@@ -808,7 +818,8 @@ sub getOrMakeProcessTypeId {
     $protocolName = join("; ", @seriesProtocolNames);
   }
   else {
-    $protocolName = $process->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
+    my $protocolApplication = $process->getProtocolApplications()->[0];
+    $protocolName = $protocolApplication->getProtocol() ? $protocolApplication->getProtocol()->getProtocolName() : $protocolApplication->getValue();
   }
   
   my $gusProcessTypeId = $processTypeNamesToIdMap->{$protocolName};
@@ -862,6 +873,12 @@ sub getProcessAttributesHash {
 
   foreach my $protocolApp (@{$process->getProtocolApplications()}) {
     my $protocol = $protocolApp->getProtocol();
+    unless($protocol) {
+      my $processValue = $protocolApp->getValue();
+      $self->log("WARN: Skipping protocol value for process: $processValue");
+      next;
+    }
+
     my $protocolName = $protocol->getProtocolName();
 
     if(my $protocolSourceId = $self->getArg('protocolVariableSourceId')) {
@@ -968,7 +985,9 @@ sub checkOntologyTermsAndFetchIds {
     $ncbiTaxon = 'PREFIX_WE_DONT_WANT';
   }
 
-
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
 
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from ${TERM_SCHEMA}.ontologyterm ot

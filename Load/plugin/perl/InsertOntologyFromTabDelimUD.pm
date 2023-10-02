@@ -3,7 +3,7 @@
 ## $Id: InsertOntologyFromTabDelim.pm manduchi $
 ##
 
-package GUS::Supported::Plugin::InsertOntologyFromTabDelimUD;
+package ApiCommonData::Load::Plugin::InsertOntologyFromTabDelimUD;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -142,7 +142,7 @@ sub run {
 
   my $termFile = $self->getArg('termFile');
 
-  my $extDbRls = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $extDbRls = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, 'apidbuserdatasets');
   my $relFile = $self->getArg('relFile');
 
   my $resultDescr = $self->insertTerms($termFile, $extDbRls);
@@ -154,7 +154,6 @@ sub run {
   $self->logData($resultDescr);
 }
 
-
 sub insertTerms {
   my ($self, $file, $extDbRls) = @_;  
   my $fh = IO::File->new("<$file");
@@ -163,7 +162,7 @@ sub insertTerms {
 
   my $isPreferred = $self->getArg('isPreferred') eq 'true' ? 1 : 0;
 
-  my $line = <$fh> if($self->getArg('hasHeader'));
+  my $line;
   while ($line=<$fh>) {
     next if ($line =~ /^#|^\s*$/);
     chomp($line);
@@ -219,7 +218,7 @@ sub insertRelationships {
   my $fh = IO::File->new("<$file");
   my $countRels = 0;
 
-  my $line = <$fh>  if($self->getArg('hasHeader'));
+  my $line;
   while ($line=<$fh>) {
     next if ($line =~ /^#/);
     chomp($line);
@@ -252,7 +251,7 @@ sub insertRelationships {
     $ontologyRelationship->setExternalDatabaseReleaseId($extDbRls);
 
     if($relationshipTypeId) {
-      my $relTypeExtDbRls = $self->getExtDbRlsId($self->getArg('relTypeExtDbRlsSpec'));
+      my $relTypeExtDbRls = $self->getExtDbRlsId($self->getArg('relTypeExtDbRlsSpec'), undef, 'apidbuserdatasets');
       $relationshipType = GUS::Model::ApidbUserDatasets::OntologyTerm->new({external_database_release_id => $relTypeExtDbRls, source_id => $relationshipTypeId});
       if(!$relationshipType->retrieveFromDB()) {
         $self->userError("Failure retrieving relationshipType ontology term \"$relationshipTypeId\"");
