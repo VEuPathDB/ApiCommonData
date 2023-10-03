@@ -562,7 +562,7 @@ CREATE TABLE :VAR1.AttributeGraph (
   is_merge_key                 numeric(1),
   force_string_type            varchar(10),
   variable_spec_to_impute_zeroes_for     varchar(200),
-  has_study_dependent_vocabulary         varchar(20),
+  has_study_dependent_vocabulary         numeric(1),
   weighting_variable_spec                varchar(200),
   impute_zero                  numeric(1),
   is_repeated                  numeric(1),
