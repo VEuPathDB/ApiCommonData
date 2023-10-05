@@ -71,7 +71,12 @@ where s.ontology_term_id = os.ontology_term_id (+)
 
 
 sub queryForOntologyHierarchyAndAnnotationProperties {
-  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema) = @_;
+  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema, $noCommonDef) = @_;
+
+  my $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, s.definition))";
+  if($noCommonDef){
+    $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), os.definition)";
+  }
 
   my $sql = "select s.name
                   , s.source_id
@@ -81,7 +86,7 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , o.ontology_term_id parent_ontology_term_id
                   -- json values from annprop OR dedicated fields in ontologysyn
                   , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, s.name)) as display_name
-                  , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, s.definition)) as definition
+                  , $definitionSql as definition
                   , os.is_preferred
                   -- json values from annprop OR annotation_props field in ontologysynonym
                   , nvl(json_value(ap.props, '\$.displayType[0]'), json_value(os.annotation_properties, '\$.displayType[0]')) as display_type
