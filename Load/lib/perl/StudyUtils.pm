@@ -94,7 +94,7 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , nvl(json_value(ap.props, '\$.variableSpecToImputeZeroesFor[0]'), json_value(os.annotation_properties, '\$.variableSpecToImputeZeroesFor[0]')) as variable_spec_to_impute_zeroes_for
                   , nvl(json_value(ap.props, '\$.weightingVariableSpec[0]'), json_value(os.annotation_properties, '\$.weightingVariableSpec[0]')) as weighting_variable_spec
                   -- boolean things from json_value
-                  , case when lower(nvl(json_value(ap.props, '\$.hasStudyDependentVocabulary[0]'), json_value(os.annotation_properties, '\$.hasStudyDependentVocabulary[0]'))) == 'yes' then 1 else 0 end as has_study_dependent_vocabulary
+                  , case when lower(nvl(json_value(ap.props, '\$.hasStudyDependentVocabulary[0]'), json_value(os.annotation_properties, '\$.hasStudyDependentVocabulary[0]'))) = 'yes' then 1 else 0 end as has_study_dependent_vocabulary
                   , case when lower(nvl(json_value(ap.props, '\$.is_temporal[0]'), json_value(os.annotation_properties, '\$.is_temporal[0]')))  = 'yes' then 1 else 0 end as is_temporal
                   , case when lower(nvl(json_value(ap.props, '\$.is_featured[0]'), json_value(os.annotation_properties, '\$.is_featured[0]')))  = 'yes' then 1 else 0 end as is_featured
                   , case when lower(nvl(json_value(ap.props, '\$.repeated[0]'), json_value(os.annotation_properties, '\$.repeated[0]')))  = 'yes' then 1 else 0 end as is_repeated
