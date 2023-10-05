@@ -898,4 +898,41 @@ GRANT execute ON apidb.insert_user_allstudies TO public;
 
 -------------------------------------------------------------------------------
 
+
+CREATE or replace TYPE apidb.json_rec_t AS OBJECT
+(
+    jsonkey VARCHAR2 (100),
+    jsonvalue VARCHAR2 (50)
+);
+/
+GRANT execute ON apidb.json_rec_t TO PUBLIC;
+
+CREATE or replace TYPE apidb.json_tab_t IS TABLE OF apidb.json_rec_t;
+/
+GRANT execute ON apidb.json_tab_t TO PUBLIC;
+
+-- json string like '{'key1': value1, 'key2': value2} will become 2 rows (fields are jsonkey and jsonvalue)
+CREATE OR REPLACE FUNCTION apidb.get_json_vals (p_json CLOB)
+    RETURN apidb.json_tab_t
+    PIPELINED
+AS
+    l_json          json_object_t := json_object_t (p_json);
+    l_parent_keys   json_key_list;
+BEGIN
+    l_parent_keys := l_json.get_keys;
+
+    FOR i IN 1 .. l_parent_keys.COUNT
+    LOOP
+            PIPE ROW (apidb.json_rec_t (l_parent_keys (i), l_json.get_string(l_parent_keys(i))));
+    END LOOP;
+
+    RETURN;
+END;
+/
+
+show errors;
+
+GRANT execute ON apidb.get_json_vals TO public;
+-------------------------------------------------------------------------------
+
 exit
