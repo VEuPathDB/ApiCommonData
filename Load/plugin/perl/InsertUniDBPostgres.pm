@@ -12,7 +12,7 @@ use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Psql;
 
-use GUS::Model::ApiDB::DATABASETABLEMAPPING;
+use GUS::Model::ApiDB::DatabaseTableMapping;
 
 
 
@@ -307,6 +307,7 @@ sub run {
 }
 
 sub undoTable {
+  my ($self) = @_;
   $self->error("Undo not implemented for Postgres");
 }
 
