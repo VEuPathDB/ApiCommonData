@@ -324,47 +324,27 @@ sub selectHashRef {
 
 sub getCharacteristicsFromYaml {
   my ($self, $file, $datasetName) = @_;
-
   my $yaml = YAML::Tiny->read($file);
   unless($yaml) {
     die "Error parsing yaml file:  $file";
   }
-
   my %data;
   foreach my $doc (@$yaml) {
-
-    if($doc->{dataset} eq $datasetName) {
-      foreach my $var (keys %$doc) {
-        next if($var eq 'dataset');
-
-        if(ref($doc->{$var}) eq 'ARRAY') {
-          push @{$data{$var}}, @{$doc->{$var}};
+    while(my ($dsname,$chars) = each %$doc){
+      if($dsname eq $datasetName) {
+        foreach my $var (%$chars) {
+          next if($var eq 'dataset');
+          if(ref($chars->{$var}) eq 'ARRAY') {
+            push @{$data{$var}}, @{$chars->{$var}};
+          }
+          else {
+            push @{$data{$var}}, $chars->{$var};
+          }
         }
-        else {
-          push @{$data{$var}}, $doc->{$var};
-        }
+        last;
       }
     }
   }
-
-
-  # while(my($k,$v) = each %{$yaml->{$datasetName}}){
-
-
-
-
-
-  #   my $arr = [];
-  #   if(ref($v) eq 'ARRAY'){ $arr = $v } # array of values
-  #   else { $arr = [ $v ] } # single value
-  #   foreach my $av (@$arr){ # array value
-  #     $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, parser should handle it
-  #     if($av =~ /\w+/){
-  #       $data{$k} //= [];
-  #       push(@{$data{$k}}, $av);
-  #     }
-  #   }
-  # }
   return \%data ;
 }
 
