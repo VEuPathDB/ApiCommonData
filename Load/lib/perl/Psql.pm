@@ -121,6 +121,8 @@ sub getCommandLine {
   my $quiet = $self->getQuiet() ? '>/dev/null 2>&1' : '';
   my $copyCommand = $self->getCommand();
 
+  # Temporarily remove --echo-errors as it is not supported in older psql versions
+  # return "psql --echo-all --echo-errors --log-file='$logFileName' --command='$copyCommand' $connectionString $quiet"
   return "psql --echo-all --echo-errors --log-file='$logFileName' --command='$copyCommand' $connectionString $quiet"
 }
 
