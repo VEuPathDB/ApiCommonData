@@ -1,5 +1,8 @@
-file	category	id
-ELICIT_data_for_PLOS_reshaped_v3	participant	pid
-ELICIT_data_for_PLOS_reshaped_v3	repeatedMeasures	pid+obs_number
-ELICIT_data_for_PLOS_reshaped_v3	household	pid
-ELICIT_data_for_PLOS_reshaped_v3	sample	pid
+elicit_data_for_plos_reshaped_v3	participant	{{p}}+pid
+elicit_data_for_plos_reshaped_v3	participant_repeated_measures	{{pr}}+pid+obs_number
+elicit_data_for_plos_reshaped_v3	household	{{h}}+pid
+elicit_data_for_plos_reshaped_v3	sample	{{s}}+pid+obs_number
+missing_household	household	{{h}}+pid
+ELICIT_TAC_datafile	participant	{{p}}+pid
+ELICIT_TAC_datafile	participant_repeated_measures	{{pr}}+pid+month
+ELICIT_TAC_datafile	sample	{{s}}+pid+month+scf_date
