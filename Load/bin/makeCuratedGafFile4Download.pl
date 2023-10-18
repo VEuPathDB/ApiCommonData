@@ -18,11 +18,10 @@ use HTTP::Date;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-my ($help, $gusConfigFile, $organismAbbrev, $outputFile, $tuningTablePrefix);
+my ($help, $gusConfigFile, $organismAbbrev, $outputFile);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
             'organismAbbrev=s' => \$organismAbbrev,
-            'tuningTablePrefix=s' => \$tuningTablePrefix,
             'outputFile=s' => \$outputFile,
 );
 
@@ -58,7 +57,7 @@ my $geneNameRef = getGeneNamesForOrganism ($dbh, $extDbRlsId);
 my $productRef = getProductNamesForOrganism ($dbh, $extDbRlsId);
 my $synonymRef = getSynonymsForOrganism ($dbh, $organismAbbrev);
 
-my $goRef = getGoInfoFromDbs ($dbh, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $synonymRef, $transcriptTypeRef, $date, $tuningTablePrefix);
+my $goRef = getGoInfoFromDbs ($dbh, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $synonymRef, $transcriptTypeRef, $date);
 
 printGoInfo ($fhl, $goRef) if (scalar (@$goRef) > 0);
 
@@ -70,7 +69,7 @@ $dbh->disconnect();
 
 #################
 sub getGoInfoFromDbs {
-  my ($dbhSub, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date, $tuningTablePrefix) = @_;
+  my ($dbhSub, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date) = @_;
   my @goInfos;
 
   ## use apidbtuning.GoTermSummary table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
@@ -79,7 +78,7 @@ select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, IS_NOT, GO_ID, REFERENCE, EVIDENCE_
 decode(ontology, 'Biological Process', 'P',
                  'Molecular Function', 'F',
                  'Cellular Component', 'C', ontology) 
-from apidbtuning.${tuningTablePrefix}GeneGoTerms
+from apidbtuning.GeneGoTerms
 ";
 
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
@@ -341,7 +340,6 @@ NOTE: the GUS_HOME should point to the instance that the GO association has been
 where
   --organismAbbrev: the organism Abbrev in the table apidb.organism
   --outputFile: the name of the output .gaf file
-  --tuningTablePrefix: the letter 'P' following by the organism_id in the apidb.organism table, eg P101_
   --optionalTaxonId: only required in case the taxonId is not available in ncbi Taxonomy
 ";
 }
