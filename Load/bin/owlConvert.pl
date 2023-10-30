@@ -2,13 +2,14 @@
 
 use strict;
 use warnings;
+use feature qw(switch);
 use File::Basename;
 
 use Getopt::Long;
 
-my ($convFile, $externFile, $outFile, $setFile, $test);
+my ($convFile, $externFile, $outFile, $setFile, $test, $clean);
 
-GetOptions("c|conversionFile=s" => \$convFile, "x|externalOwl=s" => \$externFile, "s|settingsFile=s" => \$setFile, "o|outputFile=s" => \$outFile, "t|test!" => \$test);
+GetOptions("c|conversionFile=s" => \$convFile, "x|externalOwl=s" => \$externFile, "s|settingsFile=s" => \$setFile, "o|outputFile=s" => \$outFile, "t|test!" => \$test, "x|clean!" => \$clean);
 
 
 my $basename = basename($convFile, '.csv');
@@ -25,6 +26,8 @@ my $cmdline = "java -jar $ENV{HOME}/bin/OWLmaker.jar -settingFilename %s";
 $setFile ||= sprintf("%s/%s_settings.txt", $outDir, $basename);
 
 # params: conversion.csv, external .owl,  owl basename, owl basename
+#
+my ($iri,$lab,$piri,$plab) = getKeyHeaderIndex($convFile);
 
 my $settingsTemplate = <<TEMPLATE_END;
 path	
@@ -35,10 +38,10 @@ IRI base	http://purl.obolibrary.org/obo/
 prefix	EUPATH
 start ID	1
 external ontology file	%s
-term position	3
-term IRI position	2
-term parent position	10
-term parent IRI position	9
+term IRI position	%d
+term position	%d
+term parent IRI position	%d
+term parent position	%d
 annotation property	variable|EUPATH_0000755
 annotation property	displayOrder|EUPATH_0000274
 annotation property	dataFile|EUPATH_0001001
@@ -63,9 +66,10 @@ annotation property	defaultBinWidth|EUPATH_0001019
 annotation property	forceStringType|EUPATH_0001020
 TEMPLATE_END
 
-unless (-e $setFile ){
+if ($clean || ! -e $setFile ){
+  printf STDERR "Writing new $setFile\n";
   open(SF, ">$setFile") or die "$!\n";
-  printf SF ($settingsTemplate, $convFile, $outFile, $subProject, $outFile, $externFile || "");
+  printf SF ($settingsTemplate, $convFile, $outFile, $subProject, $outFile, $externFile || "",$iri,$lab,$piri,$plab);
   close(SF);
 }
 
@@ -75,4 +79,21 @@ unless($test){
   #unlink($setFile);
 }
 
+sub getKeyHeaderIndex {
+  my ($file) = @_;
+  open(FH,"<$file") or die "$file: $!\n";
+  my $line = <FH>;
+  close(FH);
+  my @hr = split(",", $line);
+  my ($iri,$lab,$piri,$plab);
+  for(my $i = 0; $i <= $#hr; $i++){
+    given(lc($hr[$i])) {
+      when("iri") { $iri = $i + 1 }
+      when("label") { $lab = $i + 1 }
+      when("parentiri") { $piri = $i + 1 }
+      when("parentlabel") { $plab = $i + 1 }
+    }
+  }
+  return ($iri, $lab, $piri, $plab )
+}
 
