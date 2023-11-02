@@ -14,6 +14,8 @@ use Text::CSV_XS;
 use Config::Std;
 use YAML qw/LoadFile/;
 
+use YAML::Tiny;
+
 use Digest::SHA qw/sha1_hex/;
 
 use Data::Dumper;
@@ -202,6 +204,7 @@ ORDER BY e2.modification_date desc";
   my @rows;
   my @decodedRows;
   my $help_msg = 0;
+
   while( my ($k, $values) = each %{$cfg}){
     ###
     $k = uc($k);
@@ -321,17 +324,24 @@ sub selectHashRef {
 
 sub getCharacteristicsFromYaml {
   my ($self, $file, $datasetName) = @_;
-  my $yaml = LoadFile($file);
+  my $yaml = YAML::Tiny->read($file);
+  unless($yaml) {
+    die "Error parsing yaml file:  $file";
+  }
   my %data;
-  while(my($k,$v) = each %{$yaml->{$datasetName}}){
-    my $arr = [];
-    if(ref($v) eq 'ARRAY'){ $arr = $v } # array of values
-    else { $arr = [ $v ] } # single value
-    foreach my $av (@$arr){ # array value
-      $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, parser should handle it
-      if($av =~ /\w+/){
-        $data{$k} //= [];
-        push(@{$data{$k}}, $av);
+  foreach my $doc (@$yaml) {
+    while(my ($dsname,$chars) = each %$doc){
+      if($dsname eq $datasetName) {
+        foreach my $var (%$chars) {
+          next if($var eq 'dataset');
+          if(ref($chars->{$var}) eq 'ARRAY') {
+            push @{$data{$var}}, @{$chars->{$var}};
+          }
+          else {
+            push @{$data{$var}}, $chars->{$var};
+          }
+        }
+        last;
       }
     }
   }

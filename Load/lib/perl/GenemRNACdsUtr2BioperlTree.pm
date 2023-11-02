@@ -223,14 +223,13 @@ sub traverseSeqFeatures {
 
         foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
-
             #if($subFeature->primary_tag eq 'exon'){
 
 	  #    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
             #    push(@exons,$exon);
             #}
 
-            if($subFeature->primary_tag eq 'CDS'){
+            if($subFeature->primary_tag eq 'CDS'  || $subFeature->primary_tag eq 'pseudogenic_exon' ){
 
                 my $exon = &makeBioperlFeature("exon",$subFeature->location,$bioperlSeq);
                 $exon = &copyQualifiers($subFeature, $exon);

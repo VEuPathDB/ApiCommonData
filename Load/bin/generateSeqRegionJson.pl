@@ -281,11 +281,16 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "hvasRaceXXXIII"
 	|| $organismAbbrev eq "rirrC2"
 	|| $organismAbbrev eq "spalSPA8"
+	|| $organismAbbrev eq "rirrDAOM181602"
 		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
 	    || $organismAbbrev eq "tbruLister427_2018"
 	    || $organismAbbrev eq "tbruEATRO1125"
+	    || $organismAbbrev eq "laetL147"
+	    || $organismAbbrev eq "lbraMHOMBR75M2903"
+	    || $organismAbbrev eq "tevaSTIB805"
+	    || $organismAbbrev eq "lamaPH8"
 	    ) {
       $projectName = "TriTrypDB";
     } else {

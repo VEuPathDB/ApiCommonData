@@ -60,4 +60,21 @@ SELECT * {
              AS ?sid) .
       }
   }
+  UNION
+  {
+    SELECT distinct ?sid ?uri ?name
+      WHERE { 
+        ?entity a owl:NamedIndividual .
+          ?entity rdfs:label ?_label. 
+          BIND (str(?entity) AS ?uri) .
+          BIND(
+            REPLACE(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), ""),
+            str(sno:), "SNOMEDCT_")
+             AS ?sid) .
+          BIND (str(?_label) AS ?name) .
+      }
+  }
 }
