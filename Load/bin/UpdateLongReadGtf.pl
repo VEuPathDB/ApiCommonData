@@ -3,20 +3,17 @@
 use strict;
 use lib $ENV{GUS_HOME} . "/lib/perl";
 use Getopt::Long;
-use ApiCommonData::Load::EBIUtils;
 use CBIL::Util::Utils;
 use IO::Zlib;
-use File::Temp qw/ tempfile /;
-use File::Copy;
 use Bio::Tools::GFF;
 
 
-my ($help, $count_file, $gff_file, $gtfOut); 
+my ($help, $count_file, $gff_file, $gffOut); 
 
 &GetOptions('help|h' => \$help,
-            'GFF3File=s' => \$gff_file,
-            'CountFile=s' => \$count_file,
-            'UpdatedGffName=s' => \$gtfOut,
+            'gffFile=s' => \$gff_file,
+            'countFile=s' => \$count_file,
+            'outputGFF=s' => \$gffOut,
             );
 
 &usage("Count File not specified") unless $count_file;
@@ -46,12 +43,12 @@ my $len = scalar @header;
 close($count);
 
 
-my $gffhh;
+my $gffh;
 my $gff_file = $gff_file; 
-open($gffhh, "gunzip -c $gff_file |") || die "can't open pipe to $gff_file";
-my $gffio = Bio::Tools::GFF->new(-fh => $gffhh, -gff_version => 3);
+open($gffh, "gunzip -c $gff_file |") || die "can't open pipe to $gff_file";
+my $gffio = Bio::Tools::GFF->new(-fh => $gffh, -gff_version => 3);
 
-open(my $output, ">$gtfOut");
+open(my $output, ">$gffOut");
 my $gffOutput = Bio::Tools::GFF->new(-fh => $output, -gff_version => 3);
 while(my $feature = $gffio->next_feature()) {
         my $primary = $feature->primary_tag();
@@ -69,19 +66,18 @@ while(my $feature = $gffio->next_feature()) {
 
 close($output);
 
-my $newName = "mv $gtfOut Temp.gff";
-my $sortGff = "sort -k1,1 -k4,4n Temp.gff > $gtfOut";  
-my $GffZip = "bgzip -f $gtfOut";
-my $tabix = "tabix -p gff $gtfOut.gz";
-my $cleanUp = "rm Temp.gff";
+my $newName = "mv $gffOut Temp.gff";
+my $sortGff = "sort -k1,1 -k4,4n Temp.gff > $gffOut";  
+my $gffZip = "bgzip -f $gffOut";
+my $tabix = "tabix -p gff $gffOut.gz";
 
 &runCmd($newName);
 &runCmd($sortGff);
-&runCmd($GffZip);
+&runCmd($gffZip);
 &runCmd($tabix);
-&runCmd($cleanUp);
+unlink('$gffOut.gz');
 
 sub usage {
-die "UpdateLongReadGtf.pl --GFF3File=FILE --CountFile=FILE --UpdatedGffName=FILE\n";
+die "updateLongReadGtf.pl --gffFile=FILE --countFile=FILE --outputGFF=FILE\n";
 }
 1;
