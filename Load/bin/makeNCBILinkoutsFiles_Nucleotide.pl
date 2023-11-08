@@ -11,15 +11,16 @@ use IO::File;
 use HTML::Entities;
 use XML::LibXML;
 
-my ($output, $gusConfigFile, $debug, $verbose);
+my ($output, $gusConfigFile, $debug, $verbose, $tuningTablePrefix);
 
 &GetOptions("output=s" => \$output,
             "verbose!" => \$verbose,
+            "tuningTablePrefix=s" => \$tuningTablePrefix,
             "gusConfigFile=s" => \$gusConfigFile,
 	   );
 
-if (!$output) {
-  die ' USAGE: makeNCBILinkoutsFiles_Nucleotide.pl -output <output>'
+if (!$output || !$tuningTablePrefix) {
+  die ' USAGE: makeNCBILinkoutsFiles_Nucleotide.pl -output <output> -tuningTablePrefix <tuningTablePrefix>'
 }
 
 my $doc = XML::LibXML->load_xml(string => <<__END_XML__);
@@ -59,7 +60,7 @@ my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: 
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-my $sql = &getNucleotideQuery();
+my $sql = &getNucleotideQuery($tuningTablePrefix);
 my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
 $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
@@ -124,6 +125,7 @@ close(OUT);
 unlink($output . '.bak'); 
 
 sub getNucleotideQuery {
-    my $sql = "select SOURCE_ID from ApidbTuning.genomicseqattributes where is_top_level =1 ORDER by SOURCE_ID";
+    my $prefix = shift;
+    my $sql = "select SOURCE_ID from ApidbTuning.${prefix}genomicseqattributes where is_top_level =1 ORDER by SOURCE_ID";
     return $sql;
 }
