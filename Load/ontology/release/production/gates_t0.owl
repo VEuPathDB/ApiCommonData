@@ -118,6 +118,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001020 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -253,6 +261,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">T0</obo:EUPATH_0001010>
+        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mosquito species, by PCR</rdfs:label>
     </owl:Class>
     
@@ -671,6 +680,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_larval_habitat_sheet_2</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">T0</obo:EUPATH_0001010>
+        <obo:EUPATH_0001020 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001020>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Macroinvertebrate present at collection site count</rdfs:label>
     </owl:Class>
     
@@ -805,6 +815,20 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000001">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0044177"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010::morphological.id</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">T0</obo:EUPATH_0001010>
+        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mosquito species, by morphology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000002 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000002">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043212"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010::adult.collection.latitude</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010</obo:EUPATH_0001001>
@@ -815,9 +839,9 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000002 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000003 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000002">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000003">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043212"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010::adult.collection.longitude</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010</obo:EUPATH_0001001>
@@ -832,12 +856,10 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000009">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010::morphological.id</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010::wall.surface</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">t0_ento_adult_data_20231010</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">T0</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wall materal</rdfs:label>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wall material</rdfs:label>
     </owl:Class>
     
@@ -1258,9 +1280,6 @@
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001019">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">defaultBinWidth</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition</rdfs:label>
