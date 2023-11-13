@@ -2,7 +2,7 @@ CREATE TABLE apidb.TranscriptProduct (
  transcript_product_id        NUMBER(12) NOT NULL,
  na_feature_id                NUMBER(12) NOT NULL,
  external_database_release_id NUMBER(12) NOT NULL,
- product                      VARCHAR(500) NOT NULL,
+ product                      VARCHAR(2000) NOT NULL,
  is_preferred                 NUMBER(1) NOT NULL,
  publication                  VARCHAR2(20),           -- e.g. "PMID:18534909"
  evidence_code                NUMBER(10),             -- foreign key to sres.OntologyTerm 
