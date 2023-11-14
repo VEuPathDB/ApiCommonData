@@ -41,12 +41,19 @@ stringArg({name => 'extDbRlsSpec',
        isList => 0
       }),
 
+stringArg({name => 'SOExtDbRlsSpec',
+	   descr => 'The extDbRlsName of the Sequence Ontology to use',
+	   reqd => 1,
+	   constraintFunc => undef,
+	   isList => 0
+	  }),
+
 stringArg({name => 'SOTerm',
-       descr => 'SO source_id for the gap',
+       descr => 'SO term for the gap',
        constraintFunc=> undef,
        reqd  => 0,
        isList => 0,
-       default => "SO:0000730",
+       default => "gap",
       }),
 ];
 
@@ -123,10 +130,14 @@ sub run {
   my $self = shift;
 
   my $SOTermArg = $self->getArg("SOTerm");
-  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $SOTermArg});
-
-  $SOTerm->retrieveFromDB();
-
+  my $extDbRlsSpec = $self->getArg('SOExtDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $SOTermArg ,
+                                                    external_database_release_id => $extDbRlsId
+                                                   });
+  unless($SOTerm->retrieveFromDB()) {
+    die "SO Term $SOTerm not found in database.\n";
+  }
   my $SOTermId = $SOTerm->getId();
 
   # External Database Spec
