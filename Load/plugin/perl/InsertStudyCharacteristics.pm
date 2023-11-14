@@ -329,19 +329,18 @@ sub getCharacteristicsFromYaml {
     die "Error parsing yaml file:  $file";
   }
   my %data;
-  foreach my $doc (@$yaml) {
-    while(my ($dsname,$chars) = each %$doc){
-      if($dsname eq $datasetName) {
-        foreach my $var (%$chars) {
-          next if($var eq 'dataset');
-          if(ref($chars->{$var}) eq 'ARRAY') {
-            push @{$data{$var}}, @{$chars->{$var}};
-          }
-          else {
-            push @{$data{$var}}, $chars->{$var};
-          }
+  my $datasetsHash = $yaml->[0];
+  while( my ($name, $properties) = each %$datasetsHash ){ 
+    if($name eq $datasetName) {
+      foreach my $var (keys %$properties) {
+        next if($var eq 'dataset');
+
+        if(ref($properties->{$var}) eq 'ARRAY') {
+          push @{$data{$var}}, @{$properties->{$var}};
         }
-        last;
+        else {
+          push @{$data{$var}}, $properties->{$var};
+        }
       }
     }
   }
