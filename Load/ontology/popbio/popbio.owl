@@ -745,6 +745,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000005">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
@@ -757,6 +758,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000006">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
@@ -789,10 +791,11 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000542">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Place name determined from latitude/longitude using automated geo-lookup. Up to GADM admin level 2. (Some small islands have fewer levels.)</obo:IAO_0000115>
-        <rdfs:label>Location</rdfs:label>
+        <obo:IAO_0000115>Name of collection site as given by the data provider. These may not be unique across multiple datasets. For unambiguous place names, use the latitude/longitude-derived place names in continent, country, Aministrative region, level 1&amp;2.</obo:IAO_0000115>
+        <rdfs:label>provider name for collection site</rdfs:label>
     </owl:Class>
     
 
@@ -2298,6 +2301,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000013">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
         <rdfs:label>continent</rdfs:label>
@@ -3398,6 +3402,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
@@ -4991,6 +4996,7 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000015">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label>town</rdfs:label>
     </owl:Class>
@@ -6955,6 +6961,18 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043001"/>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <rdfs:label xml:lang="en">live animal bait</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000212 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000212">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>If multiple named traps are used, the name of the trap used will be recorded here. Not guaranteed to be unique across datasets. For reference mainly.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">trap ID</rdfs:label>
     </owl:Class>
     
 
