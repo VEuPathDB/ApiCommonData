@@ -84,8 +84,9 @@ sub getKeyHeaderIndex {
   open(FH,"<$file") or die "$file: $!\n";
   my $line = <FH>;
   close(FH);
+  $line =~ s/"//g;
   my @hr = split(",", $line);
-  my ($iri,$lab,$piri,$plab);
+  my ($iri,$lab,$piri,$plab) = (0,0,0,0);
   for(my $i = 0; $i <= $#hr; $i++){
     given(lc($hr[$i])) {
       when("iri") { $iri = $i + 1 }
@@ -94,6 +95,7 @@ sub getKeyHeaderIndex {
       when("parentlabel") { $plab = $i + 1 }
     }
   }
+  unless ($iri &&  $lab &&  $piri &&  $plab ) { die "Indices not found" }
   return ($iri, $lab, $piri, $plab )
 }
 
