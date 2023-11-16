@@ -13,12 +13,9 @@ use CBIL::Util::PropertySet;
 
 sub getGenomicSequenceIdMapSql{
 
-    my ($organismAbbrev)  = shift;
-
+   my ($organismAbbrev, $gusConfigFile) = @_;
     ##Create db handle
-
-    my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-     
+    $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
     my @properties;
     my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 

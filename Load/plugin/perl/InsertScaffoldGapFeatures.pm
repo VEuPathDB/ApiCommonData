@@ -131,7 +131,7 @@ sub run {
 
   # External Database Spec
   my $extDbSpec = $self->getArg('extDbRlsSpec');
-  $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n";
+  my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n";
   $self->log("External Database Spec: $extDbSpec, ReleaseID: $extDbRlsId");
 
   # retrieve sequences in a hash
