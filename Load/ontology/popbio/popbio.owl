@@ -4629,7 +4629,7 @@
         <rdfs:comment>Children will be values present in the i_investigation.txt sheet of popbio ISA-Tabs in the &quot;STUDY DESIGN DESCRIPTORS&quot; section. These are not currently loaded as EDA entity data. However, they fail validation if the loader doesn&apos;t know about the terms, so they go here so that it does.
 
 Note: this ISA-Tab section also includes terms that used to be in the now-deprecated custom &quot;STUDY TAGS&quot; section. For example, tags/terms like &quot;ICEMR&quot;.</rdfs:comment>
-        <rdfs:label>Designs and Tags</rdfs:label>
+        <rdfs:label>Design and Tag values</rdfs:label>
     </owl:Class>
     
 
@@ -6985,6 +6985,29 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:IAO_0000115>Detailed non-geographical information about where the sample was collected.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">Source habitat</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000214 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000214">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Tags</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000215 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000215">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Unique ID for a component dataset/study in VectorBase&apos;s population biology (PopBio) resource. The IDs are formatted VBPnnnnnnn where nnnnnnn is a zero-padded integer.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">PopBio Study ID</rdfs:label>
     </owl:Class>
     
 
