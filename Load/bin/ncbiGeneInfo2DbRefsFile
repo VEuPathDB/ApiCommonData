@@ -28,16 +28,16 @@ use Getopt::Long;
 
 use Data::Dumper;
 
-my ($file, $taxId, $speciesTaxa) = @ARGV;
+my ($file, $taxId, $speciesTaxa, $gusConfigFile) = @ARGV;
 
 
 usage() unless ($file, $taxId);
 
 if($speciesTaxa){
-	$taxId = `getSpeciesNCBITaxaList --NCBITaxId $taxId`;
+	$taxId = `getSpeciesNCBITaxaList --NCBITaxId $taxId  --gusConfigFile $gusConfigFile`;
 	die "\nError calling 'getSpeciesNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
 }
-my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId  --gusConfigFile $gusConfigFile`;
 die "\nError calling 'getSubNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
 
 print STDERR "$subNCBITaxaList\n";
