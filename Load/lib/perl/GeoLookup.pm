@@ -137,6 +137,8 @@ sub lookup {
       }
     }
 
+    @cleaned = ($admin0, $admin1, $admin2, $continent);
+    
     $result_names = \@cleaned;
     $rows++;
   }
