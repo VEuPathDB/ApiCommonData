@@ -250,4 +250,11 @@ sub updateIsolates{
 
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.IsolateFeature',
+          'DoTS.IsolateSource',
+         );
+}
 

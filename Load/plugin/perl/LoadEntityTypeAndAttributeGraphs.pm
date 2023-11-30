@@ -78,6 +78,13 @@ my $argsDeclaration =
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
+ booleanArg({ descr => 'never use the common ontology term definition',
+       name  => 'noCommonDef',
+       isList    => 0,
+       reqd  => 0,
+       constraintFunc => undef,
+     }),
+
 
 ];
 
@@ -126,9 +133,10 @@ sub run {
   ##
 
   chdir $self->getArg('logDir');
+  my $noCommonDef = $self->getArg('noCommonDef');
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
+  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from $SCHEMA.study where external_database_release_id = $extDbRlsId");
 
@@ -139,7 +147,7 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
 
-    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $ontologyExtDbRlsId, $extDbRlsId, $SCHEMA, $TERM_SCHEMA);
+    my $ontologyTerms = &queryForOntologyHierarchyAndAnnotationProperties($self->getQueryHandle(), $ontologyExtDbRlsId, $extDbRlsId, $SCHEMA, $TERM_SCHEMA, $noCommonDef);
 
     $self->updateDisplayTypesForGeoVariables($ontologyTerms);
 
@@ -147,7 +155,7 @@ sub run {
 
     $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForNonontologicalLeaves($studyId, $ontologyTerms);
 
-    $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
+    $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId, $noCommonDef);
   }
 
   return "Loaded $attributeGraphCount rows into $SCHEMA.AttributeGraph and $entityTypeGraphCount rows into $SCHEMA.EntityTypeGraph";
@@ -244,6 +252,7 @@ sub createAttributeGraph {
                                                                  has_study_dependent_vocabulary => $ontologyTerm->{HAS_STUDY_DEPENDENT_VOCABULARY},
                                                                  weighting_variable_spec => $ontologyTerm->{WEIGHTING_VARIABLE_SPEC},
                                                                  display_order => $ontologyTerm->{DISPLAY_ORDER},
+                                                                 force_string_type => $ontologyTerm->{FORCE_STRING_TYPE},
                                                                  definition => $ontologyTerm->{DEFINITION},
                                                                  ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
                                                                  scale => $ontologyTerm->{SCALE}
@@ -286,20 +295,23 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
 
 
 sub constructAndSubmitEntityTypeGraphsForStudy {
-  my ($self, $studyId) = @_;
+  my ($self, $studyId, $noCommonDef) = @_;
 
   my $dbh = $self->getQueryHandle();
   $dbh->{FetchHashKeyName} = 'NAME_lc';
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'), undef, $TERM_SCHEMA);
+  my $ontologyExtDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
 
   if(my $collectionsYamlFile = $self->getArg('collectionsYamlFile')) {
     my $yaml = YAML::Tiny->read();
     foreach my $collection (@$yaml) {}
   }
 
-
+  my $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as description";
+  if($noCommonDef){
+    $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), os.definition) as description";
+  }
 
   my $sql = "
 with process as (
@@ -339,8 +351,8 @@ select DISTINCT p.parent_id
      , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(json_value(ap.props, '\$.label[0]'), nvl(os.ontology_synonym, t.name))) as display_name
      , t.entity_type_id
      , t.internal_abbrev
-     ,  ot.source_id as stable_id
-     , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as description
+     , ot.source_id as stable_id
+     , $definitionSql
      , s.study_id
      , s.stable_id as study_stable_id
      , nvl(json_value(ap.props, '\$.display_name_plural[0]'), nvl(json_value(ap.props, '\$.plural[0]'), os.plural)) as display_name_plural

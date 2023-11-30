@@ -72,9 +72,9 @@ open(SNP, ">$snpCtl") or die "Cannot open file $snpCtl for writing: $!";
       ref_na_sequence_id,
       snp_ext_db_rls_id,
       protocol_app_node_id,
-      positions_in_cds FILLER,
-      positions_in_protein FILLER,
-      products_full FILLER,
+      positions_in_cds FILLER char(1000),
+      positions_in_protein FILLER char(1000),
+      products_full FILLER char(1000),
       diff_from_adjacent_snp FILLER,
       sequence_variation_id SEQUENCE(MAX,1), 
       modification_date "SYSDATE"

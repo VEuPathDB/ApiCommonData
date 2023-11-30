@@ -94,12 +94,12 @@ sub loopDir {
 	        rename $oldname, $f or die "Can't rename $oldname to $f: $!";
             #create a symbolic link with static name for curated gaf file.
             if ($oldname =~ /\.gaf$/){
-              my $zippedFile_oldname = "$oldname.zip";
-              my $zippedFile = "$f.zip";
-              system("zip $zippedFile $f") == 0 or die "Failed to zip file: $!";
-              print "File zipped: $zippedFile\n";
-              symlink $zippedFile, $zippedFile_oldname or die "Failed to create symbolic link: $!";
-              print "Symbolic link created: $zippedFile_oldname -> $zippedFile\n";
+              my $gzippedFile_oldname = "$oldname.gzip";
+              my $gzippedFile = "$f.gzip";
+              system("gzip -c $f > $gzippedFile") == 0 or die "Failed to gzip file: $!";
+              print "File gzipped: $gzippedFile\n";
+              symlink $gzippedFile, $gzippedFile_oldname or die "Failed to create symbolic link: $!";
+              print "Symbolic link created: $gzippedFile_oldname -> $gzippedFile\n";
               unlink $f or warn "Failed to remove original file: $!";
               print "Original file removed: $f\n";
            }

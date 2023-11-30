@@ -18,7 +18,7 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
   wgsTaxa => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleTaxa($self->{data}{$sample}, $self->{isRelativeAbundance});
+      return entitiesForSampleTaxa($self->{data}{$sample}, 1);
     }
   },
   wgsFunctions => {
@@ -155,7 +155,7 @@ sub entitiesForSampleAbundances {
     while(my ($groupKey, $as) = each %groups){
       my ($key, $displayName) = abundanceKeyAndDisplayName($groupKey, $maxKeyLength);
       if($isRelativeAbundance){
-        my $relvalue = sprintf("%.6f",sum @{$as} );
+        my $relvalue = sprintf("%.6f", (sum @{$as} ) / $normalizingFactor);
         $result{$levelNamesRelative->[$taxonLevel]}{$key} = [$displayName, $relvalue];
       }
       else {

@@ -355,6 +355,7 @@ sub makeNewReleaseId{
 
 sub undoTables {
   return ('ApiDB.TranscriptProduct',
+	  'ApiDB.GeneFeatureProduct',
 	  'SRes.ExternalDatabaseRelease',
 	  'SRes.ExternalDatabase',
 	 );

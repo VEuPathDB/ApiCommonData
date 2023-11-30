@@ -103,6 +103,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001020 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
+        <rdfs:label>forceStringType</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
@@ -224,6 +232,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_24852">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002695"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Insecticide resistance assay</obo:EUPATH_0001002>
         <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
@@ -736,6 +745,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000005">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
@@ -748,6 +758,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000006">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
@@ -780,10 +791,11 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000542">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Place name determined from latitude/longitude using automated geo-lookup. Up to GADM admin level 2. (Some small islands have fewer levels.)</obo:IAO_0000115>
-        <rdfs:label>Location</rdfs:label>
+        <obo:IAO_0000115>Name of collection site as given by the data provider. These may not be unique across multiple datasets. For unambiguous place names, use the latitude/longitude-derived place names in continent, country, Aministrative region, level 1&amp;2.</obo:IAO_0000115>
+        <rdfs:label>provider name for collection site</rdfs:label>
     </owl:Class>
     
 
@@ -1185,6 +1197,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0043133 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043133">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000191"/>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>lethal insecticide concentration 95 in mass per standard assay bottle</obo:IAO_0000115>
+        <rdfs:label>LC95 measured in mass per standard assay bottle</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043136 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043136">
@@ -1209,6 +1232,17 @@
         <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000273</obo:EUPATH_0001009>
         <obo:IAO_0000115>lethal insecticide concentration 99 in mass density unit</obo:IAO_0000115>
         <rdfs:label>LC99 measured in mass density unit</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0043139 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043139">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000193"/>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>lethal insecticide concentration 99 in mass per standard assay bottle</obo:IAO_0000115>
+        <rdfs:label>LC99 measured in mass per standard assay bottle</rdfs:label>
     </owl:Class>
     
 
@@ -1760,6 +1794,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0043201 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043201">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043001"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>BG-Lure</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043203 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043203">
@@ -2014,6 +2058,19 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0043224 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043224">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000100"/>
+        <obo:EUPATH_0001002>Genotyping assay</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001008>count unit</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009>http://purl.obolibrary.org/obo/UO_0000189</obo:EUPATH_0001009>
+        <rdfs:label>count of 2Rk inversion</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043225 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043225">
@@ -2079,6 +2136,16 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043001"/>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <rdfs:label>lurex</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0043237 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043237">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000272"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>tick specimen collection process by citizen scientists</rdfs:label>
     </owl:Class>
     
 
@@ -2192,10 +2259,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043256 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043256">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
+        <obo:IAO_0000115>The date on which specimen collection began</obo:IAO_0000115>
         <rdfs:label>specimen collection start date</rdfs:label>
     </owl:Class>
     
@@ -2204,10 +2273,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043257 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043257">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
+        <obo:IAO_0000115>The date on which specimen collection ended</obo:IAO_0000115>
         <rdfs:label>specimen collection end date</rdfs:label>
     </owl:Class>
     
@@ -2216,10 +2287,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0043258 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0043258">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>indicator of specimen collection date discontinuity</rdfs:label>
+        <obo:IAO_0000115>If there was a period of time between the start and end dates that no collections were made, this will be indicated by &apos;Yes&apos;.</obo:IAO_0000115>
+        <rdfs:label>dates are discontinuous</rdfs:label>
     </owl:Class>
     
 
@@ -2228,6 +2301,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000013">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
         <rdfs:label>continent</rdfs:label>
@@ -2952,6 +3026,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0000066 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000066">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000208"/>
+        <rdfs:label>investigation</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0000070 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000070">
@@ -2985,6 +3068,7 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0000272 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000272">
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Blood meal assay</obo:EUPATH_0001002>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001002>Genotyping assay</obo:EUPATH_0001002>
@@ -3217,11 +3301,13 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001508 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001508">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Either an hour of the day (24 hour clock) or a time range during which the specimen collection was undertaken</obo:IAO_0000115>
         <obo:clinEpi_label>Study timepoint</obo:clinEpi_label>
-        <rdfs:label>sampling time measurement datum</rdfs:label>
+        <rdfs:label>collection time of day</rdfs:label>
     </owl:Class>
     
 
@@ -3230,8 +3316,10 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001617">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001020>yes</obo:EUPATH_0001020>
         <rdfs:label>PubMed ID</rdfs:label>
     </owl:Class>
     
@@ -3240,10 +3328,12 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">100</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001015>yes</obo:EUPATH_0001015>
+        <obo:IAO_0000115>The raw date range(s) as provided or curated by our team. If the dates are &quot;discontinuous&quot; (see other variable) then this variable will show the exact dates.</obo:IAO_0000115>
         <obo:clinEpi_label>Sample collection date</obo:clinEpi_label>
         <rdfs:label>specimen collection date(s) (raw)</rdfs:label>
     </owl:Class>
@@ -3290,6 +3380,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001622">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label>Study name</rdfs:label>
@@ -3311,6 +3402,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection site</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>This variable will be auto-populated at load time by looking up GADM polygons.</rdfs:comment>
@@ -3323,6 +3415,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001687">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label>Contact</rdfs:label>
@@ -3392,6 +3485,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002110">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label>DOI</rdfs:label>
@@ -4294,9 +4388,11 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0002988 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002988">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000209"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Duration of specimen collection in days</obo:IAO_0000115>
         <rdfs:label>duration of specimen collection</rdfs:label>
     </owl:Class>
     
@@ -4347,6 +4443,16 @@
         <obo:EUPATH_0001002>Blood meal assay</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label>blood meal host organism</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002998 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002998">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000272"/>
+        <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
+        <rdfs:label>arthropod collection process with automated identification</rdfs:label>
     </owl:Class>
     
 
@@ -4523,7 +4629,7 @@
         <rdfs:comment>Children will be values present in the i_investigation.txt sheet of popbio ISA-Tabs in the &quot;STUDY DESIGN DESCRIPTORS&quot; section. These are not currently loaded as EDA entity data. However, they fail validation if the loader doesn&apos;t know about the terms, so they go here so that it does.
 
 Note: this ISA-Tab section also includes terms that used to be in the now-deprecated custom &quot;STUDY TAGS&quot; section. For example, tags/terms like &quot;ICEMR&quot;.</rdfs:comment>
-        <rdfs:label>Designs and Tags</rdfs:label>
+        <rdfs:label>Design and Tag values</rdfs:label>
     </owl:Class>
     
 
@@ -4651,7 +4757,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0001152">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000207"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/SO_0001769"/>
         <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
@@ -4664,7 +4769,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0001178">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/POPBIO_8000207"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/SO_0001769"/>
         <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
@@ -4733,6 +4837,15 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:comment>Locations of arthropod collection given a shorthand name which is named population</rdfs:comment>
         <rdfs:label xml:lang="en">Pre-defined population</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_5600157 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_5600157">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0500000"/>
+        <rdfs:label xml:lang="en">St. Joseph County</rdfs:label>
     </owl:Class>
     
 
@@ -4883,6 +4996,7 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000015">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label>town</rdfs:label>
     </owl:Class>
@@ -4912,7 +5026,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     <!-- http://purl.obolibrary.org/obo/POPBIO_8000018 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000018">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002728"/>
         <obo:IAO_0000115>The number of specimens used in an assay that provides quantitative results. For example the percentage of infected specimens.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">number of input specimens to quantitative assay</rdfs:label>
     </owl:Class>
@@ -4922,7 +5035,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     <!-- http://purl.obolibrary.org/obo/POPBIO_8000019 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000019">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002728"/>
         <obo:IAO_0000115>The number of specimens used in an assay that provides qualitative results. For example 50 mosquitoes could be mashed up and assayed for pathogen detection by PCR and the result is &apos;present&apos; or &apos;absent&apos; and there is no indication of how many of the input specimens were postiive.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">number of input specimens to qualitative assay</rdfs:label>
     </owl:Class>
@@ -6600,6 +6712,7 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000185">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
         <rdfs:label xml:lang="en">Institution</rdfs:label>
@@ -6823,12 +6936,78 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     
 
 
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000208 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000208">
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Processes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000209 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000209">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">specimen collection date and time</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/POPBIO_8000210 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000210">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043001"/>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <rdfs:label xml:lang="en">live animal bait</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000212 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000212">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>If multiple named traps are used, the name of the trap used will be recorded here. Not guaranteed to be unique across datasets. For reference mainly.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">trap ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000213 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000213">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <obo:EUPATH_0001002>Collection</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Detailed non-geographical information about where the sample was collected.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">Source habitat</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000214 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000214">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Tags</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/POPBIO_8000215 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/POPBIO_8000215">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0001002>Study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Unique ID for a component dataset/study in VectorBase&apos;s population biology (PopBio) resource. The IDs are formatted VBPnnnnnnn where nnnnnnn is a zero-padded integer.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">PopBio Study ID</rdfs:label>
     </owl:Class>
     
 
@@ -8039,9 +8218,18 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     <!-- http://purl.obolibrary.org/obo/UO_0000032 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000032">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043064"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000003"/>
         <obo:EUPATH_0001005>value</obo:EUPATH_0001005>
         <rdfs:label>hour</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UO_0000190 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000190">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000003"/>
+        <rdfs:label>ratio</rdfs:label>
     </owl:Class>
     
 
@@ -8517,9 +8705,6 @@ Note: this ISA-Tab section also includes terms that used to be in the now-deprec
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001019">
         <rdfs:label>defaultBinWidth</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
-        <rdfs:label>forceStringType</rdfs:label>
     </rdf:Description>
 </rdf:RDF>
 

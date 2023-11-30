@@ -71,7 +71,12 @@ where s.ontology_term_id = os.ontology_term_id (+)
 
 
 sub queryForOntologyHierarchyAndAnnotationProperties {
-  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema) = @_;
+  my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema, $noCommonDef) = @_;
+
+  my $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, s.definition))";
+  if($noCommonDef){
+    $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), os.definition)";
+  }
 
   my $sql = "select s.name
                   , s.source_id
@@ -79,26 +84,31 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , o.name parent_name
                   , o.source_id as parent_stable_id
                   , o.ontology_term_id parent_ontology_term_id
+                  -- json values from annprop OR dedicated fields in ontologysyn
                   , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(os.ontology_synonym, s.name)) as display_name
+                  , $definitionSql as definition
                   , os.is_preferred
-                  , nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, s.definition)) as definition
-                  , json_value(ap.props, '\$.displayType[0]') as display_type
-                  , json_query(ap.props, '\$.hidden') as hidden -- gives json array
-                  , json_value(ap.props, '\$.displayOrder[0]') as display_order
-                  , json_value(ap.props, '\$.defaultDisplayRangeMin[0]') as display_range_min
-                  , json_value(ap.props, '\$.defaultDisplayRangeMax[0]') as display_range_max
-                  , json_value(ap.props, '\$.defaultBinWidth[0]') as bin_width_override
-                  , case when lower(json_value(ap.props, '\$.is_temporal[0]')) = 'yes' then 1 else 0 end as is_temporal
-                  , case when lower(json_value(ap.props, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
-                  , case when lower(json_value(ap.props, '\$.repeated[0]')) = 'yes' then 1 else 0 end as is_repeated
-                  , case when lower(json_value(ap.props, '\$.mergeKey[0]')) = 'yes' then 1 else 0 end as is_merge_key
-                  , case when lower(json_value(ap.props, '\$.impute_zero[0]')) = 'yes' then 1 else 0 end as impute_zero
-                  , json_query(ap.props, '\$.variable') as provider_label -- gives json array
-                  , json_query(ap.props, '\$.ordinal_values') as ordinal_values -- gives json array
-                  , json_value(ap.props, '\$.scale[0]') as scale
+                  -- json values from annprop OR annotation_props field in ontologysynonym
+                  , nvl(json_value(ap.props, '\$.displayType[0]'), json_value(os.annotation_properties, '\$.displayType[0]')) as display_type
+                  , nvl(json_value(ap.props, '\$.displayOrder[0]'), json_value(os.annotation_properties, '\$.displayOrder[0]')) as display_order
+                  , nvl(json_value(ap.props, '\$.defaultDisplayRangeMin[0]'), json_value(os.annotation_properties, '\$.defaultDisplayRangeMin[0]')) as display_range_min
+                  , nvl(json_value(ap.props, '\$.defaultDisplayRangeMax[0]'), json_value(os.annotation_properties, '\$.defaultDisplayRangeMax[0]')) as display_range_max
+                  , nvl(json_value(ap.props, '\$.defaultBinWidth[0]'), json_value(os.annotation_properties, '\$.defaultBinWidth[0]')) as bin_width_override
+                  , nvl(json_value(ap.props, '\$.forceStringType[0]'), json_value(os.annotation_properties, '\$.forceStringType[0]')) as force_string_type
+                  , nvl(json_value(ap.props, '\$.scale[0]'), json_value(os.annotation_properties, '\$.scale[0]')) as scale
                   , nvl(json_value(ap.props, '\$.variableSpecToImputeZeroesFor[0]'), json_value(os.annotation_properties, '\$.variableSpecToImputeZeroesFor[0]')) as variable_spec_to_impute_zeroes_for
-                  , nvl(json_value(ap.props, '\$.hasStudyDependentVocabulary[0]'), json_value(os.annotation_properties, '\$.hasStudyDependentVocabulary[0]')) as has_study_dependent_vocabulary
                   , nvl(json_value(ap.props, '\$.weightingVariableSpec[0]'), json_value(os.annotation_properties, '\$.weightingVariableSpec[0]')) as weighting_variable_spec
+                  -- boolean things from json_value
+                  , case when lower(nvl(json_value(ap.props, '\$.hasStudyDependentVocabulary[0]'), json_value(os.annotation_properties, '\$.hasStudyDependentVocabulary[0]'))) = 'yes' then 1 else 0 end as has_study_dependent_vocabulary
+                  , case when lower(nvl(json_value(ap.props, '\$.is_temporal[0]'), json_value(os.annotation_properties, '\$.is_temporal[0]')))  = 'yes' then 1 else 0 end as is_temporal
+                  , case when lower(nvl(json_value(ap.props, '\$.is_featured[0]'), json_value(os.annotation_properties, '\$.is_featured[0]')))  = 'yes' then 1 else 0 end as is_featured
+                  , case when lower(nvl(json_value(ap.props, '\$.repeated[0]'), json_value(os.annotation_properties, '\$.repeated[0]')))  = 'yes' then 1 else 0 end as is_repeated
+                  , case when lower(nvl(json_value(ap.props, '\$.mergeKey[0]'), json_value(os.annotation_properties, '\$.mergeKey[0]')))  = 'yes' then 1 else 0 end as is_merge_key
+                  , case when lower(nvl(json_value(ap.props, '\$.impute_zero[0]'), json_value(os.annotation_properties, '\$.impute_zero[0]')))  = 'yes' then 1 else 0 end as impute_zero
+                  -- json array
+                  , nvl(json_query(ap.props, '\$.hidden'), json_query(os.annotation_properties, '\$.hidden')) as hidden
+                  , nvl(json_query(ap.props, '\$.variable'), json_query(os.annotation_properties, '\$.variable')) as provider_label
+                  , nvl(json_query(ap.props, '\$.ordinal_values'), json_query(os.annotation_properties, '\$.ordinal_values')) as ordinal_values
 from ${termSchema}.ontologyrelationship r
    , ${termSchema}.ontologyterm s
    , ${termSchema}.ontologyterm o
