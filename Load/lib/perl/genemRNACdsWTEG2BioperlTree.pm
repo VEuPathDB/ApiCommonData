@@ -280,7 +280,7 @@ sub traverseSeqFeatures {
 		#    push(@exons,$exon);
 		#}
 
-		if($subFeature->primary_tag eq 'CDS'){
+		if($subFeature->primary_tag eq 'CDS' || $subFeature->primary_tag eq 'pseudogenic_exon'){
 
 		  my $exon = &makeBioperlFeature("exon", $subFeature->location, $bioperlSeq);
 		  $exon = &copyQualifiers($subFeature, $exon);

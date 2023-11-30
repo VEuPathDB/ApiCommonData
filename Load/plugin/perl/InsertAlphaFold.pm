@@ -244,7 +244,7 @@ sub getConfig {
     my ($self) = @_;
 
     if(!$self->{config}) {
-        my $gusConfigFile = $self->getArg('gusconfigfile');
+        my $gusConfigFile = $self->getArg('gusConfigFile');
         $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
     }
     $self->{config}

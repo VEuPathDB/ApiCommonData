@@ -12,13 +12,13 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
   ampliconTaxa => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleTaxa($self->{data}{$sample});
+      return entitiesForSampleTaxa($self->{data}{$sample}, $self->{isRelativeAbundance});
     }
   },
   wgsTaxa => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleTaxa($self->{data}{$sample});
+      return entitiesForSampleTaxa($self->{data}{$sample}, 1);
     }
   },
   wgsFunctions => {
@@ -54,11 +54,11 @@ sub entitiesForSample {
   return $self->{entitiesForSample}->($self, $sample);
 }
 sub entitiesForSampleTaxa {
-  my ($data) = @_;
+  my ($data, $isRelativeAbundance) = @_;
   my @values = values %${data};
   return {} unless @values;
   return {
-    %{entitiesForSampleRelativeAbundances($data)}
+    %{entitiesForSampleAbundances($data, $isRelativeAbundance)}
   };
 }
 
@@ -96,16 +96,24 @@ sub entitiesForSampleFunctions {
   }
   return \%result;
 }
-my $levelNamesTxt = <<EOF;
+
+my $levelNamesRelative = [qw/
 eupath_0009251
 eupath_0009252
 eupath_0009253
 eupath_0009254
 eupath_0009255
 eupath_0009256
-eupath_0009257
-EOF
-my $levelNames = [grep {$_} split("\n", $levelNamesTxt)];
+eupath_0009257/];
+
+my $levelNamesAbsolute = [qw/
+eupath_0009351
+eupath_0009352
+eupath_0009353
+eupath_0009354
+eupath_0009355
+eupath_0009356
+eupath_0009357/];
 
 
 sub abundanceKeyAndDisplayName {
@@ -129,15 +137,15 @@ sub abundanceKeyAndDisplayName {
   return $key, $displayName;
 }
 
-sub entitiesForSampleRelativeAbundances {
-  my ($data) = @_;
+sub entitiesForSampleAbundances {
+  my ($data, $isRelativeAbundance) = @_;
   my @rows = keys %{$data};
   my @abundances = values %{$data};
   my $normalizingFactor= sum values %{$data};
   my %result;
 
-  for my $taxonLevel ((0..$#$levelNames)){
-    my $maxKeyLength = $MAX_PROPERTY_NAME_LENGTH - length($levelNames->[$taxonLevel]) - 1;
+  for my $taxonLevel ((0..$#$levelNamesRelative)){
+    my $maxKeyLength = $MAX_PROPERTY_NAME_LENGTH - length($levelNamesRelative->[$taxonLevel]) - 1;
     my %groups;
     for my $i (0..$#rows){
       my @ls = split ";", $rows[$i];
@@ -145,9 +153,17 @@ sub entitiesForSampleRelativeAbundances {
       push @{$groups{$l}}, $abundances[$i];
     }
     while(my ($groupKey, $as) = each %groups){
-      my $value = sprintf("%.6f", (sum @{$as} ) / $normalizingFactor);
       my ($key, $displayName) = abundanceKeyAndDisplayName($groupKey, $maxKeyLength);
-      $result{$levelNames->[$taxonLevel]}{$key} = [$displayName, $value];
+      if($isRelativeAbundance){
+        my $relvalue = sprintf("%.6f", (sum @{$as} ) / $normalizingFactor);
+        $result{$levelNamesRelative->[$taxonLevel]}{$key} = [$displayName, $relvalue];
+      }
+      else {
+        my $relvalue = sprintf("%.6f", (sum @{$as} ) / $normalizingFactor);
+        $result{$levelNamesRelative->[$taxonLevel]}{$key} = [$displayName, $relvalue];
+        my $absvalue = sprintf("%.6f", sum @{$as});
+        $result{$levelNamesAbsolute->[$taxonLevel]}{$key} = [$displayName, $absvalue];
+      }
     }
   }
   return \%result;

@@ -234,7 +234,7 @@ sub DESTROY {
 
   close $controlFileHandle if($controlFileHandle);
 
-  unlink $controlFileName;
+  #unlink $controlFileName;
 }
 
 
