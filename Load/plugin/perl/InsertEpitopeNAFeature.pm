@@ -24,7 +24,7 @@ sub getArgsDeclaration {
 		     isList => 0,
 		     mustExist => 1,
 		     format=>'Text',
-             })
+             }),
 	stringArg({name => 'extDbSpec',
                      descr => 'External database from whence this data came|version',
                      constraintFunc=> undef,
@@ -106,14 +106,14 @@ sub run {
 
 sub loadEpitopes {
 
-	my ($self, $epitopeFile) = @_;
+	my ($self, $peptideResultFile) = @_;
 	my $extDbSpec = $self->getArg('extDbSpec');
   	my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";		
 	
 	open(my $peptides, $peptideResultFile) or die "Could not open file '$peptideResultFile' $!";
 
 		
-		while (my $row = <$h>) {
+		while (my $row = <$peptides>) {
        		chomp $row;
         	my @counts_list = split("\t", $row);
         	my $protein = $counts_list[0];
@@ -129,23 +129,20 @@ sub loadEpitopes {
         	my $alignment = $counts_list[10];
         	my $MatchType = $counts_list[11];
         
-        
-        
-       # print($protein, "\t", $peptide, "\t", $pepLen, "\t", $indetity, "\t", $matchStart, "\t", $matchEnd, "\t", $alignmentLength, "\t", $bitScore, "\t", $refSeq,  "\t", $hitSeq, "\t", $alignment, "\t", $MatchType, "\n",)
-
- }
-
 
 		my $row_peptide = GUS::Model::ApiDB::NAFeatureEpitope->new({
-								peptideAccession => $peptideAccession,
-								peptidesSequence => $peptidesSequence,
-								peptidesGene => $peptidesGene,
+								peptideAccession => $protein,
+								peptidesSequence => $peptide,
+								peptidesGene => $protein,
 								external_database_release_id => $extDbRlsId});
 	 	$row_peptide->submit();
 		$self->undefPointerCache();
+		
+
 		}
+	}
 	
-}
+
 	
 sub undoTables {
   my ($self) = @_;

@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertEpitopesAcession;
+package ApiCommonData::Load::Plugin::InsertEpitopeAccession;
 use lib "$ENV{GUS_HOME}/lib/perl";
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -8,7 +8,7 @@ use JSON;
 use Bio::Tools::GFF;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
-use GUS::Model::ApiDB::NAFeatureEpitopeAccession;
+use GUS::Model::ApiDB::IEDBEpitope;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
@@ -58,7 +58,7 @@ SYNTAX
 NOTES
 	
 	my $tablesAffected = <<AFFECT;
-ApiDB.NAFeatureEpitopeAccession
+ApiDB.IEDBEpitope
 AFFECT
 	
 	my $tablesDependedOn = <<TABD;
@@ -123,7 +123,7 @@ sub loadEpitopepsAccession {
 
 		 	
 
-		my $row_peptide = GUS::Model::ApiDB::NAFeatureEpitopeAccession->new({
+		my $row_peptide = GUS::Model::ApiDB::IEDBEpitope->new({
 								iedb_id => $peptideAccession,
 								peptide_sequence => $epitopeSequence,
 								peptide_gene_accession => $epitopeGene,
@@ -140,7 +140,7 @@ sub loadEpitopepsAccession {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.NAFeatureEpitopeAccession');
+  return ('ApiDB.IEDBEpitope');
 }
 
 1;
