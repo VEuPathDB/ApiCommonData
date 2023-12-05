@@ -91,11 +91,12 @@ sub run {
 
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $self->{extDbRlsId}});
 
-  my $protocolType = 'mass spectrometry analysis';
-  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $protocolType});
-  unless($ontologyTerm->retrieveFromDB()) {
-    $self->error("Required Ontology Term $protocolType not found in database");
-  }
+  my $protocolType = 'OBI_0200085';
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $protocolType});
+  $ontologyTerm->retrieveFromDB();
+  #unless($ontologyTerm->retrieveFromDB()) {
+  #  $self->error("Required Ontology Term $protocolType not found in database");
+  #}
 
   opendir (INDIR, $inputFileDirectory) or die "could not open $inputFileDirectory: $!/n";
 
