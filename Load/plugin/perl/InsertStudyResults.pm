@@ -161,7 +161,7 @@ sub run {
       $protocolType = "data transformation";
     }
 
-    my $appNodeType = "data item";
+    my $appNodeType = "IAO_0000027";
 
     my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingStudyAppNodes, $nodeOrderNum, $appNodeType);
 
@@ -563,10 +563,11 @@ sub retrieveAppNodesForStudy {
 sub makeProtocolAppNode {
   my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType) = @_;
 
-  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
-  unless($ontologyTerm->retrieveFromDB()) {
-    $self->error("Required ontology term \"$appNodeType\" either is not found in the database or returns more than one row from the database");
-  }
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $appNodeType});
+  $ontologyTerm->retrieveFromDB();
+# unless($ontologyTerm->retrieveFromDB()) {
+#    $self->error("Required ontology term \"$appNodeType\" either is not found in the database or returns more than one row from the database");
+#  }
 
   foreach my $e (@$existingAppNodes) {
     my $existingName = $e->getName();
