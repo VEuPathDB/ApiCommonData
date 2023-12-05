@@ -26,15 +26,16 @@ use Getopt::Long;
 
 use Data::Dumper;
 
-my ($gene2pubmedFile,$geneInfoFile,$taxId,$verbose);
+my ($gene2pubmedFile,$geneInfoFile,$taxId,$verbose,$gusConfigFile);
 &GetOptions("gene2pubmedFile=s" => \$gene2pubmedFile,
-	    "geneInfoFile=s" => \$geneInfoFile,
-	    "taxId=s" => \$taxId,
+	        "geneInfoFile=s" => \$geneInfoFile,
+	        "taxId=s" => \$taxId,
+            "gusConfigFile=s" => \$gusConfigFile,
             "verbose!" => \$verbose);
 
 usage() unless ($gene2pubmedFile,$geneInfoFile,$taxId);
 
-my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId --gusConfigFile $gusConfigFile`;
 
 die "\nError calling 'getSubNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
 #print STDERR "$subNCBITaxaList\n";
