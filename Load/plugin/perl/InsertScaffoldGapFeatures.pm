@@ -123,10 +123,8 @@ sub run {
   my $self = shift;
 
   my $SOTermArg = $self->getArg("SOTerm");
-  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $SOTermArg});
-
-  $SOTerm->retrieveFromDB();
-
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({name=>"NA",source_id => $SOTermArg});
+  $SOTerm->submit() unless ($SOTerm->retrieveFromDB());
   my $SOTermId = $SOTerm->getId();
 
   # External Database Spec
