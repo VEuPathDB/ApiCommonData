@@ -92,8 +92,8 @@ sub run {
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $self->{extDbRlsId}});
 
   my $protocolType = 'OBI_0200085';
-  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $protocolType});
-  $ontologyTerm->retrieveFromDB();
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name=>"NA", source_id => $protocolType});
+  $ontologyTerm->submit() unless ($ontologyTerm->retrieveFromDB());
   #unless($ontologyTerm->retrieveFromDB()) {
   #  $self->error("Required Ontology Term $protocolType not found in database");
   #}
