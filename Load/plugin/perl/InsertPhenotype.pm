@@ -192,8 +192,8 @@ sub run {
 	}
 	if($lifeCycleTerm) {
 	    #$lifeCycleTermId = $ontologyTermIds->{$lifeCycleTerm};
-        my $lifeCycleSOTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $lifeCycleTerm});
-        $lifeCycleSOTerm->retrieveFromDB();
+        my $lifeCycleSOTerm = GUS::Model::SRes::OntologyTerm->new({name=>'NA',source_id => $lifeCycleTerm});
+        $lifeCycleSOTerm->submit() unless ($lifeCycleSOTerm->retrieveFromDB());
         $lifeCycleTermId = $lifeCycleSOTerm->getId();
         $self->userError("lifeCycle Term $lifeCycleTerm specified but not found in database") unless($lifeCycleTermId);
 	}
