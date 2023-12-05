@@ -191,8 +191,11 @@ sub run {
 	    $self->userError("entity Term $entityTerm specified but not found in database") unless($entityTermId);
 	}
 	if($lifeCycleTerm) {
-	    $lifeCycleTermId = $ontologyTermIds->{$lifeCycleTerm};
-	    $self->userError("lifeCycle Term $lifeCycleTerm specified but not found in database") unless($lifeCycleTermId);
+	    #$lifeCycleTermId = $ontologyTermIds->{$lifeCycleTerm};
+        my $lifeCycleSOTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $lifeCycleTerm});
+        $lifeCycleSOTerm->retrieveFromDB();
+        $lifeCycleTermId = $lifeCycleSOTerm->getId();
+        $self->userError("lifeCycle Term $lifeCycleTerm specified but not found in database") unless($lifeCycleTermId);
 	}
 	if($evidenceTerm) {
 	    $evidenceTermId = $ontologyTermIds->{$evidenceTerm};
