@@ -563,8 +563,8 @@ sub retrieveAppNodesForStudy {
 sub makeProtocolAppNode {
   my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType) = @_;
 
-  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $appNodeType});
-  $ontologyTerm->retrieveFromDB();
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => "NA",source_id => $appNodeType});
+   $ontologyTerm->submit() unless($ontologyTerm->retrieveFromDB());
 # unless($ontologyTerm->retrieveFromDB()) {
 #    $self->error("Required ontology term \"$appNodeType\" either is not found in the database or returns more than one row from the database");
 #  }
@@ -685,7 +685,7 @@ sub undoTables {
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
     'ApiDB.LopitResults',
-    'ApiDB.NAFeatureList',
+    #'ApiDB.NAFeatureList',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
