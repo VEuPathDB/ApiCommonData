@@ -233,7 +233,7 @@ sub insertRelationships {
     if($predicateId) {
       $predicate = GUS::Model::ApidbUserDatasets::OntologyTerm->new({source_id => $predicateId});
       if(!$predicate->retrieveFromDB()) {
-        $self->userError("Failure retrieving predicate ontology term \"$predicateId\"");
+        $predicate->submit()
       }
     }
 
