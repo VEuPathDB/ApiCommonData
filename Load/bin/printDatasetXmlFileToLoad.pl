@@ -308,6 +308,7 @@ printRefStraindbEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not p
 printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printIsolatesFromFamilyRep ($ofh, \%excelInfo) if ($projectName ne "VectorBase" && $projectName ne "HostDB"); ## do not print it if VectorBase or HostDB
 
+printBUSCO ($ofh, \%excelInfo) if ($projectName ne "HostDB"); ## not sure if HostDB has BUSCO score
 
 print $ofh "</datasets>\n";
 
@@ -796,6 +797,20 @@ sub printECAssocFromUniprot {
   printNameWithDollarSign ($fh, 'speciesNcbiTaxonId');
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithValue ($fh, 'version', "TODAY");
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printBUSCO {
+  my ($fh, $excelInfoPoint) = @_;
+#  my $buildNumber = $excelInfoPoint->{$organismAbbrev}->{'ebiVersion'};
+  my $buildNumber = $ebiVersion;
+  $buildNumber =~ s/build_//;
+  print $fh "  <dataset class=\"BUSCO\">\n";
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithValue ($fh, 'buildNumber', $buildNumber);
   print $fh "  </dataset>\n";
   print $fh "\n";
   return 0;
