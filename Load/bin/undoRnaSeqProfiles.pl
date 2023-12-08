@@ -32,7 +32,7 @@ if ($commit) {
     print STDERR "Running undo with commit\n";
 }
 
-my $cmd = "ga GUS::Community::Plugin::Undo --plugin ApiCommonData::Load::Plugin::InsertRnaSeqPatch --algInvocationId $rowAlgInvId";
+my $cmd = "ga GUS::Community::Plugin::Undo --plugin ApiCommonData::Load::Plugin::InsertRnaSeqPatch --algInvocationId $rowAlgInvId --gusConfigFile $gusConfigFile";
 
 $cmd = $commit ? $cmd . " --commit": $cmd;
 
