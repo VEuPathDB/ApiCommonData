@@ -35,6 +35,7 @@ CREATE TABLE VDI_CONTROL_&1..dataset_install_message (
 , install_type VARCHAR2(64) NOT NULL
 , status       VARCHAR2(64) NOT NULL
 , message      CLOB
+, updated      TIMESTAMP WITH TIME ZONE NOT NULL
 , FOREIGN KEY (dataset_id) REFERENCES VDI_CONTROL_&1..dataset (dataset_id)
 , PRIMARY KEY (dataset_id, install_type)
 );
@@ -71,7 +72,7 @@ FROM
      FROM vdi_control_&1..dataset_install_message
      WHERE install_type = 'data'
      AND status = 'complete'
-    ) i                                  
+    ) i
     WHERE v.dataset_id = i.dataset_id
     and v.dataset_id = d.dataset_id
     and d.is_deleted = 0;
