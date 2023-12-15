@@ -237,7 +237,7 @@ sub run {
   $SCHEMA = $self->getArg('schema');
   $SCHEMA ||= 'EDA';
 
-  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 
@@ -752,7 +752,7 @@ sub getOntologyTermGusObj {
     }
 
     my $gusOntologyTerm;
-    if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
       $gusOntologyTerm = GUS::Model::ApidbUserDatasets::OntologyTerm->new({ontology_term_id => $ontologyTermId});
     }
     else {
@@ -985,7 +985,7 @@ sub checkOntologyTermsAndFetchIds {
     $ncbiTaxon = 'PREFIX_WE_DONT_WANT';
   }
 
-  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 

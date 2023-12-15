@@ -22,7 +22,7 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 use Time::HiRes qw(gettimeofday);
 
 #use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike dropViewsLike);
 
 use JSON;
 use Encode qw/encode/;
@@ -35,7 +35,7 @@ my $TERM_SCHEMA = "SRES";
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
-my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
+my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar(16))
 
 #my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
@@ -191,7 +191,10 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %studies) unless(scalar keys %studies == 1);
 
-  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
+
+
+  $self->getQueryHandle()->do("SET DateStyle = 'ISO, YMD'") or $self->error($self->getQueryHandle()->errstr);
+  #$self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
 
   my $dbh = $self->getQueryHandle();
   my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
@@ -399,8 +402,9 @@ sub queryForEntityTypeIds {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select t.name, t.entity_type_id, ot.source_id, t.internal_abbrev
-from $SCHEMA.entitytype t, ${TERM_SCHEMA}.ontologyterm ot
-where t.type_id = ot.ontology_term_id (+)
+from $SCHEMA.entitytype t
+LEFT JOIN ${TERM_SCHEMA}.ontologyterm ot
+ON t.type_id = ot.ontology_term_id
 and study_id = $studyId";
 
   my $sh = $dbh->prepare($sql);
@@ -579,8 +583,7 @@ sub addUnitsToOntologyTerms {
   #   $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
   # }
 
-  my $sql = "select * from (
-select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
+  my $sql = "select  att.source_id, unit.ontology_term_id, unit.name
 from $SCHEMA.study pg
    , $SCHEMA.entitytype vt
    , $SCHEMA.attributeunit au
@@ -591,20 +594,6 @@ and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
 and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
 and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id
---UNION
---select ot.source_id
---     , uot.ontology_term_id
---     , json_value(annotation_properties, '\$.unitLabel[0]') label
---     , 1 as priority
---from sres.ontologysynonym os
---   , sres.ontologyterm ot
---   , sres.ontologyterm uot
---where os.ontology_term_id = ot.ontology_term_id
---and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
---and json_value(annotation_properties, '\$.unitLabel[0]') is not null
---and os.external_database_release_id = ?
-)
- order by priority
 ";
 
 
@@ -1014,10 +1003,10 @@ sub fieldsAndCreateTable {
   my $tableSynonymName = "${SCHEMA}.AttributeValue_${studyId}_${entityTypeId}";
 
   my $createTableSql = "create table $tableSynonymName (
-$idField VARCHAR2(200) NOT NULL,
-attribute_stable_id  VARCHAR2(255) NOT NULL,
-string_value VARCHAR2(1000) NOT NULL,
-number_value NUMBER,
+$idField VARCHAR(200) NOT NULL,
+attribute_stable_id  VARCHAR(255) NOT NULL,
+string_value VARCHAR(1000) NOT NULL,
+number_value NUMERIC,
 date_value DATE
 )
 ";
@@ -1032,7 +1021,8 @@ date_value DATE
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableSynonymName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableSynonymName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("create or replace synonym ${tableName} for ${tableSynonymName}") or die $dbh->errstr;
+
+  $dbh->do("create or replace view ${tableName} as select $idField, attribute_stable_id, string_value, number_value, date_value from ${tableSynonymName}") or die $dbh->errstr;
   $dbh->do("GRANT SELECT ON $tableSynonymName TO gus_r") or die $dbh->errstr;
   $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
 
@@ -1042,6 +1032,8 @@ date_value DATE
 
 sub makeFifo {
   my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
+
+  my $cacheFileName = $fifoName =~ s/\.dat$/.cache/;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -1068,19 +1060,26 @@ sub makeFifo {
                                                  _fields => $fields
                                                 });
 
-  $sqlldr->setLineDelimiter($eorLiteral);
-  $sqlldr->setFieldDelimiter($eocLiteral);
-
-  $sqlldr->writeConfigFile();
-
   my $fifo = ApiCommonData::Load::Fifo->new($fifoName);
 
   my $sqlldrProcessString = $sqlldr->getCommandLine();
+
+  # for user datasets we don't run sqlldr yet
+  # make the dat/cache file on disk
+  # The input file name is what is written to the sqlldr config
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $sqlldrProcessString = "cat $fifoName >$cacheFileName";
+    $sqlldr->setInfileName($cacheFileName);
+  }
 
   my $pid = $fifo->attachReader($sqlldrProcessString);
   $self->addActiveForkedProcess($pid);
 
   my $sqlldrInfileFh = $fifo->attachWriter();
+
+  $sqlldr->setLineDelimiter($eorLiteral);
+  $sqlldr->setFieldDelimiter($eocLiteral);
+  $sqlldr->writeConfigFile();
 
   return $fifo;
 }
@@ -1102,13 +1101,18 @@ sub dropTables {
   my $dbh = $self->getDbHandle();
 #  my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
 
-  my $sql = "select distinct s.internal_abbrev from ${SCHEMA}.study s where s.external_database_release_id = $extDbRlsId";
+  my $sql = "select distinct s.study_id, et.entity_type_id, s.internal_abbrev
+             FROM ${SCHEMA}.study s
+             INNER JOIN ${SCHEMA}.entitytype et
+             ON s.study_id = et.study_id
+             WHERE s.external_database_release_id = $extDbRlsId";
   $self->log("Looking for tables belonging to this study :\n$sql");
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  while(my ($s) = $sh->fetchrow_array()) {
-    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${s}", $dbh);
+  while(my ($s, $et, $internalAbbrev) = $sh->fetchrow_array()) {
+    &dropViewsLike(${SCHEMA}, "ATTRIBUTEVALUE_${internalAbbrev}", $dbh);
+    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${s}_${et}", $dbh);
   }
   $sh->finish();
 }
