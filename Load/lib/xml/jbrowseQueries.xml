@@ -16,6 +16,9 @@ parent_id - Unique ID of the parent feature
 tstarts - comma sep list of subfeature starts
 blocksizes - comma sep list of subfeature lengths
 -->
+
+
+<!-- GOOD as is -->
   <track name="EST" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
@@ -47,6 +50,7 @@ blocksizes - comma sep list of subfeature lengths
     </sql>
   </track>
 
+  <!-- takes too long to run sql like this.  TODO:  remove this and move to reflow -->
   <track name="GenericEndFeature" type="genomic" fileSuffix="gff">
    <trackConfigurations>
      <properties>
@@ -173,6 +177,8 @@ blocksizes - comma sep list of subfeature lengths
    </sql>
   </track>
 
+
+<!-- GOOD as is -->
   <track name="alignmentSequence" type="genomic" fileSuffix="gff">
    <!-- cryptodb,tritrypdb,toxodb,unidb -->
 
@@ -226,6 +232,8 @@ WHERE  blat.query_na_sequence_id = enas.na_sequence_id
    </sql>
   </track>
 
+
+<!-- GOOD as is -->
   <track name="alignmentTransposableElements" type="genomic" fileSuffix="gff">
    <!-- TrichDB,UniDB -->
    <trackConfigurations>
@@ -2118,28 +2126,31 @@ ChIP:ChIPchip_peaksjbrowse
 MassSpecPeptide
 
 ### TODO Genomic ####
-ChIP:ChIPchip_smoothedjbrowse - should be BigWig, not GFF
-ChIP:ChIPSeqPeaksjbrowse
-#gene:annotation - skip (workflow)
-#gene:annotation2 - ditto
-#gene:syntenyJBrowseScaled - skip for now; uses JBrowse window as param
-# gff:apolloTranscript - references (only) apidbTuning.ApolloUpdate; skip
+## TODO:  make these as dedicated scripts in worklfow
+ChIP:ChIPchip_smoothedjbrowse - should be BigWig, not GFF; TODO: either one file per sample
+ChIP:ChIPSeqPeaksjbrowse - gff standard
 
-# these gsnap queries use tuning tables. Also, they all have "new" versions (e.g. gsnap:unifiedintronjunctionNew)
-#gsnap:unifiedintronjunction
-#gsnap:unifiedintronjunctionAnnotatedOnly
-#gsnap:unifiedintronjunctionHCOnly
-#gsnap:unifiedintronjunctionLCOnly
+# these gsnap queries use tuning tables. This is ok now because this step can be run after tuning artifacts have been made
+gsnap:unifiedintronjunctionAnnotatedNew
+gsnap:unifiedintronjunctionAnnotatedOnly
+gsnap:unifiedintronjunctionHCOnly
+gsnap:unifiedintronjunctionLCOnly
 
-# ReferenceSequence - already dumping in workflow as FASTA
-
-# SNP:Genotyping - uses (only) apidbTuning.SnpChipAttributes
-# SNP:Population - uses tuning tables SnpAttributes, GeneAttributes
+# TODO Add these back and use the tuning tables
+SNP:Genotyping - uses (only) apidbTuning.SnpChipAttributes
+SNP:Population - uses tuning tables SnpAttributes, GeneAttributes
 
 ### TODO Protein ####
-get_2d_struc_jbrowse
+# TODO:  move this to dedicated workflow STEP
+get_2d_struc_jbrowse - bigwig
 
-# ReferenceSequenceAa - should have FASTA file store. same as genomic sequence; copy and index download-dir file
+# Paul has already made ReferenceSequence (Genomic). do what he did but for proteins
+ReferenceSequenceAa - should have FASTA file store. same as genomic sequence; copy and index download-dir file
+
+# SKIP
+#gene:syntenyJBrowseScaled - skip for now; uses JBrowse window as param
+#gff:apolloTranscript - references (only) apidbTuning.ApolloUpdate; skip
+
 -->
 
 </tracks>
