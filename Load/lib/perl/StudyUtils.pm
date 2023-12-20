@@ -7,7 +7,6 @@ queryForOntologyTerms
 queryForOntologyHierarchyAndAnnotationProperties
 getSchemaFromRowAlgInvocationId
 getTermsByAnnotationPropertyValue
-getTermsWithDataShapeOrdinal
 parseMegaStudyConfig
 dropTablesLike
 dropViewsLike
@@ -74,9 +73,9 @@ ON s.ontology_term_id = os.ontology_term_id
 sub queryForOntologyHierarchyAndAnnotationProperties {
   my ($dbh, $ontologyExtDbRlsId, $extDbRlsId, $schema, $termSchema, $noCommonDef) = @_;
 
-  my $definitionSql = "COALESCE(json_value(ap.props, '\$.definition[0]'), COALESCE(os.definition, s.definition))";
+  my $definitionSql = "COALESCE((ap.props::json -> 'definition' ->> 0)::text, COALESCE(os.definition, s.definition))";
   if($noCommonDef){
-    $definitionSql = "COALESCE(json_value(ap.props, '\$.definition[0]'), os.definition)";
+    $definitionSql = "COALESCE((ap.props::json -> 'definition' ->> 0)::text, os.definition)";
   }
 
   my $sql = "select s.name
@@ -86,30 +85,30 @@ sub queryForOntologyHierarchyAndAnnotationProperties {
                   , o.source_id as parent_stable_id
                   , o.ontology_term_id parent_ontology_term_id
                   -- json values from annprop OR dedicated fields in ontologysyn
-                  , COALESCE(json_value(ap.props, '\$.displayName[0]'), COALESCE(os.ontology_synonym, s.name)) as display_name
+                  , COALESCE((ap.props::json -> 'displayName' ->> 0)::text, COALESCE(os.ontology_synonym, s.name)) as display_name
                   , $definitionSql as definition
                   , os.is_preferred
                   -- json values from annprop OR annotation_props field in ontologysynonym
-                  , COALESCE(json_value(ap.props, '\$.displayType[0]'), json_value(os.annotation_properties, '\$.displayType[0]')) as display_type
-                  , COALESCE(json_value(ap.props, '\$.displayOrder[0]'), json_value(os.annotation_properties, '\$.displayOrder[0]')) as display_order
-                  , COALESCE(json_value(ap.props, '\$.defaultDisplayRangeMin[0]'), json_value(os.annotation_properties, '\$.defaultDisplayRangeMin[0]')) as display_range_min
-                  , COALESCE(json_value(ap.props, '\$.defaultDisplayRangeMax[0]'), json_value(os.annotation_properties, '\$.defaultDisplayRangeMax[0]')) as display_range_max
-                  , COALESCE(json_value(ap.props, '\$.defaultBinWidth[0]'), json_value(os.annotation_properties, '\$.defaultBinWidth[0]')) as bin_width_override
-                  , COALESCE(json_value(ap.props, '\$.forceStringType[0]'), json_value(os.annotation_properties, '\$.forceStringType[0]')) as force_string_type
-                  , COALESCE(json_value(ap.props, '\$.scale[0]'), json_value(os.annotation_properties, '\$.scale[0]')) as scale
-                  , COALESCE(json_value(ap.props, '\$.variableSpecToImputeZeroesFor[0]'), json_value(os.annotation_properties, '\$.variableSpecToImputeZeroesFor[0]')) as variable_spec_to_impute_zeroes_for
-                  , COALESCE(json_value(ap.props, '\$.weightingVariableSpec[0]'), json_value(os.annotation_properties, '\$.weightingVariableSpec[0]')) as weighting_variable_spec
+                  , COALESCE((ap.props::json -> 'displayType' ->> 0)::text, (os.annotation_properties::json -> 'displayType' ->> 0)::text) as display_type
+                  , COALESCE((ap.props::json -> 'displayOrder' ->> 0)::text, (os.annotation_properties::json -> 'displayOrder' ->> 0)::text) as display_order
+                  , COALESCE((ap.props::json -> 'defaultDisplayRangeMin' ->> 0)::text, (os.annotation_properties::json -> 'defaultDisplayRangeMin' ->> 0)::text) as display_range_min
+                  , COALESCE((ap.props::json -> 'defaultDisplayRangeMax' ->> 0)::text, (os.annotation_properties::json -> 'defaultDisplayRangeMax' ->> 0)::text) as display_range_max
+                  , COALESCE((ap.props::json -> 'defaultBinWidth' ->> 0)::text, (os.annotation_properties::json -> 'defaultBinWidth' ->> 0)::text) as bin_width_override
+                  , COALESCE((ap.props::json -> 'forceStringType' ->> 0)::text, (os.annotation_properties::json -> 'forceStringType' ->> 0)::text) as force_string_type
+                  , COALESCE((ap.props::json -> 'scale' ->> 0)::text, (os.annotation_properties::json -> 'scale' ->> 0)::text) as scale
+                  , COALESCE((ap.props::json -> 'variableSpecToImputeZeroesFor' ->> 0)::text, (os.annotation_properties::json -> 'variableSpecToImputeZeroesFor' ->> 0)::text) as variable_spec_to_impute_zeroes_for
+                  , COALESCE((ap.props::json -> 'weightingVariableSpec' ->> 0)::text, (os.annotation_properties::json -> 'weightingVariableSpec' ->> 0)::text) as weighting_variable_spec
                   -- boolean things from json_value
-                  , case when lower(COALESCE(json_value(ap.props, '\$.hasStudyDependentVocabulary[0]'), json_value(os.annotation_properties, '\$.hasStudyDependentVocabulary[0]'))) = 'yes' then 1 else 0 end as has_study_dependent_vocabulary
-                  , case when lower(COALESCE(json_value(ap.props, '\$.is_temporal[0]'), json_value(os.annotation_properties, '\$.is_temporal[0]')))  = 'yes' then 1 else 0 end as is_temporal
-                  , case when lower(COALESCE(json_value(ap.props, '\$.is_featured[0]'), json_value(os.annotation_properties, '\$.is_featured[0]')))  = 'yes' then 1 else 0 end as is_featured
-                  , case when lower(COALESCE(json_value(ap.props, '\$.repeated[0]'), json_value(os.annotation_properties, '\$.repeated[0]')))  = 'yes' then 1 else 0 end as is_repeated
-                  , case when lower(COALESCE(json_value(ap.props, '\$.mergeKey[0]'), json_value(os.annotation_properties, '\$.mergeKey[0]')))  = 'yes' then 1 else 0 end as is_merge_key
-                  , case when lower(COALESCE(json_value(ap.props, '\$.impute_zero[0]'), json_value(os.annotation_properties, '\$.impute_zero[0]')))  = 'yes' then 1 else 0 end as impute_zero
+                  , case when lower(COALESCE((ap.props::json -> 'hasStudyDependentVocabulary' ->> 0)::text, (os.annotation_properties::json -> 'hasStudyDependentVocabulary' ->> 0)::text)) = 'yes' then 1 else 0 end as has_study_dependent_vocabulary
+                  , case when lower(COALESCE((ap.props::json -> 'is_temporal' ->> 0)::text, (os.annotation_properties::json -> 'is_temporal' ->> 0)::text))  = 'yes' then 1 else 0 end as is_temporal
+                  , case when lower(COALESCE((ap.props::json -> 'is_featured' ->> 0)::text, (os.annotation_properties::json -> 'is_featured' ->> 0)::text))  = 'yes' then 1 else 0 end as is_featured
+                  , case when lower(COALESCE((ap.props::json -> 'repeated' ->> 0)::text, (os.annotation_properties::json -> 'repeated' ->> 0)::text))  = 'yes' then 1 else 0 end as is_repeated
+                  , case when lower(COALESCE((ap.props::json -> 'mergeKey' ->> 0)::text, (os.annotation_properties::json -> 'mergeKey' ->> 0)::text))  = 'yes' then 1 else 0 end as is_merge_key
+                  , case when lower(COALESCE((ap.props::json -> 'impute_zero' ->> 0)::text, (os.annotation_properties::json -> 'impute_zero' ->> 0)::text))  = 'yes' then 1 else 0 end as impute_zero
                   -- json array
-                  , COALESCE(json_query(ap.props, '\$.hidden'), json_query(os.annotation_properties, '\$.hidden')) as hidden
-                  , COALESCE(json_query(ap.props, '\$.variable'), json_query(os.annotation_properties, '\$.variable')) as provider_label
-                  , COALESCE(json_query(ap.props, '\$.ordinal_values'), json_query(os.annotation_properties, '\$.ordinal_values')) as ordinal_values
+                  , COALESCE((ap.props::json -> 'hidden')::text, (os.annotation_properties::json -> 'hidden')::text) as hidden
+                  , COALESCE((ap.props::json -> 'variable')::text, (os.annotation_properties::json -> 'variable')::text) as provider_label
+                  , COALESCE((ap.props::json -> 'ordinal_values')::text, (os.annotation_properties::json -> 'ordinal_values')::text) as ordinal_values
 from ${termSchema}.ontologyrelationship r
  INNER JOIN ${termSchema}.ontologyterm s ON r.subject_term_id = s.ontology_term_id
  INNER JOIN ${termSchema}.ontologyterm o ON r.object_term_id = o.ontology_term_id
@@ -174,24 +173,24 @@ and o.ANNOTATION_PROPERTIES IS NOT NULL";
   return \%attsHash;
 }
 
-sub getTermsWithDataShapeOrdinal {
-  my($dbh, $extDbRlsId, $property, $match, $termSchema) = @_;
-  my $sql = "SELECT o2.source_id,'1'
-FROM ${termSchema}.ONTOLOGYSYNONYM o
-LEFT JOIN ${termSchema}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID
-WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
-and (json_value(o.ANNOTATION_PROPERTIES, '\$.forceStringType[0]') = 'yes' 
-OR (o.ORDINAL_VALUES IS NOT NULL
-AND json_value(o.ORDINAL_VALUES, '\$.size()') > 1))
-";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($extDbRlsId);
-  my %attsHash;
-  while(my $row = $sh->fetchrow_arrayref()) {
-    $attsHash{$row->[0]} = 1;
-  }
-  return \%attsHash;
-}
+# sub getTermsWithDataShapeOrdinal {
+#   my($dbh, $extDbRlsId, $property, $match, $termSchema) = @_;
+#   my $sql = "SELECT o2.source_id,'1'
+# FROM ${termSchema}.ONTOLOGYSYNONYM o
+# LEFT JOIN ${termSchema}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID
+# WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ?
+# and ((o.ANNOTATION_PROPERTIES::json -> 'forceStringType' ->> 0)::text = 'yes'
+# OR (o.ORDINAL_VALUES IS NOT NULL
+# AND json_value(o.ORDINAL_VALUES, '\$.size()') > 1))
+# ";
+#   my $sh = $dbh->prepare($sql);
+#   $sh->execute($extDbRlsId);
+#   my %attsHash;
+#   while(my $row = $sh->fetchrow_arrayref()) {
+#     $attsHash{$row->[0]} = 1;
+#   }
+#   return \%attsHash;
+# }
 sub getTermsByAnnotationPropertyValue {
   my($dbh, $extDbRlsId, $property, $match) = @_;
   my $attsHash = getTermsAnnotationProperties($dbh,$extDbRlsId);
@@ -218,7 +217,7 @@ sub dropTablesLike {
   my $sth = $dbh->prepare($sql);
   $sth->execute();
   while(my ($table_name) = $sth->fetchrow_array()){
-    print STDERR "dropping table ${schema}.${table_name}";
+    print STDERR "dropping table ${schema}.${table_name}\n";
     $dbh->do("drop table ${schema}.${table_name}") or die $dbh->errstr;
   }
   $sth->finish();
@@ -234,7 +233,7 @@ sub dropViewsLike {
   my $sth = $dbh->prepare($sql);
   $sth->execute();
   while(my ($view_name) = $sth->fetchrow_array()){
-    print STDERR "dropping view ${schema}.${view_name}";
+    print STDERR "dropping view ${schema}.${view_name}\n";
     $dbh->do("drop view ${schema}.${view_name}") or die $dbh->errstr;
   }
   $sth->finish();

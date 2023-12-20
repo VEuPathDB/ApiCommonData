@@ -107,10 +107,12 @@ sub run {
   }
 
   my $dbh = $self->getDbHandle();
-  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
-  $dbh->do("alter session disable parallel query") or die $self->getDbHandle()->errstr;
-  $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
-  $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
+  $dbh->{RaiseError} = 1;
+
+  $dbh->do("SET DateStyle = 'ISO, YMD'") or die $self->getDbHandle()->errstr;
+#  $dbh->do("alter session disable parallel query") or die $self->getDbHandle()->errstr;
+#  $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
+#  $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
 
     foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
@@ -125,9 +127,8 @@ sub run {
       $self->createAncestorsTable($studyId, $entityTypeId, $studyAbbrev);
       my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId, $extDbRlsId);
 
-      if ($self->countWideTableColumns($entityTypeId) <= 1000){
-        $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
-      }
+
+      $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
 
       if(scalar(keys(%$collections)) > 0) {
         if($self->maybeCreateCollections($attributeGraphTableName, $collections)) {
@@ -162,17 +163,23 @@ where entity_type_id = $entityTypeId";
   while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
     $stableId = qq/"$stableId"/;
     my $path = "\$.${stableId}[0]";
-    $dataType = lc($dataType) eq 'string' ? "VARCHAR" : uc($dataType);
-# TODO Is this the right way to handle longitude?
-    $dataType = lc($dataType) eq 'longitude' ? "NUMBER" : uc($dataType);
 
+
+    $dataType = lc($dataType) eq 'string' ? "VARCHAR" : uc($dataType);
+    # REVIEW Is this the right way to handle longitude?
+    $dataType = lc($dataType) eq 'longitude' ? "NUMERIC" : uc($dataType);
+    $dataType = lc($dataType) eq 'number' ? "NUMERIC" : uc($dataType);
+    $dataType = lc($dataType) eq 'date' ? "text" : uc($dataType);
     # multiValued data always return JSON array
     if($isMultiValued) {
-      $dataType = "FORMAT JSON";
-      $path = "\$.${stableId}";
+      $dataType = "text";
+      $path = "TODO";
     }
 
-    my $string = "${stableId} $dataType PATH '${path}'";
+    my $entityOrProcess = $tableType eq 'p' ? 'process_atts' : 'entity_atts';
+
+    my $string = "(${entityOrProcess}::json -> '$stableId' ->> 0)::${dataType} as $stableId";
+
     if($tableType eq 'p') {
       push @processColumnStrings, $string;
     }
@@ -187,37 +194,28 @@ where entity_type_id = $entityTypeId";
 
   return \@entityColumnStrings, \@processColumnStrings;
 }
-sub countWideTableColumns {
-  my ($self, $entityTypeId) = @_;
-  my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
-  return 0 + @{$entityColumnStrings} +  @{$processColumnStrings};
-}
 
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
-  $self->log("Creating TABLE:  $tableName");
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
+  my $totalColumnCount = 0 + @{$entityColumnStrings} +  @{$processColumnStrings};
 
+  # no wide tables if we have more than 1000 columns
+  return if($totalColumnCount > 1000);
+
+  $self->log("Creating TABLE:  $tableName");
   my $entityColumns = join("\n,", @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
 
-  my $entitySql = "json_table(entity_atts, '\$'
-                         columns ( $entityColumns )) eaa
-                         ";
-
-  my $processSql = "json_table(process_atts, '\$'
-                          columns ( $processColumns)) paa
-                         ";
-
   my $withAllAttsSql = "
 with all_atts as (
 select ea.stable_id
-     , nvl(pa.atts, '{}') as process_atts
-     , nvl(ea.atts, '{}') as entity_atts
+     , COALESCE(pa.atts, '{}') as process_atts
+     , COALESCE(ea.atts, '{}') as entity_atts
 from EDA.processattributes pa
 RIGHT JOIN EDA.EntityAttributes_bfv ea
 ON pa.out_entity_id = ea.entity_attributes_id
@@ -228,24 +226,25 @@ where ea.entity_type_id = $entityTypeId
   my $sql;
   if(scalar @$entityColumnStrings > 0 && scalar @$processColumnStrings > 0) {
     $sql = "$withAllAttsSql
-            select  all_atts.stable_id, eaa.*, paa.*
-            from all_atts,
-            $entitySql,
-            $processSql
+            select  all_atts.stable_id,
+                  , $entityColumns
+                  , $processColumns
+            from all_atts
             ";
 
   }
   elsif(scalar @$entityColumnStrings > 0) {
     $sql = "$withAllAttsSql
-            select  all_atts.stable_id, eaa.*
-            from all_atts,
-            $entitySql";
+            select  all_atts.stable_id
+                  , $entityColumns
+            from all_atts
+            ";
   }
   elsif(scalar @$processColumnStrings > 0) {
     $sql = "$withAllAttsSql
-            select  all_atts.stable_id, paa.*
-            from all_atts,
-            $processSql
+            select  all_atts.stable_id
+                  , $processColumns
+            from all_atts
             ";
   }
   else {
@@ -261,9 +260,12 @@ where ea.entity_type_id = $entityTypeId
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
   # Check for stable_id (entities with no attributes will have none)
-  my $fields =  $self->sqlAsDictionary( Sql => "SELECT column_name, DATA_LENGTH FROM all_tab_columns WHERE owner='$SCHEMA'
-AND table_name='$tableName'");
-  if($fields->{STABLE_ID}){
+  my $sh = $dbh->prepare("select count(*) from $SCHEMA.$tableName");
+  $sh->execute();
+  my ($rowCount) = $sh->fetchrow_array();
+  $sh->finish();
+
+  if($rowCount){
     $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
     $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
   }
@@ -309,31 +311,42 @@ sub populateAncestorsTable {
   from ${SCHEMA}.processattributes p
      , ${SCHEMA}.entityattributes_bfv i
      , ${SCHEMA}.entityattributes_bfv o
-where p.in_entity_id = i.entity_attributes_id
+  where p.in_entity_id = i.entity_attributes_id
   and p.out_entity_id = o.entity_attributes_id
   and o.study_id = $studyId
   and i.study_id = $studyId
   ),
- recursive tree AS (
-  SELECT out_stable_id, out_entity_id,  in_stable_id, in_type_id
-  FROM f
-  WHERE out_type_id = $entityTypeId
-  UNION ALL
-  SELECT f.out_stable_id, f.out_entity_id, f.in_stable_id, f.in_type_id
-  FROM tree
-  INNER JOIN f ON tree.in_entity_id = f.out_entity_id
- )
- SELECT DISTINCT connect_by_root(out_stable_id) AS stable_id, in_stable_id, in_type_id
- FROM tree
---  select connect_by_root out_stable_id stable_id,  in_stable_id, in_type_id
---  from f
---  start with f.out_type_id = $entityTypeId
---  connect by prior in_entity_id = out_entity_id
+	  ancestors as (
+	      WITH RECURSIVE recursive_ancestors AS (
+	        SELECT
+	            f.out_stable_id AS stable_id,
+	            f.out_stable_id AS root_stable_id,
+                f.in_entity_id,
+                f.in_stable_id,
+	            f.in_type_id,
+                f.out_entity_id
+	        FROM f
+          WHERE f.out_type_id = $entityTypeId
+	        UNION ALL
+	        SELECT
+	            ra.stable_id,
+	            ra.root_stable_id,
+                f.in_entity_id,
+                f.in_stable_id,
+	            f.in_type_id,
+                f.out_entity_id
+            FROM f
+	        JOIN recursive_ancestors ra ON f.out_entity_id = ra.in_entity_id
+	      )
+	      select * from recursive_ancestors
+	  )
+SELECT DISTINCT root_stable_id AS stable_id, in_stable_id, in_type_id
+ FROM ancestors
   union
   select ea.stable_id, null, null
   from ${SCHEMA}.entityattributes_bfv ea
   where ea.entity_type_id = $entityTypeId
-) order by stable_id";
+) all_ancestors order by stable_id";
 
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($sql);
@@ -396,18 +409,19 @@ sub createEmptyAncestorsTable {
 
   my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
-  my $sql = "WITH RECURSIVE cte (entity_type_id)
+  my $sql = "WITH RECURSIVE sub_entities (entity_type_id)
              AS
              (
-             SELECT entity_type_id FROM ${SCHEMA}.entitytypegraph WHERE entity_type_id = ?
+             SELECT entity_type_id
+             FROM ${SCHEMA}.entitytypegraph
+             WHERE entity_type_id = ?
              UNION ALL
-             SELECT et.entity_type_id FROM ${SCHEMA}.entitytypegraph et
-             JOIN cte
-             -- TODO Confirm this is ordered right
-             -- ON et.parent_id = cte.entity_type_id
-             ON cte.parent_id = et.entity_type_id
+             SELECT et.entity_type_id
+             FROM ${SCHEMA}.entitytypegraph et
+             --REVIEW (is it s.parent_id = et.entity_type_id???)
+             INNER JOIN sub_entities s ON s.entity_type_id = et.parent_id
              )
-             SELECT entity_type_id FROM cte";
+             SELECT entity_type_id FROM sub_entities";
 
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($sql);
@@ -522,7 +536,7 @@ sub createAttributeGraphTable {
 
   my $sql = "CREATE TABLE $tableName as
   WITH attAnnProps AS
-  (select ontology_term_id, json_value(props, '\$.unitLabel[0]') as unit_override from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId)
+  (select ontology_term_id, (props::json -> 'unitLabel' ->> 0)::text as unit_override from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId)
    , att AS
   (SELECT a.*, t.unit_override
    FROM attAnnProps t
@@ -533,24 +547,25 @@ sub createAttributeGraphTable {
   (SELECT atg.*
    FROM ${SCHEMA}.attributegraph atg
    WHERE study_id = $studyId
-  )
-   , atg AS
-  (WITH RECURSIVE satg_recursive (ontology_term_id, study_id, stable_id,parent_ontology_term_id, parent_stable_id) as (
-   SELECT ontology_term_id, study_id, stable_id, parent_ontology_term_id, parent_stable_id
-   FROM satg
-   WHERE stable_id IN (SELECT DISTINCT stable_id FROM att)
-   UNION ALL
-   SELECT s.ontology_term_id, s.study_id, s.stable_id, s.parent_ontology_term_id, s.parent_stable_id
-   FROM satg s
-   INNER JOIN satg_recursive ON satg_recursive.parent_ontology_term_id = s.ontology_term_id
-   AND s.parent_stable_id != 'Thing'
-   AND s.study_id = $studyId)
-   SELECT *
-   FROM satg_recursive
-   -- TODO:  remove after testing
-   --select * from satg
-   --    START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
-   --    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing' and study_id = $studyId
+  ), atg as
+  (WITH RECURSIVE recursive_satg as (
+      SELECT s.*
+      FROM satg s
+      INNER JOIN (
+          SELECT DISTINCT stable_id
+          FROM att
+          ) AS subq
+      ON s.stable_id = subq.stable_id
+      WHERE s.study_id = $studyId
+      UNION ALL
+      SELECT s.*
+      FROM satg s
+      INNER JOIN recursive_satg rs
+      ON s.ontology_term_id = rs.parent_ontology_term_id
+       AND s.parent_stable_id != 'Thing'
+       AND s.study_id = rs.study_id
+     )
+   select * from recursive_satg
   )
 -- this bit gets the internal nodes
 SELECT --  distinct
@@ -590,7 +605,7 @@ SELECT --  distinct
      , null as scale
      , null as precision
 FROM att
-RIGHT JOIN atg
+LEFT JOIN atg
 ON atg.stable_id = att.stable_id
 where att.stable_id is null
 UNION ALL
@@ -601,7 +616,7 @@ SELECT -- distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , nvl(atg.ordinal_values, att.ordered_values) as vocabulary
+     , COALESCE(atg.ordinal_values, att.ordered_values) as vocabulary
      , atg.display_type display_type
      , atg.hidden
      , atg.display_order
@@ -631,7 +646,7 @@ SELECT -- distinct
             then 'ordinal'
             else att.data_shape
        end as data_shape
-     , nvl(att.unit_override, att.unit) as unit
+     , COALESCE(att.unit_override, att.unit) as unit
      , atg.scale
      , att.precision
 FROM atg, att
@@ -653,18 +668,26 @@ SQL
 
   $dupq->execute();
 
+  # add temporary unique id to this table
+  # this will enable us to drop redundant rows
+  $dbh->do("ALTER TABLE $tableName ADD COLUMN temp_id SERIAL PRIMARY KEY") or die $dbh->errstr;
+
   while (my ($stableId) = $dupq->fetchrow_array()) {
     $dbh->do(<<SQL) or die $dbh->errstr;
-        delete from $tableName
-        where stable_id = '$stableId'
-          and rownum < (select count(*)
-                        from $tableName
-                        where stable_id = '$stableId')
+    WITH cte AS (
+        SELECT temp_id,
+               stable_id,
+               row_number() OVER (PARTITION BY stable_id ORDER BY temp_id) AS rn
+        FROM $tableName
+        WHERE stable_id = '$stableId'
+    )
+    DELETE FROM $tableName
+    WHERE temp_id IN (SELECT temp_id FROM cte WHERE rn > 1)
 SQL
   }
 
+  $dbh->do("ALTER TABLE $tableName DROP COLUMN temp_id") or die $dbh->errstr;
   $dbh->do("ALTER TABLE $tableName add primary key (stable_id)") or die $dbh->errstr;
-
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
   return $tableName;
 }

@@ -103,18 +103,29 @@ my $argsDeclaration =
 	     reqd            => 1,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
-   stringArg({name           => 'schema',
+
+ stringArg({name           => 'schema',
             descr          => 'GUS::Model schema for entity tables',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
 
-   booleanArg({name => 'runRLocally',
-          descr => 'if true, will assume Rscript and plot.data are installed locally.  otherwise will call singularity',
-          reqd => 1,
+   booleanArg({name => 'runStatsScriptLocally',
+          descr => 'if true, will assume GO script find-bin-widths is installed locally.  Otherwise will call singularity for Rscript and plot.data are installed locally.',
+          reqd => 0,
           constraintFunc => undef,
           isList => 0,
          }),
+
+
+     # enumArg({ name           => '',
+     #           descr          => 'The qualifier type',
+     #           constraintFunc => undef,
+     #           reqd           => 1,
+     #           isList         => 0,
+     #           enum           => 'location,host,source'
+     #         }),
+
 
 
 
@@ -247,6 +258,36 @@ sub run {
   return 0;
 }
 
+sub runStatsScriptLocally {
+  my ($self, $numericValsFileName, $dateValsFileName, $outputStatsFileName) = @_;
+
+
+
+  #INPUT is like: join("\t", $attributeStableId, $entityTypeId, $numberValue)
+  # OUTPUT is like: my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
+  my $script = "find-bin-width";
+
+  # FIXME.  change to calling fbw script once instead of grepping each pair
+  open(FBW, ">", "$outputStatsFileName") or die "Couldn't open file $outputStatsFileName for writing: $!";
+
+  my @files = ($numericValsFileName,$dateValsFileName);
+
+  foreach my $file(@files) {
+
+    $self->log("Processing File $file");
+    my $groupBy = `cut -f 1,2 $file|sort -u`;
+
+    my @groups = split(/\n/, $groupBy);
+    foreach my $group (@groups) {
+      my $values = `grep -P \"$group\" $file |cut -f 3|$script`;
+
+      print FBW $group . "\t" . $values . "\n";
+    }
+  }
+
+  close FBW;
+}
+
 
 sub statsForPlots {
   my ($self, $dateValsFileName, $numericValsFileName, $tempDirectory) = @_;
@@ -261,22 +302,29 @@ sub statsForPlots {
   print $rCommandsFh $self->rCommandsForStats();
 
   my $singularity =  "singularity exec docker://veupathdb/rserve:2.1.3";
-  if($self->getArg("runRLocally")) {
-    $singularity = "";
-  }
+  my $script = "Rscript $rCommandsFileName";
 
-  printf STDERR ("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
-  my $numberSysResult = system("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
-  if($numberSysResult) {
-    system("cat $rCommandsFileName $numericValsFileName >&2");
-    $self->error("Error Running Rscript for numericFile");
+  # requires "find-bin-widths" script to be installed locally.
+  if($self->getArg("runStatsScriptLocally")) {
+    $self->runStatsScriptLocally($numericValsFileName, $dateValsFileName, $outputStatsFileName);
   }
+  # otherwise use singularity plot.data package
+  else {
+    $self->log("STATS COMMAND:  $singularity $script $numericValsFileName $outputStatsFileName");
+    my $numberSysResult = system("$singularity $script $numericValsFileName $outputStatsFileName");
 
-  printf STDERR ("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
-  my $dateSysResult = system("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
-  if($dateSysResult) {
-    system("cat $rCommandsFileName $dateValsFileName >&2");
-    $self->error("Error Running Rscript for datesFile");
+    if($numberSysResult) {
+      system("cat $rCommandsFileName $numericValsFileName >&2") if($self->getArg("runStatsScriptLocally"));
+      $self->error("Error Running $script for numericFile $numericValsFileName");
+    }
+
+    printf STDERR ("$singularity $script $dateValsFileName $outputStatsFileName\n");
+
+    my $dateSysResult = system("$singularity $script $dateValsFileName $outputStatsFileName");
+    if($dateSysResult) {
+      system("cat $rCommandsFileName $dateValsFileName >&2") if($self->getArg("runStatsScriptLocally"));
+      $self->error("Error Running $script for datesFile $dateValsFileName");
+    }
   }
 
   unless (-e $outputStatsFileName){
@@ -697,16 +745,14 @@ sub loadAttributes {
 
   my $dbh = $self->getQueryHandle();
 
-
-
   #$self->log("Loading attribute values for study $studyId from sql:".$sql);
-  my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
+  my $sh = $dbh->prepare($sql );
   $sh->execute($studyId);
 
   my $clobCount = 0;
 
-  while(my ($entityAttributesId, $entityStableId, $entityTypeId, $entityTypeIdOrig, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $lobLocator) = $sh->fetchrow_array()) {
-    my $json = encode('UTF-8', $self->readClob($lobLocator));
+  while(my ($entityAttributesId, $entityStableId, $entityTypeId, $entityTypeIdOrig, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $json) = $sh->fetchrow_array()) {
+    #my $json = encode('UTF-8', $self->readClob($lobLocator));
 
     my $attsHash = decode_json($json);
 
@@ -906,31 +952,31 @@ sub typedValueForAttribute {
 }
 
 
-sub readClob {
-  my ($self, $lobLocator) = @_;
+# sub readClob {
+#   my ($self, $lobLocator) = @_;
 
-  my $dbh = $self->getQueryHandle();
+#   my $dbh = $self->getQueryHandle();
 
-  my $chunkSize = $self->{_lob_locator_size};
+#   my $chunkSize = $self->{_lob_locator_size};
 
-  unless($chunkSize) {
-    $self->{_lob_locator_size} = $dbh->ora_lob_chunk_size($lobLocator);
-    $chunkSize = $self->{_lob_locator_size};
-  }
+#   unless($chunkSize) {
+#     $self->{_lob_locator_size} = $dbh->ora_lob_chunk_size($lobLocator);
+#     $chunkSize = $self->{_lob_locator_size};
+#   }
 
-  my $offset = 1;   # Offsets start at 1, not 0
+#   my $offset = 1;   # Offsets start at 1, not 0
 
-  my $output;
+#   my $output;
 
-  while(1) {
-    my $data = $dbh->ora_lob_read($lobLocator, $offset, $chunkSize );
-    last unless length $data;
-    $output .= $data;
-    $offset += $chunkSize;
-  }
+#   while(1) {
+#     my $data = $dbh->ora_lob_read($lobLocator, $offset, $chunkSize );
+#     last unless length $data;
+#     $output .= $data;
+#     $offset += $chunkSize;
+#   }
 
-  return $output;
-}
+#   return $output;
+# }
 
 
 sub loadAttributesFromEntity {
@@ -1033,7 +1079,8 @@ date_value DATE
 sub makeFifo {
   my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
 
-  my $cacheFileName = $fifoName =~ s/\.dat$/.cache/;
+  my $cacheFileName = $fifoName;
+  $cacheFileName =~ s/\.dat$/.cache/;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -1069,6 +1116,9 @@ sub makeFifo {
   # The input file name is what is written to the sqlldr config
   if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $sqlldrProcessString = "cat $fifoName >$cacheFileName";
+
+    $self->log("CACHEFILE NAME=$cacheFileName");
+
     $sqlldr->setInfileName($cacheFileName);
   }
 
