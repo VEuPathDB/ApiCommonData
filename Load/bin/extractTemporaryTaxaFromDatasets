@@ -1,0 +1,66 @@
+#!/usr/bin/perl
+
+use strict;
+use utf8;
+use open qw( :std :encoding(UTF-8) );
+use XML::LibXML;
+use Getopt::Long;
+use IO::Handle;
+use Data::Dumper;
+
+
+my ($outputFile, $dir, $help, @files);
+
+&GetOptions(
+  'help|h'       => \$help,
+  'outputFile=s' => \$outputFile,
+  'inputDir=s'   => \$dir,
+);
+
+&usage() if ($help);
+&usage("input dir is required") unless (-e $dir );
+
+# iterate all files, we want missing taxa from all components
+my $f = `find $dir -type f -name *.xml`;
+@files = split(/\n/, $f);
+
+open(TAXON, ">$outputFile") or die "could not open '$outputFile' for writing\n";
+TAXON->autoflush(1);
+
+my $taxonCount = 0;
+
+my $parser = XML::LibXML->new();
+foreach my $file (@files) {
+  print STDERR "Parsing $file\n";
+  print TAXON "Parsing $file\n";
+
+  my $tree = $parser->parse_file($file);
+  my $root = $tree->getDocumentElement();
+  my @organisms = $root->findnodes('/datasets/dataset[@class="organism" and prop[@name="hasTemporaryNcbiTaxonId"]="true"]');
+
+  foreach my $organism (@organisms) {
+    my $ncbiTaxonId = $organism->findnodes('prop[@name="ncbiTaxonId"]')->[0]->textContent();
+    my $speciesNcbiTaxonId = $organism->findnodes('prop[@name="speciesNcbiTaxonId"]')->[0]->textContent();
+    my $organismFullName = $organism->findnodes('prop[@name="organismFullName"]')->[0]->textContent();
+    print TAXON $ncbiTaxonId . "\t" . $speciesNcbiTaxonId . "\t" . $organismFullName . "\n";
+    $taxonCount++;
+  }
+}
+
+close TAXON;
+
+print STDERR "Found $taxonCount organisms with temporary ncbi taxon ids.";
+
+sub usage {
+  die
+    "
+Usage: extractTemporaryTaxaFromDatasets --inputDir Datasets/lib/xml --outputFile organismsWithTempIds.txt
+
+where
+  --inputDir:  Path to the ApiCommonDatasets/Datasets/lib/xml directory containing workflow xml files with organism definitions
+  --outputFile:  the name of the output file
+";
+}
+
+
+1;

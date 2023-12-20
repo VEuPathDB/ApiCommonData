@@ -51,7 +51,7 @@ if ($experimentType eq 'histonemod') {
 	if ($inputName && $sampleName ne $inputName) {
 	    print STDERR "\nWorking on $sampleName\n\n";
 	    
-	    my $homerCmd = "findPeaks $workflowDir/$experimentDataDir/analyze_$sampleName/master/mainresult/downstream/ -style $style -o auto -i $workflowDir/$experimentDataDir/analyze_$inputName/master/mainresult/downstream/";
+	    my $homerCmd = "findPeaks $workflowDir/$experimentDataDir/analyze_$sampleName/master/downstream/ -style $style -o auto -i $workflowDir/$experimentDataDir/analyze_$inputName/master/downstream/";
 	    if ($fragLength) {
 		$homerCmd .=  " -fragLength $fragLength";
 	    }
@@ -64,7 +64,7 @@ if ($experimentType eq 'histonemod') {
 
 	    open (WFH2, ">$peaksFile") || die "Cannot open $peaksFile for writing\n";
 	    print WFH2 "sequence_source_id\tsegment_start\tsegment_end\tscore1\tscore2\tp_value\n";
-	    open (RFH, "<$workflowDir/$experimentDataDir/analyze_$sampleName/master/mainresult/downstream/$homerOutput") || die "Cannot open $workflowDir/$experimentDataDir/analyze_$sampleName/master/mainresult/downstream/$homerOutput for reading.\n";
+	    open (RFH, "<$workflowDir/$experimentDataDir/analyze_$sampleName/master/downstream/$homerOutput") || die "Cannot open $workflowDir/$experimentDataDir/analyze_$sampleName/master/downstream/$homerOutput for reading.\n";
 	    while (my $line=<RFH>) {
 		if ($line=~/^#/) {
 		    next;

@@ -1,0 +1,135 @@
+#!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+# GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+# GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+# GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+# GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+# GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+# GUS4_STATUS | RAD.SageTag                    | auto   | absent
+# GUS4_STATUS | RAD.Analysis                   | auto   | absent
+# GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+# GUS4_STATUS | Study.Study                    | auto   | absent
+# GUS4_STATUS | Dots.Isolate                   | auto   | absent
+# GUS4_STATUS | DeprecatedTables               | auto   | absent
+# GUS4_STATUS | Pathway                        | auto   | absent
+# GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+# GUS4_STATUS | RNASeq Junctions               | auto   | absent
+# GUS4_STATUS | Simple Rename                  | auto   | absent
+# GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+# GUS4_STATUS | Rethink                        | auto   | absent
+# GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
+use strict;
+use utf8;
+use open qw( :std :encoding(UTF-8) );
+use XML::LibXML;
+use Getopt::Long;
+use Data::Dumper;
+use IO::Handle;
+
+
+my ($outputFile, $dir, $help, @files);
+
+&GetOptions('help|h'   => \$help,
+  'outputfile=s'       => \$outputFile,
+  'input_dir=s'        => \$dir,
+);
+
+&usage() if ($help);
+&usage("input dir is required") unless (-e $dir );
+
+# iterate all files, we want epitopes from all taxa
+my $f = `find $dir -type f -name *.xml`;
+@files = split(/\n/, $f);
+
+#------------------------------------------------------------------------------
+
+my $parser = XML::LibXML->new();
+my $epitopeCount = 0;
+my %uniqueEpitopes;
+
+foreach my $file (@files) {
+  print STDERR "Parsing $file\n";
+
+  my $tree = $parser->parse_file($file);
+
+  my $root = $tree->getDocumentElement();
+  my @epitopes = $root->findnodes('/References/Reference/Epitopes/Epitope');
+
+  foreach my $epitope (@epitopes) {
+    my ($GenBankId, $ChemicalType, $LinearSequence, $SourceOrganismId);
+    my %h = (EpitopeName => 0, EpitopeId => 0);
+    findXmlValues($epitope, \%h);
+    my ($EpitopeName, $EpitopeId) = ($h{EpitopeName}, $h{EpitopeId});
+    my ($EpitopeStructure) = $epitope->findnodes('EpitopeStructure/FragmentOfANaturalSequenceMolecule');
+    next unless $EpitopeStructure;
+
+    %h = (ChemicalType => 0, LinearSequence => 0, SourceOrganismId => 0);
+    findXmlValues($EpitopeStructure, \%h);
+    ($ChemicalType, $LinearSequence, $SourceOrganismId) =
+      ($h{ChemicalType}, $h{LinearSequence}, $h{SourceOrganismId});
+
+    my ($SourceMolecule) = $EpitopeStructure->findnodes('SourceMolecule');
+    %h = (GenBankId => 0, IedbAccession => 0);
+    findXmlValues($SourceMolecule, \%h);
+    $GenBankId = $h{GenBankId};
+    $GenBankId = $h{IedbAccession} unless $GenBankId;
+
+    # We'd like to skip epitopes that are missing the sequence or genbankId.
+    # We also skip epitopes from organisms that do not have an ncbi_tax_id (identified by
+    # $SourceOrganismId's larger than or equal to 10000000)
+    if (defined $LinearSequence && defined $GenBankId && $SourceOrganismId < 10000000){
+      $epitopeCount++;
+      my $key = $EpitopeId . "_" . $SourceOrganismId;
+      if (! defined $uniqueEpitopes{$key}){
+        # IEDB ID|epitope name|strainTaxId|accession
+        $uniqueEpitopes{$key} = ">$EpitopeId|$EpitopeName|$SourceOrganismId|$GenBankId\n$LinearSequence\n";
+      }
+      print STDERR "Epitopes examined: $epitopeCount \n" if $epitopeCount % 10000 == 0;
+    }
+  }
+}
+#--------------------------------------------------------------------------------
+
+open(FASTA, ">$outputFile") or die "could not open '$outputFile' for writing\n";
+FASTA->autoflush(1);
+
+foreach my $epitope (values %uniqueEpitopes){
+  print FASTA $epitope;
+}
+
+close FASTA;
+
+my $uniqueEpitopeCount= keys %uniqueEpitopes;
+print STDERR "Found $uniqueEpitopeCount unique epitopes among $epitopeCount \n";
+
+#--------------------------------------------------------------------------------
+
+# we use this crazy approach instead of calling node->findvalue to workaround
+# a serious performance problem findvalue seems to have
+sub findXmlValues {
+  my ($node, $fieldsHash) = @_;
+  for my $child ($node->childNodes()) {
+    my $childName = $child->nodeName();
+    $fieldsHash->{$childName} = $child->textContent()
+      if defined($fieldsHash->{$childName});
+  }
+}
+
+#--------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "
+Make a fasta file for all organisms, from a set of IEDB xml files
+(that have been fixed with iedbFixXml).
+
+usage: iedbMakeFastaFileFromXml --input_dir INPUT_DIR --outputfile OUTPUT_FILE
+";
+  print STDERR "ERROR:  $m\n" if ($m);
+  exit(1);
+}
+
+1;
+

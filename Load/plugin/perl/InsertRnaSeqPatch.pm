@@ -100,10 +100,11 @@ sub makeProtocolAppNode {
     my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType) = @_;
     print Dumper "In InsertRnaSeqPatch subclass\n";
        
-    my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
-    unless ($ontologyTerm->retrieveFromDB()) {
-        $self->error("Required ontology term \"$appNodeType\" either is not found in the database or returns more than one row from the database");
-    }
+    my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => "NA", source_id => $appNodeType});
+    $ontologyTerm->submit() unless($ontologyTerm->retrieveFromDB());
+    #unless ($ontologyTerm->retrieveFromDB()) {
+    #    $self->error("Required ontology term \"$appNodeType\" either is not found in the database or returns more than one row from the database");
+    #}
 
     foreach my $e (@$existingAppNodes) {
         my $existingName = $e->getName();
