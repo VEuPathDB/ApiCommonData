@@ -161,7 +161,6 @@ where entity_type_id = $entityTypeId";
 
   my (@entityColumnStrings, @processColumnStrings);
   while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
-    $stableId = qq/"$stableId"/;
     my $path = "\$.${stableId}[0]";
 
 
@@ -216,8 +215,8 @@ with all_atts as (
 select ea.stable_id
      , COALESCE(pa.atts, '{}') as process_atts
      , COALESCE(ea.atts, '{}') as entity_atts
-from EDA.processattributes pa
-RIGHT JOIN EDA.EntityAttributes_bfv ea
+from ${SCHEMA}.processattributes pa
+RIGHT JOIN ${SCHEMA}.EntityAttributes_bfv ea
 ON pa.out_entity_id = ea.entity_attributes_id
 where ea.entity_type_id = $entityTypeId
 )
@@ -255,6 +254,8 @@ where ea.entity_type_id = $entityTypeId
   }
 
   my $dbh = $self->getDbHandle();
+
+  $self->log("CREATE TABLE $SCHEMA.$tableName as $sql");
   $dbh->do("CREATE TABLE $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
 
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
@@ -409,19 +410,18 @@ sub createEmptyAncestorsTable {
 
   my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
-  my $sql = "WITH RECURSIVE sub_entities (entity_type_id)
+  my $sql = "WITH RECURSIVE ancestors (entity_type_id)
              AS
              (
-             SELECT entity_type_id
+             SELECT entity_type_id, parent_id
              FROM ${SCHEMA}.entitytypegraph
              WHERE entity_type_id = ?
              UNION ALL
-             SELECT et.entity_type_id
+             SELECT et.entity_type_id, et.parent_id
              FROM ${SCHEMA}.entitytypegraph et
-             --REVIEW (is it s.parent_id = et.entity_type_id???)
-             INNER JOIN sub_entities s ON s.entity_type_id = et.parent_id
+             INNER JOIN ancestors anc ON anc.parent_id = et.entity_type_id
              )
-             SELECT entity_type_id FROM sub_entities";
+             SELECT entity_type_id FROM ancestors";
 
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($sql);
@@ -605,7 +605,7 @@ SELECT --  distinct
      , null as scale
      , null as precision
 FROM att
-LEFT JOIN atg
+RIGHT JOIN atg
 ON atg.stable_id = att.stable_id
 where att.stable_id is null
 UNION ALL

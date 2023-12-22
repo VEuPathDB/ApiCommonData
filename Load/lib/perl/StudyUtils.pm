@@ -218,7 +218,7 @@ sub dropTablesLike {
   $sth->execute();
   while(my ($table_name) = $sth->fetchrow_array()){
     print STDERR "dropping table ${schema}.${table_name}\n";
-    $dbh->do("drop table ${schema}.${table_name}") or die $dbh->errstr;
+    $dbh->do("drop table ${schema}.${table_name} CASCADE") or die $dbh->errstr;
   }
   $sth->finish();
 }

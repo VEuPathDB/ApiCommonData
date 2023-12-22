@@ -214,7 +214,6 @@ sub run {
 
   foreach my $studyId (keys %studies) {
 
-
     my $maxAttrLength = $studies{$studyId}->{max_attr_length};
     my $internalAbbrev = $studies{$studyId}->{internal_abbrev};
 
@@ -279,9 +278,14 @@ sub runStatsScriptLocally {
 
     my @groups = split(/\n/, $groupBy);
     foreach my $group (@groups) {
+
+
+
       my $values = `grep -P \"$group\" $file |cut -f 3|$script`;
 
       print FBW $group . "\t" . $values . "\n";
+
+
     }
   }
 
@@ -453,7 +457,7 @@ sub queryForEntityTypeIds {
 from $SCHEMA.entitytype t
 LEFT JOIN ${TERM_SCHEMA}.ontologyterm ot
 ON t.type_id = ot.ontology_term_id
-and study_id = $studyId";
+where study_id = $studyId";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
