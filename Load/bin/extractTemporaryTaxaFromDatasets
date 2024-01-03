@@ -32,7 +32,6 @@ my $taxonCount = 0;
 my $parser = XML::LibXML->new();
 foreach my $file (@files) {
   print STDERR "Parsing $file\n";
-  print TAXON "Parsing $file\n";
 
   my $tree = $parser->parse_file($file);
   my $root = $tree->getDocumentElement();
