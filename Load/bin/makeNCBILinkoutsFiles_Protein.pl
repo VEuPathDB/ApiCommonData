@@ -11,28 +11,43 @@ use IO::File;
 use HTML::Entities;
 use XML::LibXML;
 
-my ($output, $gusConfigFile, $debug, $verbose, $organismAbbrev);
+my ($output, $gusConfigFile, $debug, $verbose, $organismAbbrev,$downloadsite);
 
 &GetOptions("output=s" => \$output,
             "verbose!" => \$verbose,
             "organismAbbrev=s" => \$organismAbbrev,
             "gusConfigFile=s" => \$gusConfigFile,
+            "downloadsite=s" => \$downloadsite,
 	   );
 
-if (!$output || !$organismAbbrev) {
-  die ' USAGE: makeNCBILinkoutsFiles.pl -output <output> -organismAbbrev <organismAbbrev>'
+if (!$downloadsite || !$organismAbbrev) {
+  die ' USAGE: makeNCBILinkoutsFiles.pl -output <output> -organismAbbrev <organismAbbrev> -downloadsite <downloadsite>'
 }
 
-my $doc = XML::LibXML->load_xml(string => <<__END_XML__);
-<?xml version="1.0"?>
-<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut 1.0//EN" 
-"https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd" 
-[
-  <!ENTITY gene.url "https://cryptodb.org/cryptodb/app/record/gene/">
-]
-><LinkSet/>
-__END_XML__
+$downloadsite = lc($downloadsite);
 
+my $geneUrl = "https://${downloadsite}.org/a/app/record/gene/";
+
+my $doc = XML::LibXML->load_xml(string => <<"__END_XML__");
+<?xml version="1.0"?>
+<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut 1.0//EN" "https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd">
+<LinkSet/>
+__END_XML__
+ 
+my $entity_declaration = <<END_ENTITY;
+[
+  <!ENTITY gene.url "https://${downloadsite}.org/a/app/record/gene/">
+]
+END_ENTITY
+
+# Find the LinkSet node
+my ($linkset_node) = $doc->findnodes('//LinkSet');
++
+# Remove existing child nodes
+$_->unlink for $linkset_node->childNodes();
+
+# Add the new Entity Declaration as a child node
+$linkset_node->appendText($entity_declaration);
 
 open(OUT, "> $output") or die "Cannot open $output for writing: $!";
 
@@ -99,7 +114,8 @@ $writer->startTag('LinkSet');
       $writer->endTag('ObjectSelector');
       $writer->startTag('ObjectUrl');
       $writer->startTag('Base');
-      $writer->characters($protein{$k}->{Base});
+      $writer->characters($geneUrl);
+      #$writer->characters($protein{$k}->{Base});
       $writer->endTag('Base');
       $writer->startTag('Rule');
       $writer->characters($protein{$k}->{Rule});
