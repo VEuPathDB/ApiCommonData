@@ -147,13 +147,22 @@ sub new {
 
   my $controlFilePrefix = $self->getControlFilePrefix();
 
-  my ($fh, $fn) = tempfile("${controlFilePrefix}XXXX", UNLINK => 0, SUFFIX => '.ctl');
+  my $controlFileName = $self->getControlFileName();
+  if($controlFileName) {
+    my $fh;
+    open($fh, ">", $controlFileName) or die "Cannot open file $controlFileName for writing: $!";
+    $self->setControlFileHandle($fh);
+  }
+  else {
+    my ($fh, $fn) = tempfile("${controlFilePrefix}XXXX", UNLINK => 0, SUFFIX => '.ctl');
 
-  $self->setControlFileName($fn);
-  $self->setControlFileHandle($fh);
+    $self->setControlFileName($fn);
+    $self->setControlFileHandle($fh);
+    $controlFileName = $self->getControlFileName();
+  }
+    my $logFileName = $controlFileName . ".log";
+    $self->setLogFileName($logFileName);
 
-  my $logFileName = $fn . ".log";
-  $self->setLogFileName($logFileName);
 
   return $self; 
 }
