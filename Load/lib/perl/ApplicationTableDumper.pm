@@ -8,28 +8,67 @@ use ApiCommonData::Load::Sqlldr;
 
 use Data::Dumper;
 
+
+my $DEFAULT_TABLE_INFO_QUERY = "select table_schema
+    , table_name
+    , is_nullable
+    , column_name
+    , character_maximum_length
+    , data_type
+    , numeric_precision
+  from information_schema.columns
+  where table_schema = ?
+  and table_name = ?
+";
+
+my $DEVAULT_VIEWS_QUERY = "select view_definition
+            from information_schema.views
+            where table_schema = ?
+            and table_name = ?";
+
+my $DEFAULT_INDEXES_QUERY = "SELECT i.relname AS index_name,
+       a.attname AS column_name,
+       idx.indisunique AS is_unique,
+       idx.indisprimary AS is_primary,
+       idx.indkey,
+       a.attnum
+FROM pg_class t
+JOIN pg_namespace ns ON ns.oid = t.relnamespace
+JOIN pg_index idx ON t.oid = idx.indrelid
+JOIN pg_class i ON i.oid = idx.indexrelid
+JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(idx.indkey)
+WHERE t.relkind = 'r'
+and ns.nspname = ? --table_schema
+and t.relname = ? --table_name
+";
+
 sub getDbh {$_[0]->{_dbh}}
 sub setDbh {$_[0]->{_dbh} = $_[1]}
 
 sub getTablesQuery {$_[0]->{_tables_query}}
 sub setTablesQuery {$_[0]->{_tables_query} = $_[1]}
 
-# this query must contain 2 bind variable (schema and table)
-sub getTableInfoQuery {$_[0]->{_table_info_query}}
+sub getIndexesQuery {$_[0]->{_indexes_query} || $DEFAULT_INDEXES_QUERY}
+sub setIndexesQuery {$_[0]->{_indexes_query} = $_[1]}
+
+sub getViewsQuery {$_[0]->{_views_query} || $DEVAULT_VIEWS_QUERY}
+sub setViewsQuery {$_[0]->{_views_query} = $_[1]}
+
+sub getTableInfoQuery {$_[0]->{_table_info_query}  || $DEFAULT_TABLE_INFO_QUERY}
 sub setTableInfoQuery {$_[0]->{_table_info_query} = $_[1]}
 
 sub getSchemaOutputFh {$_[0]->{_schema_output_fh}}
 sub setSchemaOutputFh {$_[0]->{_schema_output_fh} = $_[1]}
 
 # maybe the tables already exist?
- sub skipCreateTableSql {$_[0]->{_skip_create_table_sql}}
+sub skipCreateTableSql {$_[0]->{_skip_create_table_sql}}
+sub skipSqlldrFiles {$_[0]->{_skip_sqlldr_files}}
 
 sub new {
   my ($class, $args) = @_;
 
   my @required = ('_dbh'
                   , '_tables_query'
-                  , '_table_info_query'
                   , '_schema_output_fh'
       );
 
@@ -46,39 +85,43 @@ sub dumpFiles {
 
     my $tables = $self->queryForTables();
 
-    foreach my $schema(keys %$tables) {
-        foreach my $table (@{$tables->{$schema}}) {
-            my $tableInfo = $self->makeTableInfo($schema, $table);
+    foreach my $inputSchema(keys %$tables) {
+        foreach my $table (@{$tables->{$inputSchema}}) {
+            my $tableInfo = $self->makeTableInfo($inputSchema, $table);
 
             my $tableName = $tableInfo->getTableName();
 
             my $datFileName = "${tableName}.dat";
             my $ctlFileName = "${tableName}.ctl";
 
-            $self->writeCreateTable($tableInfo);
-            $self->writeSqlloaderCtl($tableInfo, $ctlFileName, $datFileName);
-            $self->writeSqlloaderDat($tableInfo, $datFileName);
-            #TODO$self->writeIndexes();
+            $self->writeCreateTable($tableInfo) unless($self->skipCreateTableSql());
+
+            unless($self->skipSqlldrFiles()) {
+                $self->writeSqlloaderCtl($tableInfo, $ctlFileName, $datFileName);
+                $self->writeSqlloaderDat($inputSchema, $tableInfo, $datFileName);
+            }
+            $self->writeIndexes($tableInfo, $inputSchema);
+            $self->writeViews($tableInfo, $inputSchema);
         }
     }
 }
 
 sub makeTableInfo {
-    my ($self, $schema, $table) = @_;
+    my ($self, $inputSchema, $table) = @_;
 
     my $dbh = $self->getDbh();
     my $tableInfoQuery = $self->getTableInfoQuery();
     my $sh = $dbh->prepare($tableInfoQuery);
-    $sh->execute($schema, $table);
+    $sh->execute($inputSchema, $table);
 
     my %dateFields;
     my %numberFields;
     my %varcharFields;
-    my $fullTableName = "${schema}.${table}";
+    my $inputFullTableName = "${inputSchema}.${table}";
 
     my %nullFields;
 
-    while(my ($schema, $table, $isNull, $col, $charLen, $dataType, $numPrec) = $sh->fetchrow_array()) {
+    while(my ($iSchema, $table, $isNull, $col, $charLen, $dataType, $numPrec) = $sh->fetchrow_array()) {
         $nullFields{$col} = uc($isNull) eq "YES" ? "" : "NOT NULL";
 
         if($dataType eq 'date') {
@@ -99,7 +142,7 @@ sub makeTableInfo {
         # not number or date... so let's get the max length of the text
         else {
             # this query is always the same
-            my $sh2 = $dbh->prepare("select max(length($col)) from $fullTableName");
+            my $sh2 = $dbh->prepare("select max(length($col)) from $inputFullTableName");
             $sh2->execute();
             my ($len) = $sh2->fetchrow_array();
             $sh2->finish();
@@ -108,7 +151,7 @@ sub makeTableInfo {
     }
     $sh->finish();
 
-    return _TableInfoHelper->new({'_table_name' => "${schema}.${table}"
+    return _TableInfoHelper->new({'_table_name' => ${table}
                                       , '_varchar_fields' => \%varcharFields
                                       , '_number_fields' => \%numberFields
                                       , '_date_fields' => \%dateFields,
@@ -134,7 +177,7 @@ sub queryForTables {
 }
 
 sub writeSqlloaderDat {
-    my ($self, $tableInfo, $datFileName) = @_;
+    my ($self, $schema, $tableInfo, $datFileName) = @_;
 
     open(FILE, ">", $datFileName) or die "Cannot open file $datFileName for writing: $!";
 
@@ -147,7 +190,7 @@ sub writeSqlloaderDat {
     # NOTE: columns here must match order in ctl file
     my $fieldsString = join(',', @$orderedFields);
 
-    my $sql = "select $fieldsString from ${tableName}";
+    my $sql = "select $fieldsString from ${schema}.${tableName}";
 
     my $sh = $dbh->prepare($sql);
     $sh->execute();
@@ -190,7 +233,7 @@ sub writeSqlloaderCtl {
                                                    _append => 0,
                                                    _infile_name => $datFileName,
                                                    _reenable_disabled_constraints => 1,
-                                                   _table_name => $tableName,
+                                                   _table_name => '@SCHEMA@'.$tableName,
                                                    _fields => \@fields,
                                                    # something downstream will need to replace these macros
                                                    _login => '@USER@',
@@ -202,7 +245,63 @@ sub writeSqlloaderCtl {
     $sqlldr->writeConfigFile();
 }
 
+sub writeViews {
+    my ($self, $tableInfo, $inputSchema) = @_;
 
+    my $dbh = $self->getDbh();
+
+    my $tableName = $tableInfo->getTableName();
+    my $fh = $self->getSchemaOutputFh();
+
+    my $viewsQuery = $self->getViewsQuery();
+
+    my $sh = $dbh->prepare($viewsQuery);
+    $sh->execute($inputSchema, $tableName);
+
+    while(my ($viewDef) = $sh->fetchrow_array()) {
+        print $fh "CREATE OR REPLACE VIEW \&1.$tableName AS $viewDef;\n";
+    }
+    $sh->finish();
+}
+sub writeIndexes {
+    my ($self, $tableInfo, $inputSchema) = @_;
+
+    my $dbh = $self->getDbh();
+
+    my $tableName = $tableInfo->getTableName();
+    my $fh = $self->getSchemaOutputFh();
+
+    my $indexesQuery = $self->getIndexesQuery();
+
+    my $sh = $dbh->prepare($indexesQuery);
+    $sh->execute($inputSchema, $tableName);
+
+    my $indexCols = {};
+    my $indexKeys = {};
+
+    while(my ($indexName, $colName, $isUnique, $isPrimary, $indKey, $attNum) = $sh->fetchrow_array()) {
+        $indexCols->{$indexName}->{col}->{$attNum} = $colName;
+        $indexCols->{$indexName}->{isPrimary} = $isPrimary;
+        $indexCols->{$indexName}->{isUnique} = $isUnique;
+
+        $indexKeys->{$indexName} = $indKey; #always the same for an index name so can just always set
+    }
+    $sh->finish();
+
+    foreach my $indexName (keys %$indexKeys) {
+
+        # the key here is ordered string like "4 2 3 1"
+        my $key = $indexKeys->{$indexName};
+        my @a = split(' ', $key);
+
+        my $colString = join(",", map { $indexCols->{$indexName}->{col}->{$_} } @a);
+
+        print $fh "CREATE INDEX $indexName ON \&1.$tableName ($colString) TABLESPACE indx\n";
+        # TODO: set unique and pk constraints
+    }
+
+
+}
 
 sub writeCreateTable {
     my ($self, $tableInfo) = @_;
@@ -220,14 +319,14 @@ sub writeCreateTable {
     my $dates = join(",\n", map { $_ . " DATE"} keys %$dateFields);
 
 
-    my $sqlString = "CREATE TABLE ${tableName} (\n";
+    my $sqlString = "CREATE TABLE  \&1.${tableName} (\n";
     $sqlString .= "$varchars,\n" if $varchars;
     $sqlString .= "$numbers,\n" if $numbers;
     $sqlString .= "$dates,\n" if $dates;
 
     $sqlString .= ");
-GRANT INSERT, SELECT, UPDATE, DELETE ON ${tableName} TO gus_w;
-GRANT SELECT ON ${tableName} TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON \&1.${tableName} TO gus_w;
+GRANT SELECT ON \&1.${tableName} TO gus_r;
 ";
 
     print $fh $sqlString;
