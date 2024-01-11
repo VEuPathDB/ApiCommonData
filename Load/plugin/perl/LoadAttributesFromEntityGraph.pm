@@ -1131,8 +1131,8 @@ sub makeFifo {
 
   my $sqlldrInfileFh = $fifo->attachWriter();
 
-  $sqlldr->setLineDelimiter($eorLiteral);
-  $sqlldr->setFieldDelimiter($eocLiteral);
+#  $sqlldr->setLineDelimiter($eorLiteral);
+#  $sqlldr->setFieldDelimiter($eocLiteral);
   $sqlldr->writeConfigFile();
 
   return $fifo;
