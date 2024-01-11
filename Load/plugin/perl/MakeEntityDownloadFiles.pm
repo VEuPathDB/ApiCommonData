@@ -61,6 +61,8 @@ my $argsDeclaration =
 ];
 
 my ${SCHEMA} = '__SCHEMA__'; # must be replaced with real schema name
+my $TERM_SCHEMA = "SRES";
+
 
 # temporary, just in case
 my $HARDCODE_FORCED_HIDDEN = {
@@ -94,21 +96,26 @@ sub new {
 sub run {
   my ($self) = @_;
   ${SCHEMA} = $self->getArg('schema');
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    $TERM_SCHEMA = 'APIDBUSERDATASETS';
+  }
+
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec, undef, $TERM_SCHEMA);
   my ($datasetName,$ver) = split(/\|/, $extDbRlsSpec);
   $datasetName =~ s/\|.*//;
   my $outputDir = $self->getArg('outputDir');
   my $fileBasename = sprintf("%s_PREFIX_%s", $datasetName, $self->getArg('fileBasename') || $datasetName);
 
   my $ontologySpec = $self->getArg('ontologyExtDbRlsSpec'); # for entity labels
-  my $ontologyId = $self->getExtDbRlsId($ontologySpec);
+  my $ontologyId = $self->getExtDbRlsId($ontologySpec, undef, $TERM_SCHEMA);
+
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %$studies) unless(scalar keys %$studies == 1);
 
-  $self->getDbHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd'") or die $self->getDbHandle()->errstr;
+  $self->getQueryHandle()->do("SET DateStyle = 'ISO, YMD'") or $self->error($self->getQueryHandle()->errstr);
 
   foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
@@ -354,13 +361,13 @@ sub makeOntologyFile {
     my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${type}";
     my $sql =  <<ONTOSQL;
 WITH replacesIRI AS
-(SELECT o2.SOURCE_ID STABLE_ID, json_value(o.ANNOTATION_PROPERTIES,'\$.replaces[0]') REPLACES FROM sres.ONTOLOGYSYNONYM o
-LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID=o2.ONTOLOGY_TERM_ID
+(SELECT o2.SOURCE_ID STABLE_ID, json_value(o.ANNOTATION_PROPERTIES,'\$.replaces[0]') REPLACES FROM ${TERM_SCHEMA}.ONTOLOGYSYNONYM o
+LEFT JOIN ${TERM_SCHEMA}.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID=o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId
 ),
 parent AS 
-(SELECT o4.SOURCE_ID STABLE_ID, o3.ONTOLOGY_SYNONYM LABEL FROM sres.ONTOLOGYSYNONYM o3
-LEFT JOIN sres.ONTOLOGYTERM o4 ON o3.ONTOLOGY_TERM_ID=o4.ONTOLOGY_TERM_ID
+(SELECT o4.SOURCE_ID STABLE_ID, o3.ONTOLOGY_SYNONYM LABEL FROM ${TERM_SCHEMA}.ONTOLOGYSYNONYM o3
+LEFT JOIN ${TERM_SCHEMA}.ONTOLOGYTERM o4 ON o3.ONTOLOGY_TERM_ID=o4.ONTOLOGY_TERM_ID
 WHERE o3.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId)
 SELECT ag.stable_id, ag.display_name, ag.data_type, parent.label,
 '$category' category, ag.definition, ag.range_min, ag.range_max,
