@@ -21,12 +21,12 @@ my $DEFAULT_TABLE_INFO_QUERY = "select table_schema
   and table_name = ?
 ";
 
-my $DEVAULT_VIEWS_QUERY = "select view_definition
+my $DEFAULT_VIEW_INFO_QUERY = "select view_definition
             from information_schema.views
             where table_schema = ?
             and table_name = ?";
 
-my $DEFAULT_INDEXES_QUERY = "SELECT i.relname AS index_name,
+my $DEFAULT_INDEX_INFO_QUERY = "SELECT i.relname AS index_name,
        a.attname AS column_name,
        idx.indisunique AS is_unique,
        idx.indisprimary AS is_primary,
@@ -48,14 +48,25 @@ sub setDbh {$_[0]->{_dbh} = $_[1]}
 sub getTablesQuery {$_[0]->{_tables_query}}
 sub setTablesQuery {$_[0]->{_tables_query} = $_[1]}
 
-sub getIndexesQuery {$_[0]->{_indexes_query} || $DEFAULT_INDEXES_QUERY}
-sub setIndexesQuery {$_[0]->{_indexes_query} = $_[1]}
+#NOTE: this hash is the result of the tables query
+sub getTablesHash {$_[0]->{_tables_hash}}
+sub setTablesHash {$_[0]->{_tables_hash} = $_[1]}
 
-sub getViewsQuery {$_[0]->{_views_query} || $DEVAULT_VIEWS_QUERY}
+sub getIndexInfoQuery {$_[0]->{_index_info_query} || $DEFAULT_INDEX_INFO_QUERY}
+sub setIndexInfoQuery {$_[0]->{_index_info_query} = $_[1]}
+
+sub getViewsQuery {$_[0]->{_views_query}}
 sub setViewsQuery {$_[0]->{_views_query} = $_[1]}
+
+sub getViewsHash {$_[0]->{_views_hash}}
+sub setViewsHash {$_[0]->{_views_hash} = $_[1]}
 
 sub getTableInfoQuery {$_[0]->{_table_info_query}  || $DEFAULT_TABLE_INFO_QUERY}
 sub setTableInfoQuery {$_[0]->{_table_info_query} = $_[1]}
+
+sub getViewInfoQuery {$_[0]->{_view_info_query}  || $DEFAULT_VIEW_INFO_QUERY}
+sub setViewInfoQuery {$_[0]->{_view_info_query} = $_[1]}
+
 
 sub getSchemaOutputFh {$_[0]->{_schema_output_fh}}
 sub setSchemaOutputFh {$_[0]->{_schema_output_fh} = $_[1]}
@@ -83,7 +94,9 @@ sub new {
 sub dumpFiles {
     my ($self) = @_;
 
-    my $tables = $self->queryForTables();
+
+    my $tables = $self->queryForTablesOrViews($self->getTablesQuery());
+    $self->setTablesHash($tables);
 
     foreach my $inputSchema(keys %$tables) {
         foreach my $table (@{$tables->{$inputSchema}}) {
@@ -91,7 +104,7 @@ sub dumpFiles {
 
             my $tableName = $tableInfo->getTableName();
 
-            my $datFileName = "${tableName}.dat";
+            my $datFileName = "${tableName}.cache";
             my $ctlFileName = "${tableName}.ctl";
 
             $self->writeCreateTable($tableInfo) unless($self->skipCreateTableSql());
@@ -101,9 +114,19 @@ sub dumpFiles {
                 $self->writeSqlloaderDat($inputSchema, $tableInfo, $datFileName);
             }
             $self->writeIndexes($tableInfo, $inputSchema);
-            $self->writeViews($tableInfo, $inputSchema);
+
         }
     }
+
+    my $views = $self->queryForTablesOrViews($self->getViewsQuery());
+    $self->setViewsHash($views);
+
+    foreach my $inputSchema(keys %$views) {
+        foreach my $view (@{$views->{$inputSchema}}) {
+            $self->writeViewDefinition($view, $inputSchema);
+        }
+    }
+
 }
 
 sub makeTableInfo {
@@ -159,13 +182,12 @@ sub makeTableInfo {
                                 });
 }
 
-sub queryForTables {
-    my ($self) = @_;
+sub queryForTablesOrViews {
+    my ($self, $query) = @_;
 
     my $dbh = $self->getDbh();
-    my $tablesQuery = $self->getTablesQuery();
 
-    my $sh = $dbh->prepare($tablesQuery);
+    my $sh = $dbh->prepare($query);
     $sh->execute();
 
     my $tables = {};
@@ -196,7 +218,7 @@ sub writeSqlloaderDat {
     $sh->execute();
 
     while(my @a = $sh->fetchrow_array) {
-        print FILE join("\t, @a") . "\n";
+        print FILE join("\t", @a) . "\n";
     }
     $sh->finish();
     close FILE;
@@ -245,21 +267,26 @@ sub writeSqlloaderCtl {
     $sqlldr->writeConfigFile();
 }
 
-sub writeViews {
-    my ($self, $tableInfo, $inputSchema) = @_;
+sub writeViewDefinition {
+    my ($self, $viewName, $inputSchema) = @_;
 
     my $dbh = $self->getDbh();
 
-    my $tableName = $tableInfo->getTableName();
     my $fh = $self->getSchemaOutputFh();
 
-    my $viewsQuery = $self->getViewsQuery();
+    my $viewsQuery = $self->getViewInfoQuery();
 
     my $sh = $dbh->prepare($viewsQuery);
-    $sh->execute($inputSchema, $tableName);
+    $sh->execute($inputSchema, $viewName);
 
+    #there will only be one row here but whatevs
     while(my ($viewDef) = $sh->fetchrow_array()) {
-        print $fh "CREATE OR REPLACE VIEW \&1.$tableName AS $viewDef;\n";
+
+        #NOTE: the input schema must be swapped out in the table definition
+        $viewDef = lc($viewDef);
+        $viewDef =~ s/${inputSchema}/\&1/g;
+
+        print $fh "CREATE OR REPLACE VIEW \&1.$viewName AS $viewDef;\n";
     }
     $sh->finish();
 }
@@ -271,7 +298,7 @@ sub writeIndexes {
     my $tableName = $tableInfo->getTableName();
     my $fh = $self->getSchemaOutputFh();
 
-    my $indexesQuery = $self->getIndexesQuery();
+    my $indexesQuery = $self->getIndexInfoQuery();
 
     my $sh = $dbh->prepare($indexesQuery);
     $sh->execute($inputSchema, $tableName);
@@ -315,8 +342,8 @@ sub writeCreateTable {
     my $fh = $self->getSchemaOutputFh();
 
     my $varchars = join(",\n", map { $_ . " VARCHAR(" . $varcharFields->{$_} . ") " . $nullFields->{$_}} keys %$varcharFields);
-    my $numbers = join(",\n", map { $_ . " NUMBER"} keys %$numberFields);
-    my $dates = join(",\n", map { $_ . " DATE"} keys %$dateFields);
+    my $numbers = join(",\n", map { $_ . " \&3"} keys %$numberFields);
+    my $dates = join(",\n", map { $_ . " \&4"} keys %$dateFields);
 
 
     my $sqlString = "CREATE TABLE  \&1.${tableName} (\n";
