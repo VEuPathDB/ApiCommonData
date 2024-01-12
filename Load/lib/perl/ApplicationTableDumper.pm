@@ -69,9 +69,6 @@ sub addTableAndViewSpecs {push @{$_[0]->{_table_and_view_specs}}, $_[1]}
 sub getViewInfoQuery {$_[0]->{_view_info_query}  || $DEFAULT_VIEW_INFO_QUERY}
 sub setViewInfoQuery {$_[0]->{_view_info_query} = $_[1]}
 
-sub getSchemaOutputFh {$_[0]->{_schema_output_fh}}
-sub setSchemaOutputFh {$_[0]->{_schema_output_fh} = $_[1]}
-
 sub getDbiConfigOutputFh {$_[0]->{_dbi_config_output_fh}}
 sub setDbiConfigOutputFh {$_[0]->{_dbi_config_output_fh} = $_[1]}
 
@@ -96,7 +93,6 @@ sub new {
 
   my @required = ('_dbh'
                   , '_tables_query'
-                  , '_schema_output_fh'
       );
 
   foreach(@required) {
@@ -123,12 +119,13 @@ sub dumpFiles {
             my $datFileName = "${tableName}.cache";
             my $ctlFileName = "${tableName}.ctl";
 
-            $self->writeCreateTable($tableInfo);
+            #$self->writeCreateTable($tableInfo);
 
             unless($self->skipSqlldrFiles($table)) {
                 $self->writeSqlloaderCtl($tableInfo, $ctlFileName, $datFileName);
                 $self->writeSqlloaderDat($inputSchema, $tableInfo, $datFileName);
             }
+
             $self->writeIndexes($tableInfo, $inputSchema);
 
             $self->addTableAndViewSpecs($tableInfo->transformToConfigObject());
@@ -140,8 +137,8 @@ sub dumpFiles {
 
     foreach my $inputSchema(keys %$views) {
         foreach my $view (@{$views->{$inputSchema}}) {
-            $self->writeViewDefinition($view, $inputSchema);
-            $self->addTableAndViewSpecs({name => $view, type => 'view'});
+            my $definition = $self->writeViewDefinition($view, $inputSchema);
+            $self->addTableAndViewSpecs({name => $view, type => 'view', definition => $definition});
         }
     }
 
@@ -307,23 +304,20 @@ sub writeViewDefinition {
 
     my $dbh = $self->getDbh();
 
-    my $fh = $self->getSchemaOutputFh();
-
     my $viewsQuery = $self->getViewInfoQuery();
 
     my $sh = $dbh->prepare($viewsQuery);
     $sh->execute($inputSchema, $viewName);
 
     #there will only be one row here but whatevs
-    while(my ($viewDef) = $sh->fetchrow_array()) {
-
-        #NOTE: the input schema must be swapped out in the table definition
-        $viewDef = lc($viewDef);
-        $viewDef =~ s/${inputSchema}/\&1/g;
-
-        print $fh "CREATE OR REPLACE VIEW \&1.$viewName AS $viewDef;\n";
-    }
+    my ($viewDef) = $sh->fetchrow_array();
     $sh->finish();
+    #NOTE: the input schema must be swapped out in the table definition
+    $viewDef = lc($viewDef);
+    $viewDef =~ s/${inputSchema}/\@SCHEMA\@/g;
+
+    return $viewDef;
+
 }
 sub writeIndexes {
     my ($self, $tableInfo, $inputSchema) = @_;
@@ -331,7 +325,7 @@ sub writeIndexes {
     my $dbh = $self->getDbh();
 
     my $tableName = $tableInfo->getTableName();
-    my $fh = $self->getSchemaOutputFh();
+
 
     my $indexesQuery = $self->getIndexInfoQuery();
 
@@ -356,45 +350,21 @@ sub writeIndexes {
         my $key = $indexKeys->{$indexName};
         my @a = split(' ', $key);
 
-        my $colString = join(",", map { $indexCols->{$indexName}->{col}->{$_} } @a);
 
-        print $fh "CREATE INDEX $indexName ON \&1.$tableName ($colString) TABLESPACE indx\n";
-        # TODO: set unique and pk constraints
+        my @orderedColumns = map { $indexCols->{$indexName}->{col}->{$_} } @a;
+        my $colString = join(",", @orderedColumns);
+
+
+        $self->addTableAndViewSpecs({name => $indexName, type => 'index', orderedColumns => \@orderedColumns});
     }
 
 
 }
 
-sub writeCreateTable {
-    my ($self, $tableInfo) = @_;
-
-    my $numberFields = $tableInfo->getNumberFields();
-    my $varcharFields = $tableInfo->getVarcharFields();
-    my $dateFields = $tableInfo->getDateFields();
-    my $tableName = $tableInfo->getTableName();
-    my $nullFields = $tableInfo->getNullFields();
-
-    my $fh = $self->getSchemaOutputFh();
-
-    my $varchars = join(",\n", map { $_ . " VARCHAR(" . $varcharFields->{$_} . ") " . $nullFields->{$_}} keys %$varcharFields);
-    my $numbers = join(",\n", map { $_ . " \&3"} keys %$numberFields);
-    my $dates = join(",\n", map { $_ . " \&4"} keys %$dateFields);
-
-
-    my $sqlString = "CREATE TABLE  \&1.${tableName} (\n";
-    $sqlString .= "$varchars,\n" if $varchars;
-    $sqlString .= "$numbers,\n" if $numbers;
-    $sqlString .= "$dates,\n" if $dates;
-
-    $sqlString .= ");
-GRANT INSERT, SELECT, UPDATE, DELETE ON \&1.${tableName} TO gus_w;
-GRANT SELECT ON \&1.${tableName} TO gus_r;
-";
-
-    print $fh $sqlString;
-}
 
 package _TableInfoHelper;
+
+use JSON;
 
 sub getTableName {$_[0]->{_table_name}}
 sub setTableName {$_[0]->{_table_name} = $_[1]}
@@ -445,29 +415,39 @@ sub transformToConfigObject {
     my $rv = {};
     my $nullFields = $self->getNullFields();
 
+    my $orderedFieldNames = $self->orderedFieldNames();
+
+    my %fieldIndex;
+    my $i = 0;
+    foreach(@$orderedFieldNames) {
+        $fieldIndex{$_} = $i;
+        $i++;
+    }
+
     my $numberFields = $self->getNumberFields();
     my $varcharFields = $self->getVarcharFields();
     my $dateFields = $self->getDateFields();
 
     $rv->{name} = $self->getTableName();
     $rv->{type} = 'table';
+    $rv->{is_preexisting_table} => JSON::false;
     foreach my $field (keys %{$varcharFields}) {
         my $spec = $varcharFields->{$field};
         my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
 
-        $rv->{fields}->{$field} = {maxLength => $spec, type => 'SQL_VARCHAR', isNullable => $isNullable};
+        push @{$rv->{fields}}, {name => $field, cacheFileIndex =>$fieldIndex{$field},  maxLength => $spec, type => 'SQL_VARCHAR', isNullable => $isNullable};
     }
 
     foreach my $field (keys %{$numberFields}) {
         my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
         my $spec = $numberFields->{$field};
-        $rv->{fields}->{$field} = {prec => $spec, type => 'SQL_NUMBER', isNullable => $isNullable};
+        push @{$rv->{fields}}, {name => $field, cacheFileIndex =>$fieldIndex{$field},  prec => $spec, type => 'SQL_NUMBER', isNullable => $isNullable};
     }
 
     foreach my $field (keys %{$dateFields}) {
         my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
         my $spec = $dateFields->{$field};
-        $rv->{fields}->{$field} = {type => 'SQL_DATE', isNullable => $isNullable};
+        push @{$rv->{fields}}, {name => $field, cacheFileIndex =>$fieldIndex{$field},  type => 'SQL_DATE', isNullable => $isNullable};
     }
 
     return $rv;

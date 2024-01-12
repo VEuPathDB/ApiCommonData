@@ -11,28 +11,22 @@ use Getopt::Long;
 
 use GUS::Supported::GusConfig;
 
+use JSON;
+
 use ApiCommonData::Load::ApplicationTableDumper;
 
-my ($help, $gusConfigFile, $sqlFile, $jsonFile, $extDbRlsSpec);
+my ($help, $gusConfigFile, $jsonFile, $extDbRlsSpec);
 
 &GetOptions('help|h' => \$help,
             'gusConfig|g=s' => \$gusConfigFile,
-            'sqlFileForInstall|o=s' => \$sqlFile,
             'jsonFileForInstall|j=s' => \$jsonFile,
             'studyExtDbRlsSpec|x=s' => \$extDbRlsSpec
     );
 
 
-my $sqlFh;
-open($sqlFh, ">", $sqlFile) or die "Cannot open file $sqlFile for writing: $!";
 
 my $jsonFh;
 open($jsonFh, ">", $jsonFile) or die "Cannot open file $jsonFile for writing: $!";
-
-# NOTE:  the sqlFile script made here will be called by the installer
-print $sqlFh "WHENEVER SQLERROR EXIT 1;
--- usage:   sqlplus user/pswd\@instance $sqlFile \$schema \$userDatasetId NUMBER|NUMERIC DATE|TIMESTAMP SYSDATE|LOCALTIMESTAMP \n\n
-";
 
 my $schema = 'apidbuserdatasets';
 
@@ -51,135 +45,202 @@ my $dbiDsn = $gusConfig->getDbiDsn();
 my $dbh = DBI->connect($dbiDsn, $login, $password) or die DBI->errstr;
 $dbh->{RaiseError} = 1;
 
-
 my $studyRow = &lookupStudyFromSpec($extDbRlsSpec, $dbh, $schema);
 
 my $tablesQuery = &tablesQuery(\@tablePrefixes, $schema);
 
 my $viewsQuery = &viewsQuery(\@tablePrefixes, $schema);
 
+my $studySpec = &studySpec();
 
-my $applicationTableDumper = ApiCommonData::Load::ApplicationTableDumper->new({'_schema_output_fh' => $sqlFh
-                                                                                   , '_dbi_config_output_fh' => $jsonFh
+my $entityTypeGraphSpec = &entityTypeGraphSpec();
+
+my $applicationTableDumper = ApiCommonData::Load::ApplicationTableDumper->new({'_dbi_config_output_fh' => $jsonFh
                                                                                    , '_dbh' => $dbh
                                                                                    , '_tables_query' => $tablesQuery
                                                                                    , '_views_query' => $viewsQuery
                                                                                    , '_skip_sqlldr_tables' => \@skipSqlldrTables
                                                                               });
 
+
+
+
+
+$applicationTableDumper->addTableAndViewSpecs($studySpec);
+
+
 $applicationTableDumper->dumpFiles();
 
-# this writes the inserts to study,entitytype and entitytypegraph
-&dumpInserts($studyRow, $sqlFh, $dbh, $schema);
+&dumpPreexistingCacheFiles($studyRow, $dbh, $schema, $studySpec, $entityTypeGraphSpec);
 
-close $sqlFh;
+sub studySpec {
+    return {name => "study",
+            is_preexisting_table => JSON::true,
+            type => "table",
+            fields => [
+                {name => "user_dataset_id",
+                 type => "SQL_VARCHAR",
+                 isNullable => "No",
+                 maxLength => "32",
+                 cacheFileIndex => 0,
+                },
+                {name => "study_id",
+                 type => "SQL_NUMBER",
+                 prec => "12",
+                 isNullable => "No",
+                 cacheFileIndex => 1,
+                },
+                {name => "stable_id",
+                 type => "SQL_VARCHAR",
+                 isNullable => "No",
+                 maxLength => "200",
+                 cacheFileIndex => 2,
+                },
+                {name => "internal_abbrev",
+                 type => "SQL_VARCHAR",
+                 isNullable => "Yes",
+                 maxLength => "75",
+                 cacheFileIndex => 3,
+                },
+                {name => "modification_date",
+                 type => "SQL_DATE",
+                 isNullable => "No",
+                 cacheFileIndex => 4,
+               },
+                ]
+    };
+}
 
-sub dumpInserts {
-    my ($studyRow, $sqlFh, $dbh, $schema) = @_;
+
+sub entityTypeGraphSpec {
+    return {name => "entitytypegraph",
+            type => "table",
+            is_preexisting_table => JSON::true,
+            fields => [
+                {name => "entity_type_graph_id",
+                 type => "SQL_NUMBER",
+                 isNullable => "Yes",
+                 prec => "12",
+                 cacheFileIndex => 0,
+                },
+
+                {name => "stable_id",
+                 type => "SQL_VARCHAR",
+                 isNullable => "No",
+                 maxLength => "255",
+                 cacheFileIndex => 1,
+                },
+                {name => "study_stable_id",
+                 type => "SQL_VARCHAR",
+                 isNullable => "No",
+                 maxLength => "200",
+                 cacheFileIndex => 2,
+                },
+                {name => "parent_stable_id",
+                 type => "SQL_VARCHAR",
+                 isNullable => "Yes",
+                 maxLength => "255",
+                 cacheFileIndex => 3,
+                },
+                {name => "internal_abbrev",
+                 type => "SQL_VARCHAR",
+                 isNullable => "No",
+                 maxLength => "50",
+                 cacheFileIndex => 4,
+                },
+                {name => "description",
+                 type => "SQL_VARCHAR",
+                 isNullable => "Yes",
+                 maxLength => "4000",
+                 cacheFileIndex => 5,
+                },
+                {name => "display_name",
+                 type => "SQL_VARCHAR",
+                 isNullable => "No",
+                 maxLength => "200",
+                 cacheFileIndex => 6,
+                },
+                {name => "display_name_plural",
+                 type => "SQL_VARCHAR",
+                 isNullable => "Yes",
+                 maxLength => "200",
+                 cacheFileIndex =>7,
+                },
+                {name => "has_attribute_collections",
+                 type => "SQL_NUMBER",
+                 isNullable => "Yes",
+                 prec => "1",
+                 cacheFileIndex => 8,
+                },
+                {name => "is_many_to_one_with_parent",
+                 type => "SQL_NUMBER",
+                 isNullable => "Yes",
+                 prec => "1",
+                 cacheFileIndex => 9,
+                },
+                {name => "cardinality",
+                 type => "SQL_NUMBER",
+                 isNullable => "Yes",
+                 prec => "38",
+                 cacheFileIndex => 10,
+                }
+                ]
+    };
+}
+
+
+
+sub dumpPreexistingCacheFiles {
+    my ($studyRow, $dbh, $schema, $studySpec, $entityTypeGraphSpec) = @_;
 
     my $studyId = $studyRow->{study_id};
     my $studyStableId = $studyRow->{stable_id};
 
-    my $houseKeepingFields = "modification_date, user_read, user_write, group_read, group_write,other_read, other_write, row_user_id, row_group_id, row_project_id,row_alg_invocation_id";
-    my $houseKeepingValues = "\&5,1, 1, 1, 1, 1, 1, 1, 1, 1, 0";
-
-    &writeStudyRow($sqlFh, $studyRow, $houseKeepingFields, $houseKeepingValues);
-    my $entityTypeRows = &lookupEntityTypeRowsFromStudyId($studyId, $dbh, $schema);
-    foreach my $etRow(@$entityTypeRows) {
-        &writeEntityTypeRows($sqlFh, $etRow, $studyStableId, $houseKeepingFields, $houseKeepingValues);
+    &writeCacheFile('study.cache', $studyRow, $studySpec);
+    my $entityTypeGraphRows = &lookupEntityTypeGraphRowsFromStudyId($studyId, $dbh, $schema);
+    foreach my $etgRow (@$entityTypeGraphRows) {
+        &writeCacheFile('entitytypegraph.cache', $etgRow, $entityTypeGraphSpec);
     }
 }
 
-sub writeEntityTypeRows {
-    my ($sqlFh, $etRow, $studyStableId, $houseKeepingFields, $houseKeepingValues) = @_;
 
-    my $entityTypeName = $etRow->{name};
-    my $internalAbbrev = $etRow->{internal_abbrev};
+sub writeCacheFile {
+    my ($fileName, $row, $spec) = @_;
 
-    my $entityTypeGraphDisplayName = $etRow->{display_name};
+    my @orderedFields = map {$_->{name}}
+                            sort { $a->{cacheFileIndex} <=> $b->{cacheFileIndex}}
+                                @{$spec->{fields}};
 
+    open(FILE, ">", $fileName) or die "Cannot open $fileName for writing: $!";
 
-    my $etInsert = "INSERT INTO \&1.EntityType (entity_type_id
-                                              , name
-                                              , internal_abbrev
-                                              , study_id
-                                              , $houseKeepingFields
-                                              )
-                    select \&1.entitytype_sq.nextval
-                          , '$entityTypeName'
-                          , '$internalAbbrev'
-                          , s.study_id
-                          , $houseKeepingValues
-                    from \&1.study s
-                    where s.stable_id = '$studyStableId'
-                    );
-";
+    print FILE join("\t", map {$row->{$_}} @orderedFields) . "\n";
 
-    print $sqlFh $etInsert;
-
-    my $etgInsert = "INSERT INTO \&1.EntityTypeGraph (entity_type_graph_id
-                                              , display_name
-                                              , internal_abbrev
-                                              , study_id
-                                              , $houseKeepingFields
-                                              )
-                    select \&1.entitytypegraph_sq.nextval
-                          , '$entityTypeGraphDisplayName'
-                          , '$internalAbbrev'
-                          , s.study_id
-                          , $houseKeepingValues
-                    from \&1.study s
-                    where s.stable_id = '$studyStableId'
-                    );
-";
-    print $sqlFh $etgInsert;
+    close FILE;
 }
 
-sub writeStudyRow {
-    my ($sqlFh, $studyRow, $houseKeepingFields, $houseKeepingValues) = @_;
+sub lookupEntityTypeGraphRowsFromStudyId {
+    my ($studyStableId, $dbh, $schema) = @_;
 
-    my $stableId = $studyRow->{stable_id};
-    my $internalAbbrev =  $studyRow->{internal_abbrev};
-
-    # NOTE!! use sqlplus vars for schema and user dataset id
-    my $insert = "insert into \&1.study (study_id
-                                       , 'stable_id'
-                                       , 'internal_abbrev'
-                                       , user_dataset_id
-                                       , $houseKeepingFields
-                                         )
-                  values (\&1.study_sq.nextval
-                        , $stableId
-                        , $internalAbbrev
-                        , \&2
-                        , $houseKeepingValues
-                        );
-";
-    print $sqlFh $insert;
-
-}
-
-sub lookupEntityTypeRowsFromStudyId {
-    my ($studyId, $dbh, $schema) = @_;
-
-    my $sql = "select et.name, et.internal_abbrev, etg.display_name
- from ${schema}.entitytype et, ${schema}.entitytypegraph etg
- where et.study_id = ?
-and et.study_id = etg.study_id
-and et.internal_abbrev = etg.internal_abbrev";
+    my $sql = "select *
+ from ${schema}.entitytypegraph etg
+ where etg.study_stable_id = ?"
+;
 
     my $sh = $dbh->prepare($sql);
-    $sh->execute($studyId);
+    $sh->execute($studyStableId);
 
     my @rv;
 
     while(my $hash = $sh->fetchrow_hashref()) {
+        $hash->{entity_type_graph_id} = '\@ENTITY_TYPE_GRAPH_ID\@';
         push @rv, $hash;
     }
 
     $sh->finish;
     return \@rv;
+
 }
+
 
 
 sub lookupStudyFromSpec {
@@ -187,7 +248,7 @@ sub lookupStudyFromSpec {
 
     my ($name, $version) = split(/\|/, $extDbRlsSpec);
 
-    my $sql = "select s.study_id, s.stable_id, s.internal_abbrev, s.user_dataset_id
+    my $sql = "select s.*
 from ${schema}.externaldatabase d, ${schema}.externaldatabaserelease r, ${schema}.study s
 where s.external_database_release_id = r.external_database_release_id
  and d.external_database_id = r.external_database_id
@@ -206,6 +267,9 @@ where s.external_database_release_id = r.external_database_release_id
 
     die "Expected 1 study row for $extDbRlsSpec but found: $count" unless($count == 1);
 
+    $rv->{modification_date} = '\@MODIFICATION_DATE\@';
+    $rv->{user_dataset_id} = '\@USER_DATASET_ID\@';
+    $rv->{study_id} = '\@STUDY_ID\@';
     return $rv;
 }
 
