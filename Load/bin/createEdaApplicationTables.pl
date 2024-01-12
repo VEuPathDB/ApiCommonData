@@ -11,40 +11,34 @@ use Getopt::Long;
 
 use GUS::Supported::GusConfig;
 
-use Data::Dumper;
-
 use ApiCommonData::Load::ApplicationTableDumper;
 
-my ($help, $gusConfigFile, $sqlFile, $uninstallSqlFile, $extDbRlsSpec);
+my ($help, $gusConfigFile, $sqlFile, $jsonFile, $extDbRlsSpec);
 
 &GetOptions('help|h' => \$help,
             'gusConfig|g=s' => \$gusConfigFile,
             'sqlFileForInstall|o=s' => \$sqlFile,
-            'sqlFileForUninstall|o=s' => \$uninstallSqlFile,
+            'jsonFileForInstall|j=s' => \$jsonFile,
             'studyExtDbRlsSpec|x=s' => \$extDbRlsSpec
     );
 
 
 my $sqlFh;
-open($sqlFh, ">", $sqlFile) or die "Cannot open file $sqlFile for writing: $@";
+open($sqlFh, ">", $sqlFile) or die "Cannot open file $sqlFile for writing: $!";
 
-my $uninstallFh;
-open($uninstallFh, ">", $uninstallSqlFile) or die "Cannot open file $uninstallSqlFile for writing: $@";
+my $jsonFh;
+open($jsonFh, ">", $jsonFile) or die "Cannot open file $jsonFile for writing: $!";
 
 # NOTE:  the sqlFile script made here will be called by the installer
 print $sqlFh "WHENEVER SQLERROR EXIT 1;
 -- usage:   sqlplus user/pswd\@instance $sqlFile \$schema \$userDatasetId NUMBER|NUMERIC DATE|TIMESTAMP SYSDATE|LOCALTIMESTAMP \n\n
 ";
-# NOTE:  the sqlFile script made here will be called by the installer
-print $uninstallFh "WHENEVER SQLERROR EXIT 1;
--- usage:   sqlplus user/pswd\@instance $uninstallSqlFile \$schema \$userDatasetId \n\n
-";
 
 my $schema = 'apidbuserdatasets';
 
 # NOTE:  Will handle attributevalue separately as we already have the sqlldr files
-my @tablePrefixes = ('attributegraph', 'ancestors', 'attributes', 'collection');
-my @tablePrefixesNoSqlldr = ('attributevalue');
+my @tablePrefixes = ('attributegraph', 'ancestors', 'attributes', 'collection', 'attributevalue');
+my @skipSqlldrTables = ('attributevalue');
 
 my @viewPrefixes = ('attributevalue');
 
@@ -61,68 +55,24 @@ $dbh->{RaiseError} = 1;
 my $studyRow = &lookupStudyFromSpec($extDbRlsSpec, $dbh, $schema);
 
 my $tablesQuery = &tablesQuery(\@tablePrefixes, $schema);
-my $tablesQueryNoSqlldr = &tablesQuery(\@tablePrefixesNoSqlldr, $schema);
 
 my $viewsQuery = &viewsQuery(\@tablePrefixes, $schema);
-my $viewsQueryNoSqlldr = &viewsQuery(\@tablePrefixesNoSqlldr, $schema);
 
 
 my $applicationTableDumper = ApiCommonData::Load::ApplicationTableDumper->new({'_schema_output_fh' => $sqlFh
+                                                                                   , '_dbi_config_output_fh' => $jsonFh
                                                                                    , '_dbh' => $dbh
                                                                                    , '_tables_query' => $tablesQuery
                                                                                    , '_views_query' => $viewsQuery
+                                                                                   , '_skip_sqlldr_tables' => \@skipSqlldrTables
                                                                               });
 
-my $applicationTableDumperSkipSqlldr = ApiCommonData::Load::ApplicationTableDumper->new({'_schema_output_fh' => $sqlFh
-                                                                                             , '_dbh' => $dbh
-                                                                                             , '_tables_query' => $tablesQueryNoSqlldr
-                                                                                             , '_views_query' => $viewsQueryNoSqlldr
-                                                                                             , '_skip_sqlldr_files' => 1
-                                                                                        });
 $applicationTableDumper->dumpFiles();
-$applicationTableDumperSkipSqlldr->dumpFiles();
 
 # this writes the inserts to study,entitytype and entitytypegraph
 &dumpInserts($studyRow, $sqlFh, $dbh, $schema);
 
-# UNINSTALL STUFF
-&addDropToUninstallSql($applicationTableDumper->getViewsHash(), 'view', $uninstallFh);
-&addDropToUninstallSql($applicationTableDumperSkipSqlldr->getViewsHash(), 'view', $uninstallFh);
-
-&addDropToUninstallSql($applicationTableDumper->getTablesHash(), 'table', $uninstallFh);
-&addDropToUninstallSql($applicationTableDumperSkipSqlldr->getTablesHash(), 'table', $uninstallFh);
-
-&addDeletesToUninstallScript($studyRow, $uninstallFh);
-
 close $sqlFh;
-
-
-sub addDropToUninstallSql {
-    my ($tables, $type, $fh) = @_;
-
-    foreach my $s (keys %$tables) {
-        foreach my $t (@{$tables->{$s}}) {
-            print $fh "Drop $type \&1.$t;\n"
-        }
-    }
-}
-
-
-sub addDeletesToUninstallScript {
-    my ($studyRow, $fh) = @_;
-
-    my $studyStableId = $studyRow->{stable_id};
-
-    # find study by userdataset id and study stableid
-    my $studyIdSql = "select s.study_id from \&1.study s where s.stable_id = '$studyStableId' and s.user_dataset_id = \&2";
-
-    print $fh "delete \&1.EntityTypeGraph where study_id in ($studyIdSql);;
-delete \&1.EntityType where study_id in ($studyIdSql);
-delete \&1.Study where study_id in ($studyIdSql);
-";
-
-}
-
 
 sub dumpInserts {
     my ($studyRow, $sqlFh, $dbh, $schema) = @_;

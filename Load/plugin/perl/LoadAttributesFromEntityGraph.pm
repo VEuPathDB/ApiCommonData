@@ -32,8 +32,8 @@ use Data::Dumper;
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
 my $TERM_SCHEMA = "SRES";
 
-my $END_OF_RECORD_DELIMITER = "#EOR#\n";
-my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
+my $END_OF_RECORD_DELIMITER = "\n";
+my $END_OF_COLUMN_DELIMITER = "\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar(16))
 
@@ -1083,9 +1083,6 @@ date_value DATE
 sub makeFifo {
   my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
 
-  my $cacheFileName = $fifoName;
-  $cacheFileName =~ s/\.dat$/.cache/;
-
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
 
@@ -1098,6 +1095,8 @@ sub makeFifo {
   my $dbiDsn      = $database->getDSN();
   my ($dbi, $type, $db) = split(':', $dbiDsn, 3);
 
+  my $tableName = "AttributeValue_${studyId}_${entityTypeId}";
+
   my $sqlldr = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                  _password => $password,
                                                  _database => $db,
@@ -1107,7 +1106,7 @@ sub makeFifo {
                                                  _append => 0,
                                                  _infile_name => $fifoName,
                                                  _reenable_disabled_constraints => 1,
-                                                 _table_name => "$SCHEMA.AttributeValue_${studyId}_${entityTypeId}",
+                                                 _table_name => "${SCHEMA}.${tableName}",
                                                  _fields => $fields
                                                 });
 
@@ -1119,9 +1118,9 @@ sub makeFifo {
   # make the dat/cache file on disk
   # The input file name is what is written to the sqlldr config
   if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
-    $sqlldrProcessString = "cat $fifoName >$cacheFileName";
+    my $cacheFileName = lc($tableName) . ".cache";
 
-    $self->log("CACHEFILE NAME=$cacheFileName");
+    $sqlldrProcessString = "cat $fifoName >$cacheFileName";
 
     $sqlldr->setInfileName($cacheFileName);
   }

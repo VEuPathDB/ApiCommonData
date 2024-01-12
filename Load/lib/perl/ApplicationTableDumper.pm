@@ -6,8 +6,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 
 use ApiCommonData::Load::Sqlldr;
 
-use Data::Dumper;
-
+use JSON;
 
 my $DEFAULT_TABLE_INFO_QUERY = "select table_schema
     , table_name
@@ -64,16 +63,33 @@ sub setViewsHash {$_[0]->{_views_hash} = $_[1]}
 sub getTableInfoQuery {$_[0]->{_table_info_query}  || $DEFAULT_TABLE_INFO_QUERY}
 sub setTableInfoQuery {$_[0]->{_table_info_query} = $_[1]}
 
+sub getTableAndViewSpecs {$_[0]->{_table_and_view_specs} || []}
+sub addTableAndViewSpecs {push @{$_[0]->{_table_and_view_specs}}, $_[1]}
+
 sub getViewInfoQuery {$_[0]->{_view_info_query}  || $DEFAULT_VIEW_INFO_QUERY}
 sub setViewInfoQuery {$_[0]->{_view_info_query} = $_[1]}
-
 
 sub getSchemaOutputFh {$_[0]->{_schema_output_fh}}
 sub setSchemaOutputFh {$_[0]->{_schema_output_fh} = $_[1]}
 
-# maybe the tables already exist?
-sub skipCreateTableSql {$_[0]->{_skip_create_table_sql}}
-sub skipSqlldrFiles {$_[0]->{_skip_sqlldr_files}}
+sub getDbiConfigOutputFh {$_[0]->{_dbi_config_output_fh}}
+sub setDbiConfigOutputFh {$_[0]->{_dbi_config_output_fh} = $_[1]}
+
+sub getSkipSqlldrTables {$_[0]->{_skip_sqlldr_tables} || []}
+sub setSkipSqlldrTables {$_[0]->{_skip_sqlldr_tables} = $_[1]}
+
+sub skipSqlldrFiles {
+    my ($self, $table) = @_;
+
+    my $skips = $self->getSkipSqlldrTables();
+
+    foreach my $skip (@$skips) {
+        if($table =~ /^${skip}/i) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 sub new {
   my ($class, $args) = @_;
@@ -107,14 +123,15 @@ sub dumpFiles {
             my $datFileName = "${tableName}.cache";
             my $ctlFileName = "${tableName}.ctl";
 
-            $self->writeCreateTable($tableInfo) unless($self->skipCreateTableSql());
+            $self->writeCreateTable($tableInfo);
 
-            unless($self->skipSqlldrFiles()) {
+            unless($self->skipSqlldrFiles($table)) {
                 $self->writeSqlloaderCtl($tableInfo, $ctlFileName, $datFileName);
                 $self->writeSqlloaderDat($inputSchema, $tableInfo, $datFileName);
             }
             $self->writeIndexes($tableInfo, $inputSchema);
 
+            $self->addTableAndViewSpecs($tableInfo->transformToConfigObject());
         }
     }
 
@@ -124,10 +141,22 @@ sub dumpFiles {
     foreach my $inputSchema(keys %$views) {
         foreach my $view (@{$views->{$inputSchema}}) {
             $self->writeViewDefinition($view, $inputSchema);
+            $self->addTableAndViewSpecs({name => $view, type => 'view'});
         }
     }
 
+    $self->writeDbiConfig();
 }
+
+sub writeDbiConfig {
+    my ($self) = @_;
+
+    my $fh = $self->getDbiConfigOutputFh();
+    my $tableAndViewSpecs = $self->getTableAndViewSpecs();
+
+    print $fh encode_json($tableAndViewSpecs);
+}
+
 
 sub makeTableInfo {
     my ($self, $inputSchema, $table) = @_;
@@ -169,7 +198,13 @@ sub makeTableInfo {
             $sh2->execute();
             my ($len) = $sh2->fetchrow_array();
             $sh2->finish();
-            $varcharFields{$col} = $len;
+
+            if($len) {
+                $varcharFields{$col} = $len;
+            }
+            else {
+                $varcharFields{$col} = "NA";
+            }
         }
     }
     $sh->finish();
@@ -364,16 +399,16 @@ package _TableInfoHelper;
 sub getTableName {$_[0]->{_table_name}}
 sub setTableName {$_[0]->{_table_name} = $_[1]}
 
-sub getVarcharFields {$_[0]->{_varchar_fields}}
+sub getVarcharFields {$_[0]->{_varchar_fields} || {}}
 sub setVarcharFields {$_[0]->{_varchar_fields} = $_[1]}
 
-sub getNumberFields {$_[0]->{_number_fields}}
+sub getNumberFields {$_[0]->{_number_fields} || {}}
 sub setNumberFields {$_[0]->{_number_fields} = $_[1]}
 
-sub getDateFields {$_[0]->{_date_fields}}
+sub getDateFields {$_[0]->{_date_fields} || {}}
 sub setDateFields {$_[0]->{_date_fields} = $_[1]}
 
-sub getNullFields {$_[0]->{_null_fields}}
+sub getNullFields {$_[0]->{_null_fields} || {}}
 sub setNullFields {$_[0]->{_null_fields} = $_[1]}
 
 sub new {
@@ -402,6 +437,40 @@ sub orderedFieldNames {
 
     my @rv = sort(keys %$numberFields, keys %$varcharFields, keys %$dateFields);
     return \@rv;
+}
+
+sub transformToConfigObject {
+    my ($self) = @_;
+
+    my $rv = {};
+    my $nullFields = $self->getNullFields();
+
+    my $numberFields = $self->getNumberFields();
+    my $varcharFields = $self->getVarcharFields();
+    my $dateFields = $self->getDateFields();
+
+    $rv->{name} = $self->getTableName();
+    $rv->{type} = 'table';
+    foreach my $field (keys %{$varcharFields}) {
+        my $spec = $varcharFields->{$field};
+        my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
+
+        $rv->{fields}->{$field} = {maxLength => $spec, type => 'SQL_VARCHAR', isNullable => $isNullable};
+    }
+
+    foreach my $field (keys %{$numberFields}) {
+        my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
+        my $spec = $numberFields->{$field};
+        $rv->{fields}->{$field} = {prec => $spec, type => 'SQL_NUMBER', isNullable => $isNullable};
+    }
+
+    foreach my $field (keys %{$dateFields}) {
+        my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
+        my $spec = $dateFields->{$field};
+        $rv->{fields}->{$field} = {type => 'SQL_DATE', isNullable => $isNullable};
+    }
+
+    return $rv;
 }
 
 
