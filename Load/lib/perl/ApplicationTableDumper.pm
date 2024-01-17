@@ -138,7 +138,7 @@ sub dumpFiles {
     foreach my $inputSchema(keys %$views) {
         foreach my $view (@{$views->{$inputSchema}}) {
             my $definition = $self->writeViewDefinition($view, $inputSchema);
-            $self->addTableAndViewSpecs({name => $view, type => 'view', definition => $definition});
+            $self->addTableAndViewSpecs({name => $view, type => 'view', definition => $definition, macro => 'SCHEMA'});
         }
     }
 

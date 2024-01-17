@@ -83,12 +83,14 @@ sub studySpec {
                  isNullable => "No",
                  maxLength => "32",
                  cacheFileIndex => 0,
+                 macro => 'USER_DATASET_ID'
                 },
                 {name => "study_id",
                  type => "SQL_NUMBER",
                  prec => "12",
                  isNullable => "No",
                  cacheFileIndex => 1,
+                 macro => 'STUDY_ID'
                 },
                 {name => "stable_id",
                  type => "SQL_VARCHAR",
@@ -106,6 +108,7 @@ sub studySpec {
                  type => "SQL_DATE",
                  isNullable => "No",
                  cacheFileIndex => 4,
+                 macro => 'MODIFICATION_DATE'
                },
                 ]
     };
@@ -122,6 +125,7 @@ sub entityTypeGraphSpec {
                  isNullable => "Yes",
                  prec => "12",
                  cacheFileIndex => 0,
+                 macro => 'ENTITY_TYPE_GRAPH_ID'
                 },
 
                 {name => "stable_id",
@@ -197,7 +201,7 @@ sub dumpPreexistingCacheFiles {
     my $studyStableId = $studyRow->{stable_id};
 
     &writeCacheFile('study.cache', $studyRow, $studySpec);
-    my $entityTypeGraphRows = &lookupEntityTypeGraphRowsFromStudyId($studyId, $dbh, $schema);
+    my $entityTypeGraphRows = &lookupEntityTypeGraphRowsFromStudyId($studyStableId, $dbh, $schema);
     foreach my $etgRow (@$entityTypeGraphRows) {
         &writeCacheFile('entitytypegraph.cache', $etgRow, $entityTypeGraphSpec);
     }
@@ -232,7 +236,7 @@ sub lookupEntityTypeGraphRowsFromStudyId {
     my @rv;
 
     while(my $hash = $sh->fetchrow_hashref()) {
-        $hash->{entity_type_graph_id} = '\@ENTITY_TYPE_GRAPH_ID\@';
+        $hash->{entity_type_graph_id} = '@ENTITY_TYPE_GRAPH_ID@';
         push @rv, $hash;
     }
 
@@ -267,9 +271,9 @@ where s.external_database_release_id = r.external_database_release_id
 
     die "Expected 1 study row for $extDbRlsSpec but found: $count" unless($count == 1);
 
-    $rv->{modification_date} = '\@MODIFICATION_DATE\@';
-    $rv->{user_dataset_id} = '\@USER_DATASET_ID\@';
-    $rv->{study_id} = '\@STUDY_ID\@';
+    $rv->{modification_date} = '@MODIFICATION_DATE@';
+    $rv->{user_dataset_id} = '@USER_DATASET_ID@';
+    $rv->{study_id} = '@STUDY_ID@';
     return $rv;
 }
 
