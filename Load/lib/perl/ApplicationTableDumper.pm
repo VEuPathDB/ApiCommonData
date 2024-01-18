@@ -138,6 +138,7 @@ sub dumpFiles {
     foreach my $inputSchema(keys %$views) {
         foreach my $view (@{$views->{$inputSchema}}) {
             my $definition = $self->writeViewDefinition($view, $inputSchema);
+            $definition =~ s/\n/ /g;
             $self->addTableAndViewSpecs({name => $view, type => 'view', definition => $definition, macro => 'SCHEMA'});
         }
     }
@@ -355,7 +356,7 @@ sub writeIndexes {
         my $colString = join(",", @orderedColumns);
 
 
-        $self->addTableAndViewSpecs({name => $indexName, type => 'index', orderedColumns => \@orderedColumns});
+        $self->addTableAndViewSpecs({name => $indexName, tableName => $tableName, type => 'index', orderedColumns => \@orderedColumns});
     }
 
 
@@ -431,24 +432,30 @@ sub transformToConfigObject {
     $rv->{name} = $self->getTableName();
     $rv->{type} = 'table';
     $rv->{is_preexisting_table} => JSON::false;
+
+    my @unorderedFields;
+#@{$rv->{fields}}
     foreach my $field (keys %{$varcharFields}) {
         my $spec = $varcharFields->{$field};
         my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
 
-        push @{$rv->{fields}}, {name => $field, cacheFileIndex =>$fieldIndex{$field},  maxLength => $spec, type => 'SQL_VARCHAR', isNullable => $isNullable};
+        push @unorderedFields, {name => $field, cacheFileIndex =>$fieldIndex{$field},  maxLength => $spec, type => 'SQL_VARCHAR', isNullable => $isNullable};
     }
 
     foreach my $field (keys %{$numberFields}) {
         my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
         my $spec = $numberFields->{$field};
-        push @{$rv->{fields}}, {name => $field, cacheFileIndex =>$fieldIndex{$field},  prec => $spec, type => 'SQL_NUMBER', isNullable => $isNullable};
+        push @unorderedFields, {name => $field, cacheFileIndex =>$fieldIndex{$field},  prec => $spec, type => 'SQL_NUMBER', isNullable => $isNullable};
     }
 
     foreach my $field (keys %{$dateFields}) {
         my $isNullable = $nullFields->{$field} eq 'NOT NULL' ? 'NO' : 'YES';
         my $spec = $dateFields->{$field};
-        push @{$rv->{fields}}, {name => $field, cacheFileIndex =>$fieldIndex{$field},  type => 'SQL_DATE', isNullable => $isNullable};
+        push @unorderedFields, {name => $field, cacheFileIndex =>$fieldIndex{$field},  type => 'SQL_DATE', isNullable => $isNullable};
     }
+
+    my @orderedFields = sort { $a->{cacheFileIndex} <=> $b->{cacheFileIndex} } @unorderedFields;
+    $rv->{fields} = \@orderedFields;
 
     return $rv;
 }
