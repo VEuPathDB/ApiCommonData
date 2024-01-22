@@ -60,8 +60,10 @@ sub loadOwl {
 		unlink($dbfile);
 		$self->writeMD5($owlFile);
 	}
-	if ( not $exists ) {
-            store_model_in_dbfile($owlFile, $name, $dbfile);
+	if ($exists) {
+		print STDERR "Existing RDF Store found ($dbfile), skipping RDF store creation.";
+	} else {
+		store_model_in_dbfile($owlFile, $name, $dbfile);
 	}
 	$self->{config}->{model} = read_model_from_dbfile($name, $dbfile);
 }
