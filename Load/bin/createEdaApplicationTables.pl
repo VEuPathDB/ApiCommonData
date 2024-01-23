@@ -85,29 +85,22 @@ sub studySpec {
                  cacheFileIndex => 0,
                  macro => 'USER_DATASET_ID'
                 },
-                {name => "study_id",
-                 type => "SQL_NUMBER",
-                 prec => "12",
-                 isNullable => "No",
-                 cacheFileIndex => 1,
-                 macro => 'STUDY_ID'
-                },
                 {name => "stable_id",
                  type => "SQL_VARCHAR",
                  isNullable => "No",
                  maxLength => "200",
-                 cacheFileIndex => 2,
+                 cacheFileIndex => 1,
                 },
                 {name => "internal_abbrev",
                  type => "SQL_VARCHAR",
                  isNullable => "Yes",
                  maxLength => "75",
-                 cacheFileIndex => 3,
+                 cacheFileIndex => 2,
                 },
                 {name => "modification_date",
                  type => "SQL_DATE",
                  isNullable => "No",
-                 cacheFileIndex => 4,
+                 cacheFileIndex => 3,
                  macro => 'MODIFICATION_DATE'
                },
                 ]
@@ -120,73 +113,65 @@ sub entityTypeGraphSpec {
             type => "table",
             is_preexisting_table => JSON::true,
             fields => [
-                {name => "entity_type_graph_id",
-                 type => "SQL_NUMBER",
-                 isNullable => "Yes",
-                 prec => "12",
-                 cacheFileIndex => 0,
-                 macro => 'ENTITY_TYPE_GRAPH_ID'
-                },
-
                 {name => "stable_id",
                  type => "SQL_VARCHAR",
                  isNullable => "No",
                  maxLength => "255",
-                 cacheFileIndex => 1,
+                 cacheFileIndex => 0,
                 },
                 {name => "study_stable_id",
                  type => "SQL_VARCHAR",
                  isNullable => "No",
                  maxLength => "200",
-                 cacheFileIndex => 2,
+                 cacheFileIndex => 1,
                 },
                 {name => "parent_stable_id",
                  type => "SQL_VARCHAR",
                  isNullable => "Yes",
                  maxLength => "255",
-                 cacheFileIndex => 3,
+                 cacheFileIndex => 2,
                 },
                 {name => "internal_abbrev",
                  type => "SQL_VARCHAR",
                  isNullable => "No",
                  maxLength => "50",
-                 cacheFileIndex => 4,
+                 cacheFileIndex => 3,
                 },
                 {name => "description",
                  type => "SQL_VARCHAR",
                  isNullable => "Yes",
                  maxLength => "4000",
-                 cacheFileIndex => 5,
+                 cacheFileIndex => 4,
                 },
                 {name => "display_name",
                  type => "SQL_VARCHAR",
                  isNullable => "No",
                  maxLength => "200",
-                 cacheFileIndex => 6,
+                 cacheFileIndex => 5,
                 },
                 {name => "display_name_plural",
                  type => "SQL_VARCHAR",
                  isNullable => "Yes",
                  maxLength => "200",
-                 cacheFileIndex =>7,
+                 cacheFileIndex =>6,
                 },
                 {name => "has_attribute_collections",
                  type => "SQL_NUMBER",
                  isNullable => "Yes",
                  prec => "1",
-                 cacheFileIndex => 8,
+                 cacheFileIndex => 7,
                 },
                 {name => "is_many_to_one_with_parent",
                  type => "SQL_NUMBER",
                  isNullable => "Yes",
                  prec => "1",
-                 cacheFileIndex => 9,
+                 cacheFileIndex => 8,
                 },
                 {name => "cardinality",
                  type => "SQL_NUMBER",
                  isNullable => "Yes",
                  prec => "38",
-                 cacheFileIndex => 10,
+                 cacheFileIndex => 9,
                 }
                 ]
     };
@@ -236,7 +221,6 @@ sub lookupEntityTypeGraphRowsFromStudyId {
     my @rv;
 
     while(my $hash = $sh->fetchrow_hashref()) {
-        $hash->{entity_type_graph_id} = '@ENTITY_TYPE_GRAPH_ID@';
         push @rv, $hash;
     }
 
@@ -273,7 +257,6 @@ where s.external_database_release_id = r.external_database_release_id
 
     $rv->{modification_date} = '@MODIFICATION_DATE@';
     $rv->{user_dataset_id} = '@USER_DATASET_ID@';
-    $rv->{study_id} = '@STUDY_ID@';
     return $rv;
 }
 
