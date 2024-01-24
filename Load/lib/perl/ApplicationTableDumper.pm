@@ -78,9 +78,9 @@ sub setSkipSqlldrTables {$_[0]->{_skip_sqlldr_tables} = $_[1]}
 sub skipSqlldrFiles {
     my ($self, $table) = @_;
 
-    my $skips = $self->getSkipSqlldrTables();
+    my @skips = keys %{$self->getSkipSqlldrTables()};
 
-    foreach my $skip (@$skips) {
+    foreach my $skip (@skips) {
         if($table =~ /^${skip}/i) {
             return 1;
         }
@@ -201,17 +201,19 @@ sub makeTableInfo {
                 $varcharFields{$col} = $len;
             }
             else {
-                $varcharFields{$col} = "NA";
+                # NOTE:  the values here must be null but we need to assign something
+                $varcharFields{$col} = 1;
             }
         }
     }
     $sh->finish();
 
     return _TableInfoHelper->new({'_table_name' => ${table}
-                                      , '_varchar_fields' => \%varcharFields
+                                  , '_varchar_fields' => \%varcharFields
                                       , '_number_fields' => \%numberFields
-                                      , '_date_fields' => \%dateFields,
+                                      , '_date_fields' => \%dateFields
                                       , '_null_fields' => \%nullFields
+                                      , '_skip_table_column_regexes' => $self->getSkipSqlldrTables()
                                 });
 }
 
@@ -245,9 +247,11 @@ sub writeSqlloaderDat {
     # NOTE: columns here must match order in ctl file
     my $fieldsString = join(',', @$orderedFields);
 
+
+
     my $sql = "select $fieldsString from ${schema}.${tableName}";
 
-    my $sh = $dbh->prepare($sql);
+        my $sh = $dbh->prepare($sql);
     $sh->execute();
 
     while(my @a = $sh->fetchrow_array) {
@@ -382,6 +386,11 @@ sub setDateFields {$_[0]->{_date_fields} = $_[1]}
 sub getNullFields {$_[0]->{_null_fields} || {}}
 sub setNullFields {$_[0]->{_null_fields} = $_[1]}
 
+sub getSkipTableColumnRegexes {$_[0]->{_skip_table_column_regexes} || {}}
+sub setSkipTableColumnRegexes {$_[0]->{_skip_table_column_regexes} = $_[1]}
+
+
+
 sub new {
   my ($class, $args) = @_;
 
@@ -402,12 +411,43 @@ sub new {
 sub orderedFieldNames {
     my ($self) = @_;
 
+
+
     my $numberFields = $self->getNumberFields();
     my $varcharFields = $self->getVarcharFields();
     my $dateFields = $self->getDateFields();
 
-    my @rv = sort(keys %$numberFields, keys %$varcharFields, keys %$dateFields);
-    return \@rv;
+    my @sorted = sort(keys %$numberFields, keys %$varcharFields, keys %$dateFields);
+
+    my @predefinedOrder;
+
+    my $tableName = $self->getTableName();
+    my $colRegexes = $self->getSkipTableColumnRegexes();
+    if($colRegexes) {
+
+
+        foreach my $skippedTable (keys %$colRegexes) {
+            if($tableName =~ /^${skippedTable}/i) {
+
+                # use order from hash
+                my $colOrderRegexes = $colRegexes->{$skippedTable};
+                foreach my $regex (@$colOrderRegexes) {
+                    my ($found, $foundCount);
+                    foreach my $s (@sorted) {
+                        if($s =~ /$regex/) {
+                            $found = $s;
+                            $foundCount++;
+                        }
+                    }
+                    die "Could not determine order of columns for $tableName" if($foundCount != 1);
+                    push @predefinedOrder, $found;
+                }
+                return \@predefinedOrder;
+            }
+        }
+    }
+
+    return \@sorted;
 }
 
 sub transformToConfigObject {

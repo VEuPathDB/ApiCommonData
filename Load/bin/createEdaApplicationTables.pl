@@ -15,6 +15,8 @@ use JSON;
 
 use ApiCommonData::Load::ApplicationTableDumper;
 
+use Data::Dumper;
+
 my ($help, $gusConfigFile, $jsonFile, $extDbRlsSpec);
 
 &GetOptions('help|h' => \$help,
@@ -32,7 +34,12 @@ my $schema = 'apidbuserdatasets';
 
 # NOTE:  Will handle attributevalue separately as we already have the sqlldr files
 my @tablePrefixes = ('attributegraph', 'ancestors', 'attributes', 'collection', 'attributevalue');
-my @skipSqlldrTables = ('attributevalue');
+my $skipSqlldrTables = {'attributevalue' => [qr/^(?!attribute_stable_id$).+_stable_id$/
+                                             , qr/^attribute_stable_id$/
+                                             , qr/^string_value$/
+                                             , qr/^number_value$/
+                                             , qr/^date_value$/
+                            ]};
 
 my @viewPrefixes = ('attributevalue');
 
@@ -55,11 +62,12 @@ my $studySpec = &studySpec();
 
 my $entityTypeGraphSpec = &entityTypeGraphSpec();
 
+
 my $applicationTableDumper = ApiCommonData::Load::ApplicationTableDumper->new({'_dbi_config_output_fh' => $jsonFh
                                                                                    , '_dbh' => $dbh
                                                                                    , '_tables_query' => $tablesQuery
                                                                                    , '_views_query' => $viewsQuery
-                                                                                   , '_skip_sqlldr_tables' => \@skipSqlldrTables
+                                                                                   , '_skip_sqlldr_tables' => $skipSqlldrTables
                                                                               });
 
 
@@ -67,9 +75,10 @@ my $applicationTableDumper = ApiCommonData::Load::ApplicationTableDumper->new({'
 
 
 $applicationTableDumper->addTableAndViewSpecs($studySpec);
-
+$applicationTableDumper->addTableAndViewSpecs($entityTypeGraphSpec);
 
 $applicationTableDumper->dumpFiles();
+
 
 &dumpPreexistingCacheFiles($studyRow, $dbh, $schema, $studySpec, $entityTypeGraphSpec);
 
