@@ -12,10 +12,6 @@ use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Psql;
 
-use GUS::Model::ApiDB::DatabaseTableMapping;
-
-
-
 my $END_OF_COLUMN_DELIMITER = "\t";
 my $END_OF_RECORD_DELIMITER = "\n";
 
