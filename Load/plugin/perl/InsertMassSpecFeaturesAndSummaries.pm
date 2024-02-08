@@ -28,6 +28,8 @@ use FileHandle;
 
 use GUS::PluginMgr::Plugin;
 
+use ApiCommonData::Load::SequenceOntologyLookup;
+
 # read from
 use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::GeneFeature;
@@ -88,6 +90,9 @@ sub run {
   $self->{extDbRlsId} = $self->getExtDbRlsId($extDbSpec);
 
   my $studyName = "Mass Spec Peptides from $extDbSpec";
+
+  my $soLookup = ApiCommonData::Load::SequenceOntologyLookup->new($self->getArg('soExtDbName'), $self->getArg('soGusConfig'));
+  $self->{_so_lookup} = $soLookup;
 
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $self->{extDbRlsId}});
 
@@ -1026,13 +1031,16 @@ sub insertMassSpecFeatures {
 sub fetchSequenceOntologyId {
   my ($self, $res, $name) = @_; 
 
-  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name }); 
-  $SOTerm->retrieveFromDB;
-  $res->{sequenceOntologyId} = $SOTerm->getId();
+  my $soLookup = $self->{_so_lookup};
+  my $soSourceId = $soLookup->getSourceIdFromName($name);
 
-  if (! $SOTerm->getId()) {
-    $self->error("Error: Can't find SO term '$name' in database.");
-  } 
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name, source_id => $soSourceId });
+
+  unless($SOTerm->retrieveFromDB) {
+    $SOTerm->submit();
+  }
+
+  return $SOTerm->getId();
 }
 
 sub addNAFeatureAndLocations {
@@ -1293,11 +1301,20 @@ sub declareArgs {
              }),
 
    stringArg({
-              name            =>  'developmentalStage',
-              descr           =>  'organism developmental stage analyzed',
+              name            =>  'soExtDbName',
+              descr           =>  'External Database Name for SO terms in Component DB',
               constraintFunc  =>  undef,
               reqd            =>  0,
-              isList          =>  0
+              isList          =>  1
+             }),
+
+fileArg({ name => 'soGusConfig',
+               descr => 'GUS Config file for db with SO terms ',
+               constraintFunc=> undef,
+               format         => '',
+               reqd  => 1,
+               isList => 0,
+               mustExist => 1,
              }),
 
    stringArg({name => 'organismAbbrev',

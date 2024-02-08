@@ -5,23 +5,42 @@ use strict;
 use DBI;
 use DBD::Pg;
 
+use Data::Dumper;
+
 use GUS::Supported::GusConfig;
 
 sub getSequenceOntologyTermsHash {$_[0]->{_sequence_ontology_terms_hash}}
 sub setSequenceOntologyTermsHash {
     my ($self, $extDbName, $dbh) = @_;
 
+    my $ar = $extDbName;
+    if(ref($extDbName) eq 'SCALAR') {
+        $ar = [ $extDbName ];
+    }
+
+    my $dbNames = join(",", map { "'$_'" } @$ar);
+
     my $sql = "select t.name, t.source_id
 from sres.ontologyterm t,
  sres.externaldatabase d,
  sres.externaldatabaserelease r
-where d.name = ?
+where d.name in ($dbNames)
  and d.external_database_id = r.external_database_id
 and r.external_database_release_id = t.external_database_release_id
+UNION
+select t.name, t.source_id
+from sres.ontologyterm t,
+  sres.ontologyrelationship rel,
+ sres.externaldatabase d,
+ sres.externaldatabaserelease r
+where d.name in ($dbNames)
+ and d.external_database_id = r.external_database_id
+and r.external_database_release_id = rel.external_database_release_id
+and rel.subject_term_id = t.ontology_term_id
 ";
 
     my $sh = $dbh->prepare($sql);
-    $sh->execute($extDbName);
+    $sh->execute();
 
     my %hash;
     while(my ($name, $sourceId) = $sh->fetchrow_array()) {
@@ -45,9 +64,8 @@ sub new {
 
   my $self = bless({}, $class);
 
-  $dbh->disconnect();
   $self->setSequenceOntologyTermsHash($extDbName, $dbh);
-
+  $dbh->disconnect();
   return $self;
 }
 
