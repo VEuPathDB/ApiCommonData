@@ -231,6 +231,15 @@ sub addResults {
   elsif ($protocolName =~ /geneCNV/) {
     $tableString = "ApiDB::GeneCopyNumber";
   }
+  elsif ($protocolName =~ /PloidyNew/) {
+    $tableString = "ApiDB::Ploidy";
+  }
+  elsif ($protocolName =~ /GeneCNVNew/) {
+    $tableString = "ApiDB::GeneCNV";
+  }
+  elsif ($protocolName =~ /Indel/) {
+    $tableString = "ApiDB::Indel";
+  }
   elsif ($protocolName =~ /simple_ontology_term_results/) {
     $tableString = "ApiDB::OntologyTermResult";
   }
