@@ -16,9 +16,6 @@ parent_id - Unique ID of the parent feature
 tstarts - comma sep list of subfeature starts
 blocksizes - comma sep list of subfeature lengths
 -->
-
-
-<!-- GOOD as is -->
   <track name="EST" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
@@ -50,7 +47,6 @@ blocksizes - comma sep list of subfeature lengths
     </sql>
   </track>
 
-  <!-- takes too long to run sql like this.  TODO:  remove this and move to reflow -->
   <track name="GenericEndFeature" type="genomic" fileSuffix="gff">
    <trackConfigurations>
      <properties>
@@ -177,8 +173,6 @@ blocksizes - comma sep list of subfeature lengths
    </sql>
   </track>
 
-
-<!-- GOOD as is -->
   <track name="alignmentSequence" type="genomic" fileSuffix="gff">
    <!-- cryptodb,tritrypdb,toxodb,unidb -->
 
@@ -232,8 +226,6 @@ WHERE  blat.query_na_sequence_id = enas.na_sequence_id
    </sql>
   </track>
 
-
-<!-- GOOD as is -->
   <track name="alignmentTransposableElements" type="genomic" fileSuffix="gff">
    <!-- TrichDB,UniDB -->
    <trackConfigurations>
@@ -600,7 +592,7 @@ SELECT distinct ssf.segment_start as  feature_id,
    </sql>
   </track>
 
-<!-- very slow - comment out for test run
+<!-- commenting out for now - 4.5 hours for TgME49
   <track name="domainUnifiedMassSpecPeptides" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
@@ -774,10 +766,9 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
    </sql>
   </track>
 
-<!-- 
   <track name="gffProcessedTranscript" type="genomic" fileSuffix="gff">
 
-    <! - - PlasmoDB,ToxoDB,CryptoDB,UniDB >
+    <!-- PlasmoDB,ToxoDB,CryptoDB,UniDB -->
    <trackConfigurations>
      <properties>
        <prop name="edName">tgonME49_noseq_chromosomes_name_GFF_topLevel_RSRC</prop>
@@ -883,7 +874,6 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
      ]]>
    </sql>
   </track>
- -->
 
   <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
     <sql>
@@ -996,7 +986,7 @@ ORDER BY
   </track>
 
   <track name="MicroArrayProbesExpressionD" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,ToxoDB,TriTrypDB,UniDB
+   <!-- PlasmoDB,ToxoDB,TriTrypDB,UniDB -->
    <trackConfigurations>
      <properties>
        <prop name="edName">tcruCLBrenerEsmeraldo-like_microarrayPlatform_GPL8132_RSRC</prop>
@@ -1099,9 +1089,8 @@ where edr.external_database_id = ed.external_database_id
    </sql>
   </track>
 
-<!--
   <track name="MicroArrayProbesExpressionProbes" type="genomic" fileSuffix="gff">
-   - - PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB
+    <!-- PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB -->
 
    <trackConfigurations>
      <properties>
@@ -1170,10 +1159,9 @@ where edr.external_database_id = ed.external_database_id
      ]]>
    </sql>
   </track>
--->
 
   <track name="MicrosatelliteSts" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,UniDB
+   <!-- PlasmoDB,UniDB -->
 
    <sql>
      <![CDATA[
@@ -1198,7 +1186,7 @@ where edr.external_database_id = ed.external_database_id
   </track>
 
   <track name="piggyBacTransposableElement" type="genomic" fileSuffix="gff">
-  -- PlasmoDB,UniDB
+    <!-- PlasmoDB,UniDB -->
 
    <sql>
      <![CDATA[
@@ -1225,7 +1213,6 @@ order by blat.target_start
   </track>
 
   <track name="repeatRepeatElements" type="genomic" fileSuffix="gff">
-
    <sql>
      <![CDATA[
 select rpt.na_feature_id feature_id,
@@ -1250,59 +1237,58 @@ order by fl.start_min
   </track>
 
   <track name="scaffoldGenome" type="genomic" fileSuffix="gff">
-
    <sql>
      <![CDATA[
-  select fl.na_feature_id as feature_id,
-         'scaffold gap' feature,
-         'VEuPathDB' source,
-         'gap' as name,
-         fl.na_sequence_id as parent_id,
-         fl.start_min as startm,
-         fl.end_max as end,
-         '0' strand,
-         'Length=' || (fl.end_max - fl.start_min + 1) || '$dlm' ||
-         'Type=' ||  'gap'  || '$dlm' ||
-         'Note=' ||  ''  atts
-  from apidb.FeatureLocation fl
-  where fl.feature_type = 'ScaffoldGapFeature'
-    and fl.na_sequence_id = $srcfeature_id
-UNION
-  select p.agp_piece_id as feature_id,
-         'scaffold' feature,
-         'VEuPathDB' source,
-         p.piece_id name,
-         gsa.na_sequence_id as parent_id,
-         p.start_min as startm,
-         p.end_max as end,
-         decode(p.is_reversed, '0', '+1', '1', '-1', '0') strand,
-          'Length=' || (p.end_max - p.start_min + 1) || '$dlm' ||
-          'Type=scaffold' ||'$dlm' ||
-          'Note=' || p.piece_id atts
-  from dots.NaSequence gsa, apidb.AgpPiece p
-  where gsa.source_id = p.source_id
-    and not p.piece_id is null
-    and gsa.na_sequence_id = $srcfeature_id
-UNION
-  -- scaffold:genome:bulksubfeatures
-  select fl.na_feature_id as feature_id,
-         'gap' feature,
-         'VEuPathDB' source,
-         fl.feature_source_id name,
-         fl.na_feature_id parent_id,
-         fl.start_min as startm,
-         fl.end_max as end,
-         '0' as strand,
-         'Type=sgap' as atts
-  from apidb.FeatureLocation fl
-  where fl.feature_type = 'ScaffoldGapFeature'
-    and fl.na_sequence_id = $srcfeature_id
+select sgf.na_feature_id as feature_id,
+     'scaffold' type,
+     'genome' source,     
+      'gap' as name,
+      nal.start_min as startm,
+      nal.end_max as end,
+      '0' strand,
+      'Length=' || (nal.end_max-nal.start_min+1) || '$dlm' ||
+      'Type=' ||  'gap'  || '$dlm' ||
+      'Note=' ||  ''  atts
+from DOTS.scaffoldgapfeature sgf, dots.nalocation nal
+where nal.na_feature_id = sgf.na_feature_id
+and sgf.na_sequence_id = $srcfeature_id
+UNION ALL
+select p.agp_piece_id as feature_id, 
+     'scaffold' type,
+     'genome' source,
+      p.piece_id name,
+      p.start_min as startm,
+      p.end_max as end,
+      decode(p.is_reversed, '0', '+1', '1', '-1', '0') strand,
+      'Length=' || (p.end_max - p.start_min + 1) || '$dlm' ||
+      'Type=scaffold' ||'$dlm' ||
+      'Note=' || p.piece_id atts
+from apidbtuning.genomicseqattributes gsa, apidb.agpPiece p
+where gsa.source_id = p.source_id
+and not p.piece_id is null
+and gsa.na_sequence_id = $srcfeature_id
+UNION ALL
+SELECT sg.na_feature_id as feature_id,
+       'gap' type,
+       'genome' source,
+       sg.source_id name,
+--     sg.na_feature_id parent_id,
+       fl.start_min as startm,
+       fl.end_max as end,
+       '0' as strand,
+       'Type=sgap' as atts
+FROM   DoTS.ScaffoldGapFeature sg,
+       DoTS.NaLocation fl,
+       ApidbTuning.GenomicSeqAttributes gsa
+WHERE  fl.na_feature_id = sg.na_feature_id
+   AND gsa.na_sequence_id = sg.na_sequence_id
+   AND gsa.na_sequence_id = $srcfeature_id
      ]]>
    </sql>
   </track>
 
   <track name="SNPDiversityJbrowse" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,ToxoDB,UniDB
+   <!-- PlasmoDB,ToxoDB,UniDB -->
 
    <trackConfigurations>
      <properties>
@@ -2095,61 +2081,62 @@ order by aal.start_min
 EST
 GenericEndFeature
 alignment:sequence
-alignment:TransposableElements
 Centromere:overview
-cnv:ArrayJBrowse
-domain:spliceSites
 domain:tRNA
-domain:tssJBrowse
-domain:UnifiedMassSpecPeptides
-feature:BindingSite
-gff:basic
-gff:processedTranscript
-Haplotype:Block
+domain:UnifiedMassSpecPeptides - slow - 4.5 hours for TgME49
 lowcomplexity:dust
 match:IsolatePopset
-MicroArrayProbes:expressionD
 MicroArrayProbes:expressionProbes
-Microsatellite:sts
-piggyBac:TransposableElement
 repeat:RepeatElements
 scaffold:genome
-SNP:DiversityJbrowse
 TandemRepeat:TRF
-domain:ExportPred
 domain:interpro
 domain:SignalP
 domain:TMHMM
 hydropathy_jbrowse
 lowcomplexity:seg
-ChIP:ChIPchip_peaksjbrowse
 MassSpecPeptide
+gff:processedTranscript
+
+## done but 0 records in TgME49
+alignment:TransposableElements
+cnv:ArrayJBrowse
+domain:spliceSites
+domain:tssJBrowse
+feature:BindingSite
+gff:basic
+Haplotype:Block
+MicroArrayProbes:expressionD
+Microsatellite:sts
+piggyBac:TransposableElement
+SNP:DiversityJbrowse
+domain:ExportPred
+
 
 ### TODO Genomic ####
-## TODO:  make these as dedicated scripts in worklfow
-ChIP:ChIPchip_smoothedjbrowse - should be BigWig, not GFF; TODO: either one file per sample
-ChIP:ChIPSeqPeaksjbrowse - gff standard
 
-# these gsnap queries use tuning tables. This is ok now because this step can be run after tuning artifacts have been made
-gsnap:unifiedintronjunctionAnnotatedNew
+ChIP:ChIPchip_peaksjbrowse
+
+# use tuning tables
+gsnap:unifiedintronjunctionNew
 gsnap:unifiedintronjunctionAnnotatedOnly
 gsnap:unifiedintronjunctionHCOnly
 gsnap:unifiedintronjunctionLCOnly
-
-# TODO Add these back and use the tuning tables
-SNP:Genotyping - uses (only) apidbTuning.SnpChipAttributes
-SNP:Population - uses tuning tables SnpAttributes, GeneAttributes
+SNP:Genotyping
+SNP:Population
+gff:apolloTranscript
 
 ### TODO Protein ####
-# TODO:  move this to dedicated workflow STEP
-get_2d_struc_jbrowse - bigwig
-
 # Paul has already made ReferenceSequence (Genomic). do what he did but for proteins
 ReferenceSequenceAa - should have FASTA file store. same as genomic sequence; copy and index download-dir file
 
 # SKIP
-#gene:syntenyJBrowseScaled - skip for now; uses JBrowse window as param
-#gff:apolloTranscript - references (only) apidbTuning.ApolloUpdate; skip
+gene:syntenyJBrowseScaled - skip for now; uses JBrowse window as param
+
+# make these as dedicated scripts in workflow
+ChIP:ChIPchip_smoothedjbrowse - should be BigWig, not GFF; TODO: either one file per sample
+ChIP:ChIPSeqPeaksjbrowse - gff standard
+get_2d_struc_jbrowse - bigwig
 
 -->
 
