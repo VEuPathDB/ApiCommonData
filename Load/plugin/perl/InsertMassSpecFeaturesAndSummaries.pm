@@ -28,7 +28,7 @@ use FileHandle;
 
 use GUS::PluginMgr::Plugin;
 
-use ApiCommonData::Load::SequenceOntologyLookup;
+use GUS::Supported::SequenceOntologyLookup;
 
 # read from
 use GUS::Model::DoTS::Transcript;
@@ -91,8 +91,12 @@ sub run {
 
   my $studyName = "Mass Spec Peptides from $extDbSpec";
 
-  my $soLookup = ApiCommonData::Load::SequenceOntologyLookup->new($self->getArg('soExtDbName'), $self->getArg('soGusConfig'));
-  $self->{_so_lookup} = $soLookup;
+  # mass spec uses multiple so sources
+  foreach my $soExtDbName ($self->getArg('soExtDbName')) {
+    my $soLookup = GUS::Supported::SequenceOntologyLookup->new("$soExtDbName|%", $self->getArg('soGusConfig'));
+    push @{$self->{_so_lookup}}, $soLookup;
+  }
+
 
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $self->{extDbRlsId}});
 
@@ -1031,8 +1035,18 @@ sub insertMassSpecFeatures {
 sub fetchSequenceOntologyId {
   my ($self, $res, $name) = @_; 
 
-  my $soLookup = $self->{_so_lookup};
-  my $soSourceId = $soLookup->getSourceIdFromName($name);
+  my $soLookups = $self->{_so_lookup};
+  my $soSourceId;
+
+  # mass spec uses 2 sequence ontology sources
+  foreach my $soLookup (@{$soLookups}) {
+    next if($soSourceId);
+    $soSourceId = $soLookup->getSourceIdFromName($name);
+  }
+
+  unless($soSourceId) {
+    $self->error("unable to find SO source_id for name: $name");
+  }
 
   my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name, source_id => $soSourceId });
 
