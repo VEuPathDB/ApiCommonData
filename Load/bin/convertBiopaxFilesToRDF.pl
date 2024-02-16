@@ -20,7 +20,7 @@ my $noFiles = scalar(@files);
 print STDERR "FOUND $noFiles BIOPAX FILES IN $dir\n";
 
 foreach my $biopaxFile (@files) {
-  print STDERR "\tConverting ${basename($biopaxFile)}\n";
+  print STDERR "\tConverting @{[basename($biopaxFile)]}\n";
   my $cmd = "biopaxToRdf.R $biopaxFile $dir";
   `$cmd`;
   my $status = $? >> 8;
