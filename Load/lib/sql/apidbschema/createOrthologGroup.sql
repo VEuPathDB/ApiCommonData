@@ -136,7 +136,7 @@ WHERE 'orthomcltaxon' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 CREATE TABLE apidb.GroupTaxonMatrix (
  group_taxon_matrix_id       NUMBER(12) NOT NULL,
- ortholog_group_id       NUMBER(12) NOT NULL,
+ ortholog_group_id           VARCHAR2(12) NOT NULL,
  column1                     NUMBER(8),
  column2                     NUMBER(8),
  column3                     NUMBER(8),
@@ -755,7 +755,7 @@ ADD CONSTRAINT gtm_pk PRIMARY KEY (group_taxon_matrix_id);
 
 ALTER TABLE apidb.GroupTaxonMatrix
 ADD CONSTRAINT gtm_fk1 FOREIGN KEY (ortholog_group_id)
-REFERENCES apidb.OrthologGroup (ortholog_group_id);
+REFERENCES apidb.OrthologGroup (group_id);
 
 CREATE UNIQUE INDEX apidb.gtm_group_id 
     ON apidb.GroupTaxonMatrix (ortholog_group_id) tablespace indx;
@@ -849,7 +849,7 @@ WHERE 'OrthomclResource' NOT IN (SELECT name FROM core.TableInfo
 
 CREATE TABLE ApiDB.OrthomclGroupKeyword (
  orthomcl_keyword_id           NUMBER(10) NOT NULL,
- ortholog_group_id             NUMBER(10) NOT NULL,
+ ortholog_group_id             VARCHAR2(12) NOT NULL,
  keyword                       VARCHAR(255) NOT NULL,
  frequency                     VARCHAR(20) NOT NULL,
  modification_date             DATE NOT NULL,
@@ -863,7 +863,7 @@ CREATE TABLE ApiDB.OrthomclGroupKeyword (
  row_group_id                  NUMBER(3) NOT NULL,
  row_project_id                NUMBER(4) NOT NULL,
  row_alg_invocation_id         NUMBER(12) NOT NULL,
- FOREIGN KEY (ortholog_group_id) REFERENCES ApiDB.OrthologGroup (ortholog_group_id),
+ FOREIGN KEY (ortholog_group_id) REFERENCES ApiDB.OrthologGroup (group_id),
  PRIMARY KEY (orthomcl_keyword_id)
 );
 
@@ -901,7 +901,7 @@ WHERE 'OrthomclGroupKeyword' NOT IN (SELECT name FROM core.TableInfo
 
 CREATE TABLE ApiDB.OrthomclGroupDomain (
  orthomcl_domain_id           NUMBER(10) NOT NULL,
- ortholog_group_id             NUMBER(10) NOT NULL,
+ ortholog_group_id             VARCHAR2(12) NOT NULL,
  description                   VARCHAR(255) NOT NULL,
  frequency                     FLOAT NOT NULL,
  modification_date             DATE NOT NULL,
@@ -915,7 +915,7 @@ CREATE TABLE ApiDB.OrthomclGroupDomain (
  row_group_id                  NUMBER(3) NOT NULL,
  row_project_id                NUMBER(4) NOT NULL,
  row_alg_invocation_id         NUMBER(12) NOT NULL,
- FOREIGN KEY (ortholog_group_id) REFERENCES ApiDB.OrthologGroup (ortholog_group_id),
+ FOREIGN KEY (ortholog_group_id) REFERENCES ApiDB.OrthologGroup (group_id),
  PRIMARY KEY (orthomcl_domain_id)
 );
 
@@ -1000,15 +1000,15 @@ WHERE 'OrthologGroupStats' NOT IN (SELECT name FROM core.TableInfo
 
 ------------------------------------------------------------------------------
 
+CREATE OR REPLACE VIEW Dots.OrthoAASequence AS
+SELECT AA_SEQUENCE_ID, SEQUENCE_VERSION, SUBCLASS_VIEW, MOLECULAR_WEIGHT, SEQUENCE, LENGTH, DESCRIPTION, EXTERNAL_DATABASE_RELEASE_ID, SOURCE_ID, SOURCE_AA_SEQUENCE_ID, SEQUENCE_TYPE_ID, SEQUENCE_ONTOLOGY_ID, TAXON_ID, STRING1 AS SECONDARY_IDENTIFIER, STRING2 AS NAME, STRING3 AS MOLECULE_TYPE, STRING4 AS CRC32_VALUE, NUMBER1 as IS_CORE, MODIFICATION_DATE, USER_READ, USER_WRITE, GROUP_READ, GROUP_WRITE, OTHER_READ, OTHER_WRITE, ROW_USER_ID, ROW_GROUP_ID, ROW_PROJECT_ID, ROW_ALG_INVOCATION_ID FROM DoTS.AASequenceImp;
+
+------------------------------------------------------------------------------
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON DOTS.AASEQUENCEIMP to public;
 GRANT INSERT, SELECT, UPDATE, DELETE ON DOTS.OrthoAASequence TO gus_w;
 GRANT SELECT ON DOTS.OrthoAASequence TO gus_r;
   
-------------------------------------------------------------------------------
-
-CREATE OR REPLACE VIEW Dots.OrthoAASequence AS
-SELECT AA_SEQUENCE_ID, SEQUENCE_VERSION, SUBCLASS_VIEW, MOLECULAR_WEIGHT, SEQUENCE, LENGTH, DESCRIPTION, EXTERNAL_DATABASE_RELEASE_ID, SOURCE_ID, SOURCE_AA_SEQUENCE_ID, SEQUENCE_TYPE_ID, SEQUENCE_ONTOLOGY_ID, TAXON_ID, STRING1 AS SECONDARY_IDENTIFIER, STRING2 AS NAME, STRING3 AS MOLECULE_TYPE, STRING4 AS CRC32_VALUE, NUMBER1 as IS_CORE, MODIFICATION_DATE, USER_READ, USER_WRITE, GROUP_READ, GROUP_WRITE, OTHER_READ, OTHER_WRITE, ROW_USER_ID, ROW_GROUP_ID, ROW_PROJECT_ID, ROW_ALG_INVOCATION_ID FROM DoTS.AASequenceImp;
-
 ------------------------------------------------------------------------------
 
 INSERT INTO core.TableInfo
@@ -1097,5 +1097,52 @@ WHERE 'orthologgroupaasequence' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where database_id = d.database_id);
 
 ------------------------------------------------------------------------------
+
+CREATE TABLE apidb.SimilarOrthologGroup (
+ similar_ortholog_group_id    NUMBER(12) NOT NULL,
+ group_id                     VARCHAR2(12) NOT NULL,
+ similar_group_id             VARCHAR2(12) NOT NULL,
+ modification_date            DATE NOT NULL,
+ user_read                    NUMBER(1) NOT NULL,
+ user_write                   NUMBER(1) NOT NULL,
+ group_read                   NUMBER(1) NOT NULL,
+ group_write                  NUMBER(1) NOT NULL,
+ other_read                   NUMBER(1) NOT NULL,
+ other_write                  NUMBER(1) NOT NULL,
+ row_user_id                  NUMBER(12) NOT NULL,
+ row_group_id                 NUMBER(3) NOT NULL,
+ row_project_id               NUMBER(4) NOT NULL,
+ row_alg_invocation_id        NUMBER(12) NOT NULL,
+ PRIMARY KEY (similar_ortholog_group_id)
+);
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.SimilarOrthologGroup TO gus_w;
+GRANT SELECT ON apidb.SimilarOrthologGroup TO gus_r;
+
+------------------------------------------------------------------------------
+
+CREATE SEQUENCE apidb.SimilarOrthologGroup_sq;
+
+GRANT SELECT ON apidb.SimilarOrthologGroup_sq TO gus_r;
+GRANT SELECT ON apidb.SimilarOrthologGroup_sq TO gus_w;
+
+------------------------------------------------------------------------------
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'SimilarOrthologGroup',
+       'Standard', 'SIMILAR_ORTHOLOG_GROUP_ID',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+WHERE 'similarorthologgroup' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where database_id = d.database_id);
+
 
 exit;

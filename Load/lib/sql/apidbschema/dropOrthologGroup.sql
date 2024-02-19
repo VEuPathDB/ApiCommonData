@@ -94,19 +94,21 @@ WHERE lower(name) =  'orthologgroup'
 
 --------------------------------------------------------------------------------
 
-DROP TABLE apidb.OrthomclTaxon;
+DROP TABLE apidb.SimilarOrthologGroup;
 
-DROP SEQUENCE apidb.OrthomclTaxon_sq;
+DROP SEQUENCE apidb.SimilarOrthologGroup_sq;
 
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'ortholomcltaxon'
+WHERE lower(name) =  'similarorthologgroup'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
 --------------------------------------------------------------------------------
 
-DROP VIEW apidb.OrthoAASequence;
+DROP VIEW dots.OrthoAASequence;
+
+DROP SEQUENCE dots.OrthoAASequence_sq;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) =  'orthoaasequence'
