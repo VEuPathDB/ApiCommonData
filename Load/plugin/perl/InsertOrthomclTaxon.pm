@@ -244,7 +244,7 @@ sub parseSpeciesFile {
 	chomp($line);
 	my @columns = split("\t",$line);
 	my $numColumns = scalar @columns;
-	$self->userError("There should be 4 columns:\n$line\n") if ($numColumns != 4);
+	$self->userError("There are $numColumns columns. There should be 4 columns:\n$line\n") if ($numColumns != 4);
 	my ($speciesAbbrev,$name,$cladeAbbrev,$corePeripheral) = @columns;
 	$self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
 	$speciesAbbrevs->{$speciesAbbrev} = 1;
