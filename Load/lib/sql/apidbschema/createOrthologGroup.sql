@@ -3,6 +3,8 @@ CREATE TABLE apidb.OrthologGroup (
  group_id                     VARCHAR2(12) NOT NULL,
  is_residual                  NUMBER(1) NOT NULL,
  number_of_members            NUMBER(12) NOT NULL,
+ number_of_core_members       NUMBER(12) NOT NULL,
+ number_of_peripheral_members NUMBER(12) NOT NULL,
  external_database_release_id NUMBER(10) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
