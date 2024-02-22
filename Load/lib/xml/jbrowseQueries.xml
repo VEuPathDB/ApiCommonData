@@ -529,7 +529,7 @@ SELECT distinct ssf.segment_start as  feature_id, 'domain' feature,
       <![CDATA[
 SELECT distinct loc.feature_location_id feature_id,
        'domain' feature,
-       'tRNA' source,
+       'VEuPathDB' source,
        rnaf.source_id name,
        loc.na_sequence_id parent_id,
        loc.start_min as startm,
@@ -592,7 +592,7 @@ SELECT distinct ssf.segment_start as  feature_id,
    </sql>
   </track>
 
-<!-- very slow - comment out for test run
+<!-- commenting out for now - 4.5 hours for TgME49
   <track name="domainUnifiedMassSpecPeptides" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
@@ -766,10 +766,9 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
    </sql>
   </track>
 
-<!-- 
   <track name="gffProcessedTranscript" type="genomic" fileSuffix="gff">
 
-    <! - - PlasmoDB,ToxoDB,CryptoDB,UniDB >
+    <!-- PlasmoDB,ToxoDB,CryptoDB,UniDB -->
    <trackConfigurations>
      <properties>
        <prop name="edName">tgonME49_noseq_chromosomes_name_GFF_topLevel_RSRC</prop>
@@ -875,7 +874,6 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
      ]]>
    </sql>
   </track>
- -->
 
   <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
     <sql>
@@ -988,7 +986,7 @@ ORDER BY
   </track>
 
   <track name="MicroArrayProbesExpressionD" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,ToxoDB,TriTrypDB,UniDB
+   <!-- PlasmoDB,ToxoDB,TriTrypDB,UniDB -->
    <trackConfigurations>
      <properties>
        <prop name="edName">tcruCLBrenerEsmeraldo-like_microarrayPlatform_GPL8132_RSRC</prop>
@@ -1091,9 +1089,8 @@ where edr.external_database_id = ed.external_database_id
    </sql>
   </track>
 
-<!--
   <track name="MicroArrayProbesExpressionProbes" type="genomic" fileSuffix="gff">
-   - - PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB
+    <!-- PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB -->
 
    <trackConfigurations>
      <properties>
@@ -1162,10 +1159,9 @@ where edr.external_database_id = ed.external_database_id
      ]]>
    </sql>
   </track>
--->
 
   <track name="MicrosatelliteSts" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,UniDB
+   <!-- PlasmoDB,UniDB -->
 
    <sql>
      <![CDATA[
@@ -1190,7 +1186,7 @@ where edr.external_database_id = ed.external_database_id
   </track>
 
   <track name="piggyBacTransposableElement" type="genomic" fileSuffix="gff">
-  -- PlasmoDB,UniDB
+    <!-- PlasmoDB,UniDB -->
 
    <sql>
      <![CDATA[
@@ -1217,7 +1213,6 @@ order by blat.target_start
   </track>
 
   <track name="repeatRepeatElements" type="genomic" fileSuffix="gff">
-
    <sql>
      <![CDATA[
 select rpt.na_feature_id feature_id,
@@ -1242,7 +1237,6 @@ order by fl.start_min
   </track>
 
   <track name="scaffoldGenome" type="genomic" fileSuffix="gff">
-
    <sql>
      <![CDATA[
   select fl.na_feature_id as feature_id,
@@ -1294,7 +1288,7 @@ UNION
   </track>
 
   <track name="SNPDiversityJbrowse" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,ToxoDB,UniDB
+   <!-- PlasmoDB,ToxoDB,UniDB -->
 
    <trackConfigurations>
      <properties>
@@ -1564,465 +1558,308 @@ order by aal.start_min
    </sql>
   </track>
 
-<!-- 
   <track name="ChIPChIPchip_peaksjbrowse" type="genomic" fileSuffix="gff">
-   <! - - FungiDB,PlasmoDB,ToxoDB,TriTrypDB,UniDB - ->
+   <!-- FungiDB,PlasmoDB,ToxoDB,TriTrypDB,UniDB -->
 
    <trackConfigurations>
      <properties>
-       <prop name="panName">14070B_3D7_H3K9Ac_sir2KO_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">Ryp1-in-ryp1-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
-       <prop name="panName">14070B_3D7_H3K9Ac_sir2KO_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">Ryp3-in-ryp3-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp4-in-ryp4-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp2-in-G217B-37-ChIP-sample-C_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp4-in-G217B-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp4-in-G217B-37-ChIP-sample-C_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp1-in-G217B-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp2-in-ryp2-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp1-in-ryp1-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp4-in-G217B-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp1-in-G217B-37-ChIP-sample-C_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp2-in-G217B-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp3-in-G217B-37-ChIP-sample-B_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp1-in-G217B-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp3-in-ryp3-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp4-in-ryp4-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp2-in-ryp2-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp3-in-G217B-37-ChIP-sample-C_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp2-in-G217B-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">Ryp3-in-G217B-37-ChIP-sample-A_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">14070B_3D7_H3K9Ac_sir2KO_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">14070B_3D7_H3K9me3_sir2KO_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">14070B_3D7_H3K9me3_sir2KO_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7821202_ChIP-005HA-ab9110_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7821202_ChIP-005HA-ab9110_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7924102_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7924102_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7924502_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7924502_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7924902_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7924902_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7926902_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">7926902_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435A_3D7_H3K4me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435A_3D7_H3K4me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435A_3D7_H3K9Ac_sir2KO_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435A_3D7_H3K9Ac_sir2KO_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435A_3D7_H3K9Ac_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435A_3D7_H3K9Ac_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435A_3D7_H3K9me3_sir2KO_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435A_3D7_H3K9me3_sir2KO_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435B_3D7_H3K4me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435B_3D7_H3K4me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435B_3D7_H3K9Ac_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435B_3D7_H3K9Ac_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435B_3D7_H3K9me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435B_3D7_H3K9me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9435B_3D7_H4K20me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9435B_3D7_H4K20me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9981A_3D7_H3K9me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9981A_3D7_H3K9me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9981A_3D7_H4K20me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">9981A_3D7_H4K20me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">9981_3D7_H3K9me3_wt_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
-       <prop name="panName">9981_3D7_H3K9me3_wt_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">CenH3_H3K9me2_r_filtered_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">CenH3_H3K9me2_r_filtered_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">CenH3_r_filtered_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">CenH3_r_filtered_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338429-TBP-replicate1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338429-TBP-replicate1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338430-SNAP50-replicate1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338430-SNAP50-replicate1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338431-acetylH3-replicate1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338431-acetylH3-replicate1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338432-acetylH3-replicate2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338432-acetylH3-replicate2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338433-acetylH3-early_log_promastigotes_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338433-acetylH3-early_log_promastigotes_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338434-acetylH3-stationary_promastigotes_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338434-acetylH3-stationary_promastigotes_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338435-SNAP50-replicate2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338435-SNAP50-replicate2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338436-SNAP50-replicate3_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338436-SNAP50-replicate3_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338437-TBP-replicate2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338437-TBP-replicate2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338438-TBP-replicate3_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338438-TBP-replicate3_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338439-TBP-early_log_promastigotes_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338439-TBP-early_log_promastigotes_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338440-TBP-stationary_promastigotes_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">GSM338440-TBP-stationary_promastigotes_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_PLK_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_PLK_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_RH_1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_RH_1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_RH_2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_RH_2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_TypeIII_1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_TypeIII_1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_TypeIII_2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K4me3_TypeIII_2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K9ac_PLK_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K9ac_PLK_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K9ac_RH_1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K9ac_RH_1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">7821202_ChIP-005HA-ab9110_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">H3K9ac_RH_2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
-       <prop name="panName">H3K9ac_RH_2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">H3K4me3_TypeIII_1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">H3K9ac_PLK_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">H3K4me3_RH_1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">H3K4me3_RH_2_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">H3K9ac_RH_1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">H3K9ac_TypeIII_1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H3K9ac_TypeIII_1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">H3K9ac_TypeIII_2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
-       <prop name="panName">H3K9ac_TypeIII_2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">H3K4me3_PLK_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
-       <prop name="panName">H3K9ac_troph_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H4_ring_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H4_schizont_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">H4_trophozoite_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RH_H3K4me1_Rep1_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RH_H3K4me1_Rep1_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RH_H3K4me1_Rep2_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RH_H3K4me1_Rep2_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RPB9_RNA_pol_II_2691502_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RPB9_RNA_pol_II_2691502_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RPB9_RNA_pol_II_2696302_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">RPB9_RNA_pol_II_2696302_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">SET8_89193_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">SET8_89193_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">SET8_89420_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">SET8_89420_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP1_89169_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP1_89169_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP1_95391_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP1_95391_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP2_2696202_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP2_2696202_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP2_2736002_ratio_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">TBP2_2736002_ratio_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">H3K4me3_TypeIII_2_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">cenH3_H3K9me2_filtered_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">cenH3_H3K9me2_filtered_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">cenH3_o_filtered_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
-       <prop name="panName">cenH3_o_filtered_smoothed (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
+       <prop name="panName">CenH3_r_filtered_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">CenH3_H3K9me2_r_filtered_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">RH_H3K4me1_Rep1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">RH_H3K4me1_Rep2_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">RPB9_RNA_pol_II_2696302_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">RPB9_RNA_pol_II_2691502_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">SET8_89420_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">TBP1_95391_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">SET8_89193_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">TBP2_2696202_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">TBP2_2736002_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">TBP1_89169_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">7924902_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">7924102_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">7926902_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">7924502_ratio_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338430-SNAP50-replicate1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338429-TBP-replicate1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338431-acetylH3-replicate1_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338432-acetylH3-replicate2_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338433-acetylH3-early_log_promastigotes_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338434-acetylH3-stationary_promastigotes_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338435-SNAP50-replicate2_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338437-TBP-replicate2_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338436-SNAP50-replicate3_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338438-TBP-replicate3_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338439-TBP-early_log_promastigotes_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
+     </properties>
+     <properties>
+       <prop name="panName">GSM338440-TBP-stationary_promastigotes_peaks (ChIP-chip)</prop>
+       <prop name="cutoff">0</prop>
      </properties>
      <properties>
        <prop name="panName">ratios_peaks (ChIP-chip)</prop>
-       <prop name="cutoff">35</prop>
-     </properties>
-     <properties>
-       <prop name="panName">ratios_smoothed (ChIP-chip)</prop>
        <prop name="cutoff">35</prop>
      </properties>
    </trackConfigurations>
@@ -2054,7 +1891,7 @@ order by aal.start_min
      ]]>
    </sql>
   </track>
--->
+
 
   <track name="MassSpecPeptide" type="protein" fileSuffix="gff">
 
@@ -2081,65 +1918,321 @@ order by aal.start_min
    </sql>
   </track>
 
+  <track name="gsnapUnifiedintronjunctionnew" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+        select gij.intron_feature_id as feature_id,gij.na_sequence_id as parent_id,
+               gij.segment_start as startm, gij.segment_end as end,
+               'GSNAP' as source, -- "VEuPathDB"?
+               gij.contained, gij.matches_gene_strand as matchesgenestrand,
+               gij.total_unique as score, gij.total_unique as totalscore,
+               gij.total_isrpm as isrpm, gij.intron_feature_id as name,
+               gij.percent_max as intronpercent, gij.annotated_intron,
+               gij.annotated_intron as annotatedintron,
+               gij.gene_source_id as genesourceid, gij.gene_na_feature_id, 
+               gij.is_reversed, gij.is_reversed as isreversed,
+               case when gij.annotated_intron = 'Yes'
+                         or (gij.total_unique
+                               >= case when contained = 1
+                                         then stats.perc01_annot_score
+                                         else (5 * stats.perc01_annot_score)
+                                  end
+                             and (gij.contained = 0 or gij.percent_max >= 2 -- stats.perc0005_annot_percent_max
+                                 )
+                            )
+                      then 'Strong Evidence'
+                      else 'Weak Evidence'
+               end as evidence,
+               decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') as strand
+        from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+        where gij.na_sequence_id = $srcfeature_id
+          and gij.na_sequence_id = stats.na_sequence_id
+          and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
+       -- and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 20 -- ???
+          and (gij.annotated_intron = 'Yes'
+               or (gij.total_unique
+                     >= case when contained = 1 then stats.min_annot_score
+                             else (5 * stats.min_annot_score)
+                        end
+                   and (gij.contained = 0
+                        or gij.percent_max >= stats.min_annot_percent_max)
+                  )
+              )
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gsnapUnifiedintronjunctionAnnotatedOnly" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+         select gij.intron_feature_id as feature_id, 'gsnap' as feature,
+                to_char(gij.na_sequence_id) as parent_id, gij.segment_start as startm,
+                gij.segment_end as end, 'VEuPathDB' as source,
+                gij.total_unique as score,
+                decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                null as frame, null as atts, null as tstarts, null as blocksizes
+         from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+         where gij.na_sequence_id= $srcfeature_id
+           and gij.na_sequence_id = stats.na_sequence_id
+           and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+      --   and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 12 -- ???
+           and gij.annotated_intron = 'Yes'
+       union all
+         -- gsnap:unifiedintronjunctionAnnotatedOnly:bulksubfeatures
+         select intron_feature_id as feature_id, 'gsnap' as feature,
+                intron_feature_id as parent_id, segment_start - 10 as startm,
+                segment_end + 10 as end, 'VEuPathDB' as source,
+                total_unique as score,
+                decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                null as frame, null as atts, 
+                to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
+                to_char(10) || ',' || to_char(10) as blocksizes
+         from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+         where gij.na_sequence_id= $srcfeature_id
+           and gij.na_sequence_id = stats.na_sequence_id
+           and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+   --      and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 12
+           and gij.annotated_intron = 'Yes'
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gsnapUunifiedintronjunctionHCOnly" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+         select gij.intron_feature_id as feature_id, 'gsnap' as feature,
+                to_char(gij.na_sequence_id) as parent_id, gij.segment_start as startm,
+                gij.segment_end as end, 'VEuPathDB' as source,
+                gij.total_unique as score,
+                decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                null as frame, null as atts, null as tstarts, null as blocksizes
+         from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+         where gij.na_sequence_id = $srcfeature_id
+           and gij.na_sequence_id = stats.na_sequence_id
+           and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+        -- and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 12 -- ???
+           and gij.annotated_intron = 'No'
+           and gij.total_unique >= CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+           and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max*/)
+       union all
+         -- gsnap:unifiedintronjunctionHCOnly:bulksubfeatures
+         select intron_feature_id as feature_id, 'gsnap' as feature,
+                intron_feature_id as parent_id,
+                segment_start - 10 as startm,
+                segment_end + 10 as end, 'VEuPathDB' as source,
+                total_unique as score,
+                decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                null as frame, null as atts,
+                to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
+                to_char(10) || ',' || to_char(10) as blocksizes
+         from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+         where gij.na_sequence_id = $srcfeature_id
+           and gij.na_sequence_id = stats.na_sequence_id
+           and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+        -- and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 12
+           and gij.annotated_intron = 'No'
+           and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+           and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max*/)
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gsnapUnifiedintronjunctionLCOnly" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+         select gij.intron_feature_id as feature_id, 'gsnap' as feature, gij.na_sequence_id as parent_id,
+                gij.segment_start as startm, gij.segment_end as end, 'VEuPathDB' as source,
+                gij.total_unique as score,
+                decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                null as frame, null as atts, null as tstarts, null as blocksizes
+         from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+         where gij.na_sequence_id = $srcfeature_id
+           and gij.na_sequence_id = stats.na_sequence_id
+           and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
+     --    and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 20 -- ???
+           and gij.annotated_intron = 'No'
+           and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.min_annot_score ELSE 5*stats.min_annot_score END
+           and (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
+           and gij.intron_feature_id
+                not in (select gij.intron_feature_id
+                        from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                        where gij.na_sequence_id = $srcfeature_id
+                          and gij.na_sequence_id = stats.na_sequence_id
+                          and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                       -- and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 12 -- ???
+                          and gij.annotated_intron = 'No'
+                          and gij.total_unique
+                              >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+                          and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max
+                              )
+                       )
+       union all
+               -- gsnap:unifiedintronjunctionLCOnly:bulksubfeatures
+         select intron_feature_id as feature_id, 'gsnap' as feature
+                intron_feature_id as parent_id,
+                segment_start - 10 as startm,
+                segment_end + 10 as end, 'VEuPathDB' as source,
+                total_unique as score,
+                decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                null as frame, null as atts,                     to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
+                to_char(10) || ',' || to_char(10) as blocksizes
+         from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+         where gij.na_sequence_id = $srcfeature_id
+           and gij.na_sequence_id = stats.na_sequence_id
+           and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
+    --     and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 20 -- ???
+           and gij.annotated_intron = 'No'
+           and gij.total_unique >= case when contained = 1 then stats.min_annot_score else (5 * stats.min_annot_score) end
+           and (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
+           and gij.intron_feature_id
+               not in (select gij.intron_feature_id
+                       from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                       where gij.na_sequence_id = $srcfeature_id
+                         and gij.na_sequence_id = stats.na_sequence_id
+                         and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                --       and gij.segment_end - gij.segment_start <= ($rend - $base_start) * 12 -- ???
+                         and gij.annotated_intron = 'No'
+                         and gij.total_unique
+                              >= case when contained = 1 then stats.perc01_annot_score else (5 * stats.perc01_annot_score) end
+                         and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max*/)
+                      )
+     ]]>
+   </sql>
+  </track>
+
+  <track name="SNPGenotyping" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+         select sa.na_feature_id as feature_id, 'SNP' as feature,
+                'Genotyping' as source, sa.source_id as name,
+                sa.na_sequence_id as parent_id, 
+                sa.start_min as startm, sa.start_min as end,
+                null as score, null as frame, null as tstarts, null as blocksizes,
+                decode(sa.gene_strand, 'forward', '+1', 'reverse', '-1', '.') as strand,
+                'SNPChipType='   || replace (replace (sa.dataset,'pfal3D7_SNPChip_'), '_RSRC')  || '$dlm' ||
+                'type=' || 'snp-chip' || '$dlm' ||
+                'source_id='   || sa.source_id || '$dlm' ||
+                'major_allele_freq=' || sa.major_allele_frequency || '$dlm' ||
+                'minor_allele_freq=' || sa.minor_allele_frequency || '$dlm' ||
+                'NonSyn='   || decode(sa.has_nonsynonymous_allele,'yes',1,'no',0) || '$dlm'||
+                'Nonsense='   || CASE WHEN sa.major_product = '*' or sa.minor_product = '*' THEN 1 ELSE 0 END || '$dlm'||
+                'IsCoding=' || sa.is_coding || '$dlm' ||
+                'position_in_CDS=' || sa.position_in_CDS || '$dlm' ||
+                'position_in_protein=' || sa.position_in_protein || '$dlm' ||
+                'reference_strain=' || sa.reference_strain || '$dlm' ||
+                'reference_aa=' || sa.reference_aa || '$dlm' ||
+                'reference_na=' || sa.reference_na || '$dlm' ||
+                'major_allele=' || sa.major_allele || '$dlm' ||
+                'minor_allele=' || sa.minor_allele || '$dlm' ||
+                'major_product=' || sa.major_product || '$dlm' ||
+                'minor_product=' || sa.minor_product || '$dlm' ||
+                'major_allele_count=' || sa.major_allele_count || '$dlm' ||
+                'minor_allele_count=' || sa.minor_allele_count AS atts
+         from apidbTuning.SnpChipAttributes sa
+         where sa.na_sequence_id = $srcfeature_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gffApolloTranscript" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+         select g3.attr attr, g3.apolloproduct apolloproduct,
+                g3.apollopmid apollopmid,
+                g3.apolloevidencecode apolloevidencecode,
+                g3.apolloobsolete apolloobsolete, g3.id_attr as feature_id,
+                g3.type feature, 'VEuPathDB' source, g3.seqid name,
+                '1' phase, g3.score score, g3.id_attr parent_id,
+                g3.mapping_start startm, g3.mapping_end end,
+                g3.apolloid apolloid,
+                decode(g3.strand, '+', '+1', '-', '-1', '.') strand,
+                replace( UTL_URL.unescape(g3.attr), ';', '$dlm') atts,
+                null as frame, null as tstarts, null as blocksizes
+         from apidbtuning.ApolloUpdate g3
+         where g3.na_sequence_id = $srcfeature_id
+           and type like '%gene'
+       union all
+         -- gff:apolloTranscript:bulksubfeatures
+         select g3.attr attr, g3.apolloproduct apolloproduct,
+                g3.apollopmid apollopmid,
+                g3.apolloevidencecode apolloevidencecode,
+                g3.apolloobsolete apolloobsolete,
+                g3.id_attr as feature_id, g3.type feature,
+                'VEuPathDB' source, g3.seqid name, '1' phase,
+                g3.score score, g3.parent_attr parent_id,
+                g3.mapping_start startm, g3.mapping_end end,
+                g3.apolloid apolloid,
+                decode (g3.strand, '+', '+1', '-', '-1', '.') strand,
+                replace( UTL_URL.unescape(g3.attr), ';', '$dlm') atts,
+                null as frame, null as tstarts, null as blocksizes
+         from apidbtuning.ApolloUpdate  g3
+         where g3.na_sequence_id = $srcfeature_id
+           and (type = 'exon'
+                or type = 'UTR'
+                or type = 'mRNA'
+                or type = 'CDS')
+     ]]>
+   </sql>
+  </track>
+
 
 <!--
 ####DONE ####
 EST
 GenericEndFeature
 alignment:sequence
-alignment:TransposableElements
 Centromere:overview
-cnv:ArrayJBrowse
-domain:spliceSites
 domain:tRNA
-domain:tssJBrowse
-domain:UnifiedMassSpecPeptides
-feature:BindingSite
-gff:basic
-gff:processedTranscript
-Haplotype:Block
+domain:UnifiedMassSpecPeptides - slow - 4.5 hours for TgME49
 lowcomplexity:dust
 match:IsolatePopset
-MicroArrayProbes:expressionD
 MicroArrayProbes:expressionProbes
-Microsatellite:sts
-piggyBac:TransposableElement
 repeat:RepeatElements
 scaffold:genome
-SNP:DiversityJbrowse
 TandemRepeat:TRF
-domain:ExportPred
 domain:interpro
 domain:SignalP
 domain:TMHMM
 hydropathy_jbrowse
 lowcomplexity:seg
-ChIP:ChIPchip_peaksjbrowse
 MassSpecPeptide
+gff:processedTranscript
+gff:apolloTranscript
+ChIPChIPchip_peaksjbrowse
+gsnap:unifiedintronjunctionLCOnly
+gsnap:unifiedintronjunctionNew
+gsnap:unifiedintronjunctionHCOnly
+gsnap:unifiedintronjunctionAnnotatedOnly
 
-### TODO Genomic ####
-ChIP:ChIPchip_smoothedjbrowse - should be BigWig, not GFF
-ChIP:ChIPSeqPeaksjbrowse
-#gene:annotation - skip (workflow)
-#gene:annotation2 - ditto
-#gene:syntenyJBrowseScaled - skip for now; uses JBrowse window as param
-# gff:apolloTranscript - references (only) apidbTuning.ApolloUpdate; skip
+## done but 0 records in TgME49
+alignment:TransposableElements
+cnv:ArrayJBrowse
+domain:spliceSites
+domain:tssJBrowse
+feature:BindingSite
+gff:basic
+Haplotype:Block
+MicroArrayProbes:expressionD
+Microsatellite:sts
+piggyBac:TransposableElement
+SNP:DiversityJbrowse
+domain:ExportPred
+SNP:Genotyping
 
-# these gsnap queries use tuning tables. Also, they all have "new" versions (e.g. gsnap:unifiedintronjunctionNew)
-#gsnap:unifiedintronjunction
-#gsnap:unifiedintronjunctionAnnotatedOnly
-#gsnap:unifiedintronjunctionHCOnly
-#gsnap:unifiedintronjunctionLCOnly
+## TODO Protein ##
+# Paul has already made ReferenceSequence (Genomic). do what he did but for proteins
+ReferenceSequenceAa - should have FASTA file store. same as genomic sequence; copy and index download-dir file
 
-# ReferenceSequence - already dumping in workflow as FASTA
+# SKIP?
+domainUnifiedMassSpecPeptides - works but very slow (4.5 hours for T.g. ME49)
+gene:syntenyJBrowseScaled - put off because it uses JBrowse window as param, but probably OK
 
-# SNP:Genotyping - uses (only) apidbTuning.SnpChipAttributes
-# SNP:Population - uses tuning tables SnpAttributes, GeneAttributes
+## SKIP ##
+# make these as dedicated scripts in workflow
+ChIP:ChIPchip_smoothedjbrowse - should be BigWig, not GFF; TODO: either one file per sample
+ChIP:ChIPSeqPeaksjbrowse - gff standard
+get_2d_struc_jbrowse - bigwig
 
-### TODO Protein ####
-get_2d_struc_jbrowse
-
-# ReferenceSequenceAa - should have FASTA file store. same as genomic sequence; copy and index download-dir file
 -->
 
 </tracks>
