@@ -21,6 +21,8 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
+use Date::Calc qw(check_date);
+
 #use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
 use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike dropViewsLike);
 
@@ -260,36 +262,21 @@ sub run {
 sub runStatsScriptLocally {
   my ($self, $numericValsFileName, $dateValsFileName, $outputStatsFileName) = @_;
 
-
-
   #INPUT is like: join("\t", $attributeStableId, $entityTypeId, $numberValue)
   # OUTPUT is like: my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
   my $script = "find-bin-width";
-
-  # FIXME.  change to calling fbw script once instead of grepping each pair
-  open(FBW, ">", "$outputStatsFileName") or die "Couldn't open file $outputStatsFileName for writing: $!";
 
   my @files = ($numericValsFileName,$dateValsFileName);
 
   foreach my $file(@files) {
 
     $self->log("Processing File $file");
-    my $groupBy = `cut -f 1,2 $file|sort -u`;
 
-    my @groups = split(/\n/, $groupBy);
-    foreach my $group (@groups) {
-
-
-
-      my $values = `grep -P \"$group\" $file |cut -f 3|$script`;
-
-      print FBW $group . "\t" . $values . "\n";
-
-
-    }
+    # need to append to output here as we're doing both number and date
+    system("sort $file|$script -s >>$outputStatsFileName") == 0
+      or die "$script failed: $?";
   }
 
-  close FBW;
 }
 
 
@@ -714,7 +701,7 @@ sub makeFifosForSqlloader {
     my $fifoName = "${SCHEMA}_attributevalue_${internalAbbrev}_${timestamp}.dat";
 
     my $fields = $self->fieldsAndCreateTable($maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId, $studyId);
-    my $fifo = $self->makeFifo($fields, $fifoName, $entityTypeId, $studyId);
+    my $fifo = $self->makeFifo($fields, $fifoName, $internalAbbrev, $studyInternalAbbrev);
 
     $entityTypeIdFifos->{$entityTypeId} = $fifo;
   }
@@ -931,9 +918,12 @@ sub typedValueForAttribute {
     $counts->{_PRECISION} ||= 0;
     $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision);#if $counts->{_PRECISION};
   }
-  elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
+  elsif($value =~ /^(\d\d\d\d)-(\d\d)-(\d\d)$/) {
     $dateValue = $value;
-    $counts->{_IS_DATE_COUNT}++;
+
+    if(check_date($1, $2, $3)) {
+      $counts->{_IS_DATE_COUNT}++;
+    }
 
     # my $parsedDate = ParseDate($dateValue);
     # $counts->{_MIN_DATE} = (sort { Date_Cmp($b, $a) } ($counts->{_MIN_DATE} || $parsedDate, $parsedDate))[-1];
@@ -1050,9 +1040,7 @@ sub fieldsAndCreateTable {
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyInternalAbbrev}_${internalAbbrev}";
 
-  my $tableSynonymName = "${SCHEMA}.AttributeValue_${studyId}_${entityTypeId}";
-
-  my $createTableSql = "create table $tableSynonymName (
+  my $createTableSql = "create table $tableName (
 $idField VARCHAR(200) NOT NULL,
 attribute_stable_id  VARCHAR(255) NOT NULL,
 string_value VARCHAR(1000) NOT NULL,
@@ -1065,23 +1053,21 @@ date_value DATE
 
   $dbh->do($createTableSql) or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableSynonymName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableSynonymName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableSynonymName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableSynonymName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-
-  $dbh->do("create or replace view ${tableName} as select $idField, attribute_stable_id, string_value, number_value, date_value from ${tableSynonymName}") or die $dbh->errstr;
-  $dbh->do("GRANT SELECT ON $tableSynonymName TO gus_r") or die $dbh->errstr;
   $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
+
 
   return \@fields;
 }
 
 
 sub makeFifo {
-  my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
+  my ($self, $fields, $fifoName, $entityTypeAbbrev, $studyAbbrev) = @_;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -1095,7 +1081,7 @@ sub makeFifo {
   my $dbiDsn      = $database->getDSN();
   my ($dbi, $type, $db) = split(':', $dbiDsn, 3);
 
-  my $tableName = "AttributeValue_${studyId}_${entityTypeId}";
+  my $tableName = "AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
 
   my $sqlldr = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                  _password => $password,
@@ -1164,8 +1150,7 @@ sub dropTables {
   $sh->execute();
 
   while(my ($s, $et, $internalAbbrev) = $sh->fetchrow_array()) {
-    &dropViewsLike(${SCHEMA}, "ATTRIBUTEVALUE_${internalAbbrev}", $dbh);
-    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${s}_${et}", $dbh);
+    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${internalAbbrev}", $dbh);
   }
   $sh->finish();
 }
