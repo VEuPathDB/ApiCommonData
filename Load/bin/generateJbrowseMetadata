@@ -3,17 +3,11 @@
 use strict;
 use lib $ENV{GUS_HOME} . "/lib/perl";
 use Data::Dumper;
-use LWP::Simple;
-use LWP::UserAgent;
 use DBI;
-use DBD::Oracle;
-use WDK::Model::ModelConfig;
 use JSON;
-use URI::Escape;
-use Tie::IxHash;
 use CBIL::Util::PropertySet;
 
-my ($gusConfigFile, $organismAbbrev, $projectName, $jbrowseConf) = @ARGV;
+my ($gusConfigFile, $organismAbbrev, $jbrowseConf) = @ARGV;
 
 
 #    my $modelConfig = new WDK::Model::ModelConfig($projectName);
@@ -23,11 +17,9 @@ my ($gusConfigFile, $organismAbbrev, $projectName, $jbrowseConf) = @ARGV;
 #        )
 #        || die "unable to open db handle to ", $modelConfig->getAppDbDbiDsn();
 
-$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
 unless(-e $gusConfigFile) {
-  print STDERR "gus.config file not found! \n";
-  exit;
+  die "gus.config file not found! \n";
 }
 
 my @properties = ();
@@ -42,18 +34,16 @@ my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: 
 
 	#my $dir = $ENV{OLDPWD} . "/temporaryWebservices/$organismAbbrev";
 	#mkdir $dir unless(-d $dir);
-	open(FILE, '>>', $jbrowseConf) or die "Cannot open file $jbrowseConf for reading: $!";
+	open(FILE, '>', $jbrowseConf) or die "Cannot open file $jbrowseConf for reading: $!";
 
 
-	my $result = {"jBrowseMetadata" => [] };	
-
-        my $taxonId = &getTaxonId($dbh, $result, $organismAbbrev);
-	&addCentromereCount($dbh, $result, $organismAbbrev);
-	&addScaffoldCount($dbh, $result, $organismAbbrev);
+        my $taxonId = &getTaxonId($dbh, $organismAbbrev);
+	my $hasCentromere = &hasCentromere($dbh, $taxonId);
+	&addScaffoldCount($dbh, $result, $taxonId);
 	&addUnifiedSnpCount($dbh, $result, $organismAbbrev); 
 	&addChipChipTracks($dbh, $result, $organismAbbrev); 
 	&addUnifiedMassSpecCount($dbh, $result, $organismAbbrev);
-	&addTRNACount($dbh, $result);
+	&addTRNACount($dbh, $result);?
 	&addCnvArray($dbh, $result);
 
 	print FILE $organismAbbrev."::centromereCount=".$result->{jBrowseMetadata}[0]{centromereCount}."\n";
@@ -74,7 +64,7 @@ my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: 
 	close FILE;
 
 sub getTaxonId {
-  my ($dbh, $result, $organismAbbrev) = @_;
+  my ($dbh, $organismAbbrev) = @_;
   my $sql = "select taxon_id from apidb.organism o where o.abbrev = '${organismAbbrev}'";
 
   my $sh = $dbh->prepare($sql);
@@ -84,23 +74,29 @@ sub getTaxonId {
   return $result;
 }
 
-sub addCentromereCount {
-  my ($dbh, $result, $organismAbbrev) = @_;
-  my $sql = "select count(*) from apidbtuning.organismattributes where hasCentromere = 1 and  internal_abbrev = '${organismAbbrev}'";
+sub hasCentromere {
+  my ($dbh, $taxonId) = @_;
+  my $sql = "SELECT count(*)
+FROM  DOTS.MISCELLANEOUS f
+    , sres.ontologyTerm ot
+    , dots.nasequence s
+WHERE ot.ontology_term_id = f.sequence_ontology_id
+ AND ot.name='centromere'
+ AND f.na_sequence_id = s.na_sequence_id
+ AND s.TAXON_ID = ${taxonId}";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my $count = $sh->fetchrow_array();
-  my $centromereCount = {centromereCount => $count};
-  push @{$result->{jBrowseMetadata}}, $centromereCount;
+  my $hasCentromere = $count > 0 ? 1 : 0;
   $sh->finish(); 
-  return $result;
+  return $hasCentromere;
 }
 
 
 sub addScaffoldCount {
-  my ($dbh, $result, $organismAbbrev) = @_;
-  my $sql = "select count(*)  from dots.scaffoldgapfeature sgf, apidb.organism o, dots.ExternalNaSequence na where na.na_sequence_id = sgf.na_sequence_id and o.taxon_id = na.taxon_id and o.abbrev = '${organismAbbrev}'";
+  my ($dbh, $result, $taxonId) = @_;
+  my $sql = "select count(*)  from dots.scaffoldgapfeature sgf, dots.ExternalNaSequence na where na.na_sequence_id = sgf.na_sequence_id and na.taxon_id = '${taxonId}'";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
