@@ -115,7 +115,7 @@ sub addScaffoldCount {
 sub addUnifiedSnpCount {
   my ($dbh, $result, $organismAbbrev) = @_;
 
-  my $sql = "select count(*) from apidbtuning.datasetpresenter where name like '${organismAbbrev}%HTS_SNP_%'";
+  my $sql = "select count(*) from sres.externaldatabase where name like '${organismAbbrev}%HTS_SNP_%'";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
@@ -130,7 +130,7 @@ sub addUnifiedSnpCount {
 sub addUnifiedMassSpecCount {
   my ($dbh, $result, $organismAbbrev) = @_;
 
-  my $sql = "select count(*) from apidbtuning.datasetpresenter where name like '${organismAbbrev}%massSpec%'";
+  my $sql = "select count(*) from sres.externaldatabase where name like '${organismAbbrev}%massSpec%'";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my $count = $sh->fetchrow_array();
