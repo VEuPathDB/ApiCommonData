@@ -160,7 +160,7 @@ sub run {
   $self->resetUndoTables();
 
   $SCHEMA = $self->getArg('schema');
-  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 

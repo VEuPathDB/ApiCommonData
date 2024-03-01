@@ -9,17 +9,26 @@ use File::Temp qw/tempfile tempdir/;
 
 use POSIX qw/strftime/;
 
+use File::Basename;
+
 my $REASONABLE_ID_LENGTH = 100;
 my %MATERIAL_TYPES;
 my %CHAR_QUALIFIERS;
 
-my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom",
-                     'EUPATH_0009252' => "Phylum",
-                     'EUPATH_0009253' => "Class",
-                     'EUPATH_0009254' => "Order",
-                     'EUPATH_0009255' => "Family",
-                     'EUPATH_0009256' => "Genus",
-                     'EUPATH_0009257' => "Species",
+my %taxaSourceIds = ('EUPATH_0009251' => "Relative Abundance - Kingdom",
+                     'EUPATH_0009252' => "Relative Abundance - Phylum",
+                     'EUPATH_0009253' => "Relative Abundance - Class",
+                     'EUPATH_0009254' => "Relative Abundance - Order",
+                     'EUPATH_0009255' => "Relative Abundance - Family",
+                     'EUPATH_0009256' => "Relative Abundance - Genus",
+                     'EUPATH_0009257' => "Relative Abundance - Species",
+                     'EUPATH_0009351' => "Absolute Abundance - Kingdom",
+                     'EUPATH_0009352' => "Absolute Abundance - Phylum",
+                     'EUPATH_0009353' => "Absolute Abundance - Class",
+                     'EUPATH_0009354' => "Absolute Abundance - Order",
+                     'EUPATH_0009355' => "Absolute Abundance - Family",
+                     'EUPATH_0009356' => "Absolute Abundance - Genus",
+                     'EUPATH_0009357' => "Absolute Abundance - Species",
                      'MBIOTEMP_TAXON_SOURCE_ID' => "Taxon ID"
     );
 
@@ -33,23 +42,24 @@ my $relAbundanceDesc = "Relative taxonomic abundance analysis";
 my $data = $ARGV[0];
 my $metaDataJson = $ARGV[1];
 
-my $workingDir = $ARGV[2];
+my $investigationDir = $ARGV[2];
 
+my $investigationName = basename $investigationDir;
 
 my $sourceFile = "source.tsv";
 my $ontologyTermsFile = "ontology_terms.txt";
 my $ontologyRelationshipsFile = "ontology_relationships.txt";
 my $ontologyMappingFile = "ontologyMapping.xml";
 my $sourceType = "Source";
-my $abundanceFile = "${sourceType}.abundance.tsv";
+my $abundanceFile = "${investigationName}.${sourceType}.lineage_abundance.tsv";
 
-&printInvestigationXml($workingDir, $sourceFile, $sourceType);
+&printInvestigationXml($investigationDir, $sourceFile, $sourceType);
 
 open(FILE, $data) or die "Cannot open file $data for reading: $!";
 
-open(TERMS, ">$workingDir/$ontologyTermsFile") or die "Cannot open file $workingDir/$ontologyTermsFile for writing: $!";
-open(RELS, ">$workingDir/$ontologyRelationshipsFile") or die "Cannot open file $workingDir/$ontologyRelationshipsFile for writing: $!";
-open(MAP, ">$workingDir/$ontologyMappingFile") or die "Cannot open file $workingDir/$ontologyMappingFile for writing: $!";
+open(TERMS, ">$investigationDir/$ontologyTermsFile") or die "Cannot open file $investigationDir/$ontologyTermsFile for writing: $!";
+open(RELS, ">$investigationDir/$ontologyRelationshipsFile") or die "Cannot open file $investigationDir/$ontologyRelationshipsFile for writing: $!";
+open(MAP, ">$investigationDir/$ontologyMappingFile") or die "Cannot open file $investigationDir/$ontologyMappingFile for writing: $!";
 
 print TERMS &makeTermLine($sourceType, undef, 'mt');
 
@@ -92,10 +102,10 @@ foreach(keys %taxaSourceIds) {
 print TERMS &makeTermLine($relAbundanceSourceId, $relAbundanceDesc, 'taxa');
 
 my $sourceOut;
-open($sourceOut, ">$workingDir/$sourceFile") or die "Cannot open file abundance.tsv for writing:$!";
+open($sourceOut, ">$investigationDir/$sourceFile") or die "Cannot open file abundance.tsv for writing:$!";
 
 my $tsvOut;
-open($tsvOut, ">${workingDir}/${abundanceFile}") or die "Cannot open file $abundanceFile for writing:$!";
+open($tsvOut, ">${investigationDir}/${abundanceFile}") or die "Cannot open file $abundanceFile for writing:$!";
 
 my @ids = map {$_->{id}} @{$decodedJson->{columns}};
 
