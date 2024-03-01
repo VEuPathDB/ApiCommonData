@@ -139,6 +139,7 @@ sub dumpFiles {
         foreach my $view (@{$views->{$inputSchema}}) {
             my $definition = $self->writeViewDefinition($view, $inputSchema);
             $definition =~ s/\n/ /g;
+            $definition =~ s/;//g;
             $self->addTableAndViewSpecs({name => $view, type => 'view', definition => $definition, macro => 'SCHEMA'});
         }
     }
