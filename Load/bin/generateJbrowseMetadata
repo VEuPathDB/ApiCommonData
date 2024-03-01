@@ -144,9 +144,12 @@ sub addUnifiedMassSpecCount {
 sub addTRNACount {
   my ($dbh, $result) = @_;
 
-  my $sql = "select count(*) from dots.rnafeature rnaf, sres.ontologyterm ot
-where ot.ontology_term_id = rnaf.sequence_ontology_id
-and ot.name ='tRNA'";
+  my $sql = "select count(*) from dots.rnafeature rnaf, sres.ontologyterm ot, dots.ExternalNaSequence na, apidb.organism o
+where ot.ontology_term_id = rnaf.sequence_ontology_id 
+and na.na_sequence_id = rnaf.na_sequence_id 
+and o.taxon_id = na.taxon_id  
+and ot.name ='tRNA' 
+and o.abbrev = '${organismAbbrev}'";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
