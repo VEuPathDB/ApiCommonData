@@ -268,7 +268,7 @@ where ea.entity_type_id = $entityTypeId
 
   if($rowCount){
     $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
-    $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
   }
   return $tableName;
 }
@@ -289,7 +289,7 @@ sub createAncestorsTable {
   # $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
   # return $tableName;
 
-  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix);
+  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $studyAbbrev);
 
   $self->populateAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId);
 
@@ -405,11 +405,15 @@ sub insertAncestorRow {
 }
 
 sub createEmptyAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $fieldSuffix) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix, $studyInternalAbbrev) = @_;
 
 
-  my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
+  my $entityTypeInternalAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
+  my $stableIdField = $entityTypeInternalAbbrev . $fieldSuffix;
+
+
+  
   my $sql = "WITH RECURSIVE ancestors (entity_type_id)
              AS
              (
@@ -447,8 +451,8 @@ PRIMARY KEY ($stableIdField)
 
   # create a pair of indexes for each field
   foreach my $field (@fields) {
-    $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
-    $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancestors_${studyInternalAbbrev}_${entityTypeInternalAbbrev}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancestors_${studyInternalAbbrev}_${entityTypeInternalAbbrev}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
   }
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
