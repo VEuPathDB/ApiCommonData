@@ -220,7 +220,12 @@ close TERMS;
 
 
 unless($hasTaxonomyCount > 0) {
-    die "Taxonomy Missing.  Only found IDs";
+    # die "Taxonomy information missing.  Only found IDs";
+    print STDERR "Taxonomy Missing.  Only found IDs";
+
+    # handle this as a VDI API compatible validation error
+    print STDOUT "Taxonomy information Missing.  Only found IDs";  
+    exit(99);
 }
 
 print MAP "<ontologymappings>\n";
