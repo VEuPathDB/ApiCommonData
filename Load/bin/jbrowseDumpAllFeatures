@@ -14,6 +14,8 @@ use XML::Simple;
 use GUS::Supported::GusConfig;
 use Data::Dumper;
 
+use File::Temp qw/ tempfile tempdir /;
+
 my ($help, $outputDir, $orgFilter, $replaceExisting);
 
 &GetOptions('help|h' => \$help,
@@ -53,7 +55,7 @@ print "starting dump at " . `date` . "\n";
 foreach my $o (@$organisms) {
   next if($orgFilter && $o->{abbrev} ne $orgFilter);
 
-  my ($sequenceCount, $printedSequenceCount);
+  my ($sequenceCount, $printedSequenceCount, $wroteProteinLengths);
   my $genomicSequences = &getGenomicSequences($dbh, $o);
   my $proteinSequences = &getProteinSequences($dbh, $o);
 
@@ -70,6 +72,8 @@ foreach my $o (@$organisms) {
   mkdir $organismDir unless(-d $organismDir);
   mkdir $outputDir unless(-d $outputDir);
 
+  # TODO: write table of <protein sequence ID> TAB <length
+
   my $trackCount = 0;
   foreach my $trackName (@tracks) {
     next if($trackName =~ /^\s*#/);
@@ -82,7 +86,7 @@ foreach my $o (@$organisms) {
 
     die "track must provide trackType, fileSuffix, and trackName" unless($trackType && $fileSuffix && $trackName);
 
-    my $fullFileName = "$outputDir/${trackName}.${fileSuffix}";
+    my $fullFileName = "$outputDir/${trackName}.gff";
 
     my $outFh;
 
@@ -113,7 +117,13 @@ foreach my $o (@$organisms) {
       }
     }
 
-    open($outFh, "|sort -T $outputDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
+    my $sortKey;
+    if($fileSuffix eq 'gff') {
+      $sortKey = "-k1,1 -k4,4n";
+    } elsif ($fileSuffix eq 'bed') {
+      $sortKey = "-k1,1 -k2,2n";
+    }
+    open($outFh, "|sort -T $outputDir $sortKey >$fullFileName") or die "Cannot open file $fullFileName for writing: $!";
 
     my $featureCountTotal;
     foreach my $s (@$sequences) {
@@ -127,7 +137,6 @@ foreach my $o (@$organisms) {
 
         $featureCountTotal += $featureCount;
       }
-
     }
     close $outFh;
 
@@ -135,19 +144,33 @@ foreach my $o (@$organisms) {
       if($fileSuffix eq 'gff') {
         system("bgzip $fullFileName");
         system("tabix -p gff ${fullFileName}.gz");
-      }
-      # TODO what about bw files??
-    }
-    else {
-      print "WARN: unlink $fullFileName\n";
-      unlink $fullFileName;
-    }
-    print "organism " . $o->{abbrev} . " $sequenceCount sequences\n"
-      unless $printedSequenceCount;
-    $printedSequenceCount = 1;
+      } elsif ($fileSuffix eq 'bed') {
 
-    my $duration = time - $startTime;
-    print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+	my $lengthFile;
+	unless ($wroteProteinLengths) {
+	  $lengthFile = makeProteinLengthsFile($dbh, $o->{abbrev});
+	  $wroteProteinLengths = 1;
+	}
+
+	my $bedFileName = $fullFileName;
+	$bedFileName =~ s/\.gff$/.bed/;
+
+	my $bwFileName = $fullFileName;
+	$bwFileName =~ s/\.gff$/.bw/;
+
+        system("cut -f 1,4,5,6 < ${fullFileName} > $bedFileName");
+        system("bedGraphToBigWig $bedFileName $lengthFile $bwFileName");
+      } else {
+	print "WARN: unlink $fullFileName\n";
+	unlink $fullFileName;
+      }
+      print "organism " . $o->{abbrev} . " $sequenceCount sequences\n"
+	unless $printedSequenceCount;
+      $printedSequenceCount = 1;
+
+      my $duration = time - $startTime;
+      print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+    }
   }
 
   print "finished $trackCount tracks\n";
@@ -311,3 +334,27 @@ sub makeSql {
 }
 
 
+sub makeProteinLengthsFile {
+  my ($dbh, $abbrev, $filename) = @_;
+
+  my $sh = $dbh->prepare(<<SQL);
+    select source_id, length
+    from dots.TranslatedAASequence tas, apidb.Organism o
+    where o.public_abbrev = ?
+      and tas.taxon_id = o.taxon_id
+SQL
+
+  $sh->execute($abbrev);
+
+  my ($fh, $filename) = tempfile();
+
+  while (my ($sourceId, $length) = $sh->fetchrow_array()) {
+    print $fh "$sourceId\t$length\n";
+  }
+
+  $sh->finish();
+  close $fh;
+
+  return $filename;
+
+}
