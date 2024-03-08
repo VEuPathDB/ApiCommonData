@@ -869,7 +869,9 @@ sub typedValueForAttribute {
   $counts->{_COUNT}++;
 
   my $valueNoCommas = $value;
-  $valueNoCommas =~ tr/,//d;
+  if($value =~ /,/ && $value =~ /^\d{1,3}(,\d{3}){0,}(\.\d+){0,}$/){
+    $valueNoCommas =~ tr/,//d;
+  }
 
   $counts->{_VALUES}->{$value}++;
 
@@ -1016,7 +1018,7 @@ sub fieldsAndCreateTable {
   my $createTableSql = "create table $tableSynonymName (
 $idField VARCHAR2(200) NOT NULL,
 attribute_stable_id  VARCHAR2(255) NOT NULL,
-string_value VARCHAR2(1000) NOT NULL,
+string_value VARCHAR2(2000) NOT NULL,
 number_value NUMBER,
 date_value DATE
 )
