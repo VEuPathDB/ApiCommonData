@@ -172,11 +172,11 @@ sub updateDisplayTypesForGeoVariables {
 
   if(my $ontologyTerm = $ontologyTerms->{$latitudeSourceId}) {
     $ontologyTerm->{DISPLAY_TYPE} = 'latitude';
-    $ontologyTerm->{HIDDEN} = $hiddenEverywhere;
+    $ontologyTerm->{HIDDEN} //= $hiddenEverywhere;
   }
   if(my $ontologyTerm = $ontologyTerms->{$longitudeSourceId}) {
     $ontologyTerm->{DISPLAY_TYPE} = 'longitude';
-    $ontologyTerm->{HIDDEN} = $hiddenEverywhere;
+    $ontologyTerm->{HIDDEN} //= $hiddenEverywhere;
   }
 
   foreach(keys %$GEOHASH_PRECISION) {
