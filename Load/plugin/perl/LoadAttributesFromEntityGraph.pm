@@ -895,7 +895,12 @@ sub typedValueForAttribute {
   $counts->{_COUNT}++;
 
   my $valueNoCommas = $value;
-  $valueNoCommas =~ tr/,//d;
+  # use heuristic to distinguish numbers with commas from comma delimited lists of numbers.
+  # consider a number, and remove commas, if of the form 2,870,141, up to 999,999,999,999
+  # leave commas in numeric lists, eg 8793583,9909998,7188839
+  if($value =~ /,/ && $value =~ /^\d{1,3}(,\d{3}){0,3}(\.\d+){0,}$/){
+    $valueNoCommas =~ tr/,//d;
+  }
 
   $counts->{_VALUES}->{$value}++;
 
