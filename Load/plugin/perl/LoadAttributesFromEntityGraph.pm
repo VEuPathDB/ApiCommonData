@@ -868,8 +868,11 @@ sub typedValueForAttribute {
 
   $counts->{_COUNT}++;
 
+  # use heuristic to distinguish numbers with commas from comma delimited lists of numbers.
+  # consider a number if in the form 2,870,141, up to 999,999,999,999
+  # reject lists, eg 8793583,9909998,7188839
   my $valueNoCommas = $value;
-  if($value =~ /,/ && $value =~ /^\d{1,3}(,\d{3}){0,}(\.\d+){0,}$/){
+  if($value =~ /,/ && $value =~ /^\d{1,3}(,\d{3}){0,3}(\.\d+){0,}$/){
     $valueNoCommas =~ tr/,//d;
   }
 
