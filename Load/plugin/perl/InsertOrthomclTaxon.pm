@@ -249,7 +249,7 @@ sub parseSpeciesFile {
 	$self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
 	$speciesAbbrevs->{$speciesAbbrev} = 1;
 	$self->userError("species abbreviation '$speciesAbbrev' must have 4 letters") if length($speciesAbbrev) != 4;
-	$self->userError("The fourth column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
+	$self->userError("The fourth column must be C or P for Core or Peripheral: $line\n") if $corePeripheral !~ /^[CP]$/;
 
 	my $clade = $self->{clades}->{$cladeAbbrev};
 	$clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
