@@ -26,18 +26,22 @@ open(FILE, '>', $jbrowseConf) or die "Cannot open file $jbrowseConf for reading:
 
 my $taxonId = &getTaxonId($dbh, $organismAbbrev);
 
-print FILE "hasCentromere=" . &hasCentromere($dbh, $taxonId);
-print FILE "hasSnp=" . &hasSnp($dbh, $organismAbbrev);
-print FILE "hasMassSpec=" . &hasMassSpec($dbh, $organismAbbrev);
-print FILE "hasTRNA=" . &hasTRNA($dbh, $organismAbbrev);
-print FILE "hasScaffold=" . &hasScaffold($dbh, $taxonId);
+print FILE "hasCentromere=" . &hasCentromere($dbh, $taxonId) ."\n";
+print FILE "hasSnp=" . &hasSnp($dbh, $organismAbbrev) ."\n";
+print FILE "hasMassSpec=" . &hasMassSpec($dbh, $organismAbbrev) ."\n";
+print FILE "hasTRNA=" . &hasTRNA($dbh, $organismAbbrev) ."\n";
+print FILE "hasScaffold=" . &hasScaffold($dbh, $taxonId) ."\n";
 
-my $chipChipDatasets = &getChipChipDatasetsHash();
+my $chipChipDatasets = &getChipChipDatasetsHash($dbh, $organismAbbrev);
 
 foreach my $dataset (keys %$chipChipDatasets) {
-  print FILE "chipchip::${dataset}::dataset=" . $dataset;
-  print FILE "chipchip::${dataset}::panName=" . $chipChipDatasets->{$dataset}->{panName};
-  print FILE "chipchip::${dataset}::study=" . $chipChipDatasets->{$dataset}->{study};
+  print FILE "chipchip::${dataset}::dataset=" . $dataset ."\n";
+  foreach my $studyName(keys %{$chipChipDatasets->{$dataset}}){
+  	print FILE "chipchip::${dataset}::${studyName}::studyName=" . ${studyName} ."\n";
+	foreach my $panName(@{$chipChipDatasets->{$dataset}->{$studyName}}){
+		print FILE "chipchip::${dataset}::${studyName}::${panName}::panName=" . $panName ."\n";
+	}	
+  }
 }
 
 close FILE;
@@ -142,9 +146,8 @@ and o.abbrev = '${organismAbbrev}'";
 #   return $result;
 # }
 
-#TODO: should use query apidb.organism table (test toxo inc)
 sub getChipChipDatasetsHash {
-  my ($dbh, $result, $organismAbbrev) = @_;
+  my ($dbh, $organismAbbrev) = @_;
 
   my %chipChipDatasets;
 
@@ -165,9 +168,7 @@ and s.investigation_id is null";
   $sh->execute();
 
   while(my ($dataset, $study, $panName, $panId) = $sh->fetchrow_array()){
-    $chipChipDatasets{$dataset} = {study => $study,
-                                   panName => $panName,
-    };
+    push @{$chipChipDatasets{$dataset}->{$study}},$panName ;
   }
   $sh->finish();
   return \%chipChipDatasets;
