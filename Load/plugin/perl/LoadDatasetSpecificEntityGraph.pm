@@ -206,7 +206,7 @@ sub createWideTable {
 
   # no wide tables if we have more than 1000 columns
   if($totalColumnCount > 1000) {
-    $self->warn("SKIPPING table $tableName as it has $totalColumnCount columns which is more than 1000 allowed.");
+    $self->log("SKIPPING table $tableName as it has $totalColumnCount columns which is more than 1000 allowed.");
     return;
   }
 
@@ -220,7 +220,7 @@ sub createWideTable {
   # No wide table (attributes) if any field name > 62 characters
   foreach my $column(@array)  {
     if(length $column > $maxColumnNameLength) {
-      $self->warn("SKIPPING table $tableName as it contains at least one column name which is too long:  $column");
+      $self->log("SKIPPING table $tableName as it contains at least one column name which is too long:  $column");
       return;
     }
   }
