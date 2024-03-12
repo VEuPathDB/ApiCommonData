@@ -197,17 +197,33 @@ where entity_type_id = $entityTypeId";
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
+  my $maxColumnNameLength = 62;
+
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
   my $totalColumnCount = 0 + @{$entityColumnStrings} +  @{$processColumnStrings};
 
   # no wide tables if we have more than 1000 columns
-  return if($totalColumnCount > 1000);
+  if($totalColumnCount > 1000) {
+    $self->warn("SKIPPING table $tableName as it has $totalColumnCount columns which is more than 1000 allowed.");
+    return;
+  }
+
 
   $self->log("Creating TABLE:  $tableName");
   my $entityColumns = join("\n,", @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
+
+  my @array = (@$entityColumnStrings, @$processColumnStrings);
+
+  # No wide table (attributes) if any field name > 62 characters
+  foreach my $column(@array)  {
+    if(length $column > $maxColumnNameLength) {
+      $self->warn("SKIPPING table $tableName as it contains at least one column name which is too long:  $column");
+      return;
+    }
+  }
 
 
   my $withAllAttsSql = "
@@ -268,7 +284,7 @@ where ea.entity_type_id = $entityTypeId
 
   if($rowCount){
     $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
-    $dbh->do("CREATE INDEX ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX attrs_${studyAbbrev}_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
   }
   return $tableName;
 }
@@ -451,8 +467,8 @@ PRIMARY KEY ($stableIdField)
 
   # create a pair of indexes for each field
   foreach my $field (@fields) {
-    $dbh->do("CREATE INDEX ancestors_${studyInternalAbbrev}_${entityTypeInternalAbbrev}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
-    $dbh->do("CREATE INDEX ancestors_${studyInternalAbbrev}_${entityTypeInternalAbbrev}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
   }
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");

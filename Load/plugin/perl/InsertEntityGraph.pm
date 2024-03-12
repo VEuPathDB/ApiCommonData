@@ -433,9 +433,11 @@ sub addEntityTypeForNode {
 
   my $mtKey = join("_", $materialOrAssayType->getTerm, $isaType);
 
+
   if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
   }
+
 
   my $entityType = $self->getGusModelClass('EntityType')->new();
   $entityType->setStudyId($gusStudyId);
@@ -446,9 +448,27 @@ sub addEntityTypeForNode {
   $entityType->setName($gusOntologyTerm->getName());
 
   my $entityTypeInternalAbbrev = $entityType->getName();
+
+  # replace underscore with space
+  $entityTypeInternalAbbrev =~ s/[_]/ /g;
+  # capitalize first character for each word
   $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
+
+  # shorten entity type abbrev by taking first 4 letters from each word
+  my @firstFourLetters = $entityTypeInternalAbbrev =~ /\b(\w{1,4})/g;
+  $entityTypeInternalAbbrev = join("", @firstFourLetters);
+
+  # remove non word characters like "-" or "'"
   $entityTypeInternalAbbrev =~ s/\W//g;
-  $entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
+
+  # why do we need this word? the only place i see this is for "entity_16sRrnaSequencingAssayTargetingV4Region" and that name is already long enough
+  #$entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
+
+  # if we've already seen this exact abbrev, add a unique suffix
+  if($self->{_ENTITY_TYPE_ABBREVS}->{$entityTypeInternalAbbrev}) {
+    my $entityTypeUniquePrefix = scalar(keys(%{$self->{_ENTITY_TYPE_IDS}})) + 1;
+    $entityTypeInternalAbbrev = $entityTypeUniquePrefix . "_" . $entityTypeInternalAbbrev;
+  }
 
   $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
@@ -457,6 +477,7 @@ sub addEntityTypeForNode {
   my $id = $entityType->getId();
 
   $self->{_ENTITY_TYPE_IDS}->{$mtKey} = $id;
+  $self->{_ENTITY_TYPE_ABBREVS}->{$entityTypeInternalAbbrev} = 1;
 
   return $id;
 }
