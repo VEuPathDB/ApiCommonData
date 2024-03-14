@@ -868,8 +868,13 @@ sub typedValueForAttribute {
 
   $counts->{_COUNT}++;
 
+  # use heuristic to distinguish numbers with commas from comma delimited lists of numbers.
+  # consider a number if in the form 2,870,141, up to 999,999,999,999
+  # reject lists, eg 8793583,9909998,7188839
   my $valueNoCommas = $value;
-  $valueNoCommas =~ tr/,//d;
+  if($value =~ /,/ && $value =~ /^\d{1,3}(,\d{3}){0,3}(\.\d+){0,}$/){
+    $valueNoCommas =~ tr/,//d;
+  }
 
   $counts->{_VALUES}->{$value}++;
 
@@ -1016,7 +1021,7 @@ sub fieldsAndCreateTable {
   my $createTableSql = "create table $tableSynonymName (
 $idField VARCHAR2(200) NOT NULL,
 attribute_stable_id  VARCHAR2(255) NOT NULL,
-string_value VARCHAR2(1000) NOT NULL,
+string_value VARCHAR2(2000) NOT NULL,
 number_value NUMBER,
 date_value DATE
 )
