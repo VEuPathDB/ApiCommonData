@@ -461,8 +461,8 @@ sub addEntityTypeForNode {
   # remove non word characters like "-" or "'"
   $entityTypeInternalAbbrev =~ s/\W//g;
 
-  # why do we need this word? the only place i see this is for "entity_16sRrnaSequencingAssayTargetingV4Region" and that name is already long enough
-  #$entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
+  # column names cannot start with numbers
+  $entityTypeInternalAbbrev = "et_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
 
   # if we've already seen this exact abbrev, add a unique suffix
   if($self->{_ENTITY_TYPE_ABBREVS}->{$entityTypeInternalAbbrev}) {
@@ -470,6 +470,7 @@ sub addEntityTypeForNode {
     $entityTypeInternalAbbrev = $entityTypeUniquePrefix . "_" . $entityTypeInternalAbbrev;
   }
 
+  # NOTE:  we are doing fancy stuff to make an abbreviated but human readable entity type name.  Also trying to be consistent for cross study comparisons
   $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
   $entityType->submit(undef, 1);

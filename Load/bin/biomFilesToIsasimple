@@ -7,6 +7,8 @@ use JSON;
 use Data::Dumper;
 use File::Temp qw/tempfile tempdir/;
 
+
+
 use POSIX qw/strftime/;
 
 use File::Basename;
@@ -15,24 +17,23 @@ my $REASONABLE_ID_LENGTH = 100;
 my %MATERIAL_TYPES;
 my %CHAR_QUALIFIERS;
 
-my %taxaSourceIds = ('EUPATH_0009251' => "Relative Abundance - Kingdom",
-                     'EUPATH_0009252' => "Relative Abundance - Phylum",
-                     'EUPATH_0009253' => "Relative Abundance - Class",
-                     'EUPATH_0009254' => "Relative Abundance - Order",
-                     'EUPATH_0009255' => "Relative Abundance - Family",
-                     'EUPATH_0009256' => "Relative Abundance - Genus",
-                     'EUPATH_0009257' => "Relative Abundance - Species",
-                     'EUPATH_0009351' => "Absolute Abundance - Kingdom",
-                     'EUPATH_0009352' => "Absolute Abundance - Phylum",
-                     'EUPATH_0009353' => "Absolute Abundance - Class",
-                     'EUPATH_0009354' => "Absolute Abundance - Order",
-                     'EUPATH_0009355' => "Absolute Abundance - Family",
-                     'EUPATH_0009356' => "Absolute Abundance - Genus",
-                     'EUPATH_0009357' => "Absolute Abundance - Species",
+
+my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom - Relative Abundance",
+                     'EUPATH_0009252' => "Phylum - Relative Abundance",
+                     'EUPATH_0009253' => "Class - Relative Abundance",
+                     'EUPATH_0009254' => "Order - Relative Abundance",
+                     'EUPATH_0009255' => "Family - Relative Abundance",
+                     'EUPATH_0009256' => "Genus - Relative Abundance",
+                     'EUPATH_0009257' => "Species - Relative Abundance",
+                     'EUPATH_0009351' => "Kingdom - Absolute Abundance",
+                     'EUPATH_0009352' => "Phylum - Absolute Abundance",
+                     'EUPATH_0009353' => "Class - Absolute Abundance",
+                     'EUPATH_0009354' => "Order - Absolute Abundance",
+                     'EUPATH_0009355' => "Family - Absolute Abundance",
+                     'EUPATH_0009356' => "Genus - Absolute Abundance",
+                     'EUPATH_0009357' => "Species - Absolute Abundance",
                      'MBIOTEMP_TAXON_SOURCE_ID' => "Taxon ID"
     );
-
-
 
 my $taxonIdSourceID = "MBIOTEMP_TAXON_SOURCE_ID";
 
@@ -64,15 +65,7 @@ open(MAP, ">$investigationDir/$ontologyMappingFile") or die "Cannot open file $i
 print TERMS &makeTermLine($sourceType, undef, 'mt');
 
 
-
-
-my @data = ();
-while(<FILE>) {
-    chomp;
-    my ($row, $col, $val) =  split(/\t/, $_);
-
-    $data[$row][$col] = $val;
-}
+my $dataTsvFileReader = DataTsvFileReader->new($data, undef, qr/\t/);
 
 my $json;
 {
@@ -87,6 +80,9 @@ $json =~ s/(,?\s?)NaN(\s?,?)/$1"NA"$2/g;
 
 
 my $decodedJson = decode_json($json);
+
+# no longer need json string;
+$json = undef;
 
 my $variables = &getDistinctVariables($decodedJson->{columns});
 
@@ -123,6 +119,14 @@ print $tsvOut "\t", join("\t", @ids) . "\n";
 
 my @possibleTaxonomyKeys;
 my $hasTaxonomyCount;
+
+if(scalar @{$decodedJson->{rows}} == 0 && scalar @{$decodedJson->{columns}} == 0) {
+    print STDERR "Error Parsing Biom File:  No data matrix found";
+    print STDOUT "Error Parsing Biom File:  No data matrix found";
+    exit(99);
+}
+
+
 for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
 
@@ -204,13 +208,39 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
     my @line;
     push @line, join(";", @taxArrayFixed);
 
+
+    # peek one row ahead to make sure we are getting correct row
+    my @dataPeek = $dataTsvFileReader->getPeek();
+
     my $hasData;
-    for(my $j = 0; $j < @ids; $j++) {
-        $hasData = 1 if $data[$i][$j];
-        push @line, $data[$i][$j];
+    if($i == $dataPeek[0]) {
+        # this is good.  this is the data we want to print
+        my $groupOfLines = $dataTsvFileReader->readNextGroupOfLines();
+        my %data = ();
+
+        foreach my $line (@$groupOfLines) {
+            my $col = $line->[1];
+            my $val = $line->[2];
+            $data{$col} = $val;
+        }
+
+        for(my $j = 0; $j < @ids; $j++) {
+            $hasData = 1 if $data{$j};
+            push @line, $data{$j};
+        }
+        if($hasData) {
+            print $tsvOut join("\t", @line) . "\n";
+        }
     }
-    if($hasData) {
-        print $tsvOut join("\t", @line) . "\n";
+
+    elsif($dataPeek[0] > $i) {
+        # this means there is no data for row $i; shouldn't happen but don't fail if it does
+        print STDERR "WARN:  Missing data for row $i in data file";
+        next;
+    }
+    else {
+        # should never happen if the file is sorted as we are assuming
+        die "Error parsing data.tsv file";
     }
 }
 
@@ -224,7 +254,7 @@ unless($hasTaxonomyCount > 0) {
     print STDERR "Taxonomy Missing.  Only found IDs";
 
     # handle this as a VDI API compatible validation error
-    print STDOUT "Taxonomy information Missing.  Only found IDs";  
+    print STDOUT "Taxonomy information Missing.  Only found IDs";
     exit(99);
 }
 
@@ -328,5 +358,25 @@ sub getDistinctVariables {
 
     return \@variables
 }
+
+package DataTsvFileReader;
+use base qw(ApiCommonData::Load::FileReader);
+
+
+use strict;
+
+
+# @OVERRIDE
+sub isSameGroup {
+  my ($self, $a, $b) = @_;
+
+  return $a->[0] == $b->[0];
+}
+
+# @OVERRIDE
+sub skipLine {
+  return 0;
+}
+
 
 1;

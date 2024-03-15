@@ -548,8 +548,8 @@ sub valProps {
 
   my ($dataType, $dataShape);
   my $precision = $cs{_PRECISION};
-  my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == $cs{_IS_NUMBER_COUNT};
-  my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == $cs{_IS_DATE_COUNT};
+  my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == ($cs{_IS_NUMBER_COUNT} + $cs{_MAYBE_NUMBER_OR_DATE});
+  my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == ($cs{_IS_DATE_COUNT} + $cs{_MAYBE_NUMBER_OR_DATE});
   my $valueCount = scalar(keys(%{$cs{_VALUES}}));
 #  my $isBoolean = $cs{_COUNT} == $cs{_IS_BOOLEAN_COUNT};
 
@@ -781,9 +781,11 @@ sub loadAttributes {
 
         if($dateValue) {
           print $dateValsFh join("\t", $attributeStableId, $entityTypeId, $dateValue) . "\n";
+          $stringValue = undef;
         }
         elsif(defined($numberValue)) { # avoid if( 0 ) evaluating to false
           print $numericValsFh join("\t", $attributeStableId, $entityTypeId, $numberValue) . "\n";
+          $stringValue = undef;
         }
         else {}
 
@@ -933,6 +935,9 @@ sub typedValueForAttribute {
     # my $parsedDate = ParseDate($dateValue);
     # $counts->{_MIN_DATE} = (sort { Date_Cmp($b, $a) } ($counts->{_MIN_DATE} || $parsedDate, $parsedDate))[-1];
     # $counts->{_MAX_DATE} = (sort { Date_Cmp($a, $b) } ($counts->{_MAX_DATE} || $parsedDate, $parsedDate))[-1];
+  }
+  elsif(lc($valueNoCommas) eq "nan" || lc($valueNoCommas) eq "inf" || lc($valueNoCommas) eq "na" || lc($valueNoCommas) eq "inf" ) {
+    $counts->{_MAYBE_NUMBER_OR_DATE}++;
   }
   # elsif($value =~ /^\d/) {
   #   $counts->{_IS_ORDINAL_COUNT}++;

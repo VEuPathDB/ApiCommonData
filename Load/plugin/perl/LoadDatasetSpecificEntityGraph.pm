@@ -218,9 +218,10 @@ sub createWideTable {
   my @array = (@$entityColumnStrings, @$processColumnStrings);
 
   # No wide table (attributes) if any field name > 62 characters
-  foreach my $column(@array)  {
-    if(length $column > $maxColumnNameLength) {
-      $self->log("SKIPPING table $tableName as it contains at least one column name which is too long:  $column");
+  my @stableIds = $self->sqlAsArray(Sql => "select stable_id from ${SCHEMA}.ATTRIBUTE where entity_type_id = $entityTypeId");
+  foreach my $stableId (@stableIds)  {
+    if(length $stableId > $maxColumnNameLength) {
+      $self->log("SKIPPING table $tableName as it contains at least one column name which is too long:  $stableId");
       return;
     }
   }
@@ -541,6 +542,9 @@ sub getEntityTypeInfo {
 sub createAttributeGraphTable {
   my ($self, $entityTypeId, $studyAbbrev, $studyId, $extDbRlsId) = @_;
 
+  # NOTE There is a bug in the vdi installer. it is not handling clobs.  this is a temporary workaround
+  my $maxVocabularyLength = 1048576;
+
   my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
   my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
@@ -636,7 +640,7 @@ SELECT -- distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , COALESCE(atg.ordinal_values, att.ordered_values) as vocabulary
+     , CASE WHEN CHAR_LENGTH(COALESCE(atg.ordinal_values, att.ordered_values)) < $maxVocabularyLength THEN  COALESCE(atg.ordinal_values, att.ordered_values) else null end as vocabulary
      , atg.display_type display_type
      , atg.hidden
      , atg.display_order
