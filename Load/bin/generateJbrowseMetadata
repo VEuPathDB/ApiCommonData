@@ -1,0 +1,177 @@
+#!/usr/bin/perl
+
+use strict;
+use lib $ENV{GUS_HOME} . "/lib/perl";
+use Data::Dumper;
+use DBI;
+use JSON;
+use CBIL::Util::PropertySet;
+
+my ($gusConfigFile, $organismAbbrev, $jbrowseConf) = @ARGV;
+
+unless(-e $gusConfigFile) {
+  die "gus.config file not found! \n";
+}
+
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $usr = $gusconfig->{props}->{databaseLogin};
+my $pwd = $gusconfig->{props}->{databasePassword};
+my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
+
+open(FILE, '>', $jbrowseConf) or die "Cannot open file $jbrowseConf for reading: $!";
+
+my $taxonId = &getTaxonId($dbh, $organismAbbrev);
+
+print FILE "hasCentromere=" . &hasCentromere($dbh, $taxonId) ."\n";
+print FILE "hasSnp=" . &hasSnp($dbh, $organismAbbrev) ."\n";
+print FILE "hasMassSpec=" . &hasMassSpec($dbh, $organismAbbrev) ."\n";
+print FILE "hasTRNA=" . &hasTRNA($dbh, $organismAbbrev) ."\n";
+print FILE "hasScaffold=" . &hasScaffold($dbh, $taxonId) ."\n";
+
+my $chipChipDatasets = &getChipChipDatasetsHash($dbh, $organismAbbrev);
+
+foreach my $dataset (keys %$chipChipDatasets) {
+  print FILE "chipchip::${dataset}::dataset=" . $dataset ."\n";
+  foreach my $studyName(keys %{$chipChipDatasets->{$dataset}}){
+  	print FILE "chipchip::${dataset}::${studyName}::studyName=" . ${studyName} ."\n";
+	foreach my $panName(@{$chipChipDatasets->{$dataset}->{$studyName}}){
+		print FILE "chipchip::${dataset}::${studyName}::${panName}::panName=" . $panName ."\n";
+	}	
+  }
+}
+
+close FILE;
+
+sub getTaxonId {
+  my ($dbh, $organismAbbrev) = @_;
+  my $sql = "select taxon_id from apidb.organism o where o.abbrev = '${organismAbbrev}'";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my $result = $sh->fetchrow_array();
+  $sh->finish();
+  return $result;
+}
+
+sub getHasRowsFromSql {
+  my ($dbh, $sql) = @_;
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my $count = $sh->fetchrow_array();
+  my $hasRows = $count > 0 ? 1 : 0;
+  $sh->finish(); 
+  return $hasRows
+}
+
+sub hasCentromere {
+  my ($dbh, $taxonId) = @_;
+  my $sql = "SELECT count(*)
+FROM  DOTS.MISCELLANEOUS f
+    , sres.ontologyTerm ot
+    , dots.nasequence s
+WHERE ot.ontology_term_id = f.sequence_ontology_id
+ AND ot.name='centromere'
+ AND f.na_sequence_id = s.na_sequence_id
+ AND s.TAXON_ID = ${taxonId}";
+
+  return &getHasRowsFromSql($dbh, $sql);
+}
+
+
+sub hasScaffold {
+  my ($dbh, $taxonId) = @_;
+  my $sql = "select count(*)  from dots.scaffoldgapfeature sgf, dots.ExternalNaSequence na where na.na_sequence_id = sgf.na_sequence_id and na.taxon_id = '${taxonId}'";
+  return &getHasRowsFromSql($dbh, $sql);
+}
+
+
+sub hasSnp {
+  my ($dbh, $organismAbbrev) = @_;
+
+  my $sql = "select count(*) from sres.externaldatabase where name like '${organismAbbrev}%HTS_SNP_%'";
+
+  return &getHasRowsFromSql($dbh, $sql);
+}
+
+
+sub hasMassSpec {
+  my ($dbh, $organismAbbrev) = @_;
+
+  my $sql = "select count(*) from sres.externaldatabase where name like '${organismAbbrev}%massSpec%'";
+
+  return &getHasRowsFromSql($dbh, $sql);
+}
+
+
+sub hasTRNA {
+  my ($dbh, $organismAbbrev) = @_;
+
+  my $sql = "select count(*) from dots.rnafeature rnaf, sres.ontologyterm ot, dots.ExternalNaSequence na, apidb.organism o
+where ot.ontology_term_id = rnaf.sequence_ontology_id 
+and na.na_sequence_id = rnaf.na_sequence_id 
+and o.taxon_id = na.taxon_id  
+and ot.name ='tRNA' 
+and o.abbrev = '${organismAbbrev}'";
+
+  return &getHasRowsFromSql($dbh, $sql);
+}
+
+# FIXME:  
+# sub addCnvArray {
+#   my ($dbh, $result) = @_;
+
+#   my $sql = "select distinct pan.name
+# from study.protocolappnode pan
+#    , study.study s
+#    , study.studylink sl
+# where pan.PROTOCOL_APP_NODE_ID = sl.PROTOCOL_APP_NODE_ID
+# and sl.study_id = s.study_id
+# and s.name like 'tcruCLBrenerEsmeraldo-like_cghArrayExper_Tarelton_GSE23576_CNV_RSRC%'
+# order by pan.name";
+
+#   my $sh = $dbh->prepare($sql);
+#   $sh->execute();
+
+#   while(my ($panName) = $sh->fetchrow_array()){
+#         my $cnvArray = {cnvArray => $panName,
+#         }; 
+#   push @{$result->{jBrowseMetadata}}, $cnvArray;
+#   }
+#   $sh->finish();
+#   return $result;
+# }
+
+sub getChipChipDatasetsHash {
+  my ($dbh, $organismAbbrev) = @_;
+
+  my %chipChipDatasets;
+
+ my $sql = "select d.name, s.name, pan.name
+from study.study s
+   , SRES.EXTERNALDATABASERELEASE r
+   , SRES.EXTERNALDATABASE d
+   , study.protocolappnode pan
+   , study.studylink sl
+where d.name like '${organismAbbrev}%_chipChipExper_%'
+and s.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
+and r.EXTERNAL_DATABASE_ID = d.EXTERNAL_DATABASE_ID
+and s.study_id = sl.study_id
+and sl.protocol_app_node_id = pan.PROTOCOL_APP_NODE_ID
+and s.investigation_id is null";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my ($dataset, $study, $panName, $panId) = $sh->fetchrow_array()){
+    push @{$chipChipDatasets{$dataset}->{$study}},$panName ;
+  }
+  $sh->finish();
+  return \%chipChipDatasets;
+}
+
+1;
