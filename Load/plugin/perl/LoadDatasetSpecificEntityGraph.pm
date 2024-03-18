@@ -177,7 +177,15 @@ where entity_type_id = $entityTypeId";
 
     my $entityOrProcess = $tableType eq 'p' ? 'process_atts' : 'entity_atts';
 
-    my $string = "(${entityOrProcess}::json -> '$stableId' ->> 0)::${dataType} as $stableId";
+
+    my $jsonFunction = "(${entityOrProcess}::json -> '$stableId' ->> 0)";
+    my $string = "${jsonFunction}::${dataType} as $stableId";
+
+    # NOTE: the regex here asks if the value has any numbers.  if it doesn't, then set to NULL;
+    # this handles the NA,NaN,Inf, ... case
+    if($dataType ne 'VARCHAR') {
+      $string = "case when ${jsonFunction} ~ '^[^0-9]+\$' then NULL else ${jsonFunction}::${dataType} end as $stableId";
+    }
 
     if($tableType eq 'p') {
       push @processColumnStrings, $string;

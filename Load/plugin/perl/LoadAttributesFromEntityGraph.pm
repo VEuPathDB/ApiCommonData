@@ -1053,7 +1053,7 @@ sub fieldsAndCreateTable {
   my $createTableSql = "create table $tableName (
 $idField VARCHAR(200) NOT NULL,
 attribute_stable_id  VARCHAR(255) NOT NULL,
-string_value VARCHAR(1000) NOT NULL,
+string_value VARCHAR(1000),
 number_value NUMERIC,
 date_value DATE
 )
