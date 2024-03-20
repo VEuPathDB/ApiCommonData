@@ -168,6 +168,7 @@ where entity_type_id = $entityTypeId";
     # REVIEW Is this the right way to handle longitude?
     $dataType = lc($dataType) eq 'longitude' ? "NUMERIC" : uc($dataType);
     $dataType = lc($dataType) eq 'number' ? "NUMERIC" : uc($dataType);
+    $dataType = lc($dataType) eq 'integer' ? "NUMERIC" : uc($dataType);
     $dataType = lc($dataType) eq 'date' ? "text" : uc($dataType);
     # multiValued data always return JSON array
     if($isMultiValued) {
@@ -204,6 +205,9 @@ where entity_type_id = $entityTypeId";
 
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
+
+  # TODO:  Temp remove wide table
+  return;
 
   my $maxColumnNameLength = 62;
 

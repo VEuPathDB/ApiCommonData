@@ -781,11 +781,9 @@ sub loadAttributes {
 
         if($dateValue) {
           print $dateValsFh join("\t", $attributeStableId, $entityTypeId, $dateValue) . "\n";
-          $stringValue = undef;
         }
         elsif(defined($numberValue)) { # avoid if( 0 ) evaluating to false
           print $numericValsFh join("\t", $attributeStableId, $entityTypeId, $numberValue) . "\n";
-          $stringValue = undef;
         }
         else {}
 
