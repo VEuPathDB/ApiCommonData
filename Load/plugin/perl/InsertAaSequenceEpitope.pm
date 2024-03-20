@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertEpitopeAAFeature;
+package ApiCommonData::Load::Plugin::InsertAaSequenceEpitope;
 use lib "$ENV{GUS_HOME}/lib/perl";
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -147,12 +147,12 @@ sub loadEpitopes {
         	#my $aa_sequence_id = $counts_list[0];
 		my $aa_sequence => $self->fetchAASourceID($aa_sequence_source_id) || $self->error ("Can't retrieve aa_sequence_id for row with source id $aa_sequence_source_id");
         	my $iedb_id = $counts_list[1];
-        	my $peptide_match = $counts_list[11];
-        	my $protein_match = $counts_list[12];
-        	my $species_match = $counts_list[13];
-        	my $blast_hit_identity = $counts_list[4];
-        	my $blast_hit_align_len = $counts_list[7];
-        	my $alignment = $counts_list[10];
+        	my $peptide_match = $counts_list[2];
+        	my $protein_match = $counts_list[3];
+        	my $species_match = $counts_list[4];
+        	my $number_of_matches = $counts_list[10];
+        	my $blast_hit_align_len = $counts_list[11];
+        	my $alignment = $counts_list[14];
 
 
 		my $row_peptide = GUS::Model::ApiDB::AASequenceEpitope->new({
@@ -161,7 +161,7 @@ sub loadEpitopes {
 								peptide_match => $peptide_match,
 								protein_match => $protein_match,
 								species_match => $species_match,
-								blast_hit_identity => $blast_hit_identity,
+								blast_hit_identity => $number_of_matches,
 								blast_hit_align_len => $blast_hit_align_len,
 								alignment => $alignment,
 								external_database_release_id => $extDbRlsId});
