@@ -32,6 +32,7 @@ params {
     pepFasta = "$inputPepFasta";
     pepTab = "$peptideTab";
     peptideProteinFasta = "$peptideProtein";
+    results = "$workDir"
  }
  process {
   executor = local
