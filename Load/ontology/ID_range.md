@@ -77,7 +77,8 @@ General NHS | EUPATH_0045001 - EUPATH_0045100
 General COVID India | EUPATH_0049001 - EUPATH_0049100
 General Guatemala opportunistic infection cohort | EUPATH_0057501 - EUPATH_0057700
 General llineup2 | EUPATH_0064001 - EUPATH_0064200
-General llineup2 | EUPATH_0066001 - EUPATH_0066200
+General llineup2 | EUPATH_0066001 - EUPATH_0066180
+General rtss_mal095 | EUPATH_0066181 - EUPATH_0066200
  
 <hr>
 
