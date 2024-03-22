@@ -1,0 +1,48 @@
+#!/usr/bin/env nextflow
+nextflow.enable.dsl=2 
+
+process prepareTab {
+    
+    input:
+     path(inputPeptide)
+     val(pepTab)
+     val(proteinFasta)
+     
+    output:
+    path(pepTab), emit: tab
+    path(proteinFasta), emit: proteinIDs
+    
+    script:
+
+    """
+    procesIedbPeptide.pl --inputPepFasta ${inputPeptide} --peptideTab ${pepTab} --peptideProtein ${proteinFasta}
+    """
+}
+
+process fetchProtein {
+
+    container = 'veupathdb/edirect'
+
+    input:
+     path(proteinID)
+
+    output:
+     path("pepProtein.fasta")
+    
+    """
+    fileItemString=\$(cat  ${proteinID} | tr "\n" ",")
+    efetch -db protein -id \$fileItemString -format fasta >> pepProtein.fasta
+    sleep 5
+    """
+}
+
+workflow {
+    tabResults = prepareTab(params.pepFasta, params.pepTab, params.proteinIDs)
+
+    proteinList = tabResults.proteinIDs.splitText( by: 500, file: true)
+
+    proteinFasta = fetchProtein(proteinList)
+
+    mergeProteins = proteinFasta.collectFile(name: params.peptideProteinFasta, newLine: true, storeDir: "${params.results}" )
+    
+}
