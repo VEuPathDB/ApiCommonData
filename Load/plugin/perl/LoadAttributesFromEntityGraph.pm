@@ -743,7 +743,7 @@ sub loadAttributes {
   my $clobCount = 0;
 
   while(my ($entityAttributesId, $entityStableId, $entityTypeId, $entityTypeIdOrig, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $json) = $sh->fetchrow_array()) {
-    #my $json = encode('UTF-8', $self->readClob($lobLocator));
+    my $json = encode('UTF-8', $json); # DB driver converts to perl format, so change back to utf8
 
     my $attsHash = decode_json($json);
 
