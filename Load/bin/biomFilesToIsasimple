@@ -121,8 +121,8 @@ my @possibleTaxonomyKeys;
 my $hasTaxonomyCount;
 
 if(scalar @{$decodedJson->{rows}} == 0 && scalar @{$decodedJson->{columns}} == 0) {
-    print STDERR "Error Parsing Biom File:  No data matrix found";
-    print STDOUT "Error Parsing Biom File:  No data matrix found";
+    print STDERR "Error Parsing Biom File:  No data matrix found\n";
+    print STDOUT "Error Parsing Biom File:  No data matrix found\n";
     exit(99);
 }
 
@@ -235,7 +235,7 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
     elsif($dataPeek[0] > $i) {
         # this means there is no data for row $i; shouldn't happen but don't fail if it does
-        print STDERR "WARN:  Missing data for row $i in data file";
+        print STDERR "WARN:  Missing data for row $i in data file\n";
         next;
     }
     else {
@@ -251,10 +251,10 @@ close TERMS;
 
 unless($hasTaxonomyCount > 0) {
     # die "Taxonomy information missing.  Only found IDs";
-    print STDERR "Taxonomy Missing.  Only found IDs";
+    print STDERR "Taxonomy Missing.  Only found IDs\n";
 
     # handle this as a VDI API compatible validation error
-    print STDOUT "Taxonomy information Missing.  Only found IDs";
+    print STDOUT "Taxonomy information Missing.  Only found IDs\n";
     exit(99);
 }
 
