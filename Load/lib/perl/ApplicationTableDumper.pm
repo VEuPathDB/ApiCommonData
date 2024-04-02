@@ -173,12 +173,15 @@ sub makeTableInfo {
     my %nullFields;
 
     while(my ($iSchema, $table, $isNull, $col, $charLen, $dataType, $numPrec) = $sh->fetchrow_array()) {
+
+        print STDERR "table=$table; dataType=$dataType; numPrec=$numPrec; charLength=$charLen";
+
         $nullFields{$col} = uc($isNull) eq "YES" ? "" : "NOT NULL";
 
         if($dataType eq 'date') {
             $dateFields{$col} = "NA";
         }
-        elsif(($dataType eq 'numeric' || $dataType eq 'integer') && defined $numPrec ) {
+        elsif(($dataType eq 'numeric' || $dataType eq 'integer' || $dataType eq 'bigint') && defined $numPrec ) {
             $numberFields{$col} = $numPrec;
 
         }

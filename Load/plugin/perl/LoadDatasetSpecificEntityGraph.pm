@@ -813,28 +813,51 @@ SELECT parent.stable_id       as stable_id,
        Min(child.range_min)         AS range_min,
        Max(child.range_max)         AS range_max,
        child.impute_zero,
-       decode(child.data_type, 'integer', 'number', child.data_type) as data_type,
-       decode(child.data_shape, 'binary', 'categorical', child.data_shape) AS data_shape,
+       case
+         when child.data_type = 'integer' then 'number'
+         else child.data_type
+       end as data_type,
+       case
+         when child.data_shape = 'binary' then 'categorical'
+         else child.data_shape
+       end as data_shape,
        child.unit,
        Min(child.PRECISION) AS precision
 $fromWhereSql
 GROUP BY  parent.stable_id,
           parent.display_name,
           child.impute_zero,
-          decode(child.data_type, 'integer', 'number', child.data_type),
-          decode(child.data_shape, 'binary', 'categorical', child.data_shape),
+          case
+            when child.data_type = 'integer' then 'number'
+            else child.data_type
+          end,
+          case
+            when child.data_shape = 'binary' then 'categorical'
+            else child.data_shape
+          end,
           child.unit
 EOF
 
   $dbh->do("CREATE TABLE $collectionTableName as ($getCollectionsSql)") or die $dbh->errstr;
-  $dbh->do("CREATE UNIQUE INDEX ${collectionTableName}_uix on $collectionTableName (stable_id)")
+
+  #$self->log("CREATE UNIQUE INDEX ${collectionTableName}_uix on $collectionTableName (stable_id)");
+  my $collectionIndexName = $collectionTableName . "_uix";
+  $collectionIndexName =~ s/^${SCHEMA}\.//i;
+
+  $dbh->do("CREATE UNIQUE INDEX ${collectionIndexName} on $collectionTableName (stable_id)")
     or die "unit, data_type, etc. should be consistent across children - ". $dbh->errstr;
   
   (my $collectionPkName = $collectionTableName) =~ s{${SCHEMA}\.(.*)}{$1_pk};
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
-  $dbh->do("ALTER TABLE $collectionTableName add (is_proportion number(1), is_compositional number(1), normalization_method varchar(25), member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
+  $dbh->do("ALTER TABLE $collectionTableName
+ADD COLUMN is_proportion numeric(1, 0),
+ADD COLUMN is_compositional numeric(1, 0),
+ADD COLUMN normalization_method VARCHAR(25),
+ADD COLUMN member VARCHAR(25),
+ADD COLUMN member_plural VARCHAR(25)
+") or die $dbh->errstr;
 
   # update some things from the yaml.
   foreach my $stableId (keys %$collections) {
@@ -882,7 +905,11 @@ EOF
 
   my $getCollectionMembersSql = "SELECT child.stable_id as attribute_stable_id, parent.stable_id as collection_stable_id $fromWhereSql ";
   $dbh->do("CREATE TABLE $collectionAttributesTableName as ($getCollectionMembersSql)")  or die $dbh->errstr;
-  $dbh->do("CREATE UNIQUE INDEX ${collectionAttributesTableName}_uix on $collectionAttributesTableName (attribute_stable_id)")  or die $dbh->errstr;
+
+  my $collectionAttrIndexName = $collectionAttributesTableName . "_uix";
+  $collectionAttrIndexName =~ s/^${SCHEMA}\.//i;
+
+  $dbh->do("CREATE UNIQUE INDEX ${collectionAttrIndexName} on $collectionAttributesTableName (attribute_stable_id)")  or die $dbh->errstr;
 
   (my $collectionAttributesAfkName = $collectionAttributesTableName) =~ s{${SCHEMA}\.(.*)}{$1_afk};
   $dbh->do("ALTER TABLE $collectionAttributesTableName add constraint $collectionAttributesAfkName foreign key (attribute_stable_id) references $attributeGraphTableName (stable_id)") or die $dbh->errstr;
