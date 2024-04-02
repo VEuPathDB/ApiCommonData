@@ -19,7 +19,7 @@ unless (-e $inputPepFasta && $peptideTab && $peptideProtein && $workDir) {
 sub usage {
     my ($e) = @_;
 
-    print STDERR "runNextflow.pl --inputPepFasta <FILE> --peptideTab OUT --peptideProtein OUT --workDir WorkDirectory\n";
+    print STDERR "iedbMakeTabAndFasta.pl --inputPepFasta <FILE> --peptideTab OUT --peptideProtein OUT --workDir WorkDirectory\n";
     die $e if($e);
 }
 
