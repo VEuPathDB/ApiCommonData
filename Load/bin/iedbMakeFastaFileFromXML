@@ -58,19 +58,19 @@ foreach my $file (@files) {
 
   foreach my $epitope (@epitopes) {
     my ($GenBankId, $ChemicalType, $LinearSequence, $SourceOrganismId);
-    my %h = (EpitopeName => 0, EpitopeId => 0);
+    my %h = (EpitopeName => undef, EpitopeId => undef);
     findXmlValues($epitope, \%h);
     my ($EpitopeName, $EpitopeId) = ($h{EpitopeName}, $h{EpitopeId});
     my ($EpitopeStructure) = $epitope->findnodes('EpitopeStructure/FragmentOfANaturalSequenceMolecule');
     next unless $EpitopeStructure;
 
-    %h = (ChemicalType => 0, LinearSequence => 0, SourceOrganismId => 0);
+    %h = (ChemicalType => undef , LinearSequence => undef, SourceOrganismId => undef );
     findXmlValues($EpitopeStructure, \%h);
     ($ChemicalType, $LinearSequence, $SourceOrganismId) =
       ($h{ChemicalType}, $h{LinearSequence}, $h{SourceOrganismId});
 
     my ($SourceMolecule) = $EpitopeStructure->findnodes('SourceMolecule');
-    %h = (GenBankId => 0, IedbAccession => 0);
+    %h = (GenBankId => undef , IedbAccession => undef );
     findXmlValues($SourceMolecule, \%h);
     $GenBankId = $h{GenBankId};
     $GenBankId = $h{IedbAccession} unless $GenBankId;
@@ -112,7 +112,7 @@ sub findXmlValues {
   for my $child ($node->childNodes()) {
     my $childName = $child->nodeName();
     $fieldsHash->{$childName} = $child->textContent()
-      if defined($fieldsHash->{$childName});
+      if exists($fieldsHash->{$childName});
   }
 }
 
