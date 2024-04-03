@@ -314,6 +314,10 @@ sub getSubStudiesAndMaxAttributeLength {
 
   my $sql = "select study_id, stable_id from ($subquery)";
 
+  if(my $excludeStudyStableId = $megaStudyConfig->{excludeStudyStableId}){
+    $sql .= sprintf(" where stable_id not in (%s) ", join(",", map { "'" . $_ . "'" } @$excludeStudyStableId));
+  }
+
   my $subStudies  = $self->sqlAsDictionary( Sql  => $sql );
 
   return($subStudies, $maxAttrLength);
