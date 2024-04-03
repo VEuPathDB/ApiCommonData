@@ -582,6 +582,164 @@ WHERE {
             	?IRI obo:EUPATH_0001020 ?forceString .
         	}
 	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0064055 .
+	BIND ("Bednet" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        		?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        		?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0001006 ?rep .
+	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0001008 ?unitL .
+	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0001009 ?unitI .
+	}
+	OPTIONAL {
+            	?IRI obo:EUPATH_0001010 ?dataS .
+	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001011 ?timeV .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001012 ?keyV .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001013 ?hid .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001014 ?scal .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001015 ?temp .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001016 ?timeK .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001017 ?rangeMin .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001018 ?rangeMax .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001019 ?binWidth .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001020 ?forceString .
+        	}
+	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0064041 .
+	BIND ("Study arm summary" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        		?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        		?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        		?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0001006 ?rep .
+	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0001008 ?unitL .
+	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0001009 ?unitI .
+	}
+	OPTIONAL {
+            	?IRI obo:EUPATH_0001010 ?dataS .
+	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001011 ?timeV .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001012 ?keyV .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001013 ?hid .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001014 ?scal .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001015 ?temp .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001016 ?timeK .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001017 ?rangeMin .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001018 ?rangeMax .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001019 ?binWidth .
+        	}
+        	OPTIONAL {
+            	?IRI obo:EUPATH_0001020 ?forceString .
+        	}
+	}
 }
 GROUP BY ?IRI
 ORDER BY ASC(?category) ASC(?parentLabel) ASC(?displayOrder) ASC(?label)
