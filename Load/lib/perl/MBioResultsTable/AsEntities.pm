@@ -5,6 +5,8 @@ use warnings;
 use base qw/ApiCommonData::Load::MBioResultsTable/;
 use List::Util qw/sum/;
 
+use Digest::SHA1 qw(sha1_hex);
+
 # needs to make a column for a wide table
 my $MAX_PROPERTY_NAME_LENGTH = 110;
 
@@ -129,8 +131,14 @@ sub abundanceKeyAndDisplayName {
   }
   if ((length $key) > $maxLength){
     my ($x, $y) = split(";", $key, 2);
-    die $key if not $y;
-    $key = $x .";...".substr($y, (length $y) - ($maxLength - 4), length $y);
+
+    if(not $y) {
+      $key = substr(sha1_hex($x), 0, 16);
+    }
+    else {
+    # short source_id
+    $key = $x . "_" . substr(sha1_hex($y), 0, 16);
+    }
   }
   $key =~ s{[^A-Za-z_0-9]+}{_}g;
 

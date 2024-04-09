@@ -233,15 +233,6 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
         }
     }
 
-    elsif($dataPeek[0] > $i) {
-        # this means there is no data for row $i; shouldn't happen but don't fail if it does
-        print STDERR "WARN:  Missing data for row $i in data file\n";
-        next;
-    }
-    else {
-        # should never happen if the file is sorted as we are assuming
-        die "Error parsing data.tsv file";
-    }
 }
 
 close $tsvOut;
