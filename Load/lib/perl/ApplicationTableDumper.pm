@@ -181,12 +181,20 @@ sub makeTableInfo {
         if($dataType eq 'date') {
             $dateFields{$col} = "NA";
         }
-        elsif(($dataType eq 'numeric' || $dataType eq 'integer' || $dataType eq 'bigint') && defined $numPrec ) {
+        elsif($dataType eq 'numeric'&& defined $numPrec ) {
             $numberFields{$col} = $numPrec;
-
+        }
+        elsif($dataType eq 'integer'&& defined $numPrec ) {
+            $numberFields{$col} = 10; ## interger is 32 bits; corresponds to number(10)
+        }
+        elsif($dataType eq 'smallint'&& defined $numPrec ) {
+            $numberFields{$col} = 5; ## smalint is 16 bits; corresponds to number(5)
+        }
+        elsif($dataType eq 'bigint'&& defined $numPrec ) {
+            $numberFields{$col} = 20; ## bigint is 64 bits; corresponds to number(20)
         }
         # number but unknown precision
-        elsif($dataType eq 'numeric' || $dataType eq 'integer') {
+        elsif($dataType eq 'numeric' || $dataType eq 'integer' || $dataType eq 'bigint' || $dataType eq 'smallint') {
             $numberFields{$col} = "NA";
 
         }
