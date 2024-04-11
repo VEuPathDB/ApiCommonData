@@ -470,6 +470,9 @@ sub addEntityTypeForNode {
     $entityTypeInternalAbbrev = $entityTypeUniquePrefix . "_" . $entityTypeInternalAbbrev;
   }
 
+  # entity abbrev cannot be longer than 25 characters else we risk postgres chopping table names
+  $entityTypeInternalAbbrev = substr($entityTypeInternalAbbrev, 0, 25);
+
   # NOTE:  we are doing fancy stuff to make an abbreviated but human readable entity type name.  Also trying to be consistent for cross study comparisons
   $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
