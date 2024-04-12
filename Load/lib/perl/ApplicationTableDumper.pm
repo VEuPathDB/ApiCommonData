@@ -174,8 +174,6 @@ sub makeTableInfo {
 
     while(my ($iSchema, $table, $isNull, $col, $charLen, $dataType, $numPrec) = $sh->fetchrow_array()) {
 
-        print STDERR "table=$table; dataType=$dataType; numPrec=$numPrec; charLength=$charLen";
-
         $nullFields{$col} = uc($isNull) eq "YES" ? "" : "NOT NULL";
 
         if($dataType eq 'date') {
@@ -362,17 +360,19 @@ sub writeIndexes {
     $sh->finish();
 
     foreach my $indexName (keys %$indexKeys) {
-
         # the key here is ordered string like "4 2 3 1"
         my $key = $indexKeys->{$indexName};
         my @a = split(' ', $key);
 
 
+        my $isUnique = $indexCols->{$indexName}->{isUnique};
+        my $isPrimary = $indexCols->{$indexName}->{isPrimary};
+
         my @orderedColumns = map { $indexCols->{$indexName}->{col}->{$_} } @a;
         my $colString = join(",", @orderedColumns);
 
 
-        $self->addTableAndViewSpecs({name => $indexName, tableName => $tableName, type => 'index', orderedColumns => \@orderedColumns});
+        $self->addTableAndViewSpecs({name => $indexName, isUnique => $isUnique, isPrimary => $isPrimary, tableName => $tableName, type => 'index', orderedColumns => \@orderedColumns});
     }
 
 
