@@ -28,7 +28,7 @@ use FileHandle;
 
 use GUS::PluginMgr::Plugin;
 
-use GUS::Supported::SequenceOntologyLookup;
+use GUS::Supported::OntologyLookup;
 
 # read from
 use GUS::Model::DoTS::Transcript;
@@ -93,7 +93,7 @@ sub run {
 
   # mass spec uses multiple so sources
   foreach my $soExtDbName ($self->getArg('soExtDbName')) {
-    my $soLookup = GUS::Supported::SequenceOntologyLookup->new("$soExtDbName|%", $self->getArg('soGusConfig'));
+    my $soLookup = GUS::Supported::OntologyLookup->new("$soExtDbName|%", $self->getArg('soGusConfig'));
     push @{$self->{_so_lookup}}, $soLookup;
   }
 
