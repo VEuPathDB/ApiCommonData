@@ -844,9 +844,6 @@ EOF
   my $collectionIndexName = $collectionTableName . "_uix";
   $collectionIndexName =~ s/^${SCHEMA}\.//i;
 
-  $dbh->do("CREATE UNIQUE INDEX ${collectionIndexName} on $collectionTableName (stable_id)")
-    or die "unit, data_type, etc. should be consistent across children - ". $dbh->errstr;
-  
   (my $collectionPkName = $collectionTableName) =~ s{${SCHEMA}\.(.*)}{$1_pk};
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
