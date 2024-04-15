@@ -243,6 +243,10 @@ $dbh->commit;
 #
 sub readLob {
   my ($lobLocator, $dbh, $chunkSize) = @_;
+
+  # Return an empty JSON object string if the LOB locator is undefined
+  return '{}' unless defined $lobLocator;
+
   my $offset = 1;   # Offsets start at 1, not 0
   $chunkSize //= 65536;
   my $output;
