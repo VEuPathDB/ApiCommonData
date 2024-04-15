@@ -151,7 +151,6 @@ my %sample2species; # sample_id => species_name => count
 
 while (my ($sample_id, $sample_name, $sample_atts_loc, $assay_id, $assay_name, $assay_atts_loc) = $sample_and_organism_id_assays_stmt->fetchrow_array()) {
 
-  
   $sample2atts_json{$sample_id} //= readLob($sample_atts_loc, $dbh);
   $sample2sample_name{$sample_id} = $sample_name;
 
