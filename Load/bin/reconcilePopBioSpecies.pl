@@ -151,6 +151,7 @@ my %sample2species; # sample_id => species_name => count
 
 while (my ($sample_id, $sample_name, $sample_atts_loc, $assay_id, $assay_name, $assay_atts_loc) = $sample_and_organism_id_assays_stmt->fetchrow_array()) {
 
+  
   $sample2atts_json{$sample_id} //= readLob($sample_atts_loc, $dbh);
   $sample2sample_name{$sample_id} = $sample_name;
 
@@ -243,6 +244,10 @@ $dbh->commit;
 #
 sub readLob {
   my ($lobLocator, $dbh, $chunkSize) = @_;
+
+  # Return an empty JSON object string if the LOB locator is undefined
+  return '{}' unless defined $lobLocator;
+
   my $offset = 1;   # Offsets start at 1, not 0
   $chunkSize //= 65536;
   my $output;
