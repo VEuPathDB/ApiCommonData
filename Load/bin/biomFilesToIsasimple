@@ -18,6 +18,16 @@ my %MATERIAL_TYPES;
 my %CHAR_QUALIFIERS;
 
 
+
+my %TAXON_LEVEL_PREFIXES = (0 => "k__",
+                            1 => "p__",
+                            2 => "c__",
+                            3 => "o__",
+                            4 => "f__",
+                            5 => "g__",
+                            6 => "s__",
+    );
+
 my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom - Relative Abundance",
                      'EUPATH_0009252' => "Phylum - Relative Abundance",
                      'EUPATH_0009253' => "Class - Relative Abundance",
@@ -129,17 +139,14 @@ if(scalar @{$decodedJson->{rows}} == 0 && scalar @{$decodedJson->{columns}} == 0
 
 for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
-
     if($i == 0 && $decodedJson->{rows}->[$i]->{metadata}) {
         @possibleTaxonomyKeys = sort grep { /taxon/i} keys %{$decodedJson->{rows}->[$i]->{metadata}};
     }
-
 
     my @taxonomyAr;
     # taxonomy should be either 1 string OR list of taxa k->strain
     if(scalar @possibleTaxonomyKeys == 1) {
         my $taxonomyThing = $decodedJson->{rows}->[$i]->{metadata}->{$possibleTaxonomyKeys[0]};
-
         if(ref($taxonomyThing) eq 'ARRAY') {
             @taxonomyAr = @$taxonomyThing;
         }
@@ -168,11 +175,17 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
     }
 
-
     my @taxArrayFixed;
     my %seenLevels;
     for(my $t = 0; $t < scalar(@taxonomyAr); $t++) {
         my $level = $taxonomyAr[$t];
+        my $origLevel = $level;
+
+        if(ref($level) eq "ARRAY") {
+            print STDERR "Error:  Multiple taxon hierarchies found in metadata:  " .  join(",", @possibleTaxonomyKeys);
+            print STDOUT "Error:  Multiple taxon hierarchies found in metadata:  " .  join(",", @possibleTaxonomyKeys);
+            exit(99);
+        }
 
         # if the taxon string starts with a letter and two underscores... remove them
 #        $level =~ s/^\s?\w?__//;
@@ -182,14 +195,19 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
         if($t == 0 && $level eq 'NA') {
             $level = 'unclassified';
         }
-        if($level =~ /^(\w__)?NA$/ || lc($level) =~ /^(\w__)?none$/) {
+        if($level =~ /^(\w__)?NA$/ || lc($level) =~ /^(\w__)?none$/ || $level =~ /^(\w__)$/) {
             my $levelPrefix = $1;
+
+            $levelPrefix = $TAXON_LEVEL_PREFIXES{$t} unless($levelPrefix);
+
             my $prevTax = $taxArrayFixed[$t-1];
+
             $prevTax =~ s/^\s?(\w__)/$levelPrefix/;
 
             my $fixed = $prevTax =~ /unclassified/ ? $prevTax : $prevTax . "_unclassified";
 
             $level = $fixed;
+
         }
 
         if($seenLevels{$level}) {
