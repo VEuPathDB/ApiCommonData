@@ -6,20 +6,19 @@ use Getopt::Long;
 
 
 
-my ($inputPepFasta, $peptideTab, $peptideProtein);
+my ($inputPepFasta, $peptideTab);
 &GetOptions("inputPepFasta=s"=> \$inputPepFasta,
             "peptideTab=s"=> \$peptideTab,
-            "peptideProtein=s"=> \$peptideProtein,
     ) ;
 
-unless (-e $inputPepFasta && $peptideTab && $peptideProtein) {
+unless (-e $inputPepFasta && $peptideTab) {
     &usage("Both input files must exist;  output file must be declared")
 }
 
 sub usage {
     my ($e) = @_;
 
-    print STDERR "processIedb.pl --inputPepFasta <FILE> --peptideTab OUT --peptideProtein OUT\n";
+    print STDERR "processIedb.pl --inputPepFasta <FILE> --peptideTab OUT \n";
     die $e if($e);
 }
 
@@ -33,7 +32,6 @@ my $epitopesFile = $inputPepFasta;
 
 open(my $epitopes, $epitopesFile) or die "Could not open file '$epitopesFile' $!";
 
-my %geneIdHash;
 
 while(my $record = <$epitopes>){
   chomp $record;
@@ -47,20 +45,9 @@ while(my $record = <$epitopes>){
 
   my $id = $headerSplir[3];
  
-  $geneIdHash{$id} = $id;
   
   print FH ( $headerSplir[3] . "\t" . $headerSplir[0] . "\t" . $headerSplir[2] .  "\t" ."$sequence\t" . $headerSplir[1] . "\n");
 
 }
 close FH;
 
-my $keyFile = $peptideProtein;
-open(FH, '>>', $keyFile) or die $!;
-
-foreach my $key (keys %geneIdHash){
-  $key =~ s/\.[0-9].*//;
-  print FH ($key . "\n");
-  
-}
-
-close FH;
