@@ -1,0 +1,136 @@
+#!/usr/bin/perl
+
+use strict;
+use DBI;
+use DBD::Oracle;
+
+usage() unless scalar(@ARGV) == 5 || scalar(@ARGV) == 6;
+
+my ($workflowId, $sourceDbPropFile, $componentDbPropFile, $vdiServiceUrl, $targetProjectName, $organismAbbrev) = @ARGV;
+
+my $sourceDbh = getDbhFromPropFile($sourceDbPropFile);
+my $componentDbh = getDbhFromPropFile($componentDbPropFile);
+
+cleanLastBatchIfBad($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName);
+
+processNewBatch($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName);
+
+
+############################################################################################################
+############################################################################################################
+
+sub usage {
+  die "
+Submit a batch of tuning tables as artifacts to VDI.  Also, firt attempt to clean up the previous batch if it had failures.
+
+Usage:  tuningTablesToVdi workflowId sourceDbPropFile componentDbPropFile vdiServiceUrl targetProjectName [organismAbbrev]
+
+Where:
+ - workflow_id:  reflow ID of the component (eg PlasmoDB) workflow
+ - sourceDbPropFile:  a prop file (eg gus.config) with connect info for the source database, such as an organism-specific database
+ - componentDbPropFile: a prop file (eg gus.config) with connect info for the component database, where the Workflow control tables are
+ - vdiServiceUrl:  the base URL of the target VDI service
+ - targetProjectName: the target project in VDI (eg WebDB) 
+ - organismAbbrev: optional.  Needed if the component workflow will have different organisms.  Used to scope tuning table names.
+
+Example: tuningTablesToVdi 123456 my_org_gus.config my_component_gus.config https://sfischer.plasmodb.org/vdi WebDB pfal3D7
+
+A run of tuningTablesToVdi is presumed to be singular for a given (workflow_id, organism_abbrev) tuple.  It is not designed to handle 
+contention with another script for that data source.
+
+The script tracks its work in dedicated tables in the component database:
+ - WorkflowArtifactVdiId
+ - WorkflowVdiStatus
+ - WorkflowVdiTuningTableBatch
+
+It identifies the batch of tuning tables that are more recent than the last batch submitted to VDI.  For each of those tuning tables it:
+ - dumps the table to file
+ - submits the file as an artifact to VDI
+ - polls VDI to track completion through the install phase
+ - tracks progress and errors
+
+It records the batch it has processed in WorkflowVdiTuningTableBatch.
+
+It handles failures and attempts to clean up bad batches
+";
+}
+
+sub cleanLastBatchIfBad {
+  my ($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName) = @_;
+
+  cleanInvalidVdiDatasets($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName);
+
+  cleanFailedDeletes($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName);
+
+  cleanFailedDatasets($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName);
+}
+
+# Invalid datasets are not failures.  They were rejected by VDI for violating validation rules.
+# If there is a new version of the tuning table, hopefully it will now pass VDI validation.
+# However if there is not a new version, that is an upstream error and cause to abort the script
+sub cleanInvalidVdiDatasets {
+  my ($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName) = @_;
+
+  my $lastBatchEndTimestamp = getLastBatchEndTimestamp($componentDbh, $workflowId, $organismAbbrev);
+  my $invalidVdis = getInvalidVdis($componentDbh, $workflowId, $organismAbbrev);  # invalid, NOT failed!
+  my $stillInvalidArtifacts;
+  my $resubmitArtifacts;
+  foreach my $invalidVdi (@$invalidVdis) {
+    my $artifactName = getArtifactName($componentDbh, $invalidVdi->{vdiId});
+    my $timestamp = getTuningTableTimestamp($sourceDbh, $artifactName);
+    if ($timestamp <= $lastBatchEndTimestamp) {
+      push(@$stillInvalidArtifacts, {name=>$artifactName, msg=>$invalidVdi->{msg}});
+    } else {
+      push(@$resubmitArtifacts, $artifactName);
+    }
+  }
+
+  submitAndMonitorArtifacts($resubmitArtifacts, $sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName);
+
+  if (scalar(@$stillInvalidArtifacts)) {
+    die "The following artifacts were previously invalid, and are still invalid.  They must be fixed before a new batch of tuning tables will be processed:\n" . join("\n", map { "$_->{name}: $_->{msg}" } @$stillInvalidArtifacts);
+  }
+}
+
+sub cleanFailedDeletes {
+  my ($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName) = @_;
+
+}
+
+sub cleanFailedDatasets {
+  my ($sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName) = @_;
+
+  my $sql = "";
+
+  # query WorkflowArtifactVdiId and WorkflowVdiStatus to find failed installs and metas for this (workflowId, organismAbbrev).
+  # remove their rows in WorkflowArtifactVdiId and WorkflowVdiStatus
+}
+
+sub submitAndMonitorArtifacts {
+  my ($resubmitArtifacts, $sourceDbh, $componentDbh, $workflowId, $organismAbbrev, $vdiServiceUrl, $targetProjectName) = @_;
+}
+
+sub getDbhFromPropFile {
+  my ($propFile) = @_;
+
+  open(F, $propFile) || die "Can't open prop file '$propFile'\n";
+  my ($dsn, $login, $pwd);
+  while(<F>) {
+    chomp;
+    next if /^\#/;
+    $dsn = $1 if /^dbiDsn=(.+)/;
+    $login = $1 if /^databaseLogin=(.+)/;
+    $pwd = $1 if /^databasePassword=(.+)/;
+  }
+
+  die "Can't find dbiDsn in file '$propFile'\n" unless $dsn;
+  die "Can't find databaseLogin in file '$propFile'\n" unless $login;
+  die "Can't find databasePassword '$propFile'\n" unless $pwd;
+
+  my $dbh = DBI->connect($dsn, $login, $pwd)
+    || die "Couldn't connect to database $dsn: " . DBI->errstr;
+
+  $dbh->{RaiseError} = 1;
+  $dbh->{LongTruncOk} = 1;
+  return $dbh;
+}
