@@ -54,7 +54,7 @@ my $notes = <<NOTES;
 NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
-hmdb.default_structuresm
+hmdb.default_structures
 hmdb.autogen_structures,
 hmdb.structures,
 hmdb.database_accession,
