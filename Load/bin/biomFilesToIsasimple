@@ -108,7 +108,7 @@ foreach(keys %taxaSourceIds) {
 print TERMS &makeTermLine($relAbundanceSourceId, $relAbundanceDesc, 'taxa');
 
 my $sourceOut;
-open($sourceOut, ">$investigationDir/$sourceFile") or die "Cannot open file abundance.tsv for writing:$!";
+open($sourceOut, ">$investigationDir/$sourceFile") or die "Cannot open file $investigationDir/$sourceFile for writing:$!";
 
 my $tsvOut;
 open($tsvOut, ">${investigationDir}/${abundanceFile}") or die "Cannot open file $abundanceFile for writing:$!";
@@ -327,7 +327,6 @@ XML
 sub makeTermLine {
     my ($term, $name, $type) = @_;
 
-
     my $sourceId = "MBIOTEMP_$term";
     $sourceId =~ s/[^a-zA-Z0-9._]/_/g;
 
@@ -335,6 +334,10 @@ sub makeTermLine {
         $MATERIAL_TYPES{$sourceId} = $term;
     }
     elsif($type eq 'char') {
+        if($term eq 'Source') {
+            $sourceId .= "_CHARACTERISTIC";
+        }
+
         $CHAR_QUALIFIERS{$sourceId} = $term;
     }
     elsif($type eq 'taxa') {}
