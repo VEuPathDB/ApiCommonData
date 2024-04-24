@@ -190,7 +190,7 @@ sub run {
 	  my $nafeatureId = $gene->getNaFeatureId();
           my $productReleaseId = $gene->getExternalDatabaseReleaseId();
 
-	  $self->makeGeneFeatureProduct($productReleaseId,$nafeatureId,$product,$preferred);
+	  $self->makeGeneFeatureProduct($productReleaseId,$nafeatureId,$product,$preferred, $assignedBy);
 
 	  $processed++;
 
@@ -229,7 +229,7 @@ sub makeTranscriptProduct {
 }
 
 sub makeGeneFeatureProduct {
-  my ($self,$geneReleaseId,$naFeatId,$product,$preferred) = @_;
+  my ($self,$geneReleaseId,$naFeatId,$product,$preferred, $assignedBy) = @_;
 
   my $geneProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
 						                    'product' => $product,
@@ -238,6 +238,7 @@ sub makeGeneFeatureProduct {
   unless ($geneProduct->retrieveFromDB()){
       $geneProduct->set("is_preferred",$preferred);
       $geneProduct->set("external_database_release_id",$geneReleaseId);
+      $geneProduct->set("assigned_by",$assignedBy);
       $geneProduct->submit();
   }else{
       $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId\n");

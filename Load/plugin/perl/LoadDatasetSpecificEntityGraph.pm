@@ -168,6 +168,7 @@ where entity_type_id = $entityTypeId";
     # REVIEW Is this the right way to handle longitude?
     $dataType = lc($dataType) eq 'longitude' ? "NUMERIC" : uc($dataType);
     $dataType = lc($dataType) eq 'number' ? "NUMERIC" : uc($dataType);
+    $dataType = lc($dataType) eq 'integer' ? "NUMERIC" : uc($dataType);
     $dataType = lc($dataType) eq 'date' ? "text" : uc($dataType);
     # multiValued data always return JSON array
     if($isMultiValued) {
@@ -177,7 +178,15 @@ where entity_type_id = $entityTypeId";
 
     my $entityOrProcess = $tableType eq 'p' ? 'process_atts' : 'entity_atts';
 
-    my $string = "(${entityOrProcess}::json -> '$stableId' ->> 0)::${dataType} as $stableId";
+
+    my $jsonFunction = "(${entityOrProcess}::json -> '$stableId' ->> 0)";
+    my $string = "${jsonFunction}::${dataType} as $stableId";
+
+    # NOTE: the regex here asks if the value has any numbers.  if it doesn't, then set to NULL;
+    # this handles the NA,NaN,Inf, ... case
+    if($dataType ne 'VARCHAR') {
+      $string = "case when ${jsonFunction} ~ '^[^0-9]+\$' then NULL else ${jsonFunction}::${dataType} end as $stableId";
+    }
 
     if($tableType eq 'p') {
       push @processColumnStrings, $string;
@@ -197,17 +206,37 @@ where entity_type_id = $entityTypeId";
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
+  # TODO:  Temp remove wide table
+  return;
+
+  my $maxColumnNameLength = 62;
+
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
   my $totalColumnCount = 0 + @{$entityColumnStrings} +  @{$processColumnStrings};
 
   # no wide tables if we have more than 1000 columns
-  return if($totalColumnCount > 1000);
+  if($totalColumnCount > 1000) {
+    $self->log("SKIPPING table $tableName as it has $totalColumnCount columns which is more than 1000 allowed.");
+    return;
+  }
+
 
   $self->log("Creating TABLE:  $tableName");
   my $entityColumns = join("\n,", @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
+
+  my @array = (@$entityColumnStrings, @$processColumnStrings);
+
+  # No wide table (attributes) if any field name > 62 characters
+  my @stableIds = $self->sqlAsArray(Sql => "select stable_id from ${SCHEMA}.ATTRIBUTE where entity_type_id = $entityTypeId");
+  foreach my $stableId (@stableIds)  {
+    if(length $stableId > $maxColumnNameLength) {
+      $self->log("SKIPPING table $tableName as it contains at least one column name which is too long:  $stableId");
+      return;
+    }
+  }
 
 
   my $withAllAttsSql = "
@@ -268,7 +297,7 @@ where ea.entity_type_id = $entityTypeId
 
   if($rowCount){
     $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
-    $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX attrs_${studyAbbrev}_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
   }
   return $tableName;
 }
@@ -289,7 +318,7 @@ sub createAncestorsTable {
   # $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
   # return $tableName;
 
-  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix);
+  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $studyAbbrev);
 
   $self->populateAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId);
 
@@ -405,11 +434,15 @@ sub insertAncestorRow {
 }
 
 sub createEmptyAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $fieldSuffix) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix, $studyInternalAbbrev) = @_;
 
 
-  my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
+  my $entityTypeInternalAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
+  my $stableIdField = $entityTypeInternalAbbrev . $fieldSuffix;
+
+
+  
   my $sql = "WITH RECURSIVE ancestors (entity_type_id)
              AS
              (
@@ -447,8 +480,8 @@ PRIMARY KEY ($stableIdField)
 
   # create a pair of indexes for each field
   foreach my $field (@fields) {
-    $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
-    $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
   }
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
@@ -520,6 +553,9 @@ sub getEntityTypeInfo {
 
 sub createAttributeGraphTable {
   my ($self, $entityTypeId, $studyAbbrev, $studyId, $extDbRlsId) = @_;
+
+  # NOTE There is a bug in the vdi installer. it is not handling clobs.  this is a temporary workaround
+  my $maxVocabularyLength = 1048576;
 
   my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
@@ -616,7 +652,7 @@ SELECT -- distinct
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , COALESCE(atg.ordinal_values, att.ordered_values) as vocabulary
+     , CASE WHEN CHAR_LENGTH(COALESCE(atg.ordinal_values, att.ordered_values)) < $maxVocabularyLength THEN  COALESCE(atg.ordinal_values, att.ordered_values) else null end as vocabulary
      , atg.display_type display_type
      , atg.hidden
      , atg.display_order
@@ -777,28 +813,48 @@ SELECT parent.stable_id       as stable_id,
        Min(child.range_min)         AS range_min,
        Max(child.range_max)         AS range_max,
        child.impute_zero,
-       decode(child.data_type, 'integer', 'number', child.data_type) as data_type,
-       decode(child.data_shape, 'binary', 'categorical', child.data_shape) AS data_shape,
+       case
+         when child.data_type = 'integer' then 'number'
+         else child.data_type
+       end as data_type,
+       case
+         when child.data_shape = 'binary' then 'categorical'
+         else child.data_shape
+       end as data_shape,
        child.unit,
        Min(child.PRECISION) AS precision
 $fromWhereSql
 GROUP BY  parent.stable_id,
           parent.display_name,
           child.impute_zero,
-          decode(child.data_type, 'integer', 'number', child.data_type),
-          decode(child.data_shape, 'binary', 'categorical', child.data_shape),
+          case
+            when child.data_type = 'integer' then 'number'
+            else child.data_type
+          end,
+          case
+            when child.data_shape = 'binary' then 'categorical'
+            else child.data_shape
+          end,
           child.unit
 EOF
 
   $dbh->do("CREATE TABLE $collectionTableName as ($getCollectionsSql)") or die $dbh->errstr;
-  $dbh->do("CREATE UNIQUE INDEX ${collectionTableName}_uix on $collectionTableName (stable_id)")
-    or die "unit, data_type, etc. should be consistent across children - ". $dbh->errstr;
-  
+
+  #$self->log("CREATE UNIQUE INDEX ${collectionTableName}_uix on $collectionTableName (stable_id)");
+  my $collectionIndexName = $collectionTableName . "_uix";
+  $collectionIndexName =~ s/^${SCHEMA}\.//i;
+
   (my $collectionPkName = $collectionTableName) =~ s{${SCHEMA}\.(.*)}{$1_pk};
   $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
-  $dbh->do("ALTER TABLE $collectionTableName add (is_proportion number(1), is_compositional number(1), normalization_method varchar(25), member varchar(25), member_plural varchar(25))") or die $dbh->errstr;
+  $dbh->do("ALTER TABLE $collectionTableName
+ADD COLUMN is_proportion numeric(1, 0),
+ADD COLUMN is_compositional numeric(1, 0),
+ADD COLUMN normalization_method VARCHAR(25),
+ADD COLUMN member VARCHAR(25),
+ADD COLUMN member_plural VARCHAR(25)
+") or die $dbh->errstr;
 
   # update some things from the yaml.
   foreach my $stableId (keys %$collections) {
@@ -846,7 +902,11 @@ EOF
 
   my $getCollectionMembersSql = "SELECT child.stable_id as attribute_stable_id, parent.stable_id as collection_stable_id $fromWhereSql ";
   $dbh->do("CREATE TABLE $collectionAttributesTableName as ($getCollectionMembersSql)")  or die $dbh->errstr;
-  $dbh->do("CREATE UNIQUE INDEX ${collectionAttributesTableName}_uix on $collectionAttributesTableName (attribute_stable_id)")  or die $dbh->errstr;
+
+  my $collectionAttrIndexName = $collectionAttributesTableName . "_uix";
+  $collectionAttrIndexName =~ s/^${SCHEMA}\.//i;
+
+  $dbh->do("CREATE UNIQUE INDEX ${collectionAttrIndexName} on $collectionAttributesTableName (attribute_stable_id)")  or die $dbh->errstr;
 
   (my $collectionAttributesAfkName = $collectionAttributesTableName) =~ s{${SCHEMA}\.(.*)}{$1_afk};
   $dbh->do("ALTER TABLE $collectionAttributesTableName add constraint $collectionAttributesAfkName foreign key (attribute_stable_id) references $attributeGraphTableName (stable_id)") or die $dbh->errstr;

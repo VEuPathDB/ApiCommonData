@@ -139,6 +139,7 @@ sub dumpFiles {
         foreach my $view (@{$views->{$inputSchema}}) {
             my $definition = $self->writeViewDefinition($view, $inputSchema);
             $definition =~ s/\n/ /g;
+            $definition =~ s/;//g;
             $self->addTableAndViewSpecs({name => $view, type => 'view', definition => $definition, macro => 'SCHEMA'});
         }
     }
@@ -172,17 +173,26 @@ sub makeTableInfo {
     my %nullFields;
 
     while(my ($iSchema, $table, $isNull, $col, $charLen, $dataType, $numPrec) = $sh->fetchrow_array()) {
+
         $nullFields{$col} = uc($isNull) eq "YES" ? "" : "NOT NULL";
 
         if($dataType eq 'date') {
             $dateFields{$col} = "NA";
         }
-        elsif(($dataType eq 'numeric' || $dataType eq 'integer') && defined $numPrec ) {
+        elsif($dataType eq 'numeric'&& defined $numPrec ) {
             $numberFields{$col} = $numPrec;
-
+        }
+        elsif($dataType eq 'integer'&& defined $numPrec ) {
+            $numberFields{$col} = 10; ## interger is 32 bits; corresponds to number(10)
+        }
+        elsif($dataType eq 'smallint'&& defined $numPrec ) {
+            $numberFields{$col} = 5; ## smalint is 16 bits; corresponds to number(5)
+        }
+        elsif($dataType eq 'bigint'&& defined $numPrec ) {
+            $numberFields{$col} = 20; ## bigint is 64 bits; corresponds to number(20)
         }
         # number but unknown precision
-        elsif($dataType eq 'numeric' || $dataType eq 'integer') {
+        elsif($dataType eq 'numeric' || $dataType eq 'integer' || $dataType eq 'bigint' || $dataType eq 'smallint') {
             $numberFields{$col} = "NA";
 
         }
@@ -350,17 +360,19 @@ sub writeIndexes {
     $sh->finish();
 
     foreach my $indexName (keys %$indexKeys) {
-
         # the key here is ordered string like "4 2 3 1"
         my $key = $indexKeys->{$indexName};
         my @a = split(' ', $key);
 
 
+        my $isUnique = $indexCols->{$indexName}->{isUnique};
+        my $isPrimary = $indexCols->{$indexName}->{isPrimary};
+
         my @orderedColumns = map { $indexCols->{$indexName}->{col}->{$_} } @a;
         my $colString = join(",", @orderedColumns);
 
 
-        $self->addTableAndViewSpecs({name => $indexName, tableName => $tableName, type => 'index', orderedColumns => \@orderedColumns});
+        $self->addTableAndViewSpecs({name => $indexName, isUnique => $isUnique, isPrimary => $isPrimary, tableName => $tableName, type => 'index', orderedColumns => \@orderedColumns});
     }
 
 
