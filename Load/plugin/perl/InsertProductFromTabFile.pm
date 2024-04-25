@@ -37,6 +37,8 @@ use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
 use GUS::Model::SRes::OntologyTerm;
+use GUS::Supported::OntologyLookup;
+
 # ----------------------------------------------------------
 # Load Arguments
 # ----------------------------------------------------------
@@ -44,6 +46,13 @@ use GUS::Model::SRes::OntologyTerm;
 sub getArgsDeclaration {
   my $argsDeclaration  =
     [
+     fileArg({name           => 'soGusConfigFile',
+              descr          => 'The gus config file for database containing SO term info',
+              reqd           => 0,
+              mustExist      => 0,
+              format         =>'TXT',
+              constraintFunc => undef,
+              isList         => 0 }),
      fileArg({ name => 'file',
 	       descr => 'tab delimited file containing gene or transcript identifiers and product names',
 	       constraintFunc=> undef,
@@ -250,15 +259,27 @@ sub getEvidCodeLink {
   my ($self, $evCodeName) = @_;
 
   my $evCodeLink;
+
+  my $soGusConfigFile = $self->getArg('soGusConfigFile') if ($self->getArg('soGusConfigFile'));
+  my $soExtDbSpec = "GO_evidence_codes_RSRC|%";
+  my $soLookup = GUS::Supported::OntologyLookup->new($soExtDbSpec, $soGusConfigFile);
+  my $soSourceId = $soLookup->getSourceIdFromName($evCodeName);
+  unless($soSourceId) {
+    $self->error("Could not determine sourceId from evidence code: $evCodeName\n");
+  }
+
+  my $goecExtDbRlsId= $self->getOrCreateExtDbAndDbRls("GO_evidence_codes_RSRC", "N/A");
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new ({
-						       'source_id' => $evCodeName
+						       'name' => $evCodeName,
+						       'source_id' => $soSourceId,
+                                                       'external_database_release_id' => $goecExtDbRlsId
 						       });
 
-  if ($ontologyTerm->retrieveFromDB()) {
-    $evCodeLink = $ontologyTerm->getOntologyTermId();
-  } else {
-    $self->log ("ERROR", "Evidence code $evCodeName does not exists in SRes::OntologyTerm table");
+  unless ($ontologyTerm->retrieveFromDB()) {
+    $self->log ("WARNING", "Evidence code $evCodeName does not exists in SRes::OntologyTerm table... adding");
+    $ontologyTerm->submit();
   }
+  $evCodeLink = $ontologyTerm->getOntologyTermId();
 
   return $evCodeLink;
 }
@@ -282,17 +303,13 @@ sub InsertExternalDatabase{
     my $sth = $self->prepareAndExecute($sql);
     $extDbId = $sth->fetchrow_array();
 
-    if ($extDbId){
-	print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
-    }
-
-    else {
+    unless ($extDbId){
 	my $newDatabase = GUS::Model::SRes::ExternalDatabase->new({
 	    name => $dbName,
 	   });
 	$newDatabase->submit();
 	$extDbId = $newDatabase->getId();
-	print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
+	print STDERR "created new entry for database $dbName with primary key $extDbId\n";
     }
     return $extDbId;
 }
@@ -303,11 +320,7 @@ sub InsertExternalDatabaseRls{
 
     my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
 
-    if ($extDbRlsId){
-	print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
-    }
-
-    else{
+    unless ($extDbRlsId){
         $extDbRlsId = $self->makeNewReleaseId($extDbId,$dbVer);
 	print STDERR "Created new release id for $dbName with version $dbVer and release id $extDbRlsId\n";
     }
@@ -357,6 +370,7 @@ sub makeNewReleaseId{
 sub undoTables {
   return ('ApiDB.TranscriptProduct',
 	  'ApiDB.GeneFeatureProduct',
+	  'SRes.OntologyTerm',
 	  'SRes.ExternalDatabaseRelease',
 	  'SRes.ExternalDatabase',
 	 );
