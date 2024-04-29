@@ -391,6 +391,14 @@ sub createGusStudy {
   my $description = $study->getDescription();
   my $studyInternalAbbrev = $cleanedIdentifier;
   $studyInternalAbbrev =~ s/[-\.\s]/_/g; #clean name/id for use in oracle table name
+
+  # TODO:  This is a temporary solution for VDI Datasets.
+  # TODO:  because we can have multiple studies, the study_stable_id or study internal abbrev should be set in the investigation.xml
+  my $vdiId = $ENV{VDI_ID};
+  if($vdiId) {
+    $cleanedIdentifier = $vdiId;
+  }
+
   return $self->getGusModelClass('Study')->new({stable_id => $cleanedIdentifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
