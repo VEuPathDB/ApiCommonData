@@ -113,7 +113,7 @@ sub lookup {
 # Returns an array reference of the following place names (some can be undefined if not found, or are
 # above the $max_level requested)
 #
-# [ $country, $admin0, $admin2, $continent ]
+# [ $country, $admin1, $admin2, $continent ]
 #
 sub lookup_from_coords {
   my ($self, $lat, $long, $max_level) = @_;
