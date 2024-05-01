@@ -683,12 +683,11 @@ sub addLookedUpPlacenames {
     $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
   }
 
-  my ($gadm_names, $gadm_ids, $veugeo_names) = @{$self->{_geolookup}->lookup($lat, $long, $maxAdminLevel)};
+  my $gadm_names = $self->{_geolookup}->lookup($lat, $long, $maxAdminLevel);
   foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
     next unless(defined $gadm_names->[$level]);
     my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
     if ($variable_iri) {
-      ### TODO: find disambiguated name with vgeo
       $hash->{$variable_iri} = [ $gadm_names->[$level] ];
     }
   }
