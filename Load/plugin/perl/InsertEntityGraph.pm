@@ -683,7 +683,7 @@ sub addLookedUpPlacenames {
     $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
   }
 
-  my $gadm_names = $self->{_geolookup}->lookup($lat, $long, $maxAdminLevel);
+  my $gadm_names = $self->{_geolookup}->lookup_from_coords($lat, $long, $maxAdminLevel);
   foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
     next unless(defined $gadm_names->[$level]);
     my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
