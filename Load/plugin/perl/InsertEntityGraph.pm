@@ -613,6 +613,7 @@ sub addGeohashAndGadm {
   my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
   my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
   my $genbankCountrySourceId = ${ApiCommonData::Load::StudyUtils::genbankCountrySourceId};
+  my $geoFromPostGisSourceId = ${ApiCommonData::Load::StudyUtils::geoFromPostGisSourceId};
 
   my $coordsWereLookedUpFromCountry = 0;
 
@@ -643,6 +644,7 @@ sub addGeohashAndGadm {
       # https://ontobee.org/ontology/EUPATH?iri=http://purl.obolibrary.org/obo/EUPATH_0043241
       # or one of its children if we look up more fine-grained info from the genbank country
       $coordsWereLookedUpFromCountry = 1;
+      $hash->{$geoFromPostGisSourceId} = ["yes"];
     } else {
       return; # don't continue to geohash stuff if we didn't get lat/long!
     }
