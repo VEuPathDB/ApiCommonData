@@ -644,7 +644,7 @@ sub addGeohashAndGadm {
       # https://ontobee.org/ontology/EUPATH?iri=http://purl.obolibrary.org/obo/EUPATH_0043241
       # or one of its children if we look up more fine-grained info from the genbank country
       $coordsWereLookedUpFromCountry = 1;
-      $hash->{$geoFromPostGisSourceId} = ["yes"];
+      $hash->{$geoFromPostGisSourceId} = ["Yes"];
     } else {
       $self->log("PostGIS lookup failed for country:$country");
       return; # don't continue to geohash stuff if we didn't get lat/long!
