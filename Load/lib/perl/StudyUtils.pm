@@ -35,6 +35,7 @@ our $GEOHASH_PRECISION = {
 our $latitudeSourceId = "OBI_0001620";
 our $longitudeSourceId = "OBI_0001621";
 our $maxAdminLevelSourceId = "POPBIO_8000179";
+our $genbankCountrySourceId = "EUPATH_0006001";
 
 our @adminLevelSourceIds = qw/OBI_0001627 ENVO_00000005 ENVO_00000006 GAZ_00000013/; # country, admin1, admin2, continent
 

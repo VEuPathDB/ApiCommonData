@@ -612,21 +612,22 @@ sub addGeohashAndGadm {
 
   my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
   my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
-  my $genbankCountrySourceId = ${ApiCommonData::Load::StudyUtils::TDB_genbankCountrySourceId_TBD}; #<< TO DO <<
+  my $genbankCountrySourceId = ${ApiCommonData::Load::StudyUtils::genbankCountrySourceId};
 
   my $coordsWereLookedUpFromCountry = 0;
 
   # if not already provided, look up lat/long from the "genbank country" variable if we have it
   if (!(defined($hash->{$latitudeSourceId}) && defined($hash->{$longitudeSourceId}))) {
     # we can't do the lookup if we don't have the means to do it
-    return unless ($hash->{genbankCountrySourceId} && $self->{_geolookup});
+    return unless ($hash->{$genbankCountrySourceId} && $self->{_geolookup});
 
     # extract the country name from the free-text-ish genbank 'field'
     # example values to parse:
     # - Afghanistan
     # - Afghanistan:Kabul
     # - Algeria: Region of Bayadh,Laghouat,Adrar
-    my ($country) = $hash->{genbankCountrySourceId}->[0] =~ /^\s*(.+?)\s*(:|$)/;
+    # Note: leading/trailing whitespace already removed
+    my ($country) = $hash->{$genbankCountrySourceId}->[0] =~ /^([^:]+)\s*/; 
     return unless ($country); # TO DO: perhaps warn here???
 
     # now do the lookup
