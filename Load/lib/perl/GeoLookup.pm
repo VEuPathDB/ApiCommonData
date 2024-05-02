@@ -246,7 +246,7 @@ SQL
 
   my $row = $sth->fetchrow_arrayref();
   my $result = [];
-  if ($row) {
+  if ($row->[0]) {
     my ($point_string) = $row->[0];  # Extract the closest centroid to median
     my ($latitude, $longitude) = parse_point($point_string);
     $result = [ $latitude, $longitude ];

@@ -646,6 +646,7 @@ sub addGeohashAndGadm {
       $coordsWereLookedUpFromCountry = 1;
       $hash->{$geoFromPostGisSourceId} = ["yes"];
     } else {
+      $self->log("PostGIS lookup failed for country:$country");
       return; # don't continue to geohash stuff if we didn't get lat/long!
     }
   }
