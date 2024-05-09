@@ -15,7 +15,7 @@ databaseName=gadm
 gpkgFileBaseName="${gpkgFile##*/}"
 
 POSTGRES_IMAGE="docker://postgis/postgis:15-3.4";
-GDAL_IMAGE="docker://osgeo/gdal:ubuntu-full-latest";
+GDAL_IMAGE="docker://ghcr.io/osgeo/gdal:ubuntu-full-latest";
 
 mkdir -p ${workDir}/postgresData ${workDir}/postgresSocket ${workDir}/postgresInit
 
