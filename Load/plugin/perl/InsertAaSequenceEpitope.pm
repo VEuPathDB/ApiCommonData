@@ -26,12 +26,6 @@ sub getArgsDeclaration {
 		     mustExist => 1,
 		     format=>'Text',
              }),
-	stringArg({name => 'extDbSpec',
-                     descr => 'External database from whence this data came|version',
-                     constraintFunc=> undef,
-                     reqd  => 1,
-                     isList => 0
-             }),
 	];
     
     return $argsDeclaration;
@@ -134,8 +128,6 @@ sub fetchAASourceID {
 sub loadEpitopes {
 
 	my ($self, $peptideResultFile) = @_;
-	my $extDbSpec = $self->getArg('extDbSpec');
-  	my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";		
 	
 	open(my $peptides, $peptideResultFile) or die "Could not open file '$peptideResultFile' $!";
 
@@ -164,7 +156,6 @@ sub loadEpitopes {
 								blast_hit_identity => $number_of_matches,
 								blast_hit_align_len => $blast_hit_align_len,
 								alignment => $alignment,
-								external_database_release_id => $extDbRlsId});
 
 		$row_peptide->setParent($aa_sequence);
 	 	$row_peptide->submit();

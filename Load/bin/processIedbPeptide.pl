@@ -6,8 +6,9 @@ use Getopt::Long;
 
 
 
-my ($inputPepFasta, $peptideTab);
+my ($inputPepFasta, $peptideTab, $correctedFasta);
 &GetOptions("inputPepFasta=s"=> \$inputPepFasta,
+	    "correctedFasta=s"=> \$correctedFasta,
             "peptideTab=s"=> \$peptideTab,
     ) ;
 
@@ -18,7 +19,7 @@ unless (-e $inputPepFasta && $peptideTab) {
 sub usage {
     my ($e) = @_;
 
-    print STDERR "processIedb.pl --inputPepFasta <FILE> --peptideTab OUT \n";
+    print STDERR "processIedb.pl --inputPepFasta <FILE> --correctedFasta FastaOut --peptideTab OUT \n";
     die $e if($e);
 }
 
@@ -30,7 +31,11 @@ local $/ = ">";
 
 my $epitopesFile = $inputPepFasta;
 
-open(my $epitopes, $epitopesFile) or die "Could not open file '$epitopesFile' $!";
+system("sed 's/>/@/;s/>/PepId/g;s/@/>/' $epitopesFile > $correctedFasta");
+
+my $modifiedFatsa = $correctedFasta;
+
+open(my $epitopes, $modifiedFatsa) or die "Could not open file '$modifiedFatsa' $!";
 
 
 while(my $record = <$epitopes>){
