@@ -1,0 +1,1348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tuningConfig>
+
+  <tuningTable name="Taxonomy">
+    <comment>
+      NCBI Taxonomy.
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE Taxonomy&1
+        SELECT
+          t.ncbi_tax_id,
+          pt.ncbi_tax_id parent_ncbi_tax_id,
+          t.rank,
+          tn.name,
+          gc.ncbi_genetic_code_id ncbi_genetic_code_id,
+          mgc.ncbi_genetic_code_id ncbi_mitochondrial_genetic_code_id
+        FROM sres.taxon t
+          LEFT JOIN sres.taxon pt ON t.parent_id = pt.taxon_id
+          INNER JOIN sres.taxonname tn ON t.taxon_id = tn.taxon_id AND tn.name_class = 'scientific name'
+          INNER JOIN sres.geneticcode gc ON t.genetic_code_id = gc.genetic_code_id
+          INNER JOIN sres.geneticcode mgc ON t.mitochondrial_genetic_code_id = mgc.genetic_code_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="GeneticCode">
+    <comment>
+      Genetic Code from NCBI Taxonomy.
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE GeneticCode&1
+        SELECT
+          ncbi_genetic_code_id,
+          name,
+          code,
+          starts
+        FROM sres.geneticcode
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="SequenceOntology">
+    <comment>Sequence Ontology terms
+      Definition may be skipped if it's never used
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE SequenceOntology&1
+        SELECT
+          ot.source_id source_id,
+          ot.name,
+          ot.definition
+        FROM
+          sres.ontologyterm ot
+            JOIN sres.externaldatabaserelease edr ON ot.external_database_release_id = edr.external_database_release_id
+            JOIN sres.externaldatabase ed ON edr.external_database_id = ed.external_database_id
+        WHERE ed.name = 'SO_RSRC'
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="GeneOntology">
+    <comment>Terms for GO dataset</comment>
+    <externalDependency name="sres.OntologyTerm"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE GeneOntology&1 AS
+        SELECT
+          ot.source_id,
+          ot.name,
+          ot.definition,
+          parent.source_id ancestor_source_id
+        FROM
+          sres.ontologyterm ot
+            JOIN sres.externaldatabaserelease edr ON ot.external_database_release_id = edr.external_database_release_id
+            JOIN sres.externaldatabase ed ON edr.external_database_id = ed.external_database_id
+            LEFT JOIN sres.ontologyterm parent ON ot.ancestor_term_id = parent.ontology_term_id
+        WHERE ed.name = 'GO_RSRC'
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="GeneOntologySubset">
+    <comment>Terms for GO dataset</comment>
+    <externalDependency name="sres.OntologyTerm"/>
+    <externalDependency name="apibdb.GoSubset"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE GeneOntologySubset&1 AS
+        SELECT
+          ot.source_id,
+          gs.go_subset_term
+        FROM apidb.gosubset gs
+          INNER JOIN sres.ontologyterm ot ON gs.ontology_term_id = ot.ontology_term_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="GeneOntologyLevels" prefixEnabled="false">
+    <comment>the max and min depth of each ontology term in OntologyRelationship. Used by the GoTermSummary tuning table</comment>
+    <externalDependency name="sres.OntologyRelationship"/>
+    <externalDependency name="sres.OntologyTerm"/>
+    <intermediateTable name="is_a_links"/>
+    <intermediateTable name="roots"/>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE is_a_links AS
+        SELECT subject_term_id, object_term_id
+        FROM
+          sres.OntologyRelationship rel
+            INNER JOIN sres.OntologyTerm pred ON rel.predicate_term_id = pred.ontology_term_id
+        WHERE pred.name = 'is_a'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE roots AS
+        SELECT object_term_id FROM is_a_links
+        EXCEPT
+        SELECT subject_term_id FROM is_a_links
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE TABLE GeneOntologyLevels&1 as
+        WITH RECURSIVE levels(ontology_term_id, depth) AS (
+          SELECT object_term_id, 1 as depth FROM roots
+          UNION
+          SELECT is_a_links.subject_term_id, levels.depth + 1 as depth
+          FROM is_a_links, levels
+          WHERE is_a_links.object_term_id = levels.ontology_term_id
+        )
+        SELECT source_id go_source_id, min(depth) as min_depth, max(depth) as max_depth
+        FROM (
+          SELECT ontology_term_id, depth
+          FROM levels
+          WHERE ontology_term_id NOT IN (SELECT object_term_id FROM roots)
+          UNION
+          SELECT object_term_id, 0 FROM roots
+        ) t INNER JOIN sres.ontologyterm ot ON t.ontology_term_id = ot.ontology_term_id
+        GROUP BY source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX olev_termix&1 ON OntologyLevels&1 (go_source_id, min_depth, max_depth)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="InterproDomainDbs">
+    <comment>DBRefs from InterProScan</comment>
+    <externalDependency name="sres.dbref"/>
+    <externalDependency name="sres.externaldatabase"/>
+    <externalDependency name="sres.externaldatabaserelease"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE InterproDomainDbs&1 AS
+        SELECT
+          ed.name interpro_db_name,
+          primary_identifier interpro_primary_id,
+          secondary_identifier interpro_secondary_id,
+          remark AS description
+        FROM sres.DbRef dr
+          INNER JOIN sres.ExternalDatabaseRelease edr ON dr.external_database_release_id = edr.external_database_release_id
+          INNER JOIN sres.ExternalDatabase ed ON edr.external_database_id = ed.external_database_id
+        WHERE ed.name IN ('PRINTS','SUPERFAMILY','PRODOM','PFAM','PROSITEPROFILES','INTERPRO','PIRSF','SMART','GENE3D','TIGRFAM')
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="EnzymeClass">
+    <comment> Enzyme Class
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE EnzymeClass&1
+        SELECT
+          ec_number,
+          ec_number_1,
+          ec_number_2,
+          ec_number_3,
+          ec_number_4,
+          description
+        FROM
+          sres.enzymeclass;
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="ECNumberGenus">
+    <comment> ECNumberGenus
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE ECNumberGenus&1
+        SELECT
+          ec_number,
+          genus
+        FROM
+          apidb.ecnumbergenus
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="LegacyDataset">
+    <comment> apidb.legacydataset table dump for Legacy_Datasets_RSRC dataset
+      This table is also populated by Production_Datasets_RSRC in the component so need to consider how they will be merged for the webdb model
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE LegacyDataset&1
+        SELECT
+          dataset_presenter_id,
+          dataset_presenter_name,
+          project_name
+        FROM
+          apidb.legacydataset
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="IEDBEpitopes">
+    <comment>IEDB Epitope Sequences for all taxa</comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE IEDBEpitopes&1
+        SELECT
+          taxon.ncbi_tax_id,
+          ot.source_id sequence_ontology_source_id,
+          aas.source_id iedb_epitope_source_id,
+          aas.sequence,
+          aas.description,
+          aas.molecular_weight,
+          aas.length
+        FROM
+          dots.motifaasequence aas,
+          sres.taxon,
+          sres.ontologyterm ot
+        WHERE
+          aas.sequence_ontology_id = ot.ontology_term_id
+          AND aas.taxon_id = taxon.taxon_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="PDBProteinSequences">
+    <comment> PDBProteinSequences
+      Note that we don't have sequence, mol_weight, or length because --nosequence option is used when loading.
+    </comment>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PDBProteinSequences&1
+        SELECT
+          taxon.ncbi_tax_id,
+          ot.source_id  sequence_ontology_source_id,
+          aas.source_id pdb_source_id,
+          aas.description,
+        FROM
+          dots.externalaasequence aas
+        , sres.taxon
+        , sres.ontologyterm ot
+        WHERE aas.sequence_ontology_id = ot.ontology_term_id
+          AND aas.taxon_id = taxon.taxon_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="PathwayAttributes" prefixEnabled="false">
+    <comment>Attributes for Metabolic Pathways</comment>
+    <externalDependency name="sres.Pathway"/>
+    <externalDependency name="sres.PathwayNode"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.OntologyTerm"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PathwayAttributes&1 as
+        SELECT
+            p.source_id
+          , p.name
+          , enz.total_enzyme_count
+          , cpd.total_compound_count
+          , p.url
+          , replace(replace(replace(ed.name, 'Pathways_', ''), 'BioCyc_', ''), '_RSRC', '') as pathway_source
+          , ed.name as external_db_name
+          , edr.version as external_db_version
+        FROM
+            sres.pathway p
+          , sres.externalDatabase ed
+          , sres.externalDatabaseRelease edr
+          ,(SELECT
+              COUNT( *) AS total_compound_count
+            , pathway_id
+            FROM
+              sres.pathwayNode pn
+            , SRES.ontologyterm ot
+            WHERE
+              pn.pathway_node_type_id = ot.ontology_term_id
+              AND ot.name = 'molecular entity'
+            GROUP BY
+              pathway_id
+          ) cpd
+          ,(SELECT
+              COUNT( *) AS total_enzyme_count
+            , pathway_id
+            FROM
+              sres.pathwayNode pn
+            , SRES.ontologyterm ot
+            WHERE
+              pn.pathway_node_type_id = ot.ontology_term_id
+              AND ot.name = 'enzyme'
+            GROUP BY
+              pathway_id
+          ) enz
+        WHERE
+          ed.external_database_id = edr.external_database_id
+          AND edr.external_database_release_id = p.external_database_release_id
+          AND cpd.pathway_id = p.pathway_id
+          AND enz.pathway_id = p.pathway_id
+          AND source_id NOT IN('ec01100', 'ec01110', 'ec01120')
+          -- temporarily remove MPMP from release 46
+          AND ed.name NOT LIKE '%MPMP%'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNIQUE INDEX PathAttr_sourceId_pwaySrc&1
+          ON PathwayAttributes&1 (source_id, pathway_source)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX PathAttr_ix&1
+          ON PathwayAttributes&1 (source_id, name, pathway_source, total_enzyme_count, total_compound_count)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="PathwayReactionsXrefs" prefixEnabled="false">
+    <comment> for PathwayTables.PathwayReactionsXrefs query</comment>
+    <externalDependency name="sres.Pathway"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="apidb.PathwayReactionRel"/>
+    <externalDependency name="apidb.PathwayReactionXref"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PathwayReactionsXrefs&1 as
+        SELECT
+          tbl.source_id,
+          tbl.pathway_source,
+          tbl.alt_pathway_source_id,
+          tbl.alt_pathway_source,
+          tbl.name,
+          tbl.reaction_count,
+          tbl.alt_reaction_count,
+          tbl.pct,
+          tbl.overlap_count
+        FROM (
+          WITH pathway_reaction AS (
+            SELECT DISTINCT
+              pathway_id
+              , pathway_reaction_id
+            FROM apidb.pathwayreactionrel
+          )
+          , pathway_counts AS (
+            SELECT pathway_id, count(*) AS ct
+            FROM pathway_reaction
+            GROUP BY pathway_id
+          )
+          , pathway_attributes AS (
+            SELECT
+              p.pathway_id,
+              p.source_id,
+              p.name,
+              replace(replace(replace(ed.name, 'Pathways_', ''), 'BioCyc_', ''), '_RSRC', '') as pathway_source
+            FROM
+            sres.pathway p
+              JOIN sres.externaldatabaserelease edr ON p.external_database_release_id = edr.external_database_release_id
+              JOIN sres.externaldatabase ed ON edr.external_database_id = ed.external_database_id
+          )
+          SELECT pa1.source_id
+            , pa1.pathway_source as pathway_source
+            , pa2.source_id AS alt_pathway_source_id
+            , pa1.pathway_source as alt_pathway_source
+            , pa2.name
+            , pc1.ct AS reaction_count
+            , pc2.ct AS alt_reaction_count
+            , CASE
+                WHEN pc1.ct < pc2.ct
+                THEN count(*) / pc1.ct
+                ELSE count(*) / pc2.ct
+              END * 100 AS pct
+            , count(*) AS overlap_count
+          FROM
+            pathway_attributes pa1
+            , pathway_attributes pa2
+            , pathway_reaction ap
+            , pathway_counts pc1
+            , pathway_counts pc2
+            , (
+              SELECT DISTINCT
+                pr.pathway_id
+                , prx.associated_reaction_id AS pathway_reaction_id
+              FROM pathway_reaction pr
+                 , apidb.pathwayreactionxref prx
+              WHERE prx.pathway_reaction_id = pr.pathway_reaction_id
+              UNION
+              SELECT DISTINCT
+                pr.pathway_id
+                , pr.pathway_reaction_id
+              FROM pathway_reaction pr
+            ) ax
+          WHERE ap.pathway_reaction_id = ax.pathway_reaction_id
+           AND pa1.pathway_id = ap.pathway_id
+           AND pa2.pathway_id = ax.pathway_id
+           AND pa1.pathway_id = pc1.pathway_id
+           AND pa2.pathway_id = pc2.pathway_id
+           AND pa1.pathway_id != pa2.pathway_id
+           GROUP BY pa1.source_id
+             , pa1.pathway_source
+             , pa2.source_id
+             , pa2.pathway_source
+             , pa2.name
+             , pc1.ct
+             , pc2.ct
+          HAVING count(*) > 1
+        ) tbl
+        ORDER BY tbl.pct DESC
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundProperties"  prefixEnabled="false">
+    <comment> Properties table for ChEBI Compounds</comment>
+    <externalDependency name="chebi.Compounds"/>
+    <externalDependency name="chebi.Names"/>
+    <externalDependency name="chebi.Chemical_Data"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundProperties&1 AS
+        SELECT
+          c.chebi_accession AS source_id,
+          parent.chebi_accession parent_source_id,
+          c.name AS compound_name,
+          substr(string_agg(cn.name, ';'), 1, 1000) AS other_names,
+          substr(string_agg(ciup.iupac_name, ';'), 1, 1000) AS iupac_name,
+          substr(string_agg(csyn.syn, ';'), 1, 1000) AS syn,
+          c.definition, m.mass,
+          string_agg(formu.formula, ';' order by formu.formula) AS formula,
+          string_agg(sec.chebi_accession, ';' order by sec.chebi_accession) AS secondary_ids
+        FROM  chebi.compounds c
+          LEFT JOIN chebi.compounds parent ON c.parent_id = parent.id
+          LEFT JOIN ( SELECT compound_id,  NAME FROM chebi.names WHERE TYPE='NAME')
+            cn ON  c.ID = cn.compound_id
+          LEFT JOIN ( SELECT compound_id,  MIN(NAME) AS iupac_name FROM chebi.names WHERE TYPE='IUPAC NAME' GROUP BY compound_id)
+            ciup ON c.ID = ciup.compound_id
+          LEFT JOIN ( SELECT compound_id,  MIN(NAME) AS syn FROM chebi.names WHERE type='SYNONYM' GROUP BY compound_id)
+            csyn ON c.ID = csyn.compound_id
+          LEFT JOIN ( SELECT compound_id, chemical_data AS formula FROM chebi.chemical_data WHERE TYPE='FORMULA')
+            formu ON  c.ID = formu.compound_id
+          LEFT JOIN ( SELECT compound_id, chemical_data AS mass FROM chebi.chemical_data WHERE TYPE='MASS' and chemical_data != 'NaN')
+            m ON c.ID = m.compound_id
+          LEFT JOIN ( SELECT parent_id, chebi_accession FROM chebi.compounds)
+            sec ON c.ID = sec.parent_id
+        WHERE NOT c.status in ('D', 'F')
+        GROUP BY c.chebi_accession, parent.chebi_accession, c.name, c.definition, m.mass
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX CompoundProperties_idx&1 ON CompoundProperties&1 (source_id)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundAttributes"  prefixEnabled="false">
+    <comment> The BFMV for the compound WDK record type. Used by the model for the
+      compound record and queries, as well as in the creation of the
+      PathwayCompounds tuning table. Propagated to portal instances.
+      Note: children of ChEBI compounds are excluded, but data of these is gathered in the (parent) entries.
+    </comment>
+    <internalDependency name="CompoundProperties"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundAttributes&1 AS
+          SELECT
+            p.source_id,
+            p.compound_name,
+            STRING_AGG(childc.other_names, ';' ORDER BY childc.other_names) AS other_names,
+            STRING_AGG(childc.iupac_name, ';' ORDER BY childc.iupac_name) AS iupac_name,
+            STRING_AGG(childc.syn, ';' ORDER BY childc.syn) AS syn,
+            p.definition,
+            p.secondary_ids,
+            STRING_AGG(childc.formula, ';' ORDER BY childc.formula) AS formula,
+            AVG(childc.mass::numeric) AS mass
+          FROM
+            CompoundProperties p,
+            (
+              SELECT source_id, parent_source_id, other_names, iupac_name, syn, mass, formula
+              FROM CompoundProperties
+            ) childc
+          WHERE p.parent_source_id IS NULL
+            AND (p.source_id = childc.parent_source_id OR p.source_id = childc.source_ID)
+          GROUP BY p.source_id, p.compound_name, p.definition, p.secondary_ids
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX CompoundAttributes_idx&1 ON CompoundAttributes&1 (source_id)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundId" prefixEnabled="false">
+    <comment> Alias table for Compounds.
+      Compound column is the source_id from CompoundAttributes (chEBI_ID).
+      ID can have this same ID, or mapping KEGG ID, or Name, or Synonym.
+    </comment>
+    <externalDependency name="chebi.Compounds"/>
+    <externalDependency name="chebi.Database_Accession"/>
+    <externalDependency name="chebi.Names"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundId&1 AS
+        SELECT source_id AS id, source_id AS compound, 'same ID' AS type, '' AS source
+        FROM CompoundAttributes
+        UNION
+        SELECT p.source_id AS id, ca.source_id AS compound, 'child ID' AS type, '' AS source
+        FROM
+          CompoundAttributes ca,
+          CompoundProperties p
+        WHERE ca.source_id = p.parent_source_id
+        UNION
+        SELECT da.accession_number AS id, p.source_id AS compound, 'KEGG' AS type, '' AS source
+        FROM
+          chebi.database_accession da
+            NATURAL JOIN chebi.compounds c,
+          CompoundAttributes p
+        WHERE da.type = 'KEGG COMPOUND accession'
+          AND c.chebi_accession = p.source_id
+        UNION
+        SELECT DISTINCT da.accession_number AS id, p.chebi_accession AS compound, 'KEGG' AS type, '' AS source
+        FROM
+          chebi.database_accession da,
+          chebi.compounds c,
+          chebi.compounds p
+        WHERE NOT p.status IN ('D', 'F')
+          AND da.type = 'KEGG COMPOUND accession'
+          AND da.compound_id = c.id
+          AND c.parent_id = p.id
+        UNION
+        SELECT n.name AS id, ca.source_id AS compound, 'name' AS type, n.source
+        FROM
+          CompoundAttributes ca,
+          chebi.names n
+            NATURAL JOIN chebi.compounds c
+        WHERE ca.source_id = c.chebi_accession
+          AND n.type = 'NAME'
+        UNION
+        SELECT n.name AS id, ca.source_id AS compound, 'synonym' AS type, n.source
+        FROM
+          CompoundAttributes ca,
+          chebi.names n
+            NATURAL JOIN chebi.compounds c
+        WHERE ca.source_id = c.chebi_accession
+          AND n.type = 'SYNONYM'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX CompoundId_idx&1 ON CompoundId&1 (id, compound)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundStructureProperties">
+    <comment> for use in "CompoundTables.Properties" query </comment>
+    <internalDependency name="CompoundAttributes"/>
+    <externalDependency name="chebi.Chemical_Data"/>
+    <externalDependency name="chebi.Structures"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundStructureProperties&1 AS
+        SELECT *
+        FROM
+          (
+            SELECT ca.source_id, struct.type, struct.structure AS value
+            FROM
+              CompoundAttributes ca,
+              chebi.structures struct
+                NATURAL JOIN chebi.compounds c
+            WHERE ca.source_id = c.chebi_accession
+              AND struct.dimension = '1D'
+            UNION
+            SELECT
+              ca.source_id, cd.type,
+              CASE
+                WHEN cd.type = 'FORMULA'
+                  THEN REGEXP_REPLACE(cd.chemical_data, '(\d)', '<sub>\1</sub>')
+                ELSE chemical_data END AS value
+            FROM
+              CompoundAttributes ca,
+              chebi.chemical_data cd
+                NATURAL JOIN chebi.compounds c
+            WHERE ca.source_id = c.chebi_accession
+          ) t
+        ORDER BY type
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundDefaultStructure">
+    <comment> for use in "CompoundAttributes.DefaultStructure" query </comment>
+    <internalDependency name="CompoundAttributes"/>
+    <internalDependency name="CompoundId"/>
+    <externalDependency name="chebi.Structures"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundDefaultStructure&1 AS
+        SELECT c.source_id, default_structure
+        FROM
+          CompoundAttributes c
+            LEFT JOIN (
+            WITH nodes AS (
+              SELECT id, compound
+              FROM CompoundId
+              WHERE type IN ('same ID', 'child ID')
+            )
+            SELECT
+              ca.source_id,
+              s.STRUCTURE AS default_structure
+            FROM
+              CompoundAttributes ca,
+              chebi.structures s,
+              nodes n
+            WHERE ca.source_id = n.compound
+              AND n.id = 'CHEBI:' || s.compound_id
+              AND s.type = 'mol'
+              AND s.dimension = '2D'
+              AND s.default_structure = 'Y'
+          ) s ON c.source_id = s.source_id
+        ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundIupacNames">
+    <comment> for use in "CompoundTables.IupacNames" query </comment>
+    <internalDependency name="CompoundAttributes"/>
+    <externalDependency name="chebi.Names"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundIupacNames AS
+        SELECT
+          ca.source_id,
+          n.name AS value
+        FROM
+          chebi.names n
+            INNER JOIN chebi.compounds c ON n.compound_id = c.id
+            RIGHT JOIN CompoundAttributes ca ON ca.source_id = c.chebi_accession
+        WHERE n.type = 'IUPAC NAME'
+        ORDER BY LOWER(n.name)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundSynonyms">
+    <comment> for use in "CompoundAttributes.Synonyms" query </comment>
+    <internalDependency name="CompoundAttributes"/>
+    <externalDependency name="chebi.Names"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundSynonyms&1 AS
+        SELECT
+          ca.source_id,
+          STRING_AGG(n.name, ', ') AS synonyms
+        FROM
+          (chebi.names n
+            INNER JOIN chebi.compounds c ON n.compound_id = c.id)
+            RIGHT JOIN CompoundAttributes ca ON ca.source_id = c.chebi_accession
+        GROUP BY ca.source_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="PathwayCompounds">
+    <comment> Each record represents a 5-tuple of (reaction, compound, pathway,
+      enzyme, type). Used extensively in the model for pathway-related
+      queries, as well as by getImageMap.pl.
+    </comment>
+    <externalDependency name="sres.Pathway"/>
+    <externalDependency name="sres.PathwayNode"/>
+    <externalDependency name="sres.PathwayRelationship"/>
+    <externalDependency name="sres.OntologyTerm"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="apidb.PathwayReactionRel"/>
+    <externalDependency name="apidb.PathwayReaction"/>
+    <externalDependency name="chebi.Compounds"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PathwayCompounds&1 AS
+        SELECT
+          pathway_source_id
+          , reaction_id
+          , ext_db_name
+          , ext_db_version
+          , compound_source_id
+          , c.chebi_accession
+          , case when c.chebi_accession is not null then 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=' || c.chebi_accession else null end as chebi_url
+          , type
+        FROM (
+          SELECT
+            p.source_id pathway_source_id
+            , prx.PATHWAY_REACTION_ID as reaction_id
+            , ed.NAME as ext_db_name
+            , edr.version as ext_db_version
+            , pn.DISPLAY_LABEL as compound_source_id
+            , 'substrate' as type
+            , pn.row_id
+          FROM
+            APIDB.PATHWAYREACTION prx
+            , SRES.PATHWAY p
+            , APIDB.PATHWAYREACTIONREL prr
+            , SRES.PATHWAYNODE pn
+            , SRES.PATHWAYRELATIONSHIP prel
+            , SRES.ONTOLOGYTERM ot
+            , SRES.EXTERNALDATABASE ed
+            , SRES.EXTERNALDATABASERELEASE edr
+          WHERE p.PATHWAY_ID = prr.PATHWAY_ID
+            AND prx.PATHWAY_REACTION_ID = prr.PATHWAY_REACTION_ID
+            AND prr.PATHWAY_RELATIONSHIP_ID = prel.PATHWAY_RELATIONSHIP_ID
+            AND prel.NODE_ID = pn.PATHWAY_NODE_ID
+            AND ot.NAME = 'molecular entity'
+            AND ot.ONTOLOGY_TERM_ID = pn.PATHWAY_NODE_TYPE_ID
+            AND p.EXTERNAL_DATABASE_RELEASE_ID = edr.EXTERNAL_DATABASE_RELEASE_ID
+            AND edr.EXTERNAL_DATABASE_ID = ed.EXTERNAL_DATABASE_ID
+        ) t LEFT OUTER JOIN CHEBI.COMPOUNDS c on t.row_id = c.ID
+        UNION
+        SELECT
+          pathway_source_id
+          , reaction_id
+          , ext_db_name
+          , ext_db_version
+          , compound_source_id
+          , c.chebi_accession
+          , case when c.chebi_accession is not null then 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=' || c.chebi_accession else null end as chebi_url
+          , type
+        FROM (
+          SELECT
+            p.source_id pathway_source_id
+            , prx.PATHWAY_REACTION_ID as reaction_id
+            , ed.NAME as ext_db_name
+            , edr.version as ext_db_version
+            , pn.DISPLAY_LABEL as compound_source_id
+            , 'product' as type
+            , pn.row_id
+          FROM
+            APIDB.PATHWAYREACTION prx
+            , SRES.PATHWAY p
+            , APIDB.PATHWAYREACTIONREL prr
+            , SRES.PATHWAYNODE pn
+            , SRES.PATHWAYRELATIONSHIP prel
+            , SRES.ONTOLOGYTERM ot
+            , SRES.EXTERNALDATABASE ed
+            , SRES.EXTERNALDATABASERELEASE edr
+          WHERE p.PATHWAY_ID = prr.PATHWAY_ID
+            AND prx.PATHWAY_REACTION_ID = prr.PATHWAY_REACTION_ID
+            AND prr.PATHWAY_RELATIONSHIP_ID = prel.PATHWAY_RELATIONSHIP_ID
+            AND prel.ASSOCIATED_NODE_ID = pn.PATHWAY_NODE_ID
+            AND ot.NAME = 'molecular entity'
+            AND ot.ONTOLOGY_TERM_ID = pn.PATHWAY_NODE_TYPE_ID
+            AND p.EXTERNAL_DATABASE_RELEASE_ID = edr.EXTERNAL_DATABASE_RELEASE_ID
+            AND edr.EXTERNAL_DATABASE_ID = ed.EXTERNAL_DATABASE_ID
+        ) t2 LEFT OUTER JOIN CHEBI.COMPOUNDS c on t2.row_id = c.ID
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index PthCmpd_id_ix&1
+        on PathwayCompounds&1(pathway_source_id, reaction_id, ext_db_name)
+        tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="PathwayReactions">
+    <comment>Aggregates reactions irrespective of pathway.  Required to determine if BioCyc reactions are reversible.  Used extensively in the model in conjunction with pathwaycompounds for pathway related queries</comment>
+    <internalDependency name="PathwayCompounds"/>
+    <internalDependency name="CompoundAttributes"/>
+    <externalDependency name="sres.Pathway"/>
+    <externalDependency name="sres.PathwayNode"/>
+    <externalDependency name="sres.PathwayRelationship"/>
+    <externalDependency name="sres.OntologyTerm"/>
+    <externalDependency name="sres.EnzymeClass"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="apidb.PathwayReactionRel"/>
+    <externalDependency name="apidb.PathwayReaction"/>
+    <intermediateTable name="Rep"/>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE rep
+        SELECT DISTINCT
+          pr.PATHWAY_REACTION_ID as reaction_id
+          , pr.SOURCE_ID as reaction_source_id
+          , pn.DISPLAY_LABEL as enzyme
+          , coalesce(ca.compound_name, pc.compound_source_id) as compound
+          , prel.is_reversible as is_reversible_og
+          , last_value(prel.is_reversible) OVER (partition by pr.pathway_reaction_id ORDER BY prel.is_reversible ASC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) as is_reversible
+          , first_value(pc.type) over (partition by pr.pathway_reaction_id, pr.SOURCE_ID, pn.DISPLAY_LABEL, prel.IS_REVERSIBLE, coalesce(pc.chebi_accession, pc.compound_source_id), coalesce(ca.compound_name, pc.compound_source_id) ORDER BY pc.pathway_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as type
+        FROM
+          sres.pathway p
+          , apidb.pathwayreaction pr
+          , APIDB.PATHWAYREACTIONREL prr
+          , SRES.PATHWAYNODE pn
+          , SRES.PATHWAYRELATIONSHIP prel
+          , SRES.ONTOLOGYTERM ot
+          , PathwayCompounds pc
+          LEFT JOIN CompoundAttributes ca ON pc.chebi_accession = ca.source_id
+        WHERE p.PATHWAY_ID = prr.PATHWAY_ID
+          AND pr.PATHWAY_REACTION_ID = prr.PATHWAY_REACTION_ID
+          AND prr.PATHWAY_RELATIONSHIP_ID = prel.PATHWAY_RELATIONSHIP_ID
+          AND prel.NODE_ID = pn.PATHWAY_NODE_ID
+          AND ot.name = 'enzyme'
+          AND ot.ONTOLOGY_TERM_ID = pn.PATHWAY_NODE_TYPE_ID
+          AND pc.PATHWAY_ID = p.PATHWAY_ID
+          AND pc.REACTION_id = pr.PATHWAY_REACTION_ID
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PathwayReactions&1 AS
+        SELECT
+          reaction_id
+          , reaction_source_id
+          , reaction_url
+          , ext_db_name
+          , ext_db_version
+          , enzyme
+          , substrates_html || ' ' || sign || ' ' || products_html as equation_html
+          , substrates_text || ' ' || sign || ' ' || products_text as equation_text
+          , case when sign = '<=>' then 1 else 0 end as is_reversible
+          , substrates_text
+          , products_text
+          , CASE
+              WHEN enzyme like '%.%.%.%' and enzyme != '-.-.-.-'
+                THEN 'https://enzyme.expasy.org/EC/' || enzyme
+              ELSE reaction_url
+            END AS expasy_url
+          , CASE
+              WHEN enzyme like '%.%.%.%' and enzyme != '-.-.-.-'
+                THEN '<a href="' || 'https://enzyme.expasy.org/EC/' || enzyme || '">' || enzyme || '</a>'
+              ELSE CASE
+                WHEN reaction_url IS NOT NULL
+                  THEN '<a href="' || reaction_url || '">' || enzyme || '</a>'
+                ELSE enzyme
+              END
+            END AS expasy_html
+        FROM (
+          SELECT
+            reaction_id
+            , reaction_source_id
+            , reaction_url
+            , ext_db_name
+            , ext_db_version
+            , enzyme
+            , (case when (string_agg (case when type_list like '%substrate%' then compound end, ',' order by compound)) = (string_agg (case when type_list like '%product%' then compound end, ',' order by compound)) or is_reversible = 1 then '<=>' else '=>' end) as sign
+            , string_agg(case when type like '%substrate%' then compound_url end, ' + ' order by compound_url) as substrates_html
+            , string_agg(case when type like '%substrate%' then compound end, ' + ' order by compound) as substrates_text
+            , string_agg(case when type like '%product%' then compound_url end, ' + ' order by compound_url) as products_html
+            , string_agg(case when type like '%product%' then compound end, ' + ' order by compound) as products_text
+          FROM (
+            SELECT DISTINCT
+              pr.PATHWAY_REACTION_ID as reaction_id
+              , pr.SOURCE_ID as reaction_source_id
+              , ed.NAME as ext_db_name
+              , edr.VERSION as ext_db_version
+              , cast(pn.DISPLAY_LABEL as varchar(20)) as enzyme
+              , min(rep.is_reversible) as is_reversible
+              , min(rep.type) as type
+              , string_agg (pc.type, ',' order by p.pathway_id) as type_list
+              , coalesce(ca.compound_name, pc.compound_source_id) as compound
+              , CASE
+                WHEN coalesce(pc.CHEBI_ACCESSION, pc.compound_source_id) LIKE 'CHEBI%'
+                THEN '<a href="/a/app/record/compound/' || coalesce(pc.chebi_accession, pc.compound_source_id)
+                     || '" title="' || coalesce(pc.chebi_accession, pc.compound_source_id) || '">' || coalesce(ca.compound_name, pc.compound_source_id) || '</a>'
+                ELSE coalesce(pc.chebi_accession, pc.compound_source_id)
+                END as compound_url
+              , CASE (replace(replace(replace(ed.name, 'Pathways_', ''), 'BioCyc_', ''), '_RSRC', ''))
+                WHEN 'KEGG' THEN 'https://www.genome.jp/dbget-bin/www_bget?rn:' || pr.source_id
+                WHEN 'MetaCyc' THEN 'https://metacyc.org/META/new-image?type=REACTION' || chr(38) || 'object=' || pr.source_id
+                WHEN 'TrypanoCyc' THEN 'http://vm-trypanocyc.toulouse.inra.fr/TRYPANO/new-image?type=REACTION' || chr(38) || 'object=' || pr.source_id
+                WHEN 'LeishCyc' THEN 'http://vm-trypanocyc.toulouse.inra.fr/LEISH/new-image?tyrp=REACTION' || chr(38) || 'object=' || pr.source_id
+                WHEN 'FungiCyc' THEN NULL
+                END as reaction_url
+            FROM
+              sres.pathway p
+              , apidb.pathwayreaction pr
+              , APIDB.PATHWAYREACTIONREL prr
+              , SRES.PATHWAYNODE pn
+              , SRES.PATHWAYRELATIONSHIP prel
+              , SRES.EXTERNALDATABASE ed
+              , SRES.EXTERNALDATABASERELEASE edr
+              , SRES.ONTOLOGYTERM ot
+              , rep
+              , PathwayCompounds pc
+              LEFT JOIN CompoundAttributes ca ON pc.chebi_accession = ca.source_id
+            WHERE p.PATHWAY_ID = prr.PATHWAY_ID
+              AND pr.PATHWAY_REACTION_ID = prr.PATHWAY_REACTION_ID
+              AND prr.PATHWAY_RELATIONSHIP_ID = prel.PATHWAY_RELATIONSHIP_ID
+              AND prel.NODE_ID = pn.PATHWAY_NODE_ID
+              AND ot.name = 'enzyme'
+              AND ot.ONTOLOGY_TERM_ID = pn.PATHWAY_NODE_TYPE_ID
+              AND pc.EXT_DB_NAME = ed.NAME
+              AND pc.EXT_DB_VERSION = edr.VERSION
+              AND ed.EXTERNAL_DATABASE_ID = edr.EXTERNAL_DATABASE_ID
+              AND pc.PATHWAY_ID = p.PATHWAY_ID
+              AND pc.REACTION_id = pr.PATHWAY_REACTION_ID
+              AND rep.reaction_id = pr.pathway_reaction_id
+              AND rep.reaction_source_id = pr.source_id
+              AND rep.compound = coalesce(ca.compound_name, pc.compound_source_id)
+              AND rep.enzyme = pn.DISPLAY_LABEL
+              AND rep.is_reversible_og = prel.is_reversible
+            GROUP BY pr.pathway_reaction_id, pr.SOURCE_ID, ed.NAME, edr.VERSION, pn.DISPLAY_LABEL, prel.IS_REVERSIBLE
+              , coalesce(pc.chebi_accession, pc.compound_source_id)
+              , coalesce(ca.compound_name, pc.compound_source_id)
+          ) t1
+          GROUP BY reaction_id, reaction_source_id, reaction_url, ext_db_name, ext_db_version, enzyme, is_reversible
+        ) t2
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index PathRcts_id_ix&1
+        on PathwayReactions&1 (reaction_id, reaction_source_id, enzyme, expasy_url, ext_db_name)
+        tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="PathwayNodes">
+    <comment>Nodes and edges for pathway maps</comment>
+    <internalDependency name="PathwayAttributes"/>
+    <internalDependency name="PathwayReactions"/>
+    <internalDependency name="CompoundId"/>
+    <externalDependency name="sres.pathway"/>
+    <externalDependency name="sres.pathwaynode"/>
+    <externalDependency name="sres.pathwayrelationship"/>
+    <externalDependency name="sres.ontologyterm"/>
+    <externalDependency name="sres.enzymeclass"/>
+    <externalDependency name="apidb.pathwayreaction pr"/>
+    <externalDependency name="apidb.pathwayreactionrel prr"/>
+    <externalDependency name="chebi.compounds"/>
+    <externalDependency name="chebi.structures"/>
+    <ancillaryTable name="PathwayEdges"/>
+    <intermediateTable name="NodesWithTypes"/>
+    <intermediateTable name="ReactionsWithReversibility"/>
+    <intermediateTable name="EnzymeEdges"/>
+    <intermediateTable name="ParentNodes"/>
+    <intermediateTable name="NodesWithParents"/>
+    <intermediateTable name="EnzymeReactions"/>
+    <intermediateTable name="ParentsForEdges"/>
+    <sql>
+      <![CDATA[
+      CREATE UNLOGGED TABLE NodesWithTypes AS
+      SELECT
+        p.source_id AS pathway_source_id
+        , CASE WHEN pa.name IS NOT NULL THEN pa.name ELSE pn.display_label END AS display_label
+        , pa.url
+        , CASE WHEN pa.name IS NOT NULL THEN pa.name ELSE pn.display_label END AS name
+        , pa.source_id AS node_identifier
+        , pn.pathway_node_id AS pathway_node_id
+        , pn.x
+        , pn.y
+        , pn.width
+        , pn.height
+        , pn.cellular_location
+        , ot.name AS type
+        , NULL AS default_structure
+      FROM sres.pathwaynode pn
+        INNER JOIN sres.pathway p ON pn.pathway_id = p.pathway_id
+        INNER JOIN sres.ontologyterm ot ON pn.pathway_node_type_id = ot.ontology_term_id
+        LEFT JOIN PathwayAttributes pa ON pn.display_label = pa.source_id
+      WHERE ot.name = 'metabolic process'
+      UNION ALL
+      SELECT
+        p.source_id AS pathway_source_id
+        , pn.display_label
+        , NULL AS url
+        , coalesce(ec.description, pn.display_label) AS name
+        , ec.ec_number AS node_identifier
+        , pn.pathway_node_id AS pathway_node_id
+        , pn.x
+        , pn.y
+        , pn.width
+        , pn.height
+        , pn.cellular_location
+        , ot.name AS type
+        , NULL AS default_structure
+      FROM sres.pathwaynode pn
+        INNER JOIN sres.pathway p ON pn.pathway_id = p.pathway_id
+        INNER JOIN sres.ontologyterm ot ON pn.pathway_node_type_id = ot.ontology_term_id
+        LEFT JOIN sres.enzymeclass ec ON pn.row_id = ec.enzyme_class_id
+      WHERE ot.name = 'enzyme'
+      UNION ALL
+      SELECT
+        p.source_id AS pathway_source_id
+        , pn.display_label
+        , NULL AS url
+        , coalesce(c.name, pn.display_label) AS name
+        , c.chebi_accession AS node_identifier
+        , pn.pathway_node_id AS pathway_node_id
+        , pn.x
+        , pn.y
+        , pn.width
+        , pn.height
+        , pn.cellular_location
+        , ot.name AS type
+        , st.default_structure
+      FROM sres.pathwaynode pn
+        INNER JOIN sres.pathway p ON pn.pathway_id = p.pathway_id
+        INNER JOIN sres.ontologyterm ot ON pn.pathway_node_type_id = ot.ontology_term_id
+        LEFT JOIN chebi.compounds c ON pn.row_id = c.id
+        LEFT JOIN (
+          SELECT n.compound
+            , s.structure AS default_structure
+          FROM chebi.structures s
+            , (SELECT id
+                , compound
+                FROM CompoundId
+                WHERE type IN ('same ID', 'child ID')
+                ) n
+          WHERE n.id = 'CHEBI:' || s.compound_id
+          AND s.type = 'mol'
+          AND s.dimension = '2D'
+          AND s.default_structure = 'Y'
+        ) st ON c.chebi_accession = st.compound
+      WHERE ot.name = 'molecular entity'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE ReactionsWithReversibility AS
+        SELECT DISTINCT spr.pathway_relationship_id
+        , tpr.is_reversible
+        , tpr.reaction_source_id
+        FROM sres.pathwayrelationship spr
+        , apidb.pathwayreactionrel prr
+        , PathwayReactions tpr
+        WHERE prr.pathway_relationship_id = spr.pathway_relationship_id
+        AND tpr.reaction_id = prr.pathway_reaction_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE EnzymeEdges AS
+        SELECT DISTINCT nwt.pathway_source_id AS pathway_source_id
+          , nwt.pathway_node_id AS e_id
+          , nwt.type
+          , i.associated_node_id AS m1_id
+          , rri.is_reversible AS ir1
+          , o.node_id AS m2_id
+          , rro.is_reversible AS ir2
+          , i.associated_node_id || '_' || o.node_id || '_' || rri.is_reversible || '_' || rro.is_reversible as io
+        FROM sres.pathwayrelationship i
+          , sres.pathwayrelationship o
+          , NodesWithTypes nwt
+          , ReactionsWithReversibility rri
+          , ReactionsWithReversibility rro
+        WHERE i.node_id = nwt.pathway_node_id
+          AND o.associated_node_id = nwt.pathway_node_id
+          AND i.pathway_relationship_id = rri.pathway_relationship_id
+          AND o.pathway_relationship_id = rro.pathway_relationship_id
+          AND nwt.type = 'enzyme'
+          AND rri.is_reversible = rro.is_reversible
+          AND rri.reaction_source_id = rro.reaction_source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE ParentNodes AS
+        WITH AllEnzymeEdges AS (
+          SELECT string_agg(io, ',' ORDER BY io) AS all_edges
+            , e_id
+            , pathway_source_id
+          FROM EnzymeEdges
+          GROUP BY pathway_source_id , e_id
+        ) , pn as (
+          SELECT pathway_source_id
+            , all_edges
+            , string_agg(e_id::varchar, '_' ORDER BY e_id) AS parent
+          FROM AllEnzymeEdges
+          GROUP BY pathway_source_id, all_edges
+          HAVING COUNT (*) > 1
+        )
+        SELECT aee.e_id, pn.*
+        FROM pn
+          , AllEnzymeEdges aee
+        WHERE aee.all_edges = pn.all_edges
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE NodesWithParents AS
+        SELECT DISTINCT
+          ee.e_id AS pathway_node_id
+          , pn.parent
+          , ee.type AS node_type
+          , ee.pathway_source_id
+        FROM EnzymeEdges ee
+          , ParentNodes pn
+        WHERE
+          pn.pathway_source_id = ee.pathway_source_id
+          AND ee.e_id = pn.e_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE EnzymeReactions AS
+        SELECT DISTINCT
+          pn.PATHWAY_NODE_ID node_id
+          , pr.SOURCE_ID AS reaction_source_id
+        FROM sres.pathwaynode pn
+          , apidb.pathwayreaction pr
+          , APIDB.PATHWAYREACTIONREL prr
+          , SRES.PATHWAYRELATIONSHIP prel
+          , sres.ontologyterm ot
+        WHERE (prel.NODE_ID = pn.PATHWAY_NODE_ID OR prel.ASSOCIATED_NODE_ID = pn.PATHWAY_NODE_ID)
+          AND prr.PATHWAY_RELATIONSHIP_ID = prel.PATHWAY_RELATIONSHIP_ID
+          AND pr.PATHWAY_REACTION_ID = prr.PATHWAY_REACTION_ID
+          AND ot.name = 'enzyme'
+          AND pn.PATHWAY_NODE_TYPE_ID = ot.ONTOLOGY_TERM_ID
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE UNLOGGED TABLE ParentsForEdges AS
+        SELECT ee.e_id
+          , ee.m1_id
+          , ee.ir1
+          , ee.m2_id
+          , ee.ir2
+          , np.parent
+        FROM EnzymeEdges ee
+          , NodesWithParents np
+        WHERE ee.e_id = np.pathway_node_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PathwayEdges&1 AS
+        SELECT pa.source_id
+          , pa.pathway_source
+          , rel.*
+        FROM (
+          SELECT DISTINCT ee.pathway_source_id
+            , coalesce(pe.parent, ee.e_id::varchar) AS source
+            , ee.m1_id::varchar AS target
+            , max(ee.ir1) AS is_reversible
+          FROM EnzymeEdges ee
+            LEFT JOIN ParentsForEdges pe ON ee.e_id = pe.e_id
+          GROUP BY ee.pathway_source_id, ee.m1_id, coalesce(pe.parent, ee.e_id::varchar)
+          UNION
+          SELECT DISTINCT ee.pathway_source_id
+            , ee.m2_id::varchar AS source
+            , coalesce(pe.parent, ee.e_id::varchar) AS target
+            , max(ee.ir2) AS is_reversible
+          FROM EnzymeEdges ee
+            LEFT JOIN ParentsForEdges pe ON ee.e_id = pe.e_id
+          GROUP BY ee.pathway_source_id, ee.m2_id, coalesce(pe.parent, ee.e_id::varchar)
+          UNION
+          SELECT p1.source_id
+            , pr.node_id::varchar AS source
+            , pr.associated_node_id::varchar AS target
+            , pr.is_reversible
+          FROM sres.pathwayrelationship pr
+            , sres.pathwaynode pn1
+              INNER JOIN sres.pathway p1 ON pn1.pathway_id = p1.pathway_id
+            , sres.pathwaynode pn2
+            , sres.ontologyterm ot1
+            , sres.ontologyterm ot2
+          WHERE pr.node_id = pn1.pathway_node_id
+            AND pr.associated_node_id = pn2.pathway_node_id
+            AND pn1.pathway_node_type_id = ot1.ontology_term_id
+            AND pn2.pathway_node_type_id = ot2.ontology_term_id
+            AND ot1.name != 'enzyme'
+            AND ot2.name != 'enzyme'
+        ) rel INNER JOIN PathwayAttributes pa ON pa.source_id = rel.pathway_source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE TABLE PathwayNodes&1 AS
+        SELECT pa.source_id
+          , pa.pathway_source
+          , pn.display_label
+          , pn.x
+          , pn.y
+          , pn.width
+          , pn.height
+          , pn.cellular_location
+          , coalesce(pn.url,
+              CASE
+                WHEN coalesce(type, nodes_with_parents.node_type) = 'enzyme' THEN
+                  CASE
+                    WHEN display_label ~ '^\d+\.(\d|-)+\.(\d|-)+\.(\d|-)+$' THEN 'https://enzyme.expasy.org/EC/' || display_label
+                    WHEN pa.pathway_source = 'KEGG' THEN 'https://www.genome.jp/dbget-bin/www_bget?rn:' || reaction_source_id
+                    WHEN pa.pathway_source = 'MetaCyc' THEN 'https://metacyc.org/META/new-image?type=REACTION' || chr(38) || 'object=' || reaction_source_id
+                    WHEN pa.pathway_source = 'TrypanoCyc' THEN 'http://vm-trypanocyc.toulouse.inra.fr/TRYPANO/new-image?type=REACTION' || chr(38) || 'object=' || reaction_source_id
+                    WHEN pa.pathway_source = 'LeishCyc' THEN 'http://vm-trypanocyc.toulouse.inra.fr/LEISH/new-image?tyrp=REACTION' || chr(38) || 'object=' || reaction_source_id
+                  ELSE NULL END
+              ELSE NULL END
+            ) AS url
+          , pn.name
+          , pn.node_identifier
+          , nodes_with_parents.pathway_node_id AS id
+          , nodes_with_parents.parent
+          , reaction_source_id
+          , coalesce(type, nodes_with_parents.node_type) AS node_type
+          , pn.default_structure
+        FROM (
+            SELECT e_id::varchar AS pathway_node_id
+              , nwp.parent
+              , type AS node_type
+              , ee.pathway_source_id
+              , er.reaction_source_id
+            FROM EnzymeEdges ee
+              INNER JOIN EnzymeReactions er ON er.node_id = ee.e_id
+              LEFT JOIN NodesWithParents nwp ON ee.e_id = nwp.pathway_node_id
+            UNION
+            SELECT nwp.parent
+              , NULL
+              , 'nodeOfNodes'
+              , pathway_source_id
+              , NULL
+            FROM NodesWithParents nwp
+            UNION
+            SELECT nwt.pathway_node_id::varchar AS pathway_node_id
+              , NULL AS parent
+              , nwt.type
+              , nwt.pathway_source_id
+              , NULL
+            FROM NodesWithTypes nwt
+            WHERE nwt.type != 'enzyme'
+          ) nodes_with_parents
+          INNER JOIN PathwayAttributes pa ON nodes_with_parents.pathway_source_id = pa.source_id
+          LEFT JOIN NodesWithTypes pn ON nodes_with_parents.pathway_node_id = pn.pathway_node_id::varchar
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="CompoundTypeAheads">
+    <comment> for use in GenesByReactionCompounds question </comment>
+    <internalDependency name="CompoundAttributes"/>
+    <internalDependency name="PathwayCompounds"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE CompoundTypeAheads&1 AS
+        SELECT ca.source_id AS compound_id,
+              ca.source_id  || ' (' || ca.compound_name || ')' AS display
+        FROM  CompoundAttributes ca, PathwayCompounds pc
+        WHERE  pc.chebi_accession = ca.source_id
+        UNION
+        SELECT ca.source_id AS compound_id,
+              pc.compound_source_id || ' (' || ca.compound_name || ')' AS display
+        FROM  CompoundAttributes ca, PathwayCompounds pc
+        WHERE  pc.chebi_accession = ca.source_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <!-- Disabling now to find out what breaks downstream. There's a chance we may not need it all -->
+  <!--<tuningTable name="OntologyTerm">
+    <comment>
+      Terms for the following datasets
+      oboOntologies: obi, eco, pato, opl, envo, uberon, bto, po, omp, uo, apo, fao, chebi, ncit, efo
+      ontologyFromTabDelim: gaz, icemr, eupathUserDefined, ptmt, eupath_isa, protein_array,
+      eupathOntologyTerms (OntologyTerm_EuPath_RSRC)
+
+      Note that the following datasets are skipped as they are handled separately
+      GO_evidence_codes_RSRC, SO_RSRC, GO_RSRC, Ontology_Relationship_Types_RSRC(?)
+    </comment>
+    <sql>
+      <![CDATA[
+        SELECT
+          ot.source_id,
+          ot.name,
+          ot.definition,
+          ot.uri
+        FROM
+          sres.ontologyterm ot
+        WHERE
+          ot.external_database_release_id IS NULL
+      ]]>
+    </sql>
+  </tuningTable>-->
+
+  <!-- Disabling now to find out what breaks downstream. There's a chance we may not need it all -->
+  <!--<tuningTable name="OntologyRelationships">
+    <comment>
+      !!This may not be needed after GO because only downstream usage for this table is for GO
+      ontology relationships including GO
+      GO_RSRC, OntologyTerm_EuPath_RSRC, OntologyTerm_eupath_isa_RSRC, OntologyTerm_protein_array_RSRC, Ontology_gaz_RSRC, Ontology_icemr_RSRC, Ontology_ptmt_RSRC
+      predicate uses left join because GAZ doesn't have predicates
+    </comment>
+    <sql>
+      <![CDATA[
+        SELECT
+          s.source_id subject_term_source_id,
+          p.source_id predicate_term_source_id,
+          o.source_id object_term_source_id,
+          ed.name database_name
+          FROM
+            sres.ontologyrelationship rel
+              JOIN sres.externaldatabaserelease edr ON rel.external_database_release_id = edr.external_database_release_id
+              JOIN sres.externaldatabase ed ON edr.external_database_id = ed.external_database_id
+              JOIN sres.ontologyterm s ON rel.subject_term_id = s.ontology_term_id
+              JOIN sres.ontologyterm o ON rel.object_term_id = o.ontology_term_id
+              LEFT JOIN sres.ontologyterm p ON rel.predicate_term_id = p.ontology_term_id
+      ]]>
+    </sql>
+  </tuningTable>-->
+
+  <!-- This table may be unccessary as well since Popset is moved to EDA now. -->
+  <!--<tuningTable name="IsolateGPS">
+    <comment>isolate country gps info.
+      This is used in a single place, PopsetAttributes tuning table, to add lat/long info to countries. Looks like the natural key is the gazetteer_id from OBO.
+      We don't really need the country but it could be helpful in the query that uses this table to join directly with popset attributes
+    </comment>
+    <sql>
+      <![CDATA[
+        SELECT
+          gazetteer_id,
+          country,
+          lat,
+          lng
+        FROM
+          apidb.isolategps
+      ]]>
+    </sql>
+  </tuningTable>-->
+</tuningConfig>
