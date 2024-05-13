@@ -97,11 +97,15 @@ if ($testFunctions) {
     termIdToName(commonAncestor(termNameToId('Anopheles melas'), termNameToId('Anopheles merus'), $veupathOntologyId));
 
   # two that are EUPATH not NCBITaxon: 'Anopheles perplexens' and 'Culex chorleyi'
-  # not sure why 'culicidae' is lowercase, while other terms such as 'Culicinae' is capitalised
-  # 'Culicidae' is capitalised in eupath_dev.owl, for example.
-  printf "Common ancestor of 'Anopheles perplexens' and 'Culex chorleyi' is '%s' (should be 'culicidae')\n",
+  printf "Common ancestor of 'Anopheles perplexens' and 'Culex chorleyi' is '%s' (should be 'Culicidae')\n",
     termIdToName(commonAncestor(termNameToId('Anopheles perplexens'), termNameToId('Culex chorleyi'), $veupathOntologyId));
 
+  # now test bug #48 - it used to return Pyretophorus
+  printf "Common ancestor of 'gambiae species complex' and 'Anopheles melas' is '%s' (should be 'gambiae species complex')\n",
+    termIdToName(commonAncestor(termNameToId('gambiae species complex'), termNameToId('Anopheles melas'), $veupathOntologyId));
+
+  printf "And in the opposite direction is also '%s'\n",
+    termIdToName(commonAncestor(termNameToId('Anopheles melas'), termNameToId('gambiae species complex'), $veupathOntologyId));
 
   die "finished tests, quitting...\n";
 }
@@ -387,17 +391,39 @@ sub commonAncestor {
 #
 
   my $sql = << 'EOT';
-with r1(subject_term_id, object_term_id, query_term_id, lvl, external_database_release_id) as (
-  select subject_term_id, object_term_id, subject_term_id as query_term_id, 1 as lvl, external_database_release_id
-  from sres.ontologyrelationship r
-  where subject_term_id in (?, ?) and external_database_release_id = ?
-  union all
-  select r2.subject_term_id, r2.object_term_id, query_term_id, lvl+1, r2.external_database_release_id
-  from sres.ontologyrelationship r2, r1
-  where r2.subject_term_id = r1.object_term_id
-    and r2.subject_term_id != r2.object_term_id -- prevents circular issues
-    and r2.external_database_release_id = r1.external_database_release_id
-)
+with
+  params as (select
+    ? as term_a,
+    ? as term_b,
+    ? as ext_db_rls_id
+  from dual),
+  r1(subject_term_id, object_term_id, query_term_id, lvl, external_database_release_id)
+     as (select *
+           from (  -- base case: input term is a subject
+                   select distinct subject_term_id, object_term_id, subject_term_id as query_term_id,
+                          1 as lvl, external_database_release_id
+                   from sres.ontologyrelationship r, params
+                   where subject_term_id in (params.term_a, params.term_b)
+                     and external_database_release_id = params.ext_db_rls_id
+                 union all
+                   -- other base case: input term is an object
+                   select distinct object_term_id as subject_term_id, object_term_id,
+                          object_term_id as query_term_id, 0 as lvl, external_database_release_id
+                   from sres.ontologyrelationship r, params
+                   where object_term_id in (params.term_a, params.term_b)
+                     and external_database_release_id = params.ext_db_rls_id
+                )
+         union all
+           -- recursion step
+           select r2.subject_term_id, r2.object_term_id, query_term_id, lvl+1, r2.external_database_release_id
+           from r1,
+                (select distinct subject_term_id, object_term_id, external_database_release_id
+                 from sres.OntologyRelationship
+                ) r2
+           where r2.subject_term_id = r1.object_term_id
+             and r2.subject_term_id != r2.object_term_id -- prevents circular issues
+             and r2.external_database_release_id = r1.external_database_release_id
+        )
 select object_term_id
 from r1
 group by object_term_id
