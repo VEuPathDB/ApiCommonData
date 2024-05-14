@@ -120,7 +120,7 @@ if ($testFunctions) {
   # and the other way round
   printf "Reconciling 'gambiae species complex' and 'Anopheles gambiae' -> '%s'/'%s' (should be 'Anopheles gambiae'/'unambiguous')\n", reconcile(['gambiae species complex', 'Anopheles gambiae']);
 
-  die "finished tests, quitting...\n";
+  die "finished tests (you have to evaluate the results by eye), quitting...\n";
 }
 
 
@@ -251,10 +251,10 @@ sub reconcile {
 
     if (!defined $result) {
       $result = $speciesTermId;
-    } elsif (isAchildofB($speciesTermId, $result)) {
+    } elsif (isAchildofB($speciesTermId, $result, $veupathOntologyId)) {
       # return the leaf-wards term unless we already chose an internal node
       $result = $speciesTermId unless ($internalResult);
-    } elsif ($speciesTermId == $result || isAchildofB($result, $speciesTermId)) {
+    } elsif ($speciesTermId == $result || isAchildofB($result, $speciesTermId, $veupathOntologyId)) {
       # that's fine - stick with the leaf term
     } else {
       # we need to return a common 'ancestral' internal node
@@ -268,7 +268,7 @@ sub reconcile {
   my $reconciled_species_name =
     defined $result
       ? termIdToName($result)
-      : $fallbackSpecies;
+      : $fallback_species;
 
   return ($reconciled_species_name, $qualifier);
 }
@@ -391,6 +391,8 @@ sub termIdToName {
 #
 sub isAchildofB {
   my ($termA_id, $termB_id, $external_database_release_id) = @_;
+
+  die "didn't give external_database_release_id\n" unless defined $external_database_release_id;
 
   my $sql = << 'EOT';
 with r1(subject_term_id, object_term_id) as (
