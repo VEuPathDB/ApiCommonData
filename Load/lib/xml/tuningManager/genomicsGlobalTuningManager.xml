@@ -126,7 +126,7 @@
     </sql>
     <sql>
       <![CDATA[
-        CREATE TABLE GeneOntologyLevels&1 as
+        CREATE TABLE GeneOntologyLevels&1 AS
         WITH RECURSIVE levels(ontology_term_id, depth) AS (
           SELECT object_term_id, 1 as depth FROM roots
           UNION
@@ -178,7 +178,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE EnzymeClass&1
+        CREATE TABLE EnzymeClass&1 AS
         SELECT
           ec_number,
           ec_number_1,
@@ -197,7 +197,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE ECNumberGenus&1
+        CREATE TABLE ECNumberGenus&1 AS
         SELECT
           ec_number,
           genus
@@ -213,7 +213,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE LegacyDataset&1
+        CREATE TABLE LegacyDataset&1 AS
         SELECT
           dataset_presenter_id,
           dataset_presenter_name,
@@ -228,7 +228,7 @@
     <comment>IEDB Epitope Sequences for all taxa</comment>
     <sql>
       <![CDATA[
-        CREATE TABLE IEDBEpitopes&1
+        CREATE TABLE IEDBEpitopes&1 AS
         SELECT
           taxon.ncbi_tax_id,
           ot.source_id sequence_ontology_source_id,
@@ -254,7 +254,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE PDBProteinSequences&1
+        CREATE TABLE PDBProteinSequences&1 AS
         SELECT
           taxon.ncbi_tax_id,
           ot.source_id  sequence_ontology_source_id,
@@ -813,7 +813,7 @@
           , coalesce(ca.compound_name, pc.compound_source_id) as compound
           , prel.is_reversible as is_reversible_og
           , last_value(prel.is_reversible) OVER (partition by pr.pathway_reaction_id ORDER BY prel.is_reversible ASC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) as is_reversible
-          , first_value(pc.type) over (partition by pr.pathway_reaction_id, pr.SOURCE_ID, pn.DISPLAY_LABEL, prel.IS_REVERSIBLE, coalesce(pc.chebi_accession, pc.compound_source_id), coalesce(ca.compound_name, pc.compound_source_id) ORDER BY pc.pathway_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as type
+          , first_value(pc.type) over (partition by pr.pathway_reaction_id, pr.SOURCE_ID, pn.DISPLAY_LABEL, prel.IS_REVERSIBLE, coalesce(pc.chebi_accession, pc.compound_source_id), coalesce(ca.compound_name, pc.compound_source_id) ORDER BY pc.pathway_source_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as type
         FROM
           sres.pathway p
           , apidb.pathwayreaction pr
@@ -829,7 +829,7 @@
           AND prel.NODE_ID = pn.PATHWAY_NODE_ID
           AND ot.name = 'enzyme'
           AND ot.ONTOLOGY_TERM_ID = pn.PATHWAY_NODE_TYPE_ID
-          AND pc.PATHWAY_ID = p.PATHWAY_ID
+          AND pc.pathway_source_id = p.source_id
           AND pc.REACTION_id = pr.PATHWAY_REACTION_ID
       ]]>
     </sql>
