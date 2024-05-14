@@ -87,6 +87,12 @@ if ($testFunctions) {
   printf "'gambiae species complex' is not a child of 'Anopheles arabiensis' %s (should be no)\n",
     isAchildofB(termNameToId('gambiae species complex'), termNameToId('Anopheles arabiensis'), $veupathOntologyId) ? 'yes' : 'no';
 
+  printf "'Anopheles gambiae' is a child of 'gambiae species complex' %s (should be yes)\n",
+    isAchildofB(termNameToId('Anopheles gambiae'), termNameToId('gambiae species complex'), $veupathOntologyId) ? 'yes' : 'no';
+
+  printf "'gambiae species complex' is not a child of 'Anopheles arabiensis' %s (should be no)\n",
+    isAchildofB(termNameToId('gambiae species complex'), termNameToId('Anopheles arabiensis'), $veupathOntologyId) ? 'yes' : 'no';
+
   printf "Common ancestor of 'Anopheles arabiensis' and 'Anopheles funestus' is '%s' (should be 'Cellia')\n",
     termIdToName(commonAncestor(termNameToId('Anopheles arabiensis'), termNameToId('Anopheles funestus'), $veupathOntologyId));
 
@@ -106,6 +112,13 @@ if ($testFunctions) {
 
   printf "And in the opposite direction is also '%s'\n",
     termIdToName(commonAncestor(termNameToId('Anopheles melas'), termNameToId('gambiae species complex'), $veupathOntologyId));
+
+  printf "Reconciling 'Anopheles melas' and 'Anopheles merus' -> '%s'/'%s' (should be 'gambiae species complex'/'ambiguous')\n", reconcile(['Anopheles melas', 'Anopheles merus']);
+
+  printf "Reconciling 'Anopheles gambiae' and 'gambiae species complex' -> '%s'/'%s' (should be 'Anopheles gambiae'/'unambiguous')\n", reconcile(['Anopheles gambiae', 'gambiae species complex']);
+
+  # and the other way round
+  printf "Reconciling 'gambiae species complex' and 'Anopheles gambiae' -> '%s'/'%s' (should be 'Anopheles gambiae'/'unambiguous')\n", reconcile(['gambiae species complex', 'Anopheles gambiae']);
 
   die "finished tests, quitting...\n";
 }
@@ -187,34 +200,9 @@ my $update_stmt = $dbh->prepare('
 my $row_count = 0;
 
 foreach my $sample_id (keys %sample2atts_json) {
-  my $result; # id of computed reconciled species term
-  my $qualifier = 'unambiguous'; # what type of result was computed
-  my $internalResult; # Boolean flag
 
-  foreach my $species_name (keys %{$sample2species{$sample_id}}) {
-
-    my $speciesTermId = termNameToId($species_name);
-
-    if (!defined $result) {
-      $result = $speciesTermId;
-    } elsif (isAchildofB($speciesTermId, $result)) {
-      # return the leaf-wards term unless we already chose an internal node
-      $result = $speciesTermId unless ($internalResult);
-    } elsif ($speciesTermId == $result || isAchildofB($result, $speciesTermId)) {
-      # that's fine - stick with the leaf term
-    } else {
-      # we need to return a common 'ancestral' internal node
-      $result = commonAncestor($result, $speciesTermId, $veupathOntologyId);
-      $internalResult = 1;
-      $qualifier = 'ambiguous';
-    }
-  }
-
-  $qualifier = 'fallback' unless defined $result;
-  my $reconciled_species_name =
-    defined $result
-      ? termIdToName($result)
-      : $fallbackSpecies;
+  my @species_names = keys %{$sample2species{$sample_id}};
+  my ($reconciled_species_name, $qualifier) = reconcile(\@species_names);
 
   if (!defined $reconciled_species_name) {
     die "FATAL ERROR: No species reconciliation result and no --fallbackSpecies option provided";
@@ -241,6 +229,50 @@ foreach my $sample_id (keys %sample2atts_json) {
 $update_stmt->finish();
 
 $dbh->commit;
+
+
+#
+# reconcile
+#
+# args: array_ref_species_names, fallback_species
+# returns: $reconciled_species_name, $qualifier
+#
+
+sub reconcile {
+  my ($names, $fallback_species) = @_;
+
+  my $result; # id of computed reconciled species term
+  my $qualifier = 'unambiguous'; # what type of result was computed
+  my $internalResult; # Boolean flag
+
+  foreach my $species_name (@$names) {
+
+    my $speciesTermId = termNameToId($species_name);
+
+    if (!defined $result) {
+      $result = $speciesTermId;
+    } elsif (isAchildofB($speciesTermId, $result)) {
+      # return the leaf-wards term unless we already chose an internal node
+      $result = $speciesTermId unless ($internalResult);
+    } elsif ($speciesTermId == $result || isAchildofB($result, $speciesTermId)) {
+      # that's fine - stick with the leaf term
+    } else {
+      # we need to return a common 'ancestral' internal node
+      $result = commonAncestor($result, $speciesTermId, $veupathOntologyId);
+      $internalResult = 1;
+      $qualifier = 'ambiguous';
+    }
+  }
+
+  $qualifier = 'fallback' unless defined $result;
+  my $reconciled_species_name =
+    defined $result
+      ? termIdToName($result)
+      : $fallbackSpecies;
+
+  return ($reconciled_species_name, $qualifier);
+}
+
 
 #
 # warning, Oracle specific code!
