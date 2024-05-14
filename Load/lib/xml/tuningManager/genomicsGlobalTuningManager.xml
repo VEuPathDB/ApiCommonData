@@ -147,7 +147,7 @@
     </sql>
     <sql>
       <![CDATA[
-        CREATE INDEX olev_termix&1 ON OntologyLevels&1 (go_source_id, min_depth, max_depth)
+        CREATE INDEX olev_termix&1 ON GeneOntologyLevels&1 (go_source_id, min_depth, max_depth)
       ]]>
     </sql>
   </tuningTable>
@@ -259,7 +259,7 @@
           taxon.ncbi_tax_id,
           ot.source_id  sequence_ontology_source_id,
           aas.source_id pdb_source_id,
-          aas.description,
+          aas.description
         FROM
           dots.externalaasequence aas
         , sres.taxon
@@ -655,7 +655,7 @@
     <externalDependency name="chebi.Names"/>
     <sql>
       <![CDATA[
-        CREATE TABLE CompoundIupacNames AS
+        CREATE TABLE CompoundIupacNames&1 AS
         SELECT
           ca.source_id,
           n.name AS value
@@ -920,7 +920,7 @@
               AND pc.EXT_DB_NAME = ed.NAME
               AND pc.EXT_DB_VERSION = edr.VERSION
               AND ed.EXTERNAL_DATABASE_ID = edr.EXTERNAL_DATABASE_ID
-              AND pc.PATHWAY_ID = p.PATHWAY_ID
+              AND pc.pathway_source_id = p.source_id
               AND pc.REACTION_id = pr.PATHWAY_REACTION_ID
               AND rep.reaction_id = pr.pathway_reaction_id
               AND rep.reaction_source_id = pr.source_id
