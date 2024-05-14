@@ -155,7 +155,7 @@ sub loadEpitopes {
 								species_match => $species_match,
 								blast_hit_identity => $number_of_matches,
 								blast_hit_align_len => $blast_hit_align_len,
-								alignment => $alignment,
+								alignment => $alignment});
 
 		$row_peptide->setParent($aa_sequence);
 	 	$row_peptide->submit();
