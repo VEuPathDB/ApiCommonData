@@ -7,7 +7,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE Taxonomy&1
+        CREATE TABLE Taxonomy&1 AS
         SELECT
           t.ncbi_tax_id,
           pt.ncbi_tax_id parent_ncbi_tax_id,
@@ -30,7 +30,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE GeneticCode&1
+        CREATE TABLE GeneticCode&1 AS
         SELECT
           ncbi_genetic_code_id,
           name,
@@ -47,7 +47,7 @@
     </comment>
     <sql>
       <![CDATA[
-        CREATE TABLE SequenceOntology&1
+        CREATE TABLE SequenceOntology&1 AS
         SELECT
           ot.source_id source_id,
           ot.name,
@@ -805,7 +805,7 @@
     <intermediateTable name="Rep"/>
     <sql>
       <![CDATA[
-        CREATE UNLOGGED TABLE rep
+        CREATE UNLOGGED TABLE rep AS
         SELECT DISTINCT
           pr.PATHWAY_REACTION_ID as reaction_id
           , pr.SOURCE_ID as reaction_source_id
