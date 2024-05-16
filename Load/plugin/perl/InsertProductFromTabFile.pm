@@ -240,8 +240,8 @@ sub makeGeneFeatureProduct {
   unless ($geneProduct->retrieveFromDB()){
       $geneProduct->set("is_preferred",$preferred);
       $geneProduct->set("external_database_release_id",$geneReleaseId);
-      $transcriptProduct->set("evidence_code",$evCodeLink);
-      $transcriptProduct->set("with_from",$with);
+      $geneProduct->set("evidence_code",$evCodeLink);
+      $geneProduct->set("with_from",$with);
       $geneProduct->set("assigned_by",$assignedBy);
       $geneProduct->submit();
   }else{
