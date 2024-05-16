@@ -190,7 +190,7 @@ sub run {
 	  my $nafeatureId = $gene->getNaFeatureId();
           my $productReleaseId = $gene->getExternalDatabaseReleaseId();
 
-	  $self->makeGeneFeatureProduct($productReleaseId,$nafeatureId,$product,$preferred, $assignedBy);
+	  $self->makeGeneFeatureProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with, $assignedBy);
 
 	  $processed++;
 
@@ -229,15 +229,19 @@ sub makeTranscriptProduct {
 }
 
 sub makeGeneFeatureProduct {
-  my ($self,$geneReleaseId,$naFeatId,$product,$preferred, $assignedBy) = @_;
+  my ($self,$geneReleaseId,$naFeatId,$product,$preferred, $pmid, $evCode, $with, $assignedBy) = @_;
 
+  my $evCodeLink = getEvidCodeLink ($self, $evCode) if ($evCode);
   my $geneProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
 						                    'product' => $product,
+                                                                    'publication' => $pmid,
 						                     });
 
   unless ($geneProduct->retrieveFromDB()){
       $geneProduct->set("is_preferred",$preferred);
       $geneProduct->set("external_database_release_id",$geneReleaseId);
+      $transcriptProduct->set("evidence_code",$evCodeLink);
+      $transcriptProduct->set("with_from",$with);
       $geneProduct->set("assigned_by",$assignedBy);
       $geneProduct->submit();
   }else{
