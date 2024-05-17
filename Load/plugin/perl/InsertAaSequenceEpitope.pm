@@ -102,9 +102,9 @@ sub run {
 sub fetchAASourceID {
  	 my ($self, $name) = @_;
 
-  	#my $aaSequenceExternalDatabaseSpec=$self->getArg('aaSequenceExternalDatabaseSpec');
 
-  	#my $soDbRlsId = $self->getExtDbRlsId($aaSequenceExternalDatabaseSpec);
+	#print("Now I am in the function");
+	#print Dumper $name;
 
   	my $aa_sequence = GUS::Model::DoTS::AASequenceImp->new({'source_id' => $name});
 
@@ -112,15 +112,9 @@ sub fetchAASourceID {
 	#we expect to get one row...
   	$aa_sequence->retrieveFromDB();
 
-  	#my $AA_Seq_Id = $Source_ID->getId();
-
-  	#$self->undefPointerCache();
 
   	return $aa_sequence;
 
-  	#if (! $Source_ID->getId()) {
-    	#	warn "Error: Can't find source ID '$name' in database.";
- 	 #}
 }
 
 
@@ -136,8 +130,7 @@ sub loadEpitopes {
        		chomp $row;
         	my @counts_list = split("\t", $row);
 		my $aa_sequence_source_id = $counts_list[0];
-        	#my $aa_sequence_id = $counts_list[0];
-		my $aa_sequence => $self->fetchAASourceID($aa_sequence_source_id) || $self->error ("Can't retrieve aa_sequence_id for row with source id $aa_sequence_source_id");
+		#my $aa_sequence => $self->fetchAASourceID($aa_sequence_source_id) || $self->error ("Can't retrieve aa_sequence_id for row with source id $aa_sequence_source_id");
         	my $iedb_id = $counts_list[1];
         	my $peptide_match = $counts_list[2];
         	my $protein_match = $counts_list[3];
@@ -147,8 +140,10 @@ sub loadEpitopes {
         	my $alignment = $counts_list[14];
 
 
+		my $aa_sequence = $self->fetchAASourceID($aa_sequence_source_id);
+			
 		my $row_peptide = GUS::Model::ApiDB::AASequenceEpitope->new({
-								#aa_sequence_id => $aa_sequence_id,
+								aa_sequence_id => $aa_sequence->getAaSequenceId(),
 								iedb_id => $iedb_id,
 								peptide_match => $peptide_match,
 								protein_match => $protein_match,
@@ -156,8 +151,12 @@ sub loadEpitopes {
 								blast_hit_identity => $number_of_matches,
 								blast_hit_align_len => $blast_hit_align_len,
 								alignment => $alignment});
+		
 
-		$row_peptide->setParent($aa_sequence);
+		# question - why is setParent not working?
+		# check if this is a foreign key constraint		
+		#$row_peptide->setParent($aa_sequence);
+
 	 	$row_peptide->submit();
 		$self->undefPointerCache();
 		
