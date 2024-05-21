@@ -155,7 +155,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</rdfs:label>
+        <obo:EUPATH_0001021 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sources</obo:EUPATH_0001021>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</rdfs:label>
     </owl:Class>
     
 
@@ -336,18 +337,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pubmed_title</obo:EUPATH_0000755>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study</obo:EUPATH_0001002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Publication Title</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCIT_C42774 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C42774">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">title</obo:EUPATH_0000755>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study</obo:EUPATH_0001002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Title</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Publication title</rdfs:label>
     </owl:Class>
     
 
@@ -425,8 +415,9 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gi</obo:EUPATH_0000755>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NCBI Popset GenInfo (gi) identifier</obo:EUPATH_0001003>
         <obo:EUPATH_0001020 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001020>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Genbank ID</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PopSet ID</rdfs:label>
     </owl:Class>
     
 
@@ -450,7 +441,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">collection_date</obo:EUPATH_0000755>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample collection date</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Collection date</rdfs:label>
     </owl:Class>
     
 
@@ -461,7 +452,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043212"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">latitude</obo:EUPATH_0000755>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">everywhere</obo:EUPATH_0001013>
+        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variableTree</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">latitude</rdfs:label>
     </owl:Class>
     
@@ -473,8 +464,19 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0043212"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">longitude</obo:EUPATH_0000755>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">everywhere</obo:EUPATH_0001013>
+        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variableTree</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">longitude</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0001622 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001622">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">title</obo:EUPATH_0000755>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study</obo:EUPATH_0001002>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PopSet title</rdfs:label>
     </owl:Class>
     
 
@@ -503,7 +505,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0600047">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing Assay</rdfs:label>
+        <obo:EUPATH_0001021 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequences</obo:EUPATH_0001021>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequence</rdfs:label>
     </owl:Class>
     
 
