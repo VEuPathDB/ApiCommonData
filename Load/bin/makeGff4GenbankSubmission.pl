@@ -60,13 +60,12 @@ if (!$extDbRlsId) {
 my $geneNames = getGeneName ($dbh, $extDbRlsId);
 my $geneSynonyms = getSynonym ($dbh, $extDbRlsId, $orgAbbrev);
 my $geneProducts = getGeneProductName ($dbh, $extDbRlsId);
-my $transcriptProducts = getTranscriptProductName ($dbh, $extDbRlsId);
-my $transcriptProductPrefer = getTranscriptProductNameExtra ($dbh, $extDbRlsId);
 my $transId2GeneId = getGeneIdFromTranscriptId ($dbh, $extDbRlsId);
 my $ecNumbers = getEcNumber ($dbh, $extDbRlsId);
 my $gos = getGoAssociations ($dbh, $extDbRlsId);
 my $dbxrefs = getDbxref ($dbh, $extDbRlsId);
 my $transcriptComment = getTranscriptComment ($dbh, $extDbRlsId);
+my $transcriptProduct = getTranscriptProductName ($dbh, $extDbRlsId);
 
 open(GFF, "> $outputFile") or die "Cannot open file $outputFile For writing: $!";
 
@@ -332,18 +331,23 @@ sub getGeneIdFromTranscriptId {
 
 sub getGeneName {
   my ($dbh, $extDbRlsId) = @_;
-  my %gNames;
+  my (%g2Names, %gNames);
   my $sql = "
-            select source_id, name from apidbtuning.geneattributes where external_db_rls_id=$extDbRlsId
+             select gf.source_id, n.name from dots.genefeature gf, ApiDB.GeneFeatureName n
+             where gf.na_feature_id=n.na_feature_id and n.is_preferred=1 and gf.external_database_release_id=$extDbRlsId
            ";
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
-  while (my ($sourceId, $name, $isPrefer) = $stmt->fetchrow_array()) {
+  while (my ($sourceId, $name) = $stmt->fetchrow_array()) {
     push (@{$gNames{$sourceId}}, $name);
   }
   $stmt->finish();
 
-  return \%gNames;
+  foreach my $k (sort keys %gNames) {
+    $g2Names{$k} = join (";", @{$gNames{$k}});
+  }
+
+  return \%g2Names;
 }
 
 sub getSynonym {
@@ -380,50 +384,43 @@ where gf.na_feature_id = dnf.na_feature_id and dnf.db_ref_id = d.db_ref_id and d
 
 sub getGeneProductName {
   my ($dbh, $extDbRlsId) = @_;
-  my %products;
+  my (%g2Product, %products);
   my $sql = "
-             select source_id, product from apidbtuning.geneattributes where external_db_rls_id=$extDbRlsId
+             select gf.source_id, gp.product from dots.genefeature gf, apidb.genefeatureproduct gp
+             where gf.na_feature_id=gp.na_feature_id and gf.external_database_release_id=$extDbRlsId
            ";
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
-  while (my ($sourceId, $product, $isPrefer) = $stmt->fetchrow_array()) {
-    push (@{$products{$sourceId}}, $product) if ($sourceId && $product);
+  while (my ($sourceId, $pd) = $stmt->fetchrow_array()) {
+    push (@{$products{$sourceId}}, $pd) if ($sourceId && $pd);
   }
   $stmt->finish();
-  return \%products;
+
+  foreach my $k (sort keys %products) {
+    $g2Product{$k} = join(';', @{$products{$k}});
+  }
+  return \%g2Product;
 }
 
 sub getTranscriptProductName {
   my ($dbh, $extDbRlsId) = @_;
-  my %products;
+  my (%t2Product, %products);
   my $sql = "
-            select source_id, product from dots.transcript where external_database_release_id=$extDbRlsId
-           ";
+             select t.source_id, tp.product from dots.transcript t, apidb.transcriptproduct tp
+             where t.na_feature_id=tp.na_feature_id and t.external_database_release_id=$extDbRlsId
+            ";
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
-  while (my ($sourceId, $product) = $stmt->fetchrow_array()) {
-    push (@{$products{$sourceId}}, $product) if ($sourceId && $product);
+  while (my ($sourceId, $pd) = $stmt->fetchrow_array()) {
+    push (@{$products{$sourceId}}, $pd) if($sourceId && $pd);
+  }
+  $stmt->finish();
+
+  foreach my $k (sort keys %products) {
+    $t2Product{$k} = join(';', @{$products{$k}});
   }
 
-  $stmt->finish();
-  return \%products;
-}
-
-sub getTranscriptProductNameExtra {
-  my ($dbh, $extDbRlsId) = @_;
-  my %products;
-  my $sql = "
-            select t.source_id, tp.product from dots.transcript t, APIDB.transcriptproduct tp
-            where t.na_feature_id=tp.na_feature_id and t.external_database_release_id=$extDbRlsId
-           ";
-  my $stmt = $dbh->prepare($sql);
-  $stmt->execute();
-  while (my ($sourceId, $product) = $stmt->fetchrow_array()) {
-    push (@{$products{$sourceId}}, $product) if ($sourceId && $product);
-  }
-
-  $stmt->finish();
-  return \%products;
+  return \%t2Product;
 }
 
 sub getEcNumber {
@@ -536,11 +533,7 @@ sub getBioTypeAndUpdatePrimaryTag {
     ## add extra qualifiers
     my ($gid) = $$feat->get_tag_values("ID");
     if ($geneNames->{$gid}) {
-      my $gn = $geneNames->{$gid}[0];
-      foreach my $i (1..$#{$geneNames->{$gid}}) {
-	$gn = $gn . "," . $geneNames->{$gid}[$i];
-      }
-      $$feat->add_tag_value("gene", $gn) if ($gn);
+      $$feat->add_tag_value("gene", $geneNames->{$gid});
     }
     if ($geneSynonyms->{$gid}) {
       my $gs = $geneSynonyms->{$gid}[0];
@@ -567,6 +560,10 @@ sub getBioTypeAndUpdatePrimaryTag {
     }
     my ($tid) = $$feat->get_tag_values("ID");
     print STDERR "\$tid = $tid\n";
+
+    if ($transcriptProduct->{$tid}) {
+      $$feat->add_tag_value("product", $transcriptProduct->{$tid});
+    }
     if ($transcriptComment->{$tid}) {
       my $tc = $transcriptComment->{$tid};
       $$feat->add_tag_value("comment", $tc) if ($tc);
