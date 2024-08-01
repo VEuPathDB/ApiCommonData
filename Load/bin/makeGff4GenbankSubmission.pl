@@ -61,11 +61,11 @@ my $geneNames = getGeneName ($dbh, $extDbRlsId);
 my $geneSynonyms = getSynonym ($dbh, $extDbRlsId, $orgAbbrev);
 my $geneProducts = getGeneProductName ($dbh, $extDbRlsId);
 my $transId2GeneId = getGeneIdFromTranscriptId ($dbh, $extDbRlsId);
-my $ecNumbers = getEcNumber ($dbh, $extDbRlsId);
-my $gos = getGoAssociations ($dbh, $extDbRlsId);
-my $dbxrefs = getDbxref ($dbh, $extDbRlsId);
 my $transcriptComment = getTranscriptComment ($dbh, $extDbRlsId);
 my $transcriptProduct = getTranscriptProductName ($dbh, $extDbRlsId);
+my $goAssociation = getGoAssociations ($dbh, $extDbRlsId);
+my $ecNumber = getEcNumbers ($dbh, $extDbRlsId);
+my $featureAlias = getAliases ($dbh, $extDbRlsId);
 
 open(GFF, "> $outputFile") or die "Cannot open file $outputFile For writing: $!";
 
@@ -344,7 +344,7 @@ sub getGeneName {
   $stmt->finish();
 
   foreach my $k (sort keys %gNames) {
-    $g2Names{$k} = join (";", @{$gNames{$k}});
+    $g2Names{$k} = join (",", @{$gNames{$k}});
   }
 
   return \%g2Names;
@@ -352,7 +352,7 @@ sub getGeneName {
 
 sub getSynonym {
   my ($dbh, $extDbRlsId, $orgAbbrev) = @_;
-  my %gSynonyms;
+  my (%g2Synonyms, %gSynonyms);
 
   my $synonymExtDbName = $orgAbbrev . "_dbxref_%_synonym_RSRC";
   my $sql2 = "
@@ -379,7 +379,12 @@ where gf.na_feature_id = dnf.na_feature_id and dnf.db_ref_id = d.db_ref_id and d
     push (@{$gSynonyms{$sourceId}}, $synonym) if ($sourceId && $synonym);
   }
   $stmt->finish();
-  return \%gSynonyms;
+
+  foreach my $k (sort keys %gSynonyms) {
+    $g2Synonyms{$k} = join (",", @{$gSynonyms{$k}});
+  }
+
+  return \%g2Synonyms;
 }
 
 sub getGeneProductName {
@@ -423,23 +428,96 @@ sub getTranscriptProductName {
   return \%t2Product;
 }
 
-sub getEcNumber {
-  my ($dbh, $extDbRlsId, $orgAbbrev) = @_;
-  my %gEcs;
-#  my $sql = "
-#           ";
-#  my $stmt = $dbh->prepare($sql);
-#  $stmt->execute();
-#  while (my ($sourceId, $ec) = $stmt->fetchrow_array()) {
-#  }
-#  $stmt->finish();
-  return \%gEcs;
+sub getEcNumbers {
+  my ($dbh, $extDbRlsId) = @_;
+  my (%t2ECs, %ecs);
+  my $sql = "
+select t.source_id, ec.ec_number, taf.source_id
+from DoTS.AASequenceEnzymeClass asec, sres.EnzymeClass ec, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence tas
+where asec.enzyme_class_id=ec.enzyme_class_id and asec.aa_sequence_id = tas.aa_sequence_id and t.na_feature_id=taf.na_feature_id and taf.aa_sequence_id = tas.aa_sequence_id and t.external_database_release_id=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $ec) = $stmt->fetchrow_array()) {
+    push (@{$ecs{$sourceId}}, $ec) if($sourceId && $ec);
+  }
+  $stmt->finish();
+
+  foreach my $k (sort keys %ecs) {
+    $t2ECs{$k} = join(',', @{$ecs{$k}});
+  }
+
+  return \%t2ECs;
 }
 
 sub getGoAssociations {
+  my ($dbh, $extDbRlsId) = @_;
+  my (%t2GOs, %gos);
+
+  my $eC2Name = getEvidenceCode ($dbh);
+
+  my $sql = "
+select t.source_id as t_source_id, ot.source_id as go_source_id, gaie.go_evidence_code_id, gaie.reference, gaie.evidence_code_parameter
+from DoTS.GOAssociation ga, DoTS.GOAssociationInstance gai, DoTS.GOAssocInstEvidCode gaie, dots.translatedaafeature taf, dots.transcript t, sres.ontologyterm ot
+where ga.go_association_id = gai.go_association_id and gai.go_association_instance_id = gaie.go_association_instance_id
+and taf.aa_sequence_id = ga.row_id and taf.na_feature_id=t.na_feature_id and ga.go_term_id=ot.ontology_term_id and t.external_database_release_id=$extDbRlsId
+            ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $go, $eviCode, $reference, $parameter) = $stmt->fetchrow_array()) {
+    $go =~ s/GO_/GO:/;
+	my $goList = $go . "|" . $eC2Name->{$eviCode} . "|" . $reference . "|" . $parameter;
+    push (@{$gos{$sourceId}}, $goList) if($sourceId && $goList);
+  }
+  $stmt->finish();
+
+  foreach my $k (sort keys %gos) {
+    $t2GOs{$k} = join(',', @{$gos{$k}});
+  }
+
+  return \%t2GOs;
+}
+
+sub getAliases {
+  my ($dbh, $extDbRlsId) = @_;
+  my (%g2Aliases, %aliases);
+  my $sql = "
+select nf.source_id, df.primary_identifier
+from dots.nafeature nf, DoTS.DbRefNAFeature dnf, sres.dbref df, sres.externalDatabaseRelease edr
+where df.external_database_release_id = edr.external_database_release_id and edr.id_is_alias = 1
+and nf.na_feature_id = dnf.na_feature_id and dnf.db_ref_id = df.db_ref_id and nf.external_database_release_id=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $alias) = $stmt->fetchrow_array()) {
+    push (@{$aliases{$sourceId}}, $alias) if ($sourceId && $alias);
+  }
+  $stmt->finish();
+
+  foreach my $k (sort keys %aliases) {
+    $g2Aliases{$k} = join (",", @{$aliases{$k}});
+  }
+
+  return \%g2Aliases;
 }
 
 sub getDbxref {
+}
+
+sub getEvidenceCode {
+  my ($dbh) = @_;
+  my (%id2Name);
+  my $sql = "
+select ontology_term_id, name from sres.ontologyterm
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($id, $name) = $stmt->fetchrow_array()) {
+    $id2Name{$id}  = $name if ($id && $name);
+  }
+  $stmt->finish();
+
+  return \%id2Name;
 }
 
 sub getTransposableElement {
@@ -536,11 +614,14 @@ sub getBioTypeAndUpdatePrimaryTag {
       $$feat->add_tag_value("gene", $geneNames->{$gid});
     }
     if ($geneSynonyms->{$gid}) {
-      my $gs = $geneSynonyms->{$gid}[0];
-      foreach my $j (1..$#{$geneSynonyms->{$gid}}) {
-	$gs = $gs . "," . $geneSynonyms->{$gid}[$j];
-      }
-      $$feat->add_tag_value("synonym", $gs) if ($gs);
+#      my $gs = $geneSynonyms->{$gid}[0];
+#      foreach my $j (1..$#{$geneSynonyms->{$gid}}) {
+#	$gs = $gs . "," . $geneSynonyms->{$gid}[$j];
+#      }
+      $$feat->add_tag_value("synonym", $geneSynonyms->{$gid});
+    }
+    if ($featureAlias->{$gid}) {
+      $$feat->add_tag_value("Aliases", $featureAlias->{$gid});
     }
   } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/i) {
     $bioType = $transcriptAnnotations->{$id}->{so_term_name};
@@ -564,9 +645,19 @@ sub getBioTypeAndUpdatePrimaryTag {
     if ($transcriptProduct->{$tid}) {
       $$feat->add_tag_value("product", $transcriptProduct->{$tid});
     }
+    if ($featureAlias->{$tid}) {
+      $$feat->add_tag_value("Aliases", $featureAlias->{$tid});
+    }
     if ($transcriptComment->{$tid}) {
       my $tc = $transcriptComment->{$tid};
       $$feat->add_tag_value("comment", $tc) if ($tc);
+    }
+
+    if ($ecNumber->{$tid}) {
+      $$feat->add_tag_value("ec_number", $ecNumber->{$tid});
+    }
+    if ($goAssociation->{$tid}) {
+      $$feat->add_tag_value("Ontology_term", $goAssociation->{$tid});
     }
 
   } elsif ($$feat->primary_tag eq "exon" ) {
