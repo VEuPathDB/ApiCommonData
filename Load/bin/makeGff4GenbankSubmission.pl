@@ -210,10 +210,15 @@ foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
       ## add product
       my ($tTId) = $feature->get_tag_values("Parent");
       my $tGId = $transId2GeneId->{$tTId};
-      my $prod = $geneProducts->{$tGId}[0];
 
       ## TODO need to deal with product in transcript tables
-      $feature->add_tag_value("product", $prod) if ($prod);
+      if ($geneProducts->{$tGId}) {
+        $feature->add_tag_value("product", $geneProducts->{$tGId});
+      }
+      if ($transcriptProduct->{$tTId}) {
+        $feature->add_tag_value("product", $transcriptProduct->{$tTId});
+      }
+      #$feature->add_tag_value("product", $prod) if ($prod);
     }
 
     my $bioType = getBioTypeAndUpdatePrimaryTag(\$feature, $geneSourceId);
@@ -614,15 +619,15 @@ sub getBioTypeAndUpdatePrimaryTag {
       $$feat->add_tag_value("gene", $geneNames->{$gid});
     }
     if ($geneSynonyms->{$gid}) {
-#      my $gs = $geneSynonyms->{$gid}[0];
-#      foreach my $j (1..$#{$geneSynonyms->{$gid}}) {
-#	$gs = $gs . "," . $geneSynonyms->{$gid}[$j];
-#      }
       $$feat->add_tag_value("synonym", $geneSynonyms->{$gid});
     }
     if ($featureAlias->{$gid}) {
       $$feat->add_tag_value("Aliases", $featureAlias->{$gid});
     }
+    if ($geneProducts->{$gid}) {
+      $$feat->add_tag_value("product", $geneProducts->{$gid});
+    }
+
   } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/i) {
     $bioType = $transcriptAnnotations->{$id}->{so_term_name};
     if ($$feat->has_tag("is_pseudo") && ($$feat->get_tag_values("is_pseudo")) == 1) {
@@ -642,22 +647,21 @@ sub getBioTypeAndUpdatePrimaryTag {
     my ($tid) = $$feat->get_tag_values("ID");
     print STDERR "\$tid = $tid\n";
 
-    if ($transcriptProduct->{$tid}) {
-      $$feat->add_tag_value("product", $transcriptProduct->{$tid});
-    }
     if ($featureAlias->{$tid}) {
       $$feat->add_tag_value("Aliases", $featureAlias->{$tid});
     }
-    if ($transcriptComment->{$tid}) {
-      my $tc = $transcriptComment->{$tid};
-      $$feat->add_tag_value("comment", $tc) if ($tc);
+    if ($transcriptProduct->{$tid}) {
+      $$feat->add_tag_value("product", $transcriptProduct->{$tid});
     }
-
     if ($ecNumber->{$tid}) {
       $$feat->add_tag_value("ec_number", $ecNumber->{$tid});
     }
     if ($goAssociation->{$tid}) {
       $$feat->add_tag_value("Ontology_term", $goAssociation->{$tid});
+    }
+    if ($transcriptComment->{$tid}) {
+      my $tc = $transcriptComment->{$tid};
+      $$feat->add_tag_value("comment", $tc) if ($tc);
     }
 
   } elsif ($$feat->primary_tag eq "exon" ) {
