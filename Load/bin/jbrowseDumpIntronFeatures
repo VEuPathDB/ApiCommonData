@@ -1,0 +1,313 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib $ENV{GUS_HOME} . "/lib/perl";
+
+use Getopt::Long;
+
+use JSON;
+use DBI;
+use DBD::Oracle;
+
+use XML::Simple;
+use GUS::Supported::GusConfig;
+use Data::Dumper;
+
+my ($help, $outputDir, $orgFilter, $replaceExisting);
+
+&GetOptions('help|h' => \$help,
+            'output_directory=s' => \$outputDir,
+            'organism_abbrev_filter=s' => \$orgFilter,
+            'replace_existing' => \$replaceExisting
+    );
+
+if($help || ! $outputDir) {
+  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]\n";
+}
+
+if(! -d $outputDir) {
+  die "directory not found: $outputDir";
+}
+
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+ my $dbh = DBI->connect($gusconfig->getDbiDsn(),
+                        $gusconfig->getDatabaseLogin(),
+                        $gusconfig->getDatabasePassword(),
+     )
+    || die "Cannot connect to database:  " . $DBI::errstr;
+
+$dbh->{LongTruncOk} = 0;
+$dbh->{LongReadLen} = 10000000;
+
+my $gbrowseXmlFile =  $ENV{GUS_HOME} . "/lib/xml/jbrowseIntronQueries.xml";
+my $xml = XMLin($gbrowseXmlFile, ForceArray => ['trackConfigurations', 'properties' ] );
+
+my @tracks = keys %{$xml->{track}};
+
+my $organisms = &getOrganismInfo($dbh);
+
+print "starting dump at " . `date` . "\n";
+foreach my $o (@$organisms) {
+  next if($orgFilter && $o->{abbrev} ne $orgFilter);
+
+  my ($sequenceCount, $printedSequenceCount);
+  my $genomicSequences = &getGenomicSequences($dbh, $o);
+  my $proteinSequences = &getProteinSequences($dbh, $o);
+
+  my $project = $o->{project_name};
+  my $nameForFilenames = $o->{name_for_filenames};
+
+  my $projectDir = "$outputDir/$project";
+  my $releaseDir = "$projectDir/release-CURRENT";
+  my $organismDir = "$releaseDir/$nameForFilenames";
+  my $outputDir = "$organismDir/jbrowse";
+
+  mkdir $projectDir unless(-d $projectDir);
+  mkdir $releaseDir unless(-d $releaseDir);
+  mkdir $organismDir unless(-d $organismDir);
+  mkdir $outputDir unless(-d $outputDir);
+
+  my $trackCount = 0;
+  foreach my $trackName (@tracks) {
+    next if($trackName =~ /^\s*#/);
+
+    $trackCount++;
+    my $startTime = time;
+
+    my $trackType = $xml->{track}->{$trackName}->{type};
+    my $fileSuffix = $xml->{track}->{$trackName}->{fileSuffix};
+
+    die "track must provide trackType, fileSuffix, and trackName" unless($trackType && $fileSuffix && $trackName);
+
+    my $fullFileName = "$outputDir/${trackName}.${fileSuffix}";
+
+    my $outFh;
+
+    my $featureSqlRaw = $xml->{track}->{$trackName}->{sql};
+
+    my $sequences;
+    if($trackType eq 'genomic') {
+      $sequences = $genomicSequences;
+    }
+    elsif($trackType eq 'protein') {
+      $sequences = $proteinSequences;
+    }
+    else {
+      die "trackType can only be genomic or protein";
+    }
+
+    my $queryParams = &makeQueryParams($dbh, $trackName, $xml);
+
+    my @existingFiles = glob "${fullFileName}*";
+    if (scalar @existingFiles) {
+      if($replaceExisting) {
+	print "unlinking existing file(s): " . join(", ", @existingFiles) . "\n";
+	unlink @existingFiles;
+      }
+      else {
+	print STDERR "SKIPPING Existing file: $fullFileName\n";
+	next;
+      }
+    }
+
+    open($outFh, "|sort -T $outputDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
+
+    my $featureCountTotal;
+    foreach my $s (@$sequences) {
+      $sequenceCount++;
+      my $seqName = $s->{seqname};
+      my $seqId = $s->{seqid};
+
+      foreach my $qp (@$queryParams) {
+        my $featureSql = &makeSql($featureSqlRaw, $seqId, $qp);
+        my $featureCount = &addFeatures($dbh, $featureSql, $seqName, $outFh);
+
+        $featureCountTotal += $featureCount;
+      }
+
+    }
+    close $outFh;
+
+    if($featureCountTotal > 0) {
+      if($fileSuffix eq 'gff') {
+        system("bgzip $fullFileName");
+        system("tabix -p gff ${fullFileName}.gz");
+      }
+      # TODO what about bw files??
+    }
+    else {
+      print "WARN: unlink $fullFileName\n";
+      unlink $fullFileName;
+    }
+    print "organism " . $o->{abbrev} . " $sequenceCount sequences\n"
+      unless $printedSequenceCount;
+    $printedSequenceCount = 1;
+
+    my $duration = time - $startTime;
+    print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+  }
+
+  print "finished $trackCount tracks\n";
+}
+
+
+$dbh->disconnect();
+
+sub addFeatures {
+  my ($dbh, $featureSql, $seqName, $fh) = @_;
+
+  my $sh = $dbh->prepare($featureSql);
+  $sh->execute();
+
+  my $featureCount;
+
+#    Pf3D7_13_v3VEuPathDBexon624510626292.+.ID=exon_PF3D7_1314600.1-E1;Parent=PF3D7_1314600.1;gene_id=PF3D7_1314600
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+    my $featureId = $hash->{feature_id};
+    my $parentId = $hash->{parent_id};
+
+    $hash->{atts} .= ";ID=$featureId";
+    $hash->{atts} .= ";Parent=$parentId" if($parentId);
+
+    print $fh join("\t", ($seqName,
+                           $hash->{source},
+                           $hash->{feature},
+                           $hash->{startm},
+                           $hash->{end},
+                           $hash->{score} || ".",
+                           $hash->{strand},
+                           $hash->{frame} || ".",
+                           $hash->{atts})) . "\n";
+
+    if($hash->{tstarts}) {
+      my @tstarts = map { s/\s+//g; $_ - 1 } split /,/, $hash->{tstarts};
+      my @blocksizes = map { s/\s+//g; $_ } split /,/, $hash->{blocksizes};
+      my $counter = 0;
+
+      foreach my $start (@tstarts) {
+        #TODO check end coords for possible 1 off error
+        my $end = $start + $blocksizes[$counter] - 1;
+
+        my $subAtts = "ID=" . $featureId . "_$counter;Parent=$featureId";
+
+        print $fh join("\t", ($seqName,
+                               $hash->{source},
+                               "subfeature",
+                               $start,
+                               $end,
+                               $hash->{score} || ".",
+                               $hash->{strand},
+                               $hash->{frame} || ".",
+                               $subAtts)) . "\n";
+
+        $counter = $counter + 1;
+      }
+    }
+
+    $featureCount++;
+  }
+  return $featureCount;
+}
+
+sub makeQueryParams {
+  my ($dbh, $trackName, $xml) = @_;
+
+  my @rv;
+  if(my $trackConfigurations = $xml->{track}->{$trackName}->{trackConfigurations}) {
+
+    foreach my $tc (@$trackConfigurations) {
+      foreach my $property (@{$tc->{properties}}) {
+        my %hash;
+        foreach my $prop (keys %{$property->{prop}}) {
+          my $value = $property->{prop}->{$prop}->{content};
+          $hash{$prop} = $value;
+        }
+        push @rv, \%hash;
+      }
+    }
+
+    return \@rv;
+  }
+
+  return [{INTERNAL => "INTERNAL"}];
+}
+
+sub getOrganismInfo {
+  my ($dbh) = @_;
+
+  my $sql = "select o.project_name
+     , o.abbrev
+     , o.name_for_filenames
+     , o.taxon_id
+     , r.external_database_release_id
+from apidb.datasource ds
+   , apidb.organism o
+   , sres.externaldatabase d
+   , sres.externaldatabaserelease r
+where ds.name like '%primary_genome%'
+and ds.taxon_id = o.taxon_id
+and ds.name = d.name
+and d.external_database_id = r.external_database_id";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my @rv;
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+    push @rv, $hash;
+  }
+  $sh->finish();
+  return \@rv;
+}
+
+sub getProteinSequences {
+  my ($dbh, $organism) = @_;
+
+  my $extDbRlsId = $organism->{external_database_release_id};
+
+  my $sql = "select source_id as seqname, aa_sequence_id as seqid from dots.translatedaasequence where external_database_release_id = ?";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId);
+
+  my @rv;
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+    push @rv, $hash;
+  }
+  $sh->finish();
+  return \@rv;
+}
+
+sub getGenomicSequences {
+  my ($dbh, $organism) = @_;
+  my $extDbRlsId = $organism->{external_database_release_id};
+
+  my $sql = "select source_id as seqname, na_sequence_id as seqid from dots.externalnasequence where external_database_release_id = ?";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId);
+
+  my @rv;
+  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+    push @rv, $hash;
+  }
+  $sh->finish();
+  return \@rv;
+}
+
+sub makeSql {
+  my ($sql, $seqId, $queryParams) = @_;
+
+  $sql =~ s/\$dlm/;/g;
+  $sql =~ s/\$srcfeature_id/$seqId/g;
+
+  foreach my $key (keys %$queryParams) {
+    my $value = $queryParams->{$key};
+    $sql =~ s/\$\$${key}\$\$/${value}/g;
+  }
+
+  return $sql
+}
+
+

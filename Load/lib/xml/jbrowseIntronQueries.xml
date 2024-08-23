@@ -1,0 +1,287 @@
+<tracks>
+
+<!--
+Each query must return fields which corespond to GFF3 spec (order does not matter)
+
+source - (required) name of the program that generated this feature, or the data source (database or project name)
+feature - (required) feature type name, e.g. Gene, Variation, Similarity
+startm - (required) Start position* of the feature, with sequence numbering starting at 1.
+end - (required) End position* of the feature, with sequence numbering starting at 1.
+score - A floating point value.
+strand - (required) defined as + (forward) or - (reverse).
+frame - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
+atts - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
+feature_id - (required) Unique ID for the Feature
+parent_id - Unique ID of the parent feature
+tstarts - comma sep list of subfeature starts
+blocksizes - comma sep list of subfeature lengths
+-->
+
+<!--
+from John:
+
+The main query used by all genomic sites is:
+gsnap:unifiedintronjunctionnew
+Apollo adds this code:
+ if($isApollo) {
+
+    my $refinedNovel = dclone $inclusive;
+    $refinedNovel->{category} = "Draggable Annotation";
+    $refinedNovel->{type} = "JBrowse/View/Track/HTMLFeatures";
+    $refinedNovel->{key} = $refinedNovel->{key} . " Novel with Strong Evidence";
+    $refinedNovel->{label} = $refinedNovel->{label} . " Novel with Strong Evidence";
+    $refinedNovel->{query}->{annotated_intron} = "No";
+    $refinedNovel->{query}->{feature} = "gsnap:unifiedintronjunctionHCOnly";
+    delete $refinedNovel->{onClick};
+
+    my $inclusiveNovel = dclone $inclusive;
+    $inclusiveNovel->{category} = "Draggable Annotation";
+    $inclusiveNovel->{type} = "JBrowse/View/Track/HTMLFeatures";
+    $inclusiveNovel->{key} = $inclusiveNovel->{key} . " Novel with Weak Evidence";
+    $inclusiveNovel->{label} = $inclusiveNovel->{label} . " Novel with Weak Evidence";
+    $inclusiveNovel->{query}->{annotated_intron} = "No";
+    $inclusiveNovel->{query}->{feature} = "gsnap:unifiedintronjunctionLCOnly";
+    delete $inclusiveNovel->{onClick};
+
+    my $inclusiveKnown = dclone $inclusive;
+    $inclusiveKnown->{category} = "Draggable Annotation";
+    $inclusiveKnown->{type} = "JBrowse/View/Track/HTMLFeatures";
+    $inclusiveKnown->{key} = $inclusiveKnown->{key} . " Matches Transcript Annotation";
+    $inclusiveKnown->{label} = $inclusiveKnown->{label} . " Matches Transcript Annotation";
+    $inclusiveKnown->{query}->{annotated_intron} = "Yes";
+    $inclusiveKnown->{query}->{feature} = "gsnap:unifiedintronjunctionAnnotatedOnly";
+    delete $inclusiveKnown->{onClick};
+
+
+    push @{$result->{tracks}}, $refinedNovel;
+    push @{$result->{tracks}}, $inclusiveNovel;
+    push @{$result->{tracks}}, $inclusiveKnown;
+  }
+-->
+  <track name="gsnapUnifiedIntronJunctionNew" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+                select gij.intron_feature_id as feature_id,
+                       gij.na_sequence_id as parent_id,
+                       gij.segment_start as startm, gij.segment_end as end,
+                       'VEuPathDB' as source, gij.contained,
+                       gij.matches_gene_strand as matchesgenestrand,
+                       gij.total_unique as score, gij.total_unique as totalscore,
+                       gij.total_isrpm as isrpm, gij.intron_feature_id as name,
+                       gij.percent_max as intronpercent, gij.annotated_intron,
+                       gij.annotated_intron as annotatedintron,
+                       gij.gene_source_id as
+ genesourceid, gij.gene_na_feature_id, 
+                       gij.is_reversed, gij.is_reversed as isreversed,
+                       case
+                         when gij.annotated_intron = 'Yes'
+                              or (gij.total_unique
+                                  >= case
+                                       when contained = 1
+                                         then stats.perc01_annot_score
+                                       else 5 * stats.perc01_annot_score
+                                     end
+                                  and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max*/)
+                                 )
+                           then 'Strong Evidence'
+                         else 'Weak Evidence'
+                       end as evidence,
+                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand
+                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                  and gij.na_sequence_id = stats.na_sequence_id
+                  and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
+                  and (gij.annotated_intron = 'Yes'
+                       or (gij.total_unique
+                           >= case
+                                when contained = 1
+                                  then stats.min_annot_score
+                                else 5 * stats.min_annot_score
+                              end
+                           and (gij.contained = 0
+                                or gij.percent_max >= stats.min_annot_percent_max)
+                    )
+                   )
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gsnapUnifiedintronjunctionHCOnly" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+                select gij.intron_feature_id as feature_id,
+                       'gsnap' as feature,
+                       to_char(gij.na_sequence_id) as parent_id,
+                       gij.segment_start as startm,
+                       gij.segment_end as end,
+                       'VEuPathDB' as source,
+      --               gij.contained,
+      --               gij.matches_gene_strand as matchesgenestrand,
+                       gij.total_unique as score,
+      --               gij.total_unique as totalscore,
+      --               gij.total_isrpm as isrpm,
+      --               'Score='||gij.total_unique||', ISRPM='||gij.total_isrpm as name,
+      --               gij.percent_max as intronpercent,
+      --               gij.annotated_intron as annotatedintron,
+      --               gij.gene_source_id as genesourceid,
+      --               gij.gene_na_feature_id, 
+      --               gij.is_reversed,
+                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                        null as tstarts, null as blocksizes, null as atts, null as frame
+                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                  and gij.na_sequence_id = stats.na_sequence_id
+                  and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                  and gij.annotated_intron = 'No'
+                  and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+                  and (gij.contained = 0 or gij.percent_max >= 2 --stats.perc0005_annot_percent_max
+                      )
+              UNION ALL
+                -- bulksubfeatures
+                select intron_feature_id as feature_id,
+                       'gsnap' as feature,
+                       intron_feature_id as parent_id,
+      --               'gsnap' as type,
+                       segment_start - 10 as startm,
+                       segment_end + 10 as end,
+                       'VEuPathDB' as source,
+      --               contained,
+      --               matches_gene_strand,
+      --               percent_max,
+                       total_unique as score,
+                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+      --               annotated_intron,
+                       to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
+                       to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
+                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                  and gij.na_sequence_id = stats.na_sequence_id
+                  and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                  and gij.annotated_intron = 'No'
+                  and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+                  and (gij.contained = 0 or gij.percent_max >= 2 -- stats.perc0005_annot_percent_max
+                      )
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gsnapUnifiedintronjunctionLCOnly" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+                select gij.intron_feature_id as feature_id,
+                       'gsnap' as feature,
+                       to_char(gij.na_sequence_id) as parent_id,
+                       gij.segment_start as startm,
+                       gij.segment_end as end,
+                       'VEuPathDB' as source,
+--                       gij.contained,
+--                       gij.matches_gene_strand as matchesgenestrand,
+                       gij.total_unique as score,
+--                       gij.total_unique as totalscore, gij.total_isrpm as isrpm, 'Score='||gij.total_unique||', ISRPM='||gij.total_isrpm as name, gij.percent_max as intronpercent,gij.annotated_intron as annotatedintron, gij.gene_source_id as genesourceid, gij.gene_na_feature_id, 
+--                gij.is_reversed,
+                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                  null as tstarts, null as blocksizes, null as atts, null as frame
+                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                and gij.na_sequence_id = stats.na_sequence_id
+                AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
+                AND gij.annotated_intron = 'No'
+                AND gij.total_unique >=  CASE WHEN contained = 1 THEN stats.min_annot_score ELSE 5*stats.min_annot_score END
+                AND (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
+                AND gij.intron_feature_id not in (
+                select gij.intron_feature_id
+                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                and gij.na_sequence_id = stats.na_sequence_id
+                AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                AND gij.annotated_intron = 'No'
+                AND gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+                AND (gij.contained = 0 or gij.percent_max >= 2 -- stats.perc0005_annot_percent_max
+                    )
+               )
+            UNION ALL
+              -- bulksubfeatures
+              select INTRON_FEATURE_ID as feature_id,
+                     'gsnap' as feature,
+                     intron_feature_id as PARENT_ID,
+                     segment_start - 10 as startm,
+                     segment_END + 10 as end,
+                     'VEuPathDB' as source,
+--                     CONTAINED,
+--                     MATCHES_GENE_STRAND,
+--                     PERCENT_MAX,
+                     total_unique as SCORE,
+--                     ANNOTATED_INTRON,
+                     decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                     to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
+                     to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
+                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                and gij.na_sequence_id = stats.na_sequence_id
+                AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
+                AND gij.annotated_intron = 'No'
+                AND gij.total_unique >=  CASE WHEN contained = 1 THEN stats.min_annot_score ELSE 5*stats.min_annot_score END
+                AND (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
+                AND gij.intron_feature_id not in (
+                select gij.intron_feature_id
+                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id = $srcfeature_id
+                and gij.na_sequence_id = stats.na_sequence_id
+                AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                AND gij.annotated_intron = 'No'
+                AND gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+                AND (gij.contained = 0 or gij.percent_max >= 2 --stats.perc0005_annot_percent_max
+                    )
+               )
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gsnapUnifiedintronjunctionAnnotatedOnly" type="genomic" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+                select  gij.intron_feature_id as feature_id,
+                       'gsnap' as feature,
+                       to_char(gij.na_sequence_id) as parent_id,
+                       gij.segment_start as startm,
+                       gij.segment_end as end,
+                       'VEuPathDB' as source,
+--                     gij.contained, gij.matches_gene_strand as matchesgenestrand,
+                       gij.total_unique as score,
+--                     gij.total_unique as totalscore, gij.total_isrpm as isrpm,
+--                       'Score=' || gij.total_unique || ', ISRPM='||gij.total_isrpm as name,
+--                       gij.percent_max as intronpercent,gij.annotated_intron as annotatedintron, gij.gene_source_id as genesourceid, gij.gene_na_feature_id, 
+--                gij.is_reversed,
+                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+                  null as tstarts, null as blocksizes, null as atts, null as frame
+                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id= $srcfeature_id
+                and gij.na_sequence_id = stats.na_sequence_id
+                AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                AND gij.annotated_intron = 'Yes'
+            UNION ALL
+              -- bulksubfeatures
+              select INTRON_FEATURE_ID as feature_id,
+                     'gsnap' as feature,
+                     intron_feature_id as PARENT_ID,
+                     segment_start - 10 as startm,
+                     segment_END + 10 as end,
+                     'VEuPathDB' as source,
+--                     CONTAINED,
+--                     MATCHES_GENE_STRAND,
+--                     PERCENT_MAX,
+                     total_unique as SCORE,
+                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
+--                     ANNOTATED_INTRON,
+                     to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
+                     to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
+                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                where gij.na_sequence_id= $srcfeature_id
+                and gij.na_sequence_id = stats.na_sequence_id
+                AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+                AND gij.annotated_intron = 'Yes'
+     ]]>
+   </sql>
+  </track>
+
+</tracks>
