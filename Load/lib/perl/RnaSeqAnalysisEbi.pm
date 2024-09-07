@@ -1,24 +1,4 @@
 package ApiCommonData::Load::RnaSeqAnalysisEbi;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-# GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-# GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-# GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-# GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-# GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-# GUS4_STATUS | RAD.SageTag                    | auto   | absent
-# GUS4_STATUS | RAD.Analysis                   | auto   | absent
-# GUS4_STATUS | ApiDB.Profile                  | auto   | fixed
-# GUS4_STATUS | Study.Study                    | auto   | absent
-# GUS4_STATUS | Dots.Isolate                   | auto   | absent
-# GUS4_STATUS | DeprecatedTables               | auto   | absent
-# GUS4_STATUS | Pathway                        | auto   | absent
-# GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-# GUS4_STATUS | RNASeq Junctions               | auto   | absent
-# GUS4_STATUS | Simple Rename                  | auto   | absent
-# GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-# GUS4_STATUS | Rethink                        | auto   | absent
-# GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 use base qw(CBIL::TranscriptExpression::DataMunger);
 
 use strict;
@@ -26,10 +6,8 @@ use strict;
 use CBIL::TranscriptExpression::Error;
 use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
 
-
-
-
 use ApiCommonData::Load::IntronJunctionsEbi;
+use ApiCommonData::Load::MappingStatsEbi;
 use ApiCommonData::Load::DeseqAnalysisEbi;
 use Data::Dumper;
 
@@ -66,49 +44,63 @@ sub munge {
     my ($self) = @_;
     
     my $featureType = 'genes';
-    my $valueType = 'tpm';
+    my @valueTypes = ('tpm', 'counts');
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
 
+
+    my $quantificationType = 'htseq-union';
     my $skipDeSeq = $self->getSkipDeSeq();
     my $patch = $self->getPatch();
     
     if (! $patch) {
         foreach my $sampleName (keys %$samplesHash) {
-        my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
-                                         inputs => $samplesHash->{$sampleName},
-                                         mainDirectory => $self->getMainDirectory,
-                                         profileSetName => $profileSetName,
-                                         samplesHash => $samplesHash,
-                                         sourceIdPrefix => $self->getSeqIdPrefix,
-                                         suffix => 'junctions.tab'});
-        $intronJunctions->setProtocolName("GSNAP/Junctions");
-        $intronJunctions->setDisplaySuffix(" [junctions]");
-        $intronJunctions->setTechnologyType($self->getTechnologyType());
-        
-        $intronJunctions->munge();
+            my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
+                                                                                inputs => $samplesHash->{$sampleName},
+                                                                                mainDirectory => $self->getMainDirectory,
+                                                                                profileSetName => $profileSetName,
+                                                                                samplesHash => $samplesHash,
+                                                                                sourceIdPrefix => $self->getSeqIdPrefix,
+                                                                                suffix => 'junctions.tab'});
+            $intronJunctions->setProtocolName("GSNAP/Junctions");
+            $intronJunctions->setDisplaySuffix(" [junctions]");
+            $intronJunctions->setTechnologyType($self->getTechnologyType());
+
+            $intronJunctions->munge();
+            my $mappingStats = ApiCommonData::Load::MappingStatsEbi->new({sampleName => $sampleName,
+                                                                          inputs => $samplesHash->{$sampleName},
+                                                                          mainDirectory => $self->getMainDirectory,
+                                                                          profileSetName => $profileSetName,
+                                                                          samplesHash => $samplesHash,
+                                                                          sourceIdPrefix => $self->getSeqIdPrefix,
+                                                                          suffix => 'mappingStats.txt'});
+            $mappingStats->setProtocolName("MappingStats");
+            $mappingStats->setDisplaySuffix(" [mappingStats]");
+            $mappingStats->setTechnologyType($self->getTechnologyType());
+
+            $mappingStats->munge();
         }
     }
-    
-    foreach my $quantificationType ('htseq-union') {    
-    
-	    if($isStrandSpecific) {
+
+    foreach my $valueType (@valueTypes) {
+
+        if($isStrandSpecific) {
             $self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
             $self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
 
             $self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
             $self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
 
-	    }
-	    else {
+        }
+        else {
             $self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
             $self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
-	    }
-    
-    }
-    
+        }
+        }
+
+return;
 #DESeq2 Analysis starts here  
     if (keys %{$samplesHash} <2 || $skipDeSeq) {
         print Dumper  "note: there are less than two conditions DESeq2 analysis  and or DEGseq analysis can not be done\n";
