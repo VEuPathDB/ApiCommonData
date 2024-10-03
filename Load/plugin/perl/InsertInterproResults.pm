@@ -16,18 +16,6 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   stringArg({name           => 'transcriptSourceId',
-            descr          => 'Transcript Source ID',
-            reqd           => 1,
-            constraintFunc => undef,
-            isList         => 0, }),
-
-   stringArg({name           => 'geneSourceId',
-            descr          => 'Gene Source ID',
-            reqd           => 1,
-            constraintFunc => undef,
-            isList         => 0, }),   
-
    stringArg({name           => 'ncbiTaxId',
             descr          => 'NCBI Taxon Id of Organism',
             reqd           => 1,
@@ -69,9 +57,6 @@ sub run {
  my $rowCount = 0;
 
  my $dbh = $self->getQueryHandle();
-
- my $transcriptSourceId = $self->getArg('transcriptSourceId');
- my $geneSourceId = $self->getArg('geneSourceId');
  my $ncbiTaxId = $self->getArg('ncbiTaxId');
 
  open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
@@ -79,6 +64,9 @@ sub run {
      my $rowCount++;
      chomp $line;
      my ($proteinSourceId, $seqMd5Digest, $seqLen, $interproDbName, $interproPrimaryId, $analysisDesc, $interproStartMin, $interproEndMin, $interproEValue, $status, $date, $interproFamilyId, $interproDescription) = split(/\t/, $line);
+     my $naFeatureId = &getNaFeatureId($proteinSourceId,$dbh);
+     my $transcriptSourceId = &getTranscript($naFeatureId,$dbh);
+     my $geneSourceId = &getGene($naFeatureId,$dbh);
      my $row = GUS::Model::ApiDB::InterproResults->new({TRANSCRIPT_SOURCE_ID => $transcriptSourceId,
 						  PROTEIN_SOURCE_ID => $proteinSourceId,
 						  GENE_SOURCE_ID => $geneSourceId,
@@ -96,6 +84,30 @@ sub run {
          $self->undefPointerCache();
  }
  print "$rowCount rows added.\n"
+}
+
+sub getNaFeatureId {
+  my ($proteinSourceId,$dbh) = @_;
+  my $sql = "SELECT na_feature_id FROM dots.translatedaafeature WHERE source_id = '$proteinSourceId'";
+  my $stmt = $dbh->prepareAndExecute($sql);
+  my @naFeatureIdArray = $stmt->fetchrow_array();
+  return $naFeatureIdArray[0];
+}
+
+sub getTranscript {
+  my ($naFeatureId,$dbh) = @_;
+  my $sql = "select source_id from dots.transcript where na_feature_id = $naFeatureId";
+  my $stmt = $dbh->prepareAndExecute($sql);
+  my @transcriptArray = $stmt->fetchrow_array();
+  return $transcriptArray[0];
+}
+ 
+sub getGene {
+  my ($naFeatureId,$dbh) = @_;
+  my $sql = "select source_id from dots.genefeature where na_feature_id = $naFeatureId";
+  my $stmt = $dbh->prepareAndExecute($sql);
+  my @geneArray = $stmt->fetchrow_array();
+  return $geneArray[0];
 }
 
 sub undoTables {
