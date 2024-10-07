@@ -4,6 +4,8 @@ package ApiCommonData::Load::Plugin::InsertInterproResults;
 
 use GUS::Model::ApiDB::InterproResults;
 use GUS::PluginMgr::Plugin;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
 use strict;
 # ----------------------------------------------------------------------
 my $argsDeclaration =
@@ -22,6 +24,12 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   stringArg({ name => 'genomeExtDbRlsSpec',
+                 descr => 'genome externaldatabase spec to use',
+                 constraintFunc => undef,
+                 reqd => 1,
+                 isList => 0,
+               })
   ];
 
 my $documentation = { purpose          => "",
@@ -59,14 +67,26 @@ sub run {
  my $dbh = $self->getQueryHandle();
  my $ncbiTaxId = $self->getArg('ncbiTaxId');
 
+ my $genomeExternalDatabaseSpec = $self->getArg('genomeExtDbRlsSpec');
+ my $dbRlsId = $self->getExtDbRlsId("$genomeExternalDatabaseSpec");
+
+ my %proteinToTranscript;
+ my %proteinToGene;
+
+ my $sourceSql = "select gf.source_id as geneId, t.source_id as transcriptId, aas.source_id as proteinId from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id";
+ my $stmt = $dbh->prepareAndExecute($sourceSql);
+ while(my ($geneId, $transcriptId, $proteinId) = $stmt->fetchrow_array()) {
+     $proteinToTranscript{$proteinId} = $transcriptId;
+     $proteinToGene{$proteinId} = $geneId;
+ }
+
  open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
  while (my $line = <$data>) {
      my $rowCount++;
      chomp $line;
      my ($proteinSourceId, $seqMd5Digest, $seqLen, $interproDbName, $interproPrimaryId, $analysisDesc, $interproStartMin, $interproEndMin, $interproEValue, $status, $date, $interproFamilyId, $interproDescription) = split(/\t/, $line);
-     my $naFeatureId = &getNaFeatureId($proteinSourceId,$dbh);
-     my $transcriptSourceId = &getTranscript($naFeatureId,$dbh);
-     my $geneSourceId = &getGene($naFeatureId,$dbh);
+     my $transcriptSourceId = $proteinToTranscript{$proteinSourceId};
+     my $geneSourceId = $proteinToGene{$proteinSourceId};
      my $row = GUS::Model::ApiDB::InterproResults->new({TRANSCRIPT_SOURCE_ID => $transcriptSourceId,
 						  PROTEIN_SOURCE_ID => $proteinSourceId,
 						  GENE_SOURCE_ID => $geneSourceId,
@@ -84,30 +104,6 @@ sub run {
          $self->undefPointerCache();
  }
  print "$rowCount rows added.\n"
-}
-
-sub getNaFeatureId {
-  my ($proteinSourceId,$dbh) = @_;
-  my $sql = "SELECT na_feature_id FROM dots.translatedaafeature WHERE source_id = '$proteinSourceId'";
-  my $stmt = $dbh->prepareAndExecute($sql);
-  my @naFeatureIdArray = $stmt->fetchrow_array();
-  return $naFeatureIdArray[0];
-}
-
-sub getTranscript {
-  my ($naFeatureId,$dbh) = @_;
-  my $sql = "select source_id from dots.transcript where na_feature_id = $naFeatureId";
-  my $stmt = $dbh->prepareAndExecute($sql);
-  my @transcriptArray = $stmt->fetchrow_array();
-  return $transcriptArray[0];
-}
- 
-sub getGene {
-  my ($naFeatureId,$dbh) = @_;
-  my $sql = "select source_id from dots.genefeature where na_feature_id = $naFeatureId";
-  my $stmt = $dbh->prepareAndExecute($sql);
-  my @geneArray = $stmt->fetchrow_array();
-  return $geneArray[0];
 }
 
 sub undoTables {
