@@ -24,8 +24,8 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   stringArg({ name => 'genomeExtDbRlsSpec',
-                 descr => 'genome externaldatabase spec to use',
+   stringArg({ name => 'extDbRlsSpec',
+                 descr => 'externaldatabase spec to use',
                  constraintFunc => undef,
                  reqd => 1,
                  isList => 0,
@@ -67,8 +67,8 @@ sub run {
  my $dbh = $self->getQueryHandle();
  my $ncbiTaxId = $self->getArg('ncbiTaxId');
 
- my $genomeExternalDatabaseSpec = $self->getArg('genomeExtDbRlsSpec');
- my $dbRlsId = $self->getExtDbRlsId("$genomeExternalDatabaseSpec");
+ my $externalDatabaseSpec = $self->getArg('extDbRlsSpec');
+ my $dbRlsId = $self->getExtDbRlsId("$externalDatabaseSpec");
 
  my %proteinToTranscript;
  my %proteinToGene;
