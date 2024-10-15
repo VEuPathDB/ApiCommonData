@@ -1,8 +1,8 @@
-package ApiCommonData::Load::Plugin::InsertBedGraph;
+package ApiCommonData::Load::Plugin::InsertGenomeBedGraph;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
-use GUS::Model::ApiDB::BedGraph;
+use GUS::Model::ApiDB::GenomeBedGraph;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
@@ -68,13 +68,14 @@ sub run {
 
     my $rowCount = 0;
 
-    open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
+    open(my $data, "gzip -dc $fileName |") or die "Can't open file $fileName: $!";
+
     while (my $line = <$data>) {
 	my $rowCount++;
 	chomp $line;
 	my ($sourceId, $start, $end, $value) = split(/\t/, $line);
 
-	my $row = GUS::Model::ApiDB::BedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
+	my $row = GUS::Model::ApiDB::GenomeBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
 							     START_LOCATION => $start,
 							     END_LOCATION => $end,
 						             VALUE => $value,
@@ -84,13 +85,15 @@ sub run {
 	$row->submit();
 	$self->undefPointerCache();
     }
- print "$rowCount rows added.\n"
+
+  print "$rowCount rows added.\n";
+  close($data);
 }
 
 sub undoTables {
     my ($self) = @_;
 
-  return ('ApiDB.BedGraph'
+  return ('ApiDB.GenomeBedGraph'
       );
 }
 
