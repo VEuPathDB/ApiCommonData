@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertGenomeBedGraph;
+package ApiCommonData::Load::Plugin::InsertBedGraph;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
