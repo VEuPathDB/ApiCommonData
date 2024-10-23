@@ -123,7 +123,7 @@ sub run {
   my $self = shift;
 
   my $SOTermArg = $self->getArg("SOTerm");
-  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({name=>"NA",source_id => $SOTermArg});
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({name=>"gap",source_id => $SOTermArg});
   $SOTerm->submit() unless ($SOTerm->retrieveFromDB());
   my $SOTermId = $SOTerm->getId();
 
