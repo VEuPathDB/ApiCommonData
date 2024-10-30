@@ -291,7 +291,6 @@ sub processProteinResults {
         my @allClassifications = (@classificationKids, @classificationFromEbi);
 	my %seen;
 	foreach my $classification (@allClassifications) {
-            $self->log ("classification is $classification");
             next if ($seen{$classification} || $classification =~ /-/);
 	    $self->buildGOAssociation($aaId, $classification);
             $seen{$classification} = "true";

@@ -438,16 +438,11 @@ sub loadConfig{
   foreach my $dbName (keys %$dbs) {
     $self->{$dbName} = $dbs->{$dbName};
     my $ver = $self->{$dbName}->{ver};
-    my $file = $self->{$dbName}->{filename} = 
-      "$inPath/$self->{$dbName}->{filename}";
     my $format = $self->{$dbName}->{format};
     my $logFreq = $self->{$dbName}->{logFreq};
     if (!$SUPPORTED_FORMATS->{$format}) {
       die "Format '$format' (used by db: '$dbName') is not supported";
     }
-
-    $self->error("input file '$file' for database '$dbName' cannot be opened")
-      unless (-r $file && -f $file);
 
     $self->log("Checking entry for external Db: $dbName $ver");
 
