@@ -46,9 +46,6 @@ foreach my $sample (@{$samples}) {
     my $sampleDir = "$studyDir/$sample";
     my $sampleOutDir = "$outputDir/$sample";
 
-    system("mkdir -p $sampleOutDir");
-
-
     my ($senseUniqueCountFile, $senseNUCountFile, $antisenseUniqueCountFile, $antisenseNUCountFile, $senseUniqueTpmFile, $senseNUTpmFile, $antisenseUniqueTpmFile, $antisenseNUTpmFile);
     if ($isStranded) {
         $senseUniqueCountFile = "$sampleDir/genes.htseq-union.firststrand.counts";
