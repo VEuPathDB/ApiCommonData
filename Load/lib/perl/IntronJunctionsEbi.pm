@@ -22,15 +22,19 @@ sub new {
                          ];
   my $self = $class->SUPER::new($args, $requiredParams);
 
-
-  my $cleanSampleName = $self->getSampleName();
-  $cleanSampleName =~ s/\s/_/g;
-  $cleanSampleName=~ s/[\(\)]//g;
-
-  $self->setOutputFile($cleanSampleName . "_results_" . $self->getSuffix());
-
-
   return $self;
+}
+
+# override from superclass since config file will not be in the same location as the input
+sub getConfigFilePath {
+    return $_[0]->{_config_file_path};
+}
+
+sub setConfigFilePath {
+    my ($self, $mainDir) =  @_;
+    my $configFileBaseName = $self->getConfigFileBaseName();
+    my $configFilePath = "$mainDir/$configFileBaseName";
+    $self->{_config_file_path} = $configFilePath;
 }
 
 sub munge {
