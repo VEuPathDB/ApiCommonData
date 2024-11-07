@@ -1,14 +1,13 @@
 package ApiCommonData::Load::RnaSeqAnalysisEbi;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use base qw(CBIL::StudyAssayResults::DataMunger);
 
 
 use strict;
-
 use CBIL::StudyAssayResults::Error;
-use CBIL::StudyAssayResults::DataMunger::ProfileFromSeparateFiles;
+use ApiCommonData::Load::RnaSeqCounts;
 
 use ApiCommonData::Load::IntronJunctionsEbi;
-#use ApiCommonData::Load::MappingStatsEbi;
 use ApiCommonData::Load::DeseqAnalysisEbi;
 use Data::Dumper;
 
@@ -52,15 +51,18 @@ sub munge {
     my $profileSetName = $self->getProfileSetName();
 
 
-    my $quantificationType = 'htseq-union';
     my $skipDeSeq = $self->getSkipDeSeq();
     my $patch = $self->getPatch();
     
     if (! $patch) {
         foreach my $sampleName (keys %$samplesHash) {
+            # this location to be used for the config and output
+            my $mainDirectory = $self->getMainDirectory();
+            # input files in here
+            my $mainDir = "$mainDirectory/final";
             my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
                                                                                 inputs => $samplesHash->{$sampleName},
-                                                                                mainDirectory => $self->getMainDirectory,
+                                                                                mainDirectory => $mainDir,
                                                                                 profileSetName => $profileSetName,
                                                                                 samplesHash => $samplesHash,
                                                                                 sourceIdPrefix => $self->getSeqIdPrefix,
@@ -68,24 +70,19 @@ sub munge {
             $intronJunctions->setProtocolName("GSNAP/Junctions");
             $intronJunctions->setDisplaySuffix(" [junctions]");
             $intronJunctions->setTechnologyType($self->getTechnologyType());
+            $intronJunctions->setConfigFilePath($mainDirectory);
+            my $cleanSampleName = $intronJunctions->getSampleName();
+            $cleanSampleName =~ s/\s/_/g; 
+            $cleanSampleName=~ s/[\(\)]//g;
+            $intronJunctions->setOutputFile($mainDirectory . "/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
 
             $intronJunctions->munge();
-            # my $mappingStats = ApiCommonData::Load::MappingStatsEbi->new({sampleName => $sampleName,
-            #                                                               inputs => $samplesHash->{$sampleName},
-            #                                                               mainDirectory => $self->getMainDirectory,
-            #                                                               profileSetName => $profileSetName,
-            #                                                               samplesHash => $samplesHash,
-            #                                                               sourceIdPrefix => $self->getSeqIdPrefix,
-            #                                                               suffix => 'mappingStats.txt'});
-            # $mappingStats->setProtocolName("MappingStats");
-            # $mappingStats->setDisplaySuffix(" [mappingStats]");
-            # $mappingStats->setTechnologyType($self->getTechnologyType());
-
-            # $mappingStats->munge();
         }
     }
 
     foreach my $valueType (@valueTypes) {
+
+        my $quantificationType = 'htseq-union';
 
         if($isStrandSpecific) {
             $self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
@@ -120,9 +117,16 @@ sub makeProfiles {
 
     my $outputFile = "$OUTPUT_FILE_BASE.$featureType.$quantificationType.$strand.$valueType";
 
-    my $profile = CBIL::StudyAssayResults::DataMunger::ProfileFromSeparateFiles->
-	new({mainDirectory => $self->getMainDirectory,
-	     outputFile => $outputFile,
+    # this location to be used for the config
+    my $mainDirectory = $self->getMainDirectory();
+    
+    # counts and TPM files will be in a subdir
+    my $mainDir = $valueType =~ /tpm/ ? "$mainDirectory/TPM" : "$mainDirectory/final"; 
+
+    print STDERR Dumper "$mainDirectory/$outputFile";
+    my $profile = ApiCommonData::Load::RnaSeqCounts->
+	new({mainDirectory => $mainDir,
+	     outputFile => "$mainDirectory/$outputFile",
 	     makePercentiles => $makePercentiles,
 	     isLogged => 0,
 	     fileSuffix => "$featureType.$quantificationType.$strand.$valueType",
@@ -135,13 +139,15 @@ sub makeProfiles {
 
     $profile->setHasHeader($header);
 
-    my $protocolName = 'HTSeq';
+    # protocolName will be TPM for normalised values or HTSeq for counts
+    my $protocolName = $valueType =~ /tpm/ ? 'TPM': 'HTSeq';
 
-    $profile->setProtocolName("GSNAP/$protocolName");
+    $profile->setProtocolName("HISAT2/$protocolName");
 
     $profile->addProtocolParamValue('Strand', $strand);
     $profile->addProtocolParamValue('FeatureType', $featureType);
     $profile->addProtocolParamValue('QuantificationType', $protocolName);
+
 
     if ($protocolName eq 'HTSeq') {
         $quantificationType =~ /^htseq-(.+)$/;
@@ -158,6 +164,7 @@ sub makeProfiles {
 
     $profile->setTechnologyType($self->getTechnologyType());
 
+    $profile->setConfigFilePath($mainDirectory);
     $profile->munge();
     
     return($outputFile);
