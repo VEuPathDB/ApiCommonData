@@ -6,6 +6,7 @@ use warnings;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use Data::Dumper;
+use File::Path qw( make_path );
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 use CBIL::StudyAssayResults::CalculationsForTPM qw(doTPMCalculation);
 
@@ -45,6 +46,10 @@ foreach my $group (keys %{$samplesHash}) {
 foreach my $sample (@{$samples}) {
     my $sampleDir = "$studyDir/$sample";
     my $sampleOutDir = "$outputDir/$sample";
+
+    if ( !-d $sampleOutDir ) {
+        make_path $sampleOutDir or die "Failed to create directory: $sampleOutDir";
+    }
 
     my ($senseUniqueCountFile, $senseNUCountFile, $antisenseUniqueCountFile, $antisenseNUCountFile, $senseUniqueTpmFile, $senseNUTpmFile, $antisenseUniqueTpmFile, $antisenseNUTpmFile);
     if ($isStranded) {
