@@ -134,5 +134,10 @@ sub getTaxonIdFromName {
 }
 }
 
+sub undoTables {
+  qw(
+    ApiDB.ProteinDataBank
+  );
+}
 1;
 
