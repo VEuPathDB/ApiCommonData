@@ -112,9 +112,9 @@ SQL
 SQL
   }
 
-      my $sql = <<SQL;
-        select blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
-               query_table_id, query_taxon_id, query_external_db_release_id, 
+	my $sql = <<SQL;
+				SELECT blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id,
                target_table_id, target_taxon_id, target_external_db_release_id,
                is_consistent, is_genomic_contaminant, unaligned_3p_bases,
                unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
@@ -125,15 +125,15 @@ SQL
                tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
                sp.start_position, sp.end_position, sp.strand_orientation,
                piece.length, vti.table_id as virtual_target_table_id
-        from dots.BlatAlignment ba, dots.SequencePiece sp, dots.NaSequence piece,
-             dots.NaSequence virtualseq, core.TableInfo vti, dots.NaSequence queryseq
-        where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
+        FROM dots.BlatAlignment ba
+        	LEFT JOIN dots.SequencePiece sp ON ba.target_na_sequence_id = sp.piece_na_sequence_id
+        	INNER JOIN dots.NaSequence piece ON ba.target_na_sequence_id = piece.na_sequence_id
+        	INNER JOIN dots.NaSequence virtualseq ON sp.virtual_na_sequence_id = virtualseq.na_sequence_id
+        	INNER JOIN core.TableInfo vti ON virtualseq.subclass_view = vti.name
+        	INNER JOIN dots.NaSequence queryseq ON ba.query_na_sequence_id = queryseq.na_sequence_id
+        WHERE
           and sp.start_position <= target_start
           and sp.end_position >= target_end
-          and ba.target_na_sequence_id = piece.na_sequence_id
-          and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
-          and virtualseq.subclass_view = vti.name
-          and ba.query_na_sequence_id = queryseq.na_sequence_id
           and ba.target_taxon_id = (select taxon_id from sres.Taxon where ncbi_tax_id = $ncbiTaxonId)
           $modePredicate
 SQL
