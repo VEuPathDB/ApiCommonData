@@ -10,7 +10,7 @@ use GUS::Model::SRes::ExternalDatabaseRelease;
 sub getArgumentsDeclaration {
     my $argsDeclaration =
       [
-       fileArg({name => 'diamondFile',
+       fileArg({name => 'inputFile',
                 descr => 'DIAMOND BLAST tabular output file (format -f 6)',
                 reqd => 1,
                 mustExist => 1,
@@ -92,11 +92,11 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    my $diamondFile = $self->getArg('diamondFile');
+    my $inputFile = $self->getArg('inputFile');
     my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
     my ($processed);
 
-    open my $fh, '<', $diamondFile or $self->userError("Unable to open file: $diamondFile");
+    open my $fh, '<', $inputFile or $self->userError("Unable to open file: $inputFile");
 
     while (my $line = <$fh>) {
         chomp $line;
@@ -128,7 +128,7 @@ sub run {
 
     close $fh;
 
-    $self->log("$processed data lines parsed and inserted successfully from file: $diamondFile.");
+    $self->log("$processed data lines parsed and inserted successfully from file: $inputFile.");
 }
 
 sub getProteinDataBankId {
