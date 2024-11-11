@@ -417,82 +417,85 @@ SQL
   }
 
   my $sqlString = <<SQL;
-    select case
-              when nf.subclass_view = 'GeneFeature'
-                   and nf.is_predicted = 1
-                then 'GenePrediction'
-              when nf.subclass_view = 'Miscellaneous' 
-                   and nf.is_predicted = 1
-                then 'Prediction'
-              else nf.subclass_view
-            end as feature_type,
-            nf.source_id as feature_source_id, ns.source_id as sequence_source_id,
-            nf.na_sequence_id, nf.na_feature_id,
-            least(nl.start_min, nl.end_max) as start_min,
-            greatest(nl.start_min, nl.end_max) as end_max,
-            nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
-            case
-              when sp.sequence_piece_id is null then 1
-              else 0
-            end as is_top_level,
-            nf.external_database_release_id
-     from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
-          dots.ExonFeature ef, sres.TaxonName tn, sres.Taxon t, dots.SequencePiece sp
-     where nf.na_feature_id = nl.na_feature_id
-       and nf.na_sequence_id = ns.na_sequence_id
-       and nf.na_sequence_id = sp.piece_na_sequence_id(+)
-       and nl.na_feature_id = ef.na_feature_id(+)
-       and ns.taxon_id = tn.taxon_id
-       and tn.name_class = 'scientific name'
-       and nf.subclass_view not in ('GeneFeature', 'ExonFeature', 'Transcript')
-       and ns.taxon_id = t.taxon_id
-       and t.ncbi_tax_id = $ncbiTaxonId
-     $latePredicate
-     union
-     select -- virtual feature locations mapped through SequencePiece
-            case
-              when nf.subclass_view = 'GeneFeature'
-                   and nf.is_predicted = 1
-                then 'GenePrediction'
-              else nf.subclass_view
-            end as feature_type,
-            nf.source_id as feature_source_id, scaffold.source_id as sequence_source_id,
-            sp.virtual_na_sequence_id, nf.na_feature_id,
-            case
-              when sp.strand_orientation in ('-', '-1')
-                then sp.distance_from_left + sp.end_position - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)  + 1
-                else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) - sp.start_position  + 1
-            end as start_min,
-            case
-              when sp.strand_orientation in ('-', '-1')
-                then sp.distance_from_left + sp.end_position - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
-              else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) - sp.start_position + 1
-            end as end_max,
-            case
-              when sp.strand_orientation in ('-', '-1')
-              then decode(nvl(nl.is_reversed, 0),
-                          0, 1,  1, 0,  1)
-              else nl.is_reversed
-            end as is_reversed,
-            nf.parent_id, nf.sequence_ontology_id,
-            1 as is_top_level,
-            nf.external_database_release_id
-     from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
-          dots.SequencePiece sp, dots.NaSequence scaffold, dots.ExonFeature ef,
-          sres.TaxonName tn, sres.Taxon t
-     where nf.na_feature_id = nl.na_feature_id
-       and nf.na_sequence_id = contig.na_sequence_id
-       and nf.na_sequence_id = sp.piece_na_sequence_id
-       and sp.start_position <= nl.start_min
-       and sp.end_position >= nl.end_max
-       and sp.virtual_na_sequence_id = scaffold.na_sequence_id
-       and nl.na_feature_id = ef.na_feature_id(+)
-       and contig.taxon_id = tn.taxon_id
-       and tn.name_class = 'scientific name'
-       and nf.subclass_view not in ('GeneFeature', 'ExonFeature', 'Transcript')
-       and contig.taxon_id = t.taxon_id
-       and t.ncbi_tax_id = $ncbiTaxonId
-     $latePredicate
+		SELECT
+      case
+        when nf.subclass_view = 'GeneFeature'
+             and nf.is_predicted = 1
+          then 'GenePrediction'
+        when nf.subclass_view = 'Miscellaneous'
+             and nf.is_predicted = 1
+          then 'Prediction'
+        else nf.subclass_view
+      end as feature_type,
+      nf.source_id as feature_source_id, ns.source_id as sequence_source_id,
+      nf.na_sequence_id, nf.na_feature_id,
+      least(nl.start_min, nl.end_max) as start_min,
+      greatest(nl.start_min, nl.end_max) as end_max,
+      nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
+      case
+        when sp.sequence_piece_id is null then 1
+        else 0
+      end as is_top_level,
+      nf.external_database_release_id
+    FROM dots.NaFeature nf
+      INNER JOIN dots.NaLocation nl ON nf.na_feature_id = nl.na_feature_id
+      INNER JOIN dots.NaSequence ns ON nf.na_sequence_id = ns.na_sequence_id
+      INNER JOIN sres.TaxonName tn ON ns.taxon_id = tn.taxon_id
+      INNER JOIN sres.Taxon t ON ns.taxon_id = t.taxon_id
+      LEFT JOIN dots.ExonFeature ef ON nl.na_feature_id = ef.na_feature_id
+      LEFT JOIN dots.SequencePiece sp ON nf.na_sequence_id = sp.piece_na_sequence_id
+    WHERE
+      tn.name_class = 'scientific name'
+      AND nf.subclass_view not in ('GeneFeature', 'ExonFeature', 'Transcript')
+      AND t.ncbi_tax_id = $ncbiTaxonId
+      $latePredicate
+    UNION
+    SELECT -- virtual feature locations mapped through SequencePiece
+      case
+        when nf.subclass_view = 'GeneFeature' and nf.is_predicted = 1
+          then 'GenePrediction'
+        else nf.subclass_view
+      end as feature_type,
+      nf.source_id as feature_source_id, scaffold.source_id as sequence_source_id,
+      sp.virtual_na_sequence_id, nf.na_feature_id,
+      case
+        when sp.strand_orientation in ('-', '-1')
+          then sp.distance_from_left + sp.end_position - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)  + 1
+          else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) - sp.start_position  + 1
+      end as start_min,
+      case
+        when sp.strand_orientation in ('-', '-1')
+          then sp.distance_from_left + sp.end_position - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
+        else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) - sp.start_position + 1
+      end as end_max,
+      CASE
+        WHEN sp.strand_orientation in ('-', '-1')
+        THEN
+          CASE coalesce(nl.is_reversed, 0)
+            WHEN 0 THEN 1
+            WHEN 1 THEN 0
+            ELSE 1
+          END
+        ELSE nl.is_reversed
+      END as is_reversed,
+      nf.parent_id, nf.sequence_ontology_id,
+      1 as is_top_level,
+      nf.external_database_release_id
+    FROM dots.NaFeature nf
+      INNER JOIN dots.NaLocation nl ON nf.na_feature_id = nl.na_feature_id
+      INNER JOIN dots.NaSequence contig ON nf.na_sequence_id = contig.na_sequence_id
+      INNER JOIN dots.SequencePiece sp ON nf.na_sequence_id = sp.piece_na_sequence_id
+      INNER JOIN dots.NaSequence scaffold ON sp.virtual_na_sequence_id = scaffold.na_sequence_id
+      INNER JOIN sres.TaxonName tn ON contig.taxon_id = tn.taxon_id
+      INNER JOIN sres.Taxon t ON contig.taxon_id = t.taxon_id
+      LEFT JOIN dots.ExonFeature ef ON nl.na_feature_id = ef.na_feature_id
+    WHERE
+      sp.start_position <= nl.start_min
+      and sp.end_position >= nl.end_max
+      and tn.name_class = 'scientific name'
+      and nf.subclass_view not in ('GeneFeature', 'ExonFeature', 'Transcript')
+      and t.ncbi_tax_id = $ncbiTaxonId
+      $latePredicate
 SQL
 
   $self->logDebug("NaFeature query:\n$sqlString\n");
