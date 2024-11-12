@@ -1,6 +1,5 @@
-package ApiDB::Load::Plugin::InsertProteinDataBank;
+package ApiCommonData::Load::Plugin::InsertProteinDataBankFromFile;
 @ISA = qw(GUS::PluginMgr::Plugin);
-
 use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::ProteinDataBank;
@@ -10,15 +9,19 @@ use GUS::Model::SRes::TaxonName;
 sub getArgumentsDeclaration {
     my $argsDeclaration =
       [
-       fileArg({name => 'fileName',
+       fileArg({name => 'inputFile',
                 descr => 'Tab-delimited file with source_id, description, and taxon name',
+                constraintFunc=> undef,
                 reqd => 1,
+                isList => 0,
                 mustExist => 1,
                 format => 'Text'
                }),
-       stringArg({name           => 'extDbRlsSpec',
+       stringArg({name           => 'extDbSpec',
                 descr          => 'external database release spec',
+                constraintFunc=> undef,
                 reqd           => 1,
+                isList => 0,
                 constraintFunc => undef,
                 isList         => 0, }),
       ];
@@ -91,8 +94,8 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    my $file = $self->getArg('fileName');
-    my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+    my $file = $self->getArg('inputFile');
+    my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbSpec'));
     my ($processed);
 
     open my $fh, '<', $file or $self->userError("Unable to open file: $file");
@@ -132,7 +135,7 @@ sub getTaxonIdFromName {
 
   return $taxon_id;  # returns undef if taxon_id is not found
 }
-}
+
 
 sub undoTables {
   qw(
