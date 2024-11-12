@@ -15,17 +15,24 @@ use Data::Dumper;
 use Bio::SeqFeature::Generic;
 use Bio::Tools::GFF;
 
-my ($help, $isEst, $ncbiTaxId, $queryExternalDatabaseName, $gusConfig, $outputDirectory, $sourceIdField, $organismAbbrev, $outputFileBase, $targetExtDbRlsSpec);
+
+
+my ($help, $isEst, $queryExternalDatabaseName, $gusConfig, $outputDirectory, $organismAbbrev, $outputFileBase, $targetExtDbRlsSpec);
 
 &GetOptions('query_external_database_name=s' => \$queryExternalDatabaseName,
             'output_directory=s' => \$outputDirectory,
-            'source_id_field=s' => \$sourceIdField,
             'gus_config=s' => \$gusConfig,
             'output_file_base=s' => \$outputFileBase,
-            'is_est' => \$isEst,
-            'ncbi_tax_id=i' => \$ncbiTaxId,
-            'target_ext_db_rls_spec=s' => \$targetExtDbRlsSpec
+            'is_est!' => \$isEst,
+            'target_ext_db_rls_spec=s' => \$targetExtDbRlsSpec,
+            'help!' => \$help
+
     );
+
+if($help) {
+  print STDERR "alignedTranscriptSeqsToGff.pl [--query_external_database_name NAME] [--is_est] --output_directory DIR --gus_config CONFIG --output_file_base STRING [--ncbi_tax_id INT] --target_ext_db_rls_spec STRING\n";
+  exit;
+} 
 
 
 chdir $outputDirectory;
@@ -48,7 +55,7 @@ $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
 
-my $queryExternalDatabaseReleaseIds = &getQueryExtDbRlsIds($dbh, $isEst, $ncbiTaxId, $queryExternalDatabaseName);
+my $queryExternalDatabaseReleaseIds = &getQueryExtDbRlsIds($dbh, $isEst, $queryExternalDatabaseName);
 my $queryExtenralDatabaseString = join(",", @$queryExternalDatabaseReleaseIds);
 
 my $targetExternalDatabaseReleaseId = &getTargetExtDbRls($dbh, $targetExtDbRlsSpec);
@@ -57,20 +64,20 @@ my $targetExternalDatabaseReleaseId = &getTargetExtDbRls($dbh, $targetExtDbRlsSp
 my %featureEnds;
 
 my $sql = "SELECT blat.blat_alignment_id,
-                  target.source_id as seq_id
+                  target.source_id as seq_id,
                   etn.source_id as source_id,
                   blat.score,
-                  blat.target_start start,
-                  blat.target_end end,
+                  blat.is_reversed,
+                  blat.target_start,
+                  blat.target_end,
                   blat.percent_identity,
                   blat.tstarts,
                   blat.blocksizes
            FROM dots.BlatAlignment blat,
                 dots.ExternalNASequence etn,
-                dots.ExternalNASequence target,
+                dots.ExternalNASequence target
            WHERE blat.query_na_sequence_id = etn.na_sequence_id
             and blat.target_na_sequence_id = target.na_sequence_id
-            and blat._na_sequence_id = target.na_sequence_id
             AND blat.is_best_alignment = 1
             and blat.target_external_db_release_id = $targetExternalDatabaseReleaseId
             and etn.external_database_release_id in ($queryExtenralDatabaseString)
@@ -79,29 +86,42 @@ my $sql = "SELECT blat.blat_alignment_id,
 my $sh = $dbh->prepare($sql);
 $sh->execute();
 
-while(my ($blatId, $seqId, $id, $score, $start, $end, $pctIdentity, $tstarts, $blockSizes) = $sh->fetchrow_array()) {
+while(my ($blatId, $seqId, $id, $score, $isReversed, $start, $end, $pctIdentity, $tstarts, $blockSizes) = $sh->fetchrow_array()) {
+
+  my $strand = $isReversed ? -1 : 1;
+
+
+  # NOTE:  psl coordinates are zero based half open so we need to add one here!
+  my $pslStart = $start + 1;
+
 
     my $transcript = Bio::SeqFeature::Generic->new(
-        -start        => $start
-        -end          => $end
-        -seq_id       => $seqId
+        -start        => $pslStart,
+        -end          => $end,
+        -strand       => $strand,
+        -seq_id       => $seqId,
         -primary      => 'veupathdb',
         -source_tag   => 'blat_transcript',
         -tag          => { ID => $blatId, TranscriptId => $id, PercentIdentity => $pctIdentity } );
 
+
     print GFF $transcript->gff_string($gffFormat) . "\n";
 
-    my @tstarts = map { s/\s+//g; $_ - 1 } split /,/, $tstarts;
+    my @tstarts = map { s/\s+//g; $_  } split /,/, $tstarts;
     my @blocksizes = map { s/\s+//g; $_ } split /,/, $blockSizes;
     my $counter = 0;
     foreach my $alignStart (@tstarts) {
-        my $alignEnd = $start + $blocksizes[$counter];
+        my $alignEnd = $alignStart + $blocksizes[$counter];
+
+        # NOTE:  psl coordinates are zero based half open so we need to add one here!
+        my $pslAlignStart = $alignStart + 1;
 
 
         my $alignment = Bio::SeqFeature::Generic->new(
-            -start        => $alignStart
-            -end          => $alignEnd
-            -seq_id       => $seqId
+            -start        => $pslAlignStart,
+            -end          => $alignEnd,
+            -strand       => $strand,
+            -seq_id       => $seqId,
             -primary      => 'veupathdb',
             -source_tag   => 'blat_align',
             -tag          => { ID => $blatId . "_$counter", Parent => $blatId } );
@@ -116,11 +136,8 @@ $sh->finish();
 
 close GFF;
 
-system("cp $filePath tmp.gff");
-
 system("bgzip $filePath");
 system("tabix -p gff ${filePath}.gz");
-system("mv tmp.gff $filePath");
 
 $sh->finish();
 $dbh->disconnect();
@@ -158,15 +175,15 @@ sub runExtDbRlsQuery {
 }
 
 sub getQueryExtDbRlsIds {
-    my ($dbh, $isEst, $ncbiTaxId, $externalDatabaseName) = @_;
+    my ($dbh, $isEst, $externalDatabaseName) = @_;
 
-    my $query = $isEst ? &getEstDatasetsQuery($ncbiTaxId) : &getOneDatasetQuery($externalDatabaseName, undef);
+    my $query = $isEst ? &getEstDatasetsQuery() : &getOneDatasetQuery($externalDatabaseName, undef);
 
     my $ids = &runExtDbRlsQuery($dbh, $query);
 
 
     if(scalar @$ids < 1) {
-        die "Expected at least one externaldatabase release id for ncbitaxid=$ncbiTaxId OR dataset=$externalDatabaseName";
+        die "Expected at least one externaldatabase release id for isEST=$isEst OR dataset=$externalDatabaseName";
     }
 
     return $ids;
@@ -188,16 +205,12 @@ and r.version like '$externalDatabaseVersion'";
 
 
 sub getEstDatasetsQuery {
-    my ($ncbiTaxId) = @_;
 
     return "SELECT DISTINCT s.external_database_release_id
 FROM dots.EXTERNALNASEQUENCE s
    , sres.ONTOLOGYTERM o
-   , sres.taxon t
 WHERE s.SEQUENCE_ONTOLOGY_ID = o.ONTOLOGY_TERM_ID
-AND s.TAXON_ID = t.TAXON_ID
-AND t.NCBI_TAX_ID = $ncbiTaxId
-AND o.name = 'EST';"
+AND o.name = 'EST'";
 }
 
 
