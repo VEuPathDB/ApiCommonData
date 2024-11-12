@@ -103,10 +103,10 @@ sub run {
     while (my $line = <$fh>) {
         chomp $line;
         my ($source_id, $description, $taxon_name) = split "\t", $line;
-        
-        my $unknownTaxonId = $self->getTaxonIdFromName('unknown');
         my $taxon_id = $self->getTaxonIdFromName($taxon_name);
-        $self->log("Mapping taxon name '$taxon_name' to taxon ID: " . (defined $taxon_id ? $taxon_id : $unknownTaxonId));
+        if (!defined $taxon_id) {
+          $taxon_id = $self->getTaxonIdFromName('unknown');
+        }
 
         my $protein_data_bank = GUS::Model::ApiDB::ProteinDataBank->new({
             source_id => $source_id,
