@@ -17,9 +17,9 @@ use Bio::Tools::GFF;
 
 
 
-my ($help, $isEst, $queryExternalDatabaseName, $gusConfig, $outputDirectory, $organismAbbrev, $outputFileBase, $targetExtDbRlsSpec);
+my ($help, $isEst, $gusConfig, $outputDirectory, $organismAbbrev, $outputFileBase, $targetExtDbRlsSpec, $queryExtDbRlsSpec);
 
-&GetOptions('query_external_database_name=s' => \$queryExternalDatabaseName,
+&GetOptions('query_ext_db_rls_spec=s' => \$queryExtDbRlsSpec,
             'output_directory=s' => \$outputDirectory,
             'gus_config=s' => \$gusConfig,
             'output_file_base=s' => \$outputFileBase,
@@ -30,7 +30,7 @@ my ($help, $isEst, $queryExternalDatabaseName, $gusConfig, $outputDirectory, $or
     );
 
 if($help) {
-  print STDERR "alignedTranscriptSeqsToGff.pl [--query_external_database_name NAME] [--is_est] --output_directory DIR --gus_config CONFIG --output_file_base STRING [--ncbi_tax_id INT] --target_ext_db_rls_spec STRING\n";
+  print STDERR "alignedTranscriptSeqsToGff.pl [--query_ext_db_rls_spec NAME] [--is_est] --output_directory DIR --gus_config CONFIG --output_file_base STRING [--ncbi_tax_id INT] --target_ext_db_rls_spec STRING\n";
   exit;
 } 
 
@@ -55,7 +55,7 @@ $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
 
-my $queryExternalDatabaseReleaseIds = &getQueryExtDbRlsIds($dbh, $isEst, $queryExternalDatabaseName);
+my $queryExternalDatabaseReleaseIds = &getQueryExtDbRlsIds($dbh, $isEst, $queryExtDbRlsSpec);
 my $queryExtenralDatabaseString = join(",", @$queryExternalDatabaseReleaseIds);
 
 my $targetExternalDatabaseReleaseId = &getTargetExtDbRls($dbh, $targetExtDbRlsSpec);
@@ -175,15 +175,17 @@ sub runExtDbRlsQuery {
 }
 
 sub getQueryExtDbRlsIds {
-    my ($dbh, $isEst, $externalDatabaseName) = @_;
+    my ($dbh, $isEst, $externalDatabaseSpec) = @_;
 
-    my $query = $isEst ? &getEstDatasetsQuery() : &getOneDatasetQuery($externalDatabaseName, undef);
+    my ($name, $version) = split(/\|/, $targetExtDbRlsSpec);
+
+    my $query = $isEst ? &getEstDatasetsQuery() : &getOneDatasetQuery($name, $version);
 
     my $ids = &runExtDbRlsQuery($dbh, $query);
 
 
     if(scalar @$ids < 1) {
-        die "Expected at least one externaldatabase release id for isEST=$isEst OR dataset=$externalDatabaseName";
+        die "Expected at least one externaldatabase release id for isEST=$isEst OR dataset=$externalDatabaseSpec";
     }
 
     return $ids;
@@ -192,9 +194,6 @@ sub getQueryExtDbRlsIds {
 
 sub getOneDatasetQuery {
     my ($externalDatabaseName, $externalDatabaseVersion) = @_;
-
-    $externalDatabaseVersion = '%' unless($externalDatabaseVersion);
-
 
     return "select distinct r.external_database_release_id
 FROM sres.externaldatabase d, sres.externaldatabaserelease r
