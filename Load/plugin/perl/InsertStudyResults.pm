@@ -7,8 +7,6 @@ use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
-use GUS::Model::Study::Study;
-use GUS::Model::Study::StudyLink;
 use GUS::Model::Study::Protocol;
 use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::ProtocolAppNode;
@@ -657,7 +655,6 @@ sub undoTables {
   return (
     'Study.Input',
     'Study.Output',
-    'Study.StudyLink',
     'Results.NAFeatureExpression',
     'Results.NAFeatureDiffResult',
     'Results.ReporterIntensity',
@@ -689,7 +686,6 @@ sub undoTables {
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
-    'Study.Study',
      );
 }
 
