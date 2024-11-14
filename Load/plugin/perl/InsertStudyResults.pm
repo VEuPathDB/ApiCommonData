@@ -134,22 +134,22 @@ sub run {
     chomp;
 
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
-    my $investigation = $self->makeStudy($self->getArg('studyName'));
+    #my $investigation = $self->makeStudy($self->getArg('studyName'));
 
-    my @investigationLinks = $investigation->getChildren('Study::StudyLink');
+    #my @investigationLinks = $investigation->getChildren('Study::StudyLink');
 
-    $self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
+    #$self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
 
-    my $study = $self->makeStudy($studyName);
+    my $study = $self->makeNodeSet($studyName);#makeStudy
 
-    $study->setParent($investigation);
+    #$study->setParent($investigation);
 
     my @studyLinks = $study->getChildren('Study::StudyLink');
 
-    my $existingInvestigationAppNodes = $self->retrieveAppNodesForStudy(\@investigationLinks);
+    #my $existingInvestigationAppNodes = $self->retrieveAppNodesForStudy(\@investigationLinks);
     my $existingStudyAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes, $investigation, $nodeOrderNum);
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes,  $nodeOrderNum); #$investigation,
 
     my $protocolType;
     if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/ || $protocolName eq "differential expression analysis data transformation") {
@@ -167,7 +167,7 @@ sub run {
 
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
-    $investigation->addToSubmitList($protocolApp);
+    #$investigation->addToSubmitList($protocolApp);
 
     foreach my $inputAppNode (@$inputAppNodes) {
       my $input = GUS::Model::Study::Input->new();
@@ -175,7 +175,7 @@ sub run {
       $input->setParent($inputAppNode);
 
       $self->linkAppNodeToStudy($study, $inputAppNode);
-      $self->linkAppNodeToStudy($investigation, $inputAppNode);
+      #$self->linkAppNodeToStudy($investigation, $inputAppNode);
     }
 
     my $output = GUS::Model::Study::Output->new();
@@ -183,11 +183,11 @@ sub run {
     $output->setParent($protocolAppNode);
 
     $self->linkAppNodeToStudy($study, $protocolAppNode);
-    $self->linkAppNodeToStudy($investigation, $protocolAppNode);
+    #$self->linkAppNodeToStudy($investigation, $protocolAppNode);
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
-    $investigation->submit();
+    #$investigation->submit();
 
     $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
     $self->undefPointerCache();
@@ -630,22 +630,36 @@ sub makeProtocolAppParams {
   return \@rv;
 }
 
-sub makeStudy {
-  my ($self, $studyName) = @_;
+#sub makeStudy {
+#  my ($self, $studyName) = @_;
+#
+#  # if(my $cachedStudy = $self->{_study_names}->{$studyName}) {
+#  #   return $cachedStudy;
+#  # }
+#
+#  my $extDbSpec = $self->getArg('extDbSpec');
+#  my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
+#
+#  my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $extDbRlsId});
+#  $study->retrieveFromDB();
+#
+#  $study->getChildren("Study::StudyLink", 1);
+#
+#  return $study;
+#}
 
-  # if(my $cachedStudy = $self->{_study_names}->{$studyName}) {
-  #   return $cachedStudy;
-  # }
+sub makeNodeSet {
 
-  my $extDbSpec = $self->getArg('extDbSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
+   my ($self, $studyName) = @_;
 
-  my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $extDbRlsId});
-  $study->retrieveFromDB();
 
-  $study->getChildren("Study::StudyLink", 1);
+   my $extDbSpec = $self->getArg('extDbSpec');
+   my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
 
-  return $study;
+   my $study = GUS::Model::Study::NodeSet->new({name => $studyName, external_database_release_id => $extDbRlsId});
+
+   return $study;
+
 }
 
 
