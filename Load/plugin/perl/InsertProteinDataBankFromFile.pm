@@ -96,16 +96,18 @@ sub run {
 
     my $file = $self->getArg('inputFile');
     my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbSpec'));
-    my ($processed);
+    my $taxon_cache = $self->preloadTaxonCache();
+    my $processed = 0;
 
     open my $fh, '<', $file or $self->userError("Unable to open file: $file");
 
     while (my $line = <$fh>) {
         chomp $line;
         my ($source_id, $description, $taxon_name) = split "\t", $line;
-        my $taxon_id = $self->getTaxonIdFromName($taxon_name);
+        my $taxon_id = $taxon_cache->{lc($taxon_name)};
+
         if (!defined $taxon_id) {
-          $taxon_id = $self->getTaxonIdFromName('unknown');
+          $taxon_id = $taxon_cache->{'unknown'};
         }
 
         my $protein_data_bank = GUS::Model::ApiDB::ProteinDataBank->new({
@@ -117,6 +119,7 @@ sub run {
         $protein_data_bank->submit();
         $self->undefPointerCache();
         $processed++;
+        $self->log("  Processed $processed data lines") if $processed % 10000 == 0;
     }
 
     close $fh;
@@ -124,16 +127,17 @@ sub run {
     $self->log("$processed data lines parsed and inserted successfully from file: $file.");
 }
 
-sub getTaxonIdFromName {
-  my ($self, $taxon_name) = @_;
+sub preloadTaxonCache {
+    my ($self) = @_;
+    my $dbh = $self->getQueryHandle();
+    my $stmt = $dbh->prepare("SELECT lower(name) AS name, taxon_id FROM sres.taxonname");
+    $stmt->execute();
 
-  my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepare("SELECT taxon_id FROM sres.taxonname WHERE lower(name) = lower(?)");
-
-  $stmt->execute($taxon_name);
-  my ($taxon_id) = $stmt->fetchrow_array();
-
-  return $taxon_id;  # returns undef if taxon_id is not found
+    my %cache;
+    while (my ($name, $taxon_id) = $stmt->fetchrow_array()) {
+        $cache{$name} = $taxon_id;
+    }
+    return \%cache;
 }
 
 
