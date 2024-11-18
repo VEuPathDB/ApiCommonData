@@ -141,7 +141,7 @@ sub run {
     my $study = $self->makeNodeSet($studyName);#makeStudy
 
 
-    my @studyLinks = $study->getChildren('ApiDB::NodeNodeSet');
+    my @studyLinks = $study->getChildren('Study::NodeNodeSet');
 
     my $existingStudyAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
 
@@ -514,7 +514,7 @@ sub getInputAppNodes {
 sub linkAppNodeToStudy {
   my ($self, $study, $protocolAppNode) = @_;
 
-  my @studyLinks = $study->getChildren('ApiDB::NodeNodeSet');
+  my @studyLinks = $study->getChildren('Study::NodeNodeSet');
 
   foreach my $sl (@studyLinks) {
     my $linkParent = $sl->getParent("Study::ProtocolAppNode", 1);
@@ -628,11 +628,11 @@ sub makeNodeSet {
   my $nodeSetName = $studyName;
   my $nodeSetType;
   if  ($studyName =~ /(.+) \[(.+)\]$/) {
-   $nodeSetName = $1;
-   $nodeSetType = $2;
+      $nodeSetName = $1;
+      $nodeSetType = $2;
   }
 
-   my $study = GUS::Model::ApiDB::NodeSet->new({name => $studyName, external_database_release_id => $extDbRlsId, node_type => $nodeSetType});
+   my $study = GUS::Model::Study::NodeSet->new({name => $studyName, external_database_release_id => $extDbRlsId, node_type => $nodeSetType});
    $study->retrieveFromDB();
 
    return $study;
@@ -673,8 +673,8 @@ sub undoTables {
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
     'ApiDB.LopitResults',
-    'ApiDB.NodeSet',
-    'ApiDB.NodeNodeSet',
+    'Study.NodeSet',
+    'Study.NodeNodeSet',
     #'ApiDB.NAFeatureList',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
