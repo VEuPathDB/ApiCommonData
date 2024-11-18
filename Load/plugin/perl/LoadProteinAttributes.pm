@@ -117,7 +117,7 @@ sub run {
 
   while(<FILE>) {
     chomp;
-    my ($id, $isoelectricPoint, $minWeight, $maxWeight, $hp) = split(/\t/, $_);
+    my ($id, $isoelectricPoint, $minWeight, $maxWeight) = split(/\t/, $_);
 
     my $aaSeqId = $proteinIds->{$id};
 
