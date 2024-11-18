@@ -426,11 +426,11 @@ sub loadConfig{
   my ($self) = @_;
 
   my $inPath = $self->getArg('inPath');
-  my $cFile = "$inPath/insertInterpro-config.xml";
-  $self->error("Can't open config file '$cFile'")
-    unless (-r $cFile && -f $cFile);
+  #my $cFile = "$inPath/insertInterpro-config.xml";
+  $self->error("Can't open config file '$inPath'")
+    unless (-r $inPath && -f $inPath);
 
-  my $conf = $self->parseSimple($cFile);
+  my $conf = $self->parseSimple($inPath);
 
   #Configuration of DBs listed in Config File.
   my $dbs = $conf->{'db'};
