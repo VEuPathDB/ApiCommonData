@@ -133,11 +133,9 @@ foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
 
       my $soTermName = $transcriptAnnotations->{$transcriptId}->{so_term_name};
 
-#      $soTermName = 'mRNA' if($soTermName eq 'protein_coding');
-#      $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
-#      $soTermName =~ s/_encoding$//;
-
-#      $feature->primary_tag($soTermName);
+      if($skipExtraAnnotation) { # when skipping annotation, we need to put something generic
+        $feature->primary_tag("transcript");
+      }
 
       $feature->add_tag_value("description", $product) if($product);
       $feature->add_tag_value("Note", $ecNumbers) if($ecNumbers);
