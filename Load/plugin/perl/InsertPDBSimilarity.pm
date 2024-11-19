@@ -1,4 +1,4 @@
-package ApiDB::Load::Plugin::InsertPDBSimilarity;
+package ApiCommonData::Load::Plugin::InsertPDBSimilarity;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -12,7 +12,9 @@ sub getArgumentsDeclaration {
       [
        fileArg({name => 'inputFile',
                 descr => 'DIAMOND BLAST tabular output file (format -f 6)',
+                constraintFunc=> undef,
                 reqd => 1,
+                isList => 0,
                 mustExist => 1,
                 format => 'Text'
                }),
@@ -94,17 +96,18 @@ sub run {
 
     my $inputFile = $self->getArg('inputFile');
     my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-    my ($processed);
+    my ($processed,$fh);
+    my $proteinDataBankIDs = $self->preloadProteinDataBankIdCache();
 
-    open my $fh, '<', $inputFile or $self->userError("Unable to open file: $inputFile");
+    open($fh, "gunzip -c $inputFile |") || die "Can't open $inputFile for reading";
 
     while (my $line = <$fh>) {
         chomp $line;
         my ($query_id, $subject_id, $pident, $length, $mismatch, $query_start, $query_end, $subject_start, $subject_end, $evalue_mant, $evalue_exp, $bit_score) = split "\t", $line;
 
-        my $protein_data_bank_id = $self->getProteinDataBankId($query_id);
+        my $protein_data_bank_id = $proteinDataBankIDs->{$subject_id};
 
-        my $aa_sequence_id = &GUS::Supported::Util::getAASequenceId($self, $subject_id);
+        my $aa_sequence_id = &GUS::Supported::Util::getAASequenceId($self, $query_id);
 
         my $pdb_similarity = GUS::Model::ApiDB::PDBSimilarity->new({
             protein_data_bank_id              => $protein_data_bank_id,
@@ -124,6 +127,7 @@ sub run {
         $pdb_similarity->submit();
         $self->undefPointerCache();
         $processed++;
+        $self->log("  Processed $processed data lines") if $processed % 10000 == 0;
     }
 
     close $fh;
@@ -131,16 +135,19 @@ sub run {
     $self->log("$processed data lines parsed and inserted successfully from file: $inputFile.");
 }
 
-sub getProteinDataBankId {
-    my ($self, $sourceId) = @_;
-
+sub preloadProteinDataBankIdCache {
+    my ($self) = @_;
     my $dbh = $self->getQueryHandle();
-    my $stmt = $dbh->prepare("SELECT protein_data_bank_id FROM ApiDB.ProteinDataBank WHERE source_id = ?");
-    $stmt->execute($sourceId);
-    my ($protein_data_bank_id) = $stmt->fetchrow_array();
+    my $stmt = $dbh->prepare("SELECT protein_data_bank_id,source_id FROM ApiDB.ProteinDataBank");
+    $stmt->execute();
 
-    return $protein_data_bank_id;
+    my %cache;
+    while (my ($protein_data_bank_id, $source_id) = $stmt->fetchrow_array()) {
+        $cache{$source_id} = $protein_data_bank_id;
+    }
+    return \%cache;
 }
+
 
 sub undoTables {
   qw(

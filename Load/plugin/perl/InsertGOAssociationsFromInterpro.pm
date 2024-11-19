@@ -292,7 +292,14 @@ sub processProteinResults {
 	my %seen;
 	foreach my $classification (@allClassifications) {
             next if ($seen{$classification} || $classification =~ /-/);
-	    $self->buildGOAssociation($aaId, $classification);
+            my $go_term;
+            if ($classification =~ /(GO:\d+)/) {
+               $go_term = $1;
+            } else {
+              $go_term = $classification; # Keep the original if no match
+            } 
+
+            $self->buildGOAssociation($aaId, $go_term);
             $seen{$classification} = "true";
 	}
     }

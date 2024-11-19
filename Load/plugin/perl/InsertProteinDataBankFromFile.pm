@@ -22,8 +22,7 @@ sub getArgumentsDeclaration {
                 constraintFunc=> undef,
                 reqd           => 1,
                 isList => 0,
-                constraintFunc => undef,
-                isList         => 0, }),
+               }),
       ];
     return $argsDeclaration;
 }
