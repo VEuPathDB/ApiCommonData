@@ -7,6 +7,9 @@ use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
+use GUS::Model::Study::NodeSet;
+use GUS::Model::Study::NodeNodeSet;
+
 use GUS::Model::Study::Protocol;
 use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::ProtocolAppNode;
@@ -132,9 +135,8 @@ sub run {
 
   while(<CONFIG>) {
     chomp;
-
+   
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
-
 
     #$self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
 
@@ -145,7 +147,7 @@ sub run {
 
     my $existingStudyAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames,  $nodeOrderNum); #$investigation,$existingInvestigationAppNodes
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingStudyAppNodes, $study,  $nodeOrderNum); #$investigation,$existingInvestigationAppNodes
 
     my $protocolType;
     if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/ || $protocolName eq "differential expression analysis data transformation") {
@@ -478,7 +480,6 @@ sub lookupIdFromSourceId {
 
 sub getInputAppNodes {
   my ($self, $inputNames, $existingAppNodes, $study, $nodeOrderNum) = @_;
-
   my @inputNames = split(';', $inputNames);
 
   my @rv;
@@ -523,7 +524,7 @@ sub linkAppNodeToStudy {
     return $sl if($linkParent->getName() eq $protocolAppNode->getName());
   }
 
-  my $studyLink = GUS::Model::ApiDB::NodeNodeSet->new();
+  my $studyLink = GUS::Model::Study::NodeNodeSet->new();
   $studyLink->setParent($study);
   $studyLink->setParent($protocolAppNode);
 
@@ -632,9 +633,8 @@ sub makeNodeSet {
       $nodeSetType = $2;
   }
 
-   my $study = GUS::Model::Study::NodeSet->new({name => $studyName, external_database_release_id => $extDbRlsId, node_type => $nodeSetType});
+   my $study = GUS::Model::Study::NodeSet->new({name => $nodeSetName, external_database_release_id => $extDbRlsId, node_type => $nodeSetType});
    $study->retrieveFromDB();
-
    return $study;
 
 }
