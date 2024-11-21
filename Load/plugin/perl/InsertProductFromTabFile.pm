@@ -180,8 +180,8 @@ sub run {
 
 #      my $preferred = 0;
 
-      my $gene = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId});
-      my $transcript = GUS::Model::DoTS::Transcript->new({source_id => $sourceId});
+      my $gene = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
+      my $transcript = GUS::Model::DoTS::Transcript->new({source_id => $sourceId, row_project_id => $projectId});
 
       if($transcript->retrieveFromDB()){
 	  my $transcriptProduct = $transcript->getChild('ApiDB::TranscriptProduct',1);
