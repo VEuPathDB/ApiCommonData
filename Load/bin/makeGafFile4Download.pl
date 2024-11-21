@@ -13,7 +13,7 @@ use CBIL::Util::PropertySet;
 use HTTP::Date;
 
 my ($date, ) = split(" ", HTTP::Date::time2iso());
-$date = join("",split(/-/,$date));
+#$date = join("",split(/-/,$date));
 
 my ($help, $gusConfigFile, $organismAbbrev, $outputFile, $tuningTablePrefix);
 &GetOptions('help|h' => \$help,
@@ -45,6 +45,7 @@ $dbh->{AutoCommit} = 0;
 open(my $fhl, ">$outputFile") or die "Cannot open file $outputFile For writing: $!";
 
 my $ncbiTaxonId = getNcbiTaxonIdForOrganism ($dbh, $organismAbbrev);
+my $projectName = getProjectNameForOrganism ($dbh, $organismAbbrev);
 my $extDbRlsId = getPrimaryExtRlsIdFromOrganismAbbrev ($dbh, $organismAbbrev);
 print STDERR "For $organismAbbrev got externalDatabaseRlsId = $extDbRlsId\n";
 
@@ -126,7 +127,7 @@ from apidbtuning.${tuningTablePrefix}GeneGoTerms
     #}
 
     my @items;
-    $items[0] = "VEuPathDB";
+    $items[0] = $projectName;
     $items[1] = $gSourceId;                        ## gene source id
     $items[2] = $geneName;                         ## "Symbol"
     $items[3] = uc($isNot);                        ## Qualifier, optional
@@ -290,6 +291,21 @@ where o.TAXON_ID=t.TAXON_ID and o.ABBREV='$abbrev'
   return $taxonId;
 }
 
+sub getProjectNameForOrganism {
+  my ($dbhSub, $abbrev) = @_;
+  my $project_name;
+
+  ## get project_name from organismAbbrev
+  my $sqlSub = "
+select project_name from apidb.organism
+where abbrev='$abbrev'
+
+";
+
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  $project_name = $sqlRefSub->[0] if ($sqlRefSub);
+  return $project_name;
+}
 
 sub readFromDatabase {
   my ($dbh, $sql) = @_;
@@ -311,6 +327,8 @@ sub printGoInfo {
   my ($fileH, $arrayRef) = @_;
 
   print $fileH "!gaf-version: 2.1\n";
+  print $fileH "!generated-by: $projectName\n";
+  print $fileH "!date-generated: $date\n";
 
   foreach my $j (0..$#$arrayRef) {
     my @items = split (/\|/, $arrayRef->[$j]);

@@ -4,7 +4,7 @@ use strict;
 use lib "$ENV{GUS_HOME}/lib/perl/";
 
 use DBI;
-use DBD::Oracle;
+
 use Getopt::Long;
 
 use CBIL::Util::PropertySet;
@@ -14,12 +14,13 @@ use Bio::Tools::GFF;
 
 # Possible TODO is to add the fasta sequence for transcript, cds, protein (wdkReportMaker includes options for these BUT we are not planning on using the wdkReportMaker for GUS4)
 
-my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $tuningTablePrefix);
+my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $tuningTablePrefix, $skipExtraAnnotation);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
             'extDbRlsId=s' => \$extDbRlsId,
             'outputFile=s' => \$outputFile,
             'tuningTablePrefix=s' => \$tuningTablePrefix,
+            'skipExtraAnnotation!' => \$skipExtraAnnotation,
     );
 
 ##Create db handle
@@ -47,34 +48,37 @@ my $transcriptAnnotations = {};
 my $ncbiTaxId;
 my $sequenceLengths = {};
 
-my $sql = "select t.so_term_name, s.source_id as sequence_source_id, s.length, t.gene_source_id, t.gene_product, t.gene_name, t.source_id as transcript_source_id, t.transcript_product, t.ncbi_tax_id, t.ec_numbers, t.annotated_go_id_function, t.annotated_go_id_component,t.annotated_go_id_process 
+unless($skipExtraAnnotation) {
+  my $sql = "select t.so_term_name, s.source_id as sequence_source_id, s.length, t.gene_source_id, t.gene_product, t.gene_name, t.source_id as transcript_source_id, t.transcript_product, t.ncbi_tax_id, t.ec_numbers, t.annotated_go_id_function, t.annotated_go_id_component,t.annotated_go_id_process
                    from apidbtuning.${tuningTablePrefix}transcriptattributes t, dots.nasequence s, sres.externaldatabaserelease r, sres.externaldatabase d
                    where t.na_sequence_id = s.na_sequence_id
                     and r.external_database_release_id = ?
                     and r.external_database_id = d.external_database_id
                     and r.version = t.external_db_version
                     and d.name = t.external_db_name";
-my $sh = $dbh->prepare($sql);
-$sh->execute($extDbRlsId);
-while(my ($soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $geneProduct, $geneName, $transcriptSourceId, $transcriptProduct, $ncbi, $ecNumbers, @goIds) = $sh->fetchrow_array()) {
-  $ncbiTaxId = $ncbi if($ncbi);
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId);
+  while(my ($soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $geneProduct, $geneName, $transcriptSourceId, $transcriptProduct, $ncbi, $ecNumbers, @goIds) = $sh->fetchrow_array()) {
+    $ncbiTaxId = $ncbi if($ncbi);
 
 
 
-  $geneAnnotations->{$geneSourceId} = {gene_product => $geneProduct,
-                                       ncbi_tax_id => $ncbiTaxId,
-                                       gene_name => $geneName,
-  };
+    $geneAnnotations->{$geneSourceId} = {gene_product => $geneProduct,
+                                         ncbi_tax_id => $ncbiTaxId,
+                                         gene_name => $geneName,
+    };
 
-  $transcriptAnnotations->{$transcriptSourceId} = {transcript_product => $transcriptProduct,
-                                   so_term_name => $soTermName,
-                                   ec_numbers => $ecNumbers,
-                                   go_ids => join(",",  grep {defined $_ } @goIds)
-  };
+    $transcriptAnnotations->{$transcriptSourceId} = {transcript_product => $transcriptProduct,
+                                                     so_term_name => $soTermName,
+                                                     ec_numbers => $ecNumbers,
+                                                     go_ids => join(",",  grep {defined $_ } @goIds)
+    };
 
 
-  $sequenceLengths->{$sequenceSourceId} = $sequenceLength;
+    $sequenceLengths->{$sequenceSourceId} = $sequenceLength;
+  }
 }
+
 
 my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $extDbRlsId, 1);
 
@@ -129,11 +133,9 @@ foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
 
       my $soTermName = $transcriptAnnotations->{$transcriptId}->{so_term_name};
 
-#      $soTermName = 'mRNA' if($soTermName eq 'protein_coding');
-#      $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
-#      $soTermName =~ s/_encoding$//;
-
-#      $feature->primary_tag($soTermName);
+      if($skipExtraAnnotation) { # when skipping annotation, we need to put something generic
+        $feature->primary_tag("transcript");
+      }
 
       $feature->add_tag_value("description", $product) if($product);
       $feature->add_tag_value("Note", $ecNumbers) if($ecNumbers);

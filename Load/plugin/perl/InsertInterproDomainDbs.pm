@@ -426,11 +426,11 @@ sub loadConfig{
   my ($self) = @_;
 
   my $inPath = $self->getArg('inPath');
-  my $cFile = "$inPath/insertInterpro-config.xml";
-  $self->error("Can't open config file '$cFile'")
-    unless (-r $cFile && -f $cFile);
+  #my $cFile = "$inPath/insertInterpro-config.xml";
+  $self->error("Can't open config file '$inPath'")
+    unless (-r $inPath && -f $inPath);
 
-  my $conf = $self->parseSimple($cFile);
+  my $conf = $self->parseSimple($inPath);
 
   #Configuration of DBs listed in Config File.
   my $dbs = $conf->{'db'};
@@ -438,16 +438,11 @@ sub loadConfig{
   foreach my $dbName (keys %$dbs) {
     $self->{$dbName} = $dbs->{$dbName};
     my $ver = $self->{$dbName}->{ver};
-    my $file = $self->{$dbName}->{filename} = 
-      "$inPath/$self->{$dbName}->{filename}";
     my $format = $self->{$dbName}->{format};
     my $logFreq = $self->{$dbName}->{logFreq};
     if (!$SUPPORTED_FORMATS->{$format}) {
       die "Format '$format' (used by db: '$dbName') is not supported";
     }
-
-    $self->error("input file '$file' for database '$dbName' cannot be opened")
-      unless (-r $file && -f $file);
 
     $self->log("Checking entry for external Db: $dbName $ver");
 

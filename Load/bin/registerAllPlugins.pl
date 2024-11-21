@@ -5,14 +5,20 @@ use strict;
 use lib $ENV{GUS_HOME} . "/lib/perl";
 
 use DBI;
-use DBD::Oracle;
 
 use GUS::Supported::GusConfig;
 
+use Getopt::Long;
+
 use Data::Dumper;
 
-my $configFile = "$ENV{GUS_HOME}/config/gus.config";
-my $config = GUS::Supported::GusConfig->new($configFile);
+my ($gusConfig);
+
+&GetOptions('gusConfigfile=s' => \$gusConfig,
+    );
+
+
+my $config = GUS::Supported::GusConfig->new($gusConfig);
 
 my $dbh = DBI->connect( $config->getDbiDsn(),
                         $config->getDatabaseLogin(),
@@ -20,8 +26,10 @@ my $dbh = DBI->connect( $config->getDbiDsn(),
     )
     || die "unable to open db handle to ", $config->getDbiDsn;
 
-my $sql = "select name, ai.executable_md5 from core.algorithm a, core.algorithmimplementation ai
-where ai.algorithm_id (+) = a.algorithm_id";
+my $sql = "SELECT a.name, ai.executable_md5
+FROM core.algorithm a
+LEFT JOIN core.algorithmimplementation ai
+ON ai.algorithm_id = a.algorithm_id";
 
 my %algorithms;
 my %checkSums;
@@ -32,7 +40,9 @@ $sh->execute();
 while(my ($name, $md5) = $sh->fetchrow_array()) {
   $algorithms{$name}++;
   $checkSums{$name}->{$md5}++ if($md5);
-}$sh->finish;
+}
+
+$sh->finish;
 $dbh->disconnect();
 
 
@@ -43,12 +53,11 @@ foreach my $pluginPath (glob "$ENV{GUS_HOME}/lib/perl/*/*/Plugin/*.pm") {
   my $module = $pluginPath;
   $module =~ s/\//::/g;
   $module =~ /lib::perl::(.+)\.pm$/;
-  $module = $1; 
- 
+  $module = $1;
+
   # if the database doesn't know about the Plugin, register it
   if(!$algorithms{$module}) {
-    system("ga +create $module --commit");
-    next;
+    system("ga +create $module --gusConfigFile $gusConfig --commit");
   }
 
   my $md5 = `md5sum $pluginPath | cut -f 1 -d ' '`;
@@ -60,7 +69,8 @@ foreach my $pluginPath (glob "$ENV{GUS_HOME}/lib/perl/*/*/Plugin/*.pm") {
   }
 
   # if the database doesn't know about the Version of the plugin, register it
-  system("ga +update $module --commit");
+  system("ga +update $module --gusConfigFile $gusConfig --commit");
+
 }
 
 1;

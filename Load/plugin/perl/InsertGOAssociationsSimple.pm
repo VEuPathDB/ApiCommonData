@@ -496,6 +496,9 @@ sub getLoeId {
 sub getEvidenceId {
   my ($self, $evidenceCode, $goEvidenceCodeDbRlsId) = @_;
 
+  # replace NR with ND because NR is an obsolete evidence code and seems to have been replaced by ND
+  $evidenceCode = "ND" if ($evidenceCode eq "NR");
+
   if (!$self->{evidenceIds}) {
     my $sql = "select ontology_term_id, source_id from SRes.OntologyTerm  WHERE external_database_release_id = $goEvidenceCodeDbRlsId ";
     my $stmt = $self->prepareAndExecute($sql);

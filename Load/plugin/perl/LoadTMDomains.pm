@@ -1,24 +1,4 @@
 package ApiCommonData::Load::Plugin::LoadTMDomains;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 #######################################
@@ -44,6 +24,8 @@ use GUS::Model::DoTS::TransMembraneAAFeature;
 use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::TranslatedAASequence;
 
+use Bio::Tools::GFF;
+
 $| = 1;
 
 # Load Arguments
@@ -52,7 +34,7 @@ my $argsDeclaration  =
 [
 
 fileArg({name => 'data_file',
-         descr => 'text file containing external sequence annotation data',
+         descr => 'gff file containing external sequence annotation data',
          constraintFunc=> undef,
          reqd  => 1,
          isList => 0,
@@ -60,28 +42,6 @@ fileArg({name => 'data_file',
          format=>'Text'
         }),
 
-fileArg({name => 'restart_file',
-         descr => 'text file containing external sequence annotation data',
-         constraintFunc=> undef,
-         reqd  => 0,
-         isList => 0,
-         mustExist => 0,
-         format=>'Text'
-        }),
-
-stringArg({name => 'algName',
-       descr => 'Name of algorithm used For predictions',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
-
-stringArg({name => 'algDesc',
-       descr => 'Detailed description of use',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
 
 stringArg({name => 'extDbName',
        descr => 'External database from whence the data file you are loading came (original source of data)',
@@ -97,13 +57,6 @@ stringArg({name => 'extDbRlsVer',
        isList => 0
       }),
 
-booleanArg({name => 'useSourceId',
-       descr => 'Use source_id to link back to AASequence view',
-       constraintFunc=> undef,
-       reqd  => 0,
-       isList => 0,
-       default => 0,
-      })
 ];
 
 return $argsDeclaration;
@@ -196,34 +149,44 @@ sub run{
 
   my $dataFile = $self->getArg('data_file');
 
-  my $algId = $self->getSetAlgorithm();
+  open(my $fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
+  my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
-  open (DATAFILE, "$dataFile");
 
-  while (<DATAFILE>) {
-    my $line_in = $_;
+
+  my %aaFeatureIds;
+
+  #PF3D7_MIT02300.1-p1	veupathdb	tmhmm2.0	1	376	.	.	.	ID=PF3D7_MIT02300.1-p1_tmhmm;expectedAA=204.69;first60=22.86;predictedHelices=8
+  #PF3D7_MIT02300.1-p1	veupathdb	TMhelix	24	46	.	.	.	ID=PF3D7_MIT02300.1-p1_tmhmm_2;Parent=PF3D7_MIT02300.1-p1_tmhmm
+  while (my $feature = $gffIo->next_feature()) {
+
+    my $primaryTag = $feature->primary_tag();
+
+    # only load tmhmm results and locations of the helix(s)
+    next unless($primaryTag eq 'tmhmm2.0' || $primaryTag eq 'TMhelix');
+
+    my $proteinSourceId = $feature->seq_id();
+    my $aaSeqId = $self->retSeqIdFromSrcId($proteinSourceId);
 
     $lnsPrc++;
 
-    my ($attVals,$locs) =  $self->parseAttVals($line_in,$algId);
+    # tmhmm2.0 is the top level feature
+    if($primaryTag eq 'tmhmm2.0') {
+      my $tmFeat = $self->buildTmFeat($feature, $aaSeqId);
 
-    next if (!$attVals);
-
-    $self->error("AA locations missing for aa_sequence_id = $attVals->{'aa_sequence_id'}\n") if (!$locs);
-
-    my $tmFeat = $self->buildTmFeat($attVals);
-
-    if ($tmFeat->retrieveFromDB()) { 
-      print 'Record already in GUS. Insert not attempted';
-    }
-    else {
-      $self->makeAALocations($tmFeat,$locs);
-      eval { $tmFeat->submit(); };
-      if ($@) { 
-	$self->handleFailure($@,$tmFeat);
-      }
+      $tmFeat->submit();
+      my $tmFeatId = $tmFeat->getId();
+      $aaFeatureIds{$proteinSourceId} = $tmFeatId;
       $lnsInsrt++;
     }
+    # TMHelix (load the location associated with the tmfeature)
+    else {
+      my $parentFeatId = $aaFeatureIds{$proteinSourceId};
+
+      my $aaLoc = $self->makeAALocation($parentFeatId, $feature);
+      $aaLoc->submit();
+    }
+
     $self->undefPointerCache();
   }
 
@@ -233,124 +196,65 @@ sub run{
   $self->logData($resultDescrip);
 }
 
-sub parseAttVals{
-  my ($self,$line_in,$algId) = @_;
-
-  $line_in =~ s/\w+\=//g;
-
-  my %attVals;
-
-  my @Record = split(/\t/,$line_in);
-
-  return if ($Record[4] == 0);
-
-  if ($self->getArg('useSourceId')) {
-    my $aaSeqId = $self->retSeqIdFromSrcId($Record[0]);
-    $Record[0] = $aaSeqId;
-  }
-
-  $attVals{'aa_sequence_id'} = $Record[0];
-
-  $attVals{'length'} = $Record[1];
-
-  $attVals{'expected_aa'} = $Record[2];
-
-  $attVals{'first_60'} = $Record[3];
-
-  $attVals{'predicted_helices'} = $Record[4];
-
-  $attVals{'is_predicted'} = 1;
-
-  $attVals{'prediction_algorithm_id'} = $algId;
-
-  my $topology = $Record[5];
-
-  my ($tmType,$locs) = $self->parseTopology($topology);
-
-  $self->error("Can't get the TM protein type or locations for $attVals{'aa_sequence_id'}\n") if (!$tmType || !$locs);
-
-  $attVals{'topology'} = $tmType;
-
-  return (\%attVals,$locs);
-}
-
-sub parseTopology {
-  my ($self,$topology) = @_;
-
-  $topology =~ s/\s//g;
-
-  my ($tmType,$tmStart);
-
-  if ($topology =~ /^(i|o)/) {
-    $tmStart = $1;
-
-    $topology =~ s/^\w//;
-
-    $tmType = $tmStart eq 'o' ? 1 : 2;
-
-  }
-  else {
-    return;
-  }
-
-  my @locs = split(/i|o/,$topology);
-
-  return ($tmType,\@locs);
-}
-
 sub buildTmFeat {
-  my ($self,$attVals) = @_;
+  my ($self,$feature, $aaSeqId) = @_;
 
-  my $tmFeat = GUS::Model::DoTS::TransMembraneAAFeature->new($attVals);
+  my ($expectedAA) = $feature->get_tag_values('expectedAA');
+  my ($first60) = $feature->get_tag_values('first60');
+  my ($predictedHelices) = $feature->get_tag_values('predictedHelices');
 
+
+  my $tmFeat = GUS::Model::DoTS::TransMembraneAAFeature->new({aa_sequence_id => $aaSeqId,
+                                                              is_predicted => 1,
+                                                              expected_aa => $expectedAA,
+                                                              first_60 => $first60,
+                                                              predicted_helices => $predictedHelices
+                                                             });
   return $tmFeat;
 }
 
-sub makeAALocations {
-  my ($self,$tmFeat,$aaLocs) = @_;
+sub makeAALocation {
+  my ($self,$tmFeatId,$feature) = @_;
 
-  foreach my $loc (@$aaLocs) {
+  my $start = $feature->start();
+  my $end = $feature->end();
 
-    if ($loc =~ /(\d+)-(\d+)/) {
-      my $aaLoc = GUS::Model::DoTS::AALocation->new({'start_max'=>$1,'start_min'=>$1,'end_max'=>$2,'end_min'=>$2});
+  my $aaLoc = GUS::Model::DoTS::AALocation->new({start_max => $start,
+                                                 start_min => $start,
+                                                 end_max => $end,
+                                                 end_min => $end,
+                                                 aa_feature_id => $tmFeatId
+                                                });
 
-      $aaLoc->setParent($tmFeat);
-    }
-    else {
-      $self->error("Can't parse location\n");
-    }
-  }
-}
+  return $aaLoc;
 
-sub getSetAlgorithm {
-  my ($self) = @_;
-
-  my $algName = $self->getArg('algName');
-
-  my $algDesc = $self->getArg('algDesc');
-
-  my $algEntry = GUS::Model::Core::Algorithm->new({'name' => $algName, 'description' => $algDesc});
-
-  unless ($algEntry->retrieveFromDB()) {
-    $algEntry->submit(); }
-
-  my $algId = $algEntry->getId();
-
-  return $algId;
 }
 
 
 sub retSeqIdFromSrcId {
   my ($self,$seqId) = @_;
 
-  my $dbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbRlsVer'));
-  my $gusTabl = GUS::Model::DoTS::TranslatedAASequence->new( {  #BIG ASSUMPTION - all seqs from TranslatedAASequence
-							      'source_id' => $seqId, 
-							      'external_database_release_id' => $dbRlsId,
-							     } );
+  if(my $aaSeqId = $self->{_aa_sequence_ids}->{$seqId}) {
+    return $aaSeqId;
+  }
 
-  $gusTabl->retrieveFromDB() || die ("Source Id $seqId not found in TranslatedAASequence with external database release id of $dbRlsId"); 
-  my $aaSeqId = $gusTabl->getId();
+  my $dbh = $self->getQueryHandle();
+  my $dbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbRlsVer'));
+
+  my $sql = "select source_id, aa_sequence_id from dots.translatedaasequence where external_database_release_id = ?";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($dbRlsId);
+
+  while(my ($sourceId, $aaSeqId) = $sh->fetchrow_array()) {
+    $self->{_aa_sequence_ids}->{$sourceId} = $aaSeqId;
+  }
+
+  my $aaSeqId = $self->{_aa_sequence_ids}->{$seqId};
+
+  unless($aaSeqId) {
+    $self->error("Could not retrieve aa_sequence_id for $seqId");
+  }
 
   return $aaSeqId;
 }
@@ -375,6 +279,3 @@ sub undoTables {
 
 1;
 
-=cut
-	#Single line, tab delimited, output
-        #5H2A_CRIGR	len=471	ExpAA=159.47	First60=0.02	PredHel=7	Topology=o77-99i112-134o149-171i192-214o234-256i325-347o357-379i
