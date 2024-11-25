@@ -1,279 +1,172 @@
-package ApiCommonData::Load::Plugin::LoadTMDomains;
+package ApiCommonData::Load::Plugin::InsertMassSpecPeptides;
+
 @ISA = qw(GUS::PluginMgr::Plugin);
 
-#######################################
-#       LoadTMDomains.pm
-#
-# Written for TMHMM ver. 2.0 (CBS, Denmark) 
-# Ed Robinson, Feb-March, 2005 
-# updated for GUS 3.5, Sept. 2005
-#modified D. Pinney Nov. 2005
-#######################################
-
-
 use strict;
-
-use DBI;
-use Data::Dumper;
-
-use GUS::PluginMgr::Plugin;
-
-use GUS::Model::ApiDB::;
-use GUS::Model::ApiDB::AALocation;
-
-
+use warnings;
 use Bio::Tools::GFF;
-
-$| = 1;
+use GUS::PluginMgr::Plugin;
+use GUS::Model::ApiDB::MassSpecPeptide;
+use GUS::Model::ApiDB::ModifiedMassSpecPeptide;
 
 # Load Arguments
 sub getArgsDeclaration {
-my $argsDeclaration  =
-[
+    my $argsDeclaration = [
+        fileArg({ name => 'gff_file',
+                  descr => 'GFF file containing peptide annotations, compressed as .gz',
+                  constraintFunc => undef,
+                  reqd => 1,
+                  isList => 0,
+                  mustExist => 1,
+                  format => 'gzip' }),
+        stringArg({ name => 'extDbRlsSpec',
+                    descr => 'External database release spec in format "dbName|version"',
+                    constraintFunc => undef,
+                    reqd => 1,
+                    isList => 0 }),
+    ];
 
-fileArg({name => 'data_file',
-         descr => 'gff file containing external sequence annotation data',
-         constraintFunc=> undef,
-         reqd  => 1,
-         isList => 0,
-         mustExist => 1,
-         format=>'Text'
-        }),
-
-
-stringArg({name => 'extDbName',
-       descr => 'External database from whence the data file you are loading came (original source of data)',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
-
-stringArg({name => 'extDbRlsVer',
-       descr => 'Version of external database from whence the data file you are loading came (original source of data)',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
-
-];
-
-return $argsDeclaration;
+    return $argsDeclaration;
 }
 
-
-
 sub getDocumentation {
-
-my $description = <<NOTES;
-Written for version 2.0 of CBS (Denmark) TMHMM server software.  The plugin takes as input the tab delimited output of the brief output format from this software.  Make sure to choose the one line per protein output option. 
-
- Example: /usr/local/tmhmm -short -workdir=scratch/analysis  /home/TmmIn.fasta >/home/output/tmhmm.out
-
+    my $description = <<NOTES;
 NOTES
 
-my $purpose = <<PURPOSE;
-Loads TM predictions from TMHMM Software output into GUS.
-PURPOSE
-
-my $purposeBrief = <<PURPOSEBRIEF;
-Load TM Domain predictions including locations of tm domains into GUS.
-PURPOSEBRIEF
-
-my $syntax = <<SYNTAX;
+    my $syntax = <<SYNTAX;
 Standard plugin syntax.
 SYNTAX
 
-my $notes = <<NOTES;
-Make sure to clean up the top and bottom of the file.
-An example of file format of input is at end of plugin.
-Dots.transmembraneaafeature.topology has a value of 1 for tm features that start (amino end of protein) from o (ouside) and a value of 2 for i (inside).
-Topology values are based on tm protein type definitions.
-Each tm feature may contain 1 or more transmembrane helices.
-Each helix has a corresponding row in dots.aalocation.
+    my $purpose = <<PURPOSE;
+Load mass spectrometry peptide data from a GFF file into two tables: MassSpecPeptide and ModifiedMassSpecPeptide.
+PURPOSE
+
+    my $purposeBrief = <<PURPOSEBRIEF;
+Load mass spectrometry peptides from a GFF file.
+PURPOSEBRIEF
+
+    my $notes = <<NOTES;
+The plugin expects a GFF file compressed as .gz and extracts peptide data and modifications for storage in the respective tables.
 NOTES
 
-my $tablesAffected = <<AFFECT;
-Dots.TransMembraneAAFeature and Dots.AALocation.
-AFFECT
+    my $tablesAffected = <<AFFECTED;
+ApiDB.MassSpecPeptide, ApiDB.ModifiedMassSpecPeptide
+AFFECTED
 
-my $tablesDependedOn = <<TABD;
+    my $tablesDependedOn = <<TABD;
 dots.translatedaasequence or another view of dots.aasequenceimp.  TMHMM server takes AA sequences in fasta format with GUS Ids as input.
 TABD
 
-my $howToRestart = <<RESTART;
+    my $howToRestart = <<RESTART;
 None.
 RESTART
 
-my $failureCases = <<FAIL;
+    my $failureCases = <<FAIL;
 None anticipated.
 FAIL
 
-my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
+    my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
 
-return ($documentation);
+    return $documentation;
 }
 
-
-######
 sub new {
-   my $class = shift;
-   my $self = {};
-   bless($self, $class);
+    my ($class) = @_;
+    my $self = {};
+    bless($self, $class);
 
-      my $documentation = &getDocumentation();
-      my $args = &getArgsDeclaration();
+    my $documentation = &getDocumentation();
+    my $args = &getArgsDeclaration();
 
-      $self->initialize({requiredDbVersion => 4.0, 
-                 cvsRevision => '$Revision$',
-                 cvsTag => '$Name:  $',
-                 name => ref($self),
-                 revisionNotes => '',
-                 argsDeclaration => $args,
-                 documentation => $documentation
-                });
+    $self->initialize({
+        requiredDbVersion => 4.0,
+        cvsRevision       => '$Revision$',
+        cvsTag            => '$Name$',
+        name              => ref($self),
+        argsDeclaration   => $args,
+        documentation     => $documentation,
+    });
 
-   return $self;
+    return $self;
 }
 
+# Main routine
+sub run {
+    my ($self) = @_;
 
-#Main Routine
-sub run{
-  my ($self) = shift;
+    $self->logAlgInvocationId;
+    $self->logCommit;
 
-  $self->logAlgInvocationId;
-  $self->logCommit;
+    # Parse arguments
+    my $dataFile = $self->getArg('gff_file');
+    my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
 
-  my ($lnsPrc, $lnsInsrt);
-
-  my $dataFile = $self->getArg('data_file');
-
-  open(my $fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
-  my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
-
-
-
-  my %aaFeatureIds;
-
-  #PF3D7_MIT02300.1-p1	veupathdb	tmhmm2.0	1	376	.	.	.	ID=PF3D7_MIT02300.1-p1_tmhmm;expectedAA=204.69;first60=22.86;predictedHelices=8
-  #PF3D7_MIT02300.1-p1	veupathdb	TMhelix	24	46	.	.	.	ID=PF3D7_MIT02300.1-p1_tmhmm_2;Parent=PF3D7_MIT02300.1-p1_tmhmm
-  while (my $feature = $gffIo->next_feature()) {
-
-    my $primaryTag = $feature->primary_tag();
-
-    # only load tmhmm results and locations of the helix(s)
-    next unless($primaryTag eq 'tmhmm2.0' || $primaryTag eq 'TMhelix');
-
-    my $proteinSourceId = $feature->seq_id();
-    my $aaSeqId = $self->retSeqIdFromSrcId($proteinSourceId);
-
-    $lnsPrc++;
-
-    # tmhmm2.0 is the top level feature
-    if($primaryTag eq 'tmhmm2.0') {
-      my $tmFeat = $self->buildTmFeat($feature, $aaSeqId);
-
-      $tmFeat->submit();
-      my $tmFeatId = $tmFeat->getId();
-      $aaFeatureIds{$proteinSourceId} = $tmFeatId;
-      $lnsInsrt++;
-    }
-    # TMHelix (load the location associated with the tmfeature)
-    else {
-      my $parentFeatId = $aaFeatureIds{$proteinSourceId};
-
-      my $aaLoc = $self->makeAALocation($parentFeatId, $feature);
-      $aaLoc->submit();
+    my ($dbName, $version) = split(/\|/, $extDbRlsSpec);
+    unless ($dbName && $version) {
+        $self->error("Invalid format for extDbRlsSpec: expected 'dbName|version'");
     }
 
-    $self->undefPointerCache();
-  }
+    my $extDbRlsId = $self->getExtDbRlsId($dbName, $version);
 
-  my $resultDescrip = "LoadTMHmm: Lines Processed: $lnsPrc, Lines Inserted $lnsInsrt";
+    open(my $fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
+    my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
-  $self->setResultDescr($resultDescrip);
-  $self->logData($resultDescrip);
-}
+    my $linesProcessed = 0;
+    my $linesInserted  = 0;
 
-sub buildTmFeat {
-  my ($self,$feature, $aaSeqId) = @_;
+    while (my $feature = $gffIo->next_feature()) {
+        my $primaryTag = $feature->primary_tag;
 
-  my ($expectedAA) = $feature->get_tag_values('expectedAA');
-  my ($first60) = $feature->get_tag_values('first60');
-  my ($predictedHelices) = $feature->get_tag_values('predictedHelices');
+        next unless $primaryTag eq 'ms_peptide' || $primaryTag eq 'modified_peptide';
 
+        my $attributes = $feature->attributes;
+        my $seqId = $feature->seq_id;
+        my $start = $feature->start;
+        my $end   = $feature->end;
 
-  my $tmFeat = GUS::Model::DoTS::TransMembraneAAFeature->new({aa_sequence_id => $aaSeqId,
-                                                              is_predicted => 1,
-                                                              expected_aa => $expectedAA,
-                                                              first_60 => $first60,
-                                                              predicted_helices => $predictedHelices
-                                                             });
-  return $tmFeat;
-}
+        if ($primaryTag eq 'ms_peptide') {
+            my $peptide = GUS::Model::ApiDB::MassSpecPeptide->new({
+                protein_source_id            => $seqId,
+                peptide_start                => $start,
+                peptide_end                  => $end,
+                spectrum_count               => $attributes->{spectrumCount}[0],
+                sample                       => $attributes->{sample}[0],
+                peptide_sequence             => $attributes->{peptideSequence}[0],
+                external_database_release_id => $extDbRlsId,
+            });
 
-sub makeAALocation {
-  my ($self,$tmFeatId,$feature) = @_;
+            $peptide->submit();
+            $linesInserted++;
+        }
+        elsif ($primaryTag eq 'modified_peptide') {
+            my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
+                protein_source_id            => $seqId,
+                peptide_start                => $start,
+                peptide_end                  => $end,
+                spectrum_count               => $attributes->{spectrumCount}[0],
+                sample                       => $attributes->{sample}[0],
+                peptide_sequence             => $attributes->{peptideSequence}[0],
+                external_database_release_id => $extDbRlsId,
+                residue                      => $attributes->{residue}[0],
+                residue_location             => $attributes->{residueLocation}[0],
+            });
 
-  my $start = $feature->start();
-  my $end = $feature->end();
+            $modifiedPeptide->submit();
+            $linesInserted++;
+        }
 
-  my $aaLoc = GUS::Model::DoTS::AALocation->new({start_max => $start,
-                                                 start_min => $start,
-                                                 end_max => $end,
-                                                 end_min => $end,
-                                                 aa_feature_id => $tmFeatId
-                                                });
+        $linesProcessed++;
+        $self->undefPointerCache();
+    }
 
-  return $aaLoc;
-
-}
-
-
-sub retSeqIdFromSrcId {
-  my ($self,$seqId) = @_;
-
-  if(my $aaSeqId = $self->{_aa_sequence_ids}->{$seqId}) {
-    return $aaSeqId;
-  }
-
-  my $dbh = $self->getQueryHandle();
-  my $dbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbRlsVer'));
-
-  my $sql = "select source_id, aa_sequence_id from dots.translatedaasequence where external_database_release_id = ?";
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($dbRlsId);
-
-  while(my ($sourceId, $aaSeqId) = $sh->fetchrow_array()) {
-    $self->{_aa_sequence_ids}->{$sourceId} = $aaSeqId;
-  }
-
-  my $aaSeqId = $self->{_aa_sequence_ids}->{$seqId};
-
-  unless($aaSeqId) {
-    $self->error("Could not retrieve aa_sequence_id for $seqId");
-  }
-
-  return $aaSeqId;
-}
-
-
-sub handleFailure {
-  my ($self, $err, $obj) = @_;
-
-  print "Failure Processing Entry\n\n";
-  print $err; 
-  exit;
+    my $resultDescription = "Processed $linesProcessed lines, inserted $linesInserted rows.";
+    $self->setResultDescr($resultDescription);
+    $self->logData($resultDescription);
 }
 
 sub undoTables {
-  my ($self) = @_;
-
-  return ('DoTS.AALocation',
-	  'DoTS.AAFeature'
-	 );
+    return ('ApiDB.MassSpecPeptide', 'ApiDB.ModifiedMassSpecPeptide');
 }
-
 
 1;
 
