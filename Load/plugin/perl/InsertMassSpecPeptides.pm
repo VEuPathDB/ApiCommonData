@@ -114,50 +114,57 @@ sub run {
     my $linesProcessed = 0;
     my $linesInserted  = 0;
 
-    while (my $feature = $gffIo->next_feature()) {
-        my $primaryTag = $feature->primary_tag;
+while (my $feature = $gffIo->next_feature()) {
+    my $primaryTag = $feature->primary_tag;
 
-        next unless $primaryTag eq 'ms_peptide' || $primaryTag eq 'modified_peptide';
+    next unless $primaryTag eq 'ms_peptide' || $primaryTag eq 'modified_peptide';
 
-        my $attributes = $feature->attributes;
-        my $seqId = $feature->seq_id;
-        my $start = $feature->start;
-        my $end   = $feature->end;
+    my $seqId = $feature->seq_id;
+    my $start = $feature->start;
+    my $end   = $feature->end;
 
-        if ($primaryTag eq 'ms_peptide') {
-            my $peptide = GUS::Model::ApiDB::MassSpecPeptide->new({
-                protein_source_id            => $seqId,
-                peptide_start                => $start,
-                peptide_end                  => $end,
-                spectrum_count               => $attributes->{spectrumCount}[0],
-                sample                       => $attributes->{sample}[0],
-                peptide_sequence             => $attributes->{peptideSequence}[0],
-                external_database_release_id => $extDbRlsId,
-            });
+    # Extract attributes using get_tag_values
+    my $spectrumCount = ($feature->has_tag('spectrum_count') ? ($feature->get_tag_values('spectrum_count'))[0] : undef);
+    my $sample = ($feature->has_tag('sample_name') ? ($feature->get_tag_values('sample_name'))[0] : undef);
+    my $peptideSequence = ($feature->has_tag('peptide') ? ($feature->get_tag_values('peptide'))[0] : undef);
 
-            $peptide->submit();
-            $linesInserted++;
-        }
-        elsif ($primaryTag eq 'modified_peptide') {
-            my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
-                protein_source_id            => $seqId,
-                peptide_start                => $start,
-                peptide_end                  => $end,
-                spectrum_count               => $attributes->{spectrumCount}[0],
-                sample                       => $attributes->{sample}[0],
-                peptide_sequence             => $attributes->{peptideSequence}[0],
-                external_database_release_id => $extDbRlsId,
-                residue                      => $attributes->{residue}[0],
-                residue_location             => $attributes->{residueLocation}[0],
-            });
+    if ($primaryTag eq 'ms_peptide') {
+        my $peptide = GUS::Model::ApiDB::MassSpecPeptide->new({
+            protein_source_id            => $seqId,
+            peptide_start                => $start,
+            peptide_end                  => $end,
+            spectrum_count               => $spectrumCount,
+            sample                       => $sample,
+            peptide_sequence             => $peptideSequence,
+            external_database_release_id => $extDbRlsId,
+        });
 
-            $modifiedPeptide->submit();
-            $linesInserted++;
-        }
-
-        $linesProcessed++;
-        $self->undefPointerCache();
+        $peptide->submit();
+        $linesInserted++;
     }
+    elsif ($primaryTag eq 'modified_peptide') {
+        my $residue = ($feature->has_tag('residue') ? ($feature->get_tag_values('residue'))[0] : undef);
+        my $residueLocation = ($feature->has_tag('residueLocation') ? ($feature->get_tag_values('residueLocation'))[0] : undef);
+
+        my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
+            protein_source_id            => $seqId,
+            peptide_start                => $start,
+            peptide_end                  => $end,
+            spectrum_count               => $spectrumCount,
+            sample                       => $sample,
+            peptide_sequence             => $peptideSequence,
+            external_database_release_id => $extDbRlsId,
+            residue                      => $residue,
+            residue_location             => $residueLocation,
+        });
+
+        $modifiedPeptide->submit();
+        $linesInserted++;
+    }
+
+    $linesProcessed++;
+    $self->undefPointerCache();
+}
 
     my $resultDescription = "Processed $linesProcessed lines, inserted $linesInserted rows.";
     $self->setResultDescr($resultDescription);
