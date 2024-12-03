@@ -83,7 +83,7 @@ foreach my $file (@files) {
       my $key = $EpitopeId . "_" . $SourceOrganismId;
       if (! defined $uniqueEpitopes{$key}){
         # IEDB ID|epitope name|strainTaxId|accession
-        $uniqueEpitopes{$key} = ">$EpitopeId|$EpitopeName|$SourceOrganismId|$GenBankId\n$LinearSequence\n";
+        $uniqueEpitopes{$key} = ">$EpitopeId $EpitopeName|$SourceOrganismId|$GenBankId\n$LinearSequence\n";
       }
       print STDERR "Epitopes examined: $epitopeCount \n" if $epitopeCount % 10000 == 0;
     }
