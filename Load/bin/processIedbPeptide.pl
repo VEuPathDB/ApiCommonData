@@ -1,14 +1,17 @@
 #!/usr/bin/env perl
 
-use warnings;
+
 use strict;
 use Getopt::Long;
 
 
+use Bio::SeqIO;
+use Data::Dumper;
 
-my ($inputPepFasta, $peptideTab, $correctedFasta);
+my ($inputPepFasta, $peptideTab, $correctedFasta, $mergedNcbiFile);
 &GetOptions("inputPepFasta=s"=> \$inputPepFasta,
-	    "correctedFasta=s"=> \$correctedFasta,
+            "correctedFasta=s"=> \$correctedFasta,
+            "mergedNcbi=s" => \$mergedNcbiFile,
             "peptideTab=s"=> \$peptideTab,
     ) ;
 
@@ -24,35 +27,67 @@ sub usage {
 }
 
 
+
+my $mergedTaxa = &readMergedFile($mergedNcbiFile);
+
+
 my $outfile =  $peptideTab;
-open(FH, '>>', $outfile) or die $!;
-
-local $/ = ">";
-
-my $epitopesFile = $inputPepFasta;
-
-system("sed 's/>/@/;s/>/PepId/g;s/@/>/' $epitopesFile > $correctedFasta");
-
-my $modifiedFatsa = $correctedFasta;
-
-open(my $epitopes, $modifiedFatsa) or die "Could not open file '$modifiedFatsa' $!";
+open(FH, '>', $outfile) or die $!;
 
 
-while(my $record = <$epitopes>){
-  chomp $record;
-  
-  my $newline_loc = index($record,"\n");
-  my $header = substr($record,0,$newline_loc);
-  
-  my @headerSplir = split(/\|/, $header);
-  my $sequence = substr($record,$newline_loc+1);
-  $sequence =~ tr/\n//d;
+my $inseq = Bio::SeqIO->new(-file   => $inputPepFasta,
+                            -format => 'fasta' );
 
-  my $id = $headerSplir[3];
- 
-  
-  print FH ( $headerSplir[3] . "\t" . $headerSplir[0] . "\t" . $headerSplir[2] .  "\t" ."$sequence\t" . $headerSplir[1] . "\n");
+my $outseq = Bio::SeqIO->new( -file   => ">$correctedFasta",
+                               -format => 'fasta',
+                             );
 
+while (my $seq = $inseq->next_seq) {
+    my $iedbId = $seq->id();
+
+    my $seqString = $seq->seq();
+
+
+    my $desc = $seq->desc();
+    my @deflineElements = split(/\|/, $desc);
+
+    my $iedbTaxon = $deflineElements[1];
+    if($mergedTaxa->{$iedbTaxon}) {
+        $iedbTaxon = $mergedTaxa->{$iedbTaxon};
+    }
+
+    print FH $deflineElements[2], "\t",
+        $iedbId, "\t",
+        $iedbTaxon, "\t",
+        $seqString, "\t",
+        $deflineElements[0], "\n";
+
+    my $newDesc = $deflineElements[0] . "|" . $iedbTaxon . "|" . $deflineElements[2];
+
+    my $correctedSeq = Bio::Seq->new( -display_id => $iedbId,
+                                      -desc => $newDesc,
+                         -seq => $seqString);
+
+    $outseq->write_seq($correctedSeq);
 }
-close FH;
 
+ close FH;
+
+
+sub readMergedFile {
+    my ($merged) = @_;
+
+    open(MERGED, $merged) or die "Cannot open merged ncbi file $merged for reading: $!";
+
+    my %rv;
+
+    while(<MERGED>) {
+        chomp;
+
+        my ($oldNcbiTaxId, $newNcbiTaxId) = split(/\s*\|\s*/, $_);
+
+        $rv{$oldNcbiTaxId} = $newNcbiTaxId;
+    }
+
+    return \%rv;
+}
