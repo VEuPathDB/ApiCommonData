@@ -18,7 +18,7 @@ my %hash;
 my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix, $analysisConfig);
 
 &GetOptions("inputDir=s"            => \$inputDir,
-            "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
+            "seqSizeFile=s" => \$topLevelSeqSizeFile,
             "analysisConfig=s"      => \$analysisConfig,
             "seqIdPrefix=s"         => \$seqIdPrefix
  );
