@@ -17,7 +17,7 @@ my ($experimentType, $inBamFile,$outDir, $topLevelSeqSizeFile, $fragmentLength);
 &GetOptions("experimentType=s" => \$experimentType,
             "inBamFile=s" => \$inBamFile,
 	    "outDir=s" => \$outDir,
-	    "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
+	    "seqSizeFile=s" => \$topLevelSeqSizeFile,
 	    "fragmentLength=i" => \$fragmentLength
     ); 
 
