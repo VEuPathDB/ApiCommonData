@@ -121,7 +121,7 @@ sub fetchAASequenceIdFromSourceID {
     my $sql = "select aa_sequence_id, source_id from dots.translatedaasequence where external_database_release_id = ?";
     my $dbh = $self->getQueryHandle();
     my $sh = $dbh->prepare($sql);
-    $sh->execute($origSourceId);
+    $sh->execute($extDbRlsId);
 
 
     while(my ($aaSequenceId, $sourceId) = $sh->fetchrow_array()) {
