@@ -4,14 +4,12 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 
 use strict;
 use warnings;
-use JSON;
+
 use Bio::Tools::GFF;
 use GUS::PluginMgr::Plugin;
-use GUS::Supported::Util;
+
 use GUS::Model::ApiDB::AASequenceEpitope;
 use Data::Dumper;
-use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
-use GUS::Model::DoTS::AASequenceImp;
 
 sub getArgsDeclaration {
     my $argsDeclaration  =
@@ -24,7 +22,7 @@ sub getArgsDeclaration {
                    reqd  => 1,
                    isList => 0,
                    mustExist => 1,
-                   format=>'Text',
+                   format=>'gff',
                  }),
 
          stringArg({name => 'genomeExtDbRlsSpec',
@@ -123,7 +121,6 @@ sub fetchAASequenceIdFromSourceID {
     my $sh = $dbh->prepare($sql);
     $sh->execute($extDbRlsId);
 
-
     while(my ($aaSequenceId, $sourceId) = $sh->fetchrow_array()) {
         $self->{aa_sequence_id}->{$sourceId} = $aaSequenceId;
     }
@@ -139,36 +136,42 @@ sub loadEpitopes {
 
     my ($self, $peptideResultFile) = @_;
 
-    open(my $peptides, $peptideResultFile) or die "Could not open file '$peptideResultFile' $!";
+    my $fh;
+    if($peptideResultFile =~ /\.gz$/) {
+        open($fh, "gzip -dc $peptideResultFile |") or die "Could not open '$peptideResultFile': $!";
+    }
+    else {
+        open($fh, $peptideResultFile) or die "Could not open '$peptideResultFile': $!";
+    }
+
+    my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
     my $count;
-    while (my $row = <$peptides>) {
-        chomp $row;
-        my @counts_list = split("\t", $row);
-        my $aa_sequence_source_id = $counts_list[0];
-        #my $aa_sequence => $self->fetchAASourceID($aa_sequence_source_id) || $self->error ("Can't retrieve aa_sequence_id for row with source id $aa_sequence_source_id");
-        my $iedb_id = $counts_list[1];
-        my $peptide_match = $counts_list[2];
-        my $protein_match = $counts_list[3];
-        my $species_match = $counts_list[4];
-        my $number_of_matches = $counts_list[10];
-        my $blast_hit_align_len = $counts_list[11];
-        my $alignment = $counts_list[14];
+    while (my $feature = $gffIo->next_feature()) {
+
+        my $primaryTag = $feature->primary_tag();
+        my $sourceTag = $feature->source_tag();
+
+        my $proteinSourceId = $feature->seq_id();
+        my $aaSeqId = $self->fetchAASequenceIdFromSourceID($proteinSourceId);
+
+        my ($iedb) = $feature->get_tag_values('iedb');
+        my ($matchesTaxon) = $feature->get_tag_values('matchesTaxon');
+        my ($matchesFullLengthProtein) = $feature->get_tag_values('matchesFullLengthProtein');
+        my ($mismatches) = $feature->get_tag_values('mismatches');
+
+        my $aaSequenceEpitope = GUS::Model::ApiDB::AASequenceEpitope->new({
+            aa_sequence_id => $aaSeqId,
+            iedb_id => $iedb,
+            mismatches => $mismatches,
+            protein_match => $matchesFullLengthProtein,
+            taxon_match => $matchesTaxon,
+            start_min => $feature->start(),
+            end_max => $feature->end(),
+            });
 
 
-        my $aa_sequence_id = $self->fetchAASequenceIdFromSourceID($aa_sequence_source_id);
-
-        my $row_peptide = GUS::Model::ApiDB::AASequenceEpitope->new({
-            aa_sequence_id => $aa_sequence_id,
-            iedb_id => $iedb_id,
-            peptide_match => $peptide_match,
-            protein_match => $protein_match,
-            species_match => $species_match,
-            blast_hit_identity => $number_of_matches,
-            blast_hit_align_len => $blast_hit_align_len,
-            alignment => $alignment});
-
-        $row_peptide->submit();
+        $aaSequenceEpitope->submit();
         $self->undefPointerCache();
 
         $count++;
