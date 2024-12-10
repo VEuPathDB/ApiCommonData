@@ -149,10 +149,15 @@ sub run{
 
   my $dataFile = $self->getArg('data_file');
 
-  open(my $fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
+  my $fh;
+  if($dataFile =~ /\.gz$/) {
+    open($fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
+  }
+  else {
+    open($fh, $dataFile) or die "Could not open '$dataFile': $!";
+  }
+
   my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
-
-
 
   my %aaFeatureIds;
 

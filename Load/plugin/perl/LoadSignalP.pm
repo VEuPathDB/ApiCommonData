@@ -149,8 +149,14 @@ sub run{
 
   my $gffFile = $self->getArg('gff_file') || die ('No Data File');
 
-  # NOTE:  workflow only sends gzipped version of gff here
-  open(my $fh, "gzip -dc $gffFile |") or die "Could not open '$gffFile': $!";
+  my $fh;
+  if($gffFile =~ /\.gz$/) {
+    open($fh, "gzip -dc $gffFile |") or die "Could not open '$gffFile': $!";
+  }
+  else {
+    open($fh, $gffFile) or die "Could not open '$gffFile': $!";
+  }
+
   my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
 

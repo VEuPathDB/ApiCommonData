@@ -95,7 +95,14 @@ sub run {
 
   my $file = $self->getArg('inputFile');
 
-  open(my $fh, "gzip -dc $file |") or die "Could not open '$file': $!";
+  my $fh;
+  if($file =~ /\.gz$/) {
+    open($fh, "gzip -dc $file |") or die "Could not open '$file': $!";
+  }
+  else {
+    open($fh, $file) or die "Could not open '$file': $!";
+  }
+
   my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
