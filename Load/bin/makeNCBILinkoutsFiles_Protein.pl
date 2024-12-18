@@ -47,7 +47,7 @@ my ($linkset_node) = $doc->findnodes('//LinkSet');
 $_->unlink for $linkset_node->childNodes();
 
 # Add the new Entity Declaration as a child node
-$linkset_node->appendText($entity_declaration);
+#$linkset_node->appendText($entity_declaration);
 
 open(OUT, "> $output") or die "Cannot open $output for writing: $!";
 
