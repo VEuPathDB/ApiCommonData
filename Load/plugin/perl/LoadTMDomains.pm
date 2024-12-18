@@ -42,28 +42,6 @@ fileArg({name => 'data_file',
          format=>'Text'
         }),
 
-fileArg({name => 'restart_file',
-         descr => 'text file containing external sequence annotation data',
-         constraintFunc=> undef,
-         reqd  => 0,
-         isList => 0,
-         mustExist => 0,
-         format=>'Text'
-        }),
-
-stringArg({name => 'algName',
-       descr => 'Name of algorithm used For predictions',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
-
-stringArg({name => 'algDesc',
-       descr => 'Detailed description of use',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
 
 stringArg({name => 'extDbName',
        descr => 'External database from whence the data file you are loading came (original source of data)',
@@ -79,13 +57,6 @@ stringArg({name => 'extDbRlsVer',
        isList => 0
       }),
 
-booleanArg({name => 'useSourceId',
-       descr => 'Use source_id to link back to AASequence view',
-       constraintFunc=> undef,
-       reqd  => 0,
-       isList => 0,
-       default => 0,
-      })
 ];
 
 return $argsDeclaration;
@@ -178,10 +149,15 @@ sub run{
 
   my $dataFile = $self->getArg('data_file');
 
-  open(my $fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
-  my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
+  my $fh;
+  if($dataFile =~ /\.gz$/) {
+    open($fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
+  }
+  else {
+    open($fh, $dataFile) or die "Could not open '$dataFile': $!";
+  }
 
-  my $algId = $self->getSetAlgorithm();
+  my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
   my %aaFeatureIds;
 
@@ -257,23 +233,6 @@ sub makeAALocation {
 
   return $aaLoc;
 
-}
-
-sub getSetAlgorithm {
-  my ($self) = @_;
-
-  my $algName = $self->getArg('algName');
-
-  my $algDesc = $self->getArg('algDesc');
-
-  my $algEntry = GUS::Model::Core::Algorithm->new({'name' => $algName, 'description' => $algDesc});
-
-  unless ($algEntry->retrieveFromDB()) {
-    $algEntry->submit(); }
-
-  my $algId = $algEntry->getId();
-
-  return $algId;
 }
 
 

@@ -132,7 +132,7 @@ SQL
         	INNER JOIN core.TableInfo vti ON virtualseq.subclass_view = vti.name
         	INNER JOIN dots.NaSequence queryseq ON ba.query_na_sequence_id = queryseq.na_sequence_id
         WHERE
-          and sp.start_position <= target_start
+          sp.start_position <= target_start
           and sp.end_position >= target_end
           and ba.target_taxon_id = (select taxon_id from sres.Taxon where ncbi_tax_id = $ncbiTaxonId)
           $modePredicate

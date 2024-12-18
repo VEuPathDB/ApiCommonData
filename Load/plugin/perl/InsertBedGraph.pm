@@ -68,9 +68,21 @@ sub run {
 
     my $rowCount = 0;
 
-    open(my $data, "gzip -dc $fileName |") or die "Can't open file $fileName: $!";
 
-    while (my $line = <$data>) {
+  my $fh;
+  if($fileName =~ /\.gz$/) {
+    open($fh, "gzip -dc $fileName |") or die "Can't open file $fileName: $!";
+  }
+  else {
+    open($fh, $fileName) or die "Can't open file $fileName: $!";
+  }
+
+
+
+
+
+
+    while (my $line = <$fh>) {
 	my $rowCount++;
 	chomp $line;
 	my ($sourceId, $start, $end, $value) = split(/\t/, $line);
@@ -87,7 +99,7 @@ sub run {
     }
 
   print "$rowCount rows added.\n";
-  close($data);
+  close($fh);
 }
 
 sub undoTables {

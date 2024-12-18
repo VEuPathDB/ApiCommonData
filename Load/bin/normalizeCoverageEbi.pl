@@ -18,7 +18,7 @@ my %hash;
 my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix, $analysisConfig);
 
 &GetOptions("inputDir=s"            => \$inputDir,
-            "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
+            "seqSizeFile=s" => \$topLevelSeqSizeFile,
             "analysisConfig=s"      => \$analysisConfig,
             "seqIdPrefix=s"         => \$seqIdPrefix
  );
@@ -46,7 +46,7 @@ my $mappingStatsBasename = "mappingStats.txt";
 
 foreach my $groupKey (keys %$samplesHash) {
     my @samples = @{$samplesHash->{$groupKey}->{samples}};
-    my @mappingStatsFiles = map {"$inputDir/${_}"} @samples;
+    my @mappingStatsFiles = map {"$inputDir/final/${_}"} @samples;
 
     if(scalar @mappingStatsFiles > 1) {
         push @{$dealingWithReps{$groupKey}}, @mappingStatsFiles;

@@ -42,7 +42,7 @@ my %hash;
 my ($inputDir, $strandSpecific, $topLevelSeqSizeFile, $isPairedEnd); 
 
 &GetOptions("inputDir=s"            => \$inputDir,
-            "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
+            "seqSizeFile=s" => \$topLevelSeqSizeFile,
             "strandSpecific!"       => \$strandSpecific,
 	    "isPairedEnd!" => \$isPairedEnd
  );

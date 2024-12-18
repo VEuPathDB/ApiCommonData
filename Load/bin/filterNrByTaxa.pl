@@ -35,15 +35,18 @@ foreach my $taxon (@formattedTaxa) {
   &checkExitStatus($?, $taxonByNameEdirect);
 
   if($ncbiTaxId) {
-    my $scientificNamesForTaxonEdirect = &getEdirectTaxonomyCommand("txid${ncbiTaxId}[Subtree]", "ScientificName");
+    my @taxIdEachs = split(/\n/, $ncbiTaxId);
+    foreach my $taxIdEach (@taxIdEachs) {
+      my $scientificNamesForTaxonEdirect = &getEdirectTaxonomyCommand("txid${taxIdEach}[Subtree]", "ScientificName");
 
-    my $scientificNamesString = `$scientificNamesForTaxonEdirect`;
-    &checkExitStatus($?, $scientificNamesForTaxonEdirect);
+      my $scientificNamesString = `$scientificNamesForTaxonEdirect`;
+      &checkExitStatus($?, $scientificNamesForTaxonEdirect);
 
-    my @scientificNames = split(/\n/, $scientificNamesString);
+      my @scientificNames = split(/\n/, $scientificNamesString);
 
-    foreach my $scientificName(@scientificNames) {
-      $taxa{${scientificName}} = 1;
+      foreach my $scientificName(@scientificNames) {
+	$taxa{${scientificName}} = 1;
+      }
     }
   }
   else {

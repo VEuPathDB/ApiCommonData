@@ -318,7 +318,7 @@ sub InsertExternalDatabaseRls{
 
     my ($self,$dbName,$dbVer,$extDbId) = @_;
 
-    my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
+    my $extDbRlsId = $self->releaseAlreadyExists($dbName, $extDbId,$dbVer);
 
     unless ($extDbRlsId){
         $extDbRlsId = $self->makeNewReleaseId($extDbId,$dbVer);
@@ -329,12 +329,20 @@ sub InsertExternalDatabaseRls{
 
 
 sub releaseAlreadyExists{
-    my ($self, $extDbId,$dbVer) = @_;
+    my ($self, $dbName, $extDbId,$dbVer) = @_;
 
-    my $sql = "select external_database_release_id 
+    my $sql;
+
+    if ($dbName =~ /GO_evidence_codes_RSRC/i || $dbName =~ /SO_RSRC/i) {
+      $sql = "select external_database_release_id 
+               from SRes.ExternalDatabaseRelease
+               where external_database_id = $extDbId";
+    } else {
+      $sql = "select external_database_release_id 
                from SRes.ExternalDatabaseRelease
                where external_database_id = $extDbId
                and version = '$dbVer'";
+    }
 
     my $sth = $self->prepareAndExecute($sql);
     my ($relId) = $sth->fetchrow_array();
