@@ -12,7 +12,7 @@ use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::ExternalAASequence;
 
-
+my $INTERPRO_REF = "GO_REF:0000002";
 
 sub getArgsDeclaration {
   my $argsDeclaration  =
@@ -235,7 +235,7 @@ sub processProteinResults {
               $go_term = $classification; # Keep the original if no match
             } 
 
-            $self->buildGOAssociation($aaId, $go_term);
+            $self->buildGOAssociation($aaId, $go_term, $interproId);
             $seen{$classification} = "true";
       }
     }
@@ -246,7 +246,7 @@ sub processProteinResults {
 
 
 sub buildGOAssociation {
-  my ($self, $aaId, $classId) = @_;
+  my ($self, $aaId, $classId, $interproId) = @_;
 
   if ($classId !~ /^GO:\d+/) {
     $self->error ("Expecting GO classification, but got \'$classId\'");
@@ -287,7 +287,12 @@ sub buildGOAssociation {
 		    'isPrimary' => '1',
 		   };
 
-  my $goInstance = $self->{GOAnnotater}->getOrCreateGOInstance($goInstance);
+  my ($goInstance, $evid) = $self->{GOAnnotater}->getOrCreateGOInstance($goInstance);
+
+  $evid->setEvidenceCodeParameter("InterPro:${interproId}");
+  $evid->setReference($INTERPRO_REF);
+
+  $evid->submit();
 
   return 1;
 
