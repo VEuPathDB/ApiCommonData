@@ -7,8 +7,9 @@ use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
-use GUS::Model::Study::Study;
-use GUS::Model::Study::StudyLink;
+use GUS::Model::Study::NodeSet;
+use GUS::Model::Study::NodeNodeSet;
+
 use GUS::Model::Study::Protocol;
 use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::ProtocolAppNode;
@@ -134,24 +135,19 @@ sub run {
 
   while(<CONFIG>) {
     chomp;
-
+   
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
-    my $investigation = $self->makeStudy($self->getArg('studyName'));
 
-    my @investigationLinks = $investigation->getChildren('Study::StudyLink');
+    #$self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
 
-    $self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
+    my $study = $self->makeNodeSet($studyName);#makeStudy
 
-    my $study = $self->makeStudy($studyName);
 
-    $study->setParent($investigation);
+    my @studyLinks = $study->getChildren('Study::NodeNodeSet');
 
-    my @studyLinks = $study->getChildren('Study::StudyLink');
-
-    my $existingInvestigationAppNodes = $self->retrieveAppNodesForStudy(\@investigationLinks);
     my $existingStudyAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes, $investigation, $nodeOrderNum);
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingStudyAppNodes, $study,  $nodeOrderNum); #$investigation,$existingInvestigationAppNodes
 
     my $protocolType;
     if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/ || $protocolName eq "differential expression analysis data transformation") {
@@ -169,27 +165,18 @@ sub run {
 
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
-    $investigation->addToSubmitList($protocolApp);
+    $study->addToSubmitList($protocolApp);
 
-    foreach my $inputAppNode (@$inputAppNodes) {
-      my $input = GUS::Model::Study::Input->new();
-      $input->setParent($protocolApp);
-      $input->setParent($inputAppNode);
-
-      $self->linkAppNodeToStudy($study, $inputAppNode);
-      $self->linkAppNodeToStudy($investigation, $inputAppNode);
-    }
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
     $output->setParent($protocolAppNode);
 
     $self->linkAppNodeToStudy($study, $protocolAppNode);
-    $self->linkAppNodeToStudy($investigation, $protocolAppNode);
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
-    $investigation->submit();
+    $study->submit();
 
     $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
     $self->undefPointerCache();
@@ -493,7 +480,6 @@ sub lookupIdFromSourceId {
 
 sub getInputAppNodes {
   my ($self, $inputNames, $existingAppNodes, $study, $nodeOrderNum) = @_;
-
   my @inputNames = split(';', $inputNames);
 
   my @rv;
@@ -529,7 +515,7 @@ sub getInputAppNodes {
 sub linkAppNodeToStudy {
   my ($self, $study, $protocolAppNode) = @_;
 
-  my @studyLinks = $study->getChildren('Study::StudyLink');
+  my @studyLinks = $study->getChildren('Study::NodeNodeSet');
 
   foreach my $sl (@studyLinks) {
     my $linkParent = $sl->getParent("Study::ProtocolAppNode", 1);
@@ -538,7 +524,7 @@ sub linkAppNodeToStudy {
     return $sl if($linkParent->getName() eq $protocolAppNode->getName());
   }
 
-  my $studyLink = GUS::Model::Study::StudyLink->new();
+  my $studyLink = GUS::Model::Study::NodeNodeSet->new();
   $studyLink->setParent($study);
   $studyLink->setParent($protocolAppNode);
 
@@ -632,22 +618,25 @@ sub makeProtocolAppParams {
   return \@rv;
 }
 
-sub makeStudy {
-  my ($self, $studyName) = @_;
+sub makeNodeSet {
 
-  # if(my $cachedStudy = $self->{_study_names}->{$studyName}) {
-  #   return $cachedStudy;
-  # }
+   my ($self, $studyName) = @_;
 
-  my $extDbSpec = $self->getArg('extDbSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
 
-  my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $extDbRlsId});
-  $study->retrieveFromDB();
+   my $extDbSpec = $self->getArg('extDbSpec');
+   my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
+   
+  my $nodeSetName = $studyName;
+  my $nodeSetType;
+  if  ($studyName =~ /(.+) \[(.+)\]$/) {
+      $nodeSetName = $1;
+      $nodeSetType = $2;
+  }
 
-  $study->getChildren("Study::StudyLink", 1);
+   my $study = GUS::Model::Study::NodeSet->new({name => $nodeSetName, external_database_release_id => $extDbRlsId, node_type => $nodeSetType});
+   $study->retrieveFromDB();
+   return $study;
 
-  return $study;
 }
 
 
@@ -657,7 +646,6 @@ sub undoTables {
   return (
     'Study.Input',
     'Study.Output',
-    'Study.StudyLink',
     'Results.NAFeatureExpression',
     'Results.NAFeatureDiffResult',
     'Results.ReporterIntensity',
@@ -685,11 +673,12 @@ sub undoTables {
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
     'ApiDB.LopitResults',
+    'Study.NodeSet',
+    'Study.NodeNodeSet',
     #'ApiDB.NAFeatureList',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
-    'Study.Study',
      );
 }
 
