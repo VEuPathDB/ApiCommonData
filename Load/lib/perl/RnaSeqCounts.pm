@@ -187,6 +187,38 @@ sub writeDataHash {
     return $file;
 }
 
+sub createEDACountsFile {
+    my ($self) = @_;
+
+    my $mainDirectory = $self->getMainDirectory();
+    my $edaFile = "$mainDirectory/analysis_output/countsForEda.txt";
+    open (EDA, ">$edaFile") or die "Cannot  open $edaFile for writing\n$!\n";
+
+    my $countHash = $self->{dataHash}->{counts};
+
+    # in this context, a "sample" is an individual replicate
+    my $samples = $self->getHeaders();
+    #TODO I think Bob had some text in this empty cell
+    print EDA "\t";
+    print EDA join("\t", @$samples), "\n";
+ 
+    foreach my $gene (keys(%$countHash)) {
+        print EDA "$gene\t";
+        my $i = 0;
+        foreach my $sample (@$samples) {
+            my $value = $countHash->{$gene}->{$sample};
+            $i ++;
+            print EDA "$value";
+            if ($i < scalar @$samples) {
+                print EDA "\t";
+            } else {
+                print EDA "\n";
+            }
+        }
+    }
+    close EDA
+}
+
 sub munge {
     my ($self) = @_;
 
@@ -202,6 +234,8 @@ sub munge {
     
     unlink($tpmFile);
     unlink($countFile);
+    
+    $self->createEDACountsFile();
     
 }   
 
