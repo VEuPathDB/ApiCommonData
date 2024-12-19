@@ -15,6 +15,12 @@ sub getConfigFilePath {
     return $_[0]->{_config_file_path};
 }
 
+sub getTpmFile { $_[0]->{tpmFile} }
+sub setTpmFile { $_[0]->{tpmFile} = $_[1] }
+
+sub getCountFile { $_[0]->{countFile} }
+sub setCountFile { $_[0]->{countFile} = $_[1] }
+
 sub setConfigFilePath {
     my ($self, $mainDir) =  @_;
     my $configFileBaseName = $self->getConfigFileBaseName();
@@ -25,34 +31,24 @@ sub setConfigFilePath {
 # override from Profiles.pm
 # remove all the stuff related to microarrays
 # Raw and TPM counts go into one file
-# Also dump out raw count matrix for EDA
 sub writeRScript {
     my($self, $samples) = @_;
-    print STDERR Dumper "In RnaSeqCounts\n";
-    print STDERR Dumper $self;
-    print STDERR Dumper $samples;
 
-    my $inputFile = $self->getInputFile();
+    my $tpmFile = $self->getTpmFile();
+    my $countFile = $self->getCountFile();
     my $outputFile = $self->getOutputFile();
     my $pctOutputFile = $outputFile . ".pct";
     my $stdErrOutputFile = $outputFile . ".stderr";
-
-    my $inputFileBase = basename($inputFile);
+    (my $countOutputFile = $outputFile) =~ s/tpm/counts/;
 
     my ($rfh, $rFile) = tempfile();
-    print STDERR Dumper $inputFile;
-    print STDERR Dumper $outputFile;
-
-    my $makeStandardError = $self->getMakeStandardError() ? "TRUE" : "FALSE";
     my $makePercentiles = $self->getMakePercentiles() ? "TRUE" : "FALSE";
+    my $makeStandardError = $self->getMakeStandardError() ? "TRUE" : "FALSE";
 
-    # do I need these??
     my $findMedian = $self->getFindMedian() ? "TRUE" : "FALSE";
     my $isLogged = $self->getIsLogged() ? "TRUE" : "FALSE";
     my $statistic = $self->getFindMedian() ? "median" : "average";
-    #my $isTimeSeries = $self->getIsTimeSeries();
     $self->addProtocolParamValue("statistic", $statistic);
-    #$self->addProtocolParamValue("isTimeSeries", $isTimeSeries);
     $self->addProtocolParamValue("isLogged", $isLogged);
 
     # begin R string
@@ -60,13 +56,13 @@ sub writeRScript {
 
 source("$ENV{GUS_HOME}/lib/R/StudyAssayResults/profile_functions.R");
 
-dat = read.table("$inputFile", header=T, sep="\\t", check.names=FALSE);
+dat = read.table("$tpmFile", header=T, sep="\\t", check.names=FALSE);
 
 dat.samples = list()
 $samples
 #------------------------------------------------------------------------
 
-# write out samples
+# write out sample TPM values
 reorderedSamples = reorderAndGetColCentralVal(pl=dat.samples, df=dat, computeMedian=$findMedian);
 write.table(reorderedSamples\$data, file="$outputFile", quote=F, sep="\\t", row.names=reorderedSamples\$id, col.names=NA);
 
@@ -81,6 +77,18 @@ if ($makePercentiles) {
     write.table(reorderedSamples\$percentile, file="$pctOutputFile", quote=F, sep="\\t", row.names=reorderedSamples\$id, col.names=NA);
 }
 
+# now sample Count values
+dat.count = read.table("$countFile", header=T, sep="\\t", check.names=FALSE);
+
+#filter out additional rows added by htseq-count
+dat.count = dat.count[!grepl("^__", dat.count\$U_ID),]
+
+# ensure that the genes are in the same order as the TPM
+dat.count = dat.count[order(match(dat.count\$U_ID, dat\$U_ID)), , drop=FALSE] 
+
+reorderedCounts = reorderAndGetColCentralVal(pl=dat.samples, df=dat.count, computeMedian=$findMedian);
+write.table(reorderedCounts\$data, file="$countOutputFile", quote=F, sep="\\t", row.names=reorderedCounts\$id, col.names=NA);
+
 
 ### Here we make individual files
 ### Header names match results tables
@@ -90,8 +98,14 @@ dir.create(samplesDir)
 
 for (i in 1:ncol(reorderedSamples\$data)) {
     sampleId = colnames(reorderedSamples\$data)[i];
+    # this is the TPM data
     sample = as.matrix(reorderedSamples\$data[,i]);
-    colnames(sample) = c("value")
+    colnames(sample) = c("value");
+
+    # add the averaged but otherwise raw count data
+    countSample = as.matrix(reorderedCounts\$data[,i]);
+    colnames(countSample) = c("mean_raw_count");
+    sample = cbind(sample, countSample);
 
     if ($makeStandardError) {
         stdErrSample = as.matrix(reorderedSamples\$stdErr[,i]);
@@ -104,7 +118,6 @@ for (i in 1:ncol(reorderedSamples\$data)) {
         colnames(pctSample) = c("percentile_channel1");
         sample = cbind(sample, pctSample);
     }
-
 
     # Fix disallowed characters
     # spaces become underscores,  ( and ) are removed
@@ -122,12 +135,75 @@ RString
     print $rfh $rString;
     close $rfh;
 
-    print STDERR $rString;
 
     return $rFile;
 }
 
+sub readDataHash {
+    my ($self) = @_;
+    
+    my $mainDirectory = $self->getMainDirectory();
+    #make dataHash for TPM values
+    chdir "$mainDirectory/TPM";
 
-### Use the new and munge methods from the superclass!
+    my $tpmHash = $self->SUPER::readDataHash();
+    $self->{dataHash}->{TPM} = $tpmHash;
+
+    # now the counts
+    chdir "$mainDirectory/results";
+
+    # set file suffix for counts files
+    my $fileSuffix = $self->getFileSuffix();
+    $fileSuffix =~ s/tpm/counts/;
+    $self->setFileSuffix($fileSuffix);
+
+    my $countsHash = $self->SUPER::readDataHash();
+    $self->{dataHash}->{counts} = $countsHash;
+
+    #must chdir back to mainDirectory when done
+    chdir $mainDirectory;
+}
+
+sub writeDataHash {
+    my ($self, $type) = @_;
+ 
+    my $dataHash;
+    if ($type eq "TPM") {
+        $dataHash = $self->{dataHash}->{TPM};
+    } elsif ($type eq "counts") {
+        $dataHash = $self->{dataHash}->{counts};
+    }
+
+    my $headers = $self->getHeaders();
+
+    my ($fh, $file) = tempfile();
+
+    print $fh "U_ID\t" . join("\t", @$headers) . "\n";
+
+    foreach my $uid (sort keys %$dataHash) {
+        my @values = map {defined($dataHash->{$uid}->{$_}) ? $dataHash->{$uid}->{$_} : 'NA'} @$headers;
+        print $fh "$uid\t" . join("\t", @values) . "\n";
+    }
+    return $file;
+}
+
+sub munge {
+    my ($self) = @_;
+
+    $self->readDataHash();
+
+    my $tpmFile = $self->writeDataHash("TPM");
+    my $countFile = $self->writeDataHash("counts");
+    $self->setTpmFile($tpmFile);
+    $self->setCountFile($countFile);
+
+
+    $self->SUPER::munge();
+    
+    unlink($tpmFile);
+    unlink($countFile);
+    
+}   
+
 
 1;
