@@ -1,24 +1,4 @@
 package ApiCommonData::Load::Plugin::InsertGOAssociationsFromInterpro;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | fixed
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | reviewed
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -29,11 +9,10 @@ use GUS::Supported::Utility::GOAnnotater;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
-use GUS::Model::DoTS::DomainFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::ExternalAASequence;
-use GUS::Model::DoTS::AALocation;
-use GUS::Model::DoTS::DbRefAAFeature;
+
+
 
 sub getArgsDeclaration {
   my $argsDeclaration  =
@@ -56,15 +35,6 @@ sub getArgsDeclaration {
                mustExist => 1,
                format => 'InterPro:IPR000003 Retinoid X receptor/HNF4 > GO:DNA binding ; GO:0003677'
               }),
-
-     fileArg({name => 'confFile',
-	      descr => 'XML file containing configuration for this plugin',
-	      constraintFunc=> undef,
-	      reqd  => 1,
-	      mustExist => 0,
-	      isList => 0,
-	      format=>'Text'
-	     }),
 
      stringArg({name => 'extDbName',
 		descr => 'External database for the data inserted',
@@ -111,12 +81,6 @@ sub getArgsDeclaration {
                 default => '^(\S+)',
 	       }),
 
-     integerArg({name  => 'testnumber',
-		 descr => 'Number of query sequences to process for testing',
-		 reqd  => 0,
-		 constraintFunc=> undef,
-		 isList=> 0,
-		}),
     ];
 
   return $argsDeclaration;
@@ -210,8 +174,6 @@ sub run {
       }
   }
 
-  $self->loadConfig($interproResultsFile);
-
   my $goVersion = $self->getArg('goVersion');
   $self->{GOAnnotater} = GUS::Supported::Utility::GOAnnotater->new($self, ["GO_RSRC^$goVersion"], "GO_evidence_codes_RSRC^%");
 
@@ -226,30 +188,17 @@ sub run {
     # Retrieve GO associations from interpro2go
     my $interproFamilyGoAssociations = $interproFamilyToGo{$myArray[11]};
     $self->processProteinResults($interproFamilyGoAssociations,\@myArray);
-    last if ($self->getArg('testnumber') && $self->{interproCount}+$self->{noIPR}->{interproCount} >= $self->getArg('testnumber'));
   }
 
   my $totalIprCount = $self->{interproCount} + $self->{noIPR}->{interproCount};
   my $totalGOCount = $self->{GOCount} + $self->{unfoundGOCount};
   my $totalMatchCount = $self->{matchCount} + $self->{noIPR}->{matchCount};
   my $totalLocationCount = $self->{locationCount} + $self->{noIPR}->{locationCount};
-  $self->log("Proteins: $self->{protCount}");
-  $self->log("Interpro Hits loaded: $self->{interproCount}");
-  $self->log("Interpro Hits loaded (noIPR): $self->{noIPR}->{interproCount}");
-  $self->log("Interpro Hits total: $totalIprCount");
   $self->log("GO Associations loaded: $self->{GOCount}");
   $self->log("GO Associations unfound: $self->{unfoundGOCount}");
   $self->log("GO Associations total: $totalGOCount");
-  $self->log("Matches loaded: $self->{matchCount}");
-  $self->log("Matches loaded (noIPR): $self->{noIPR}->{matchCount}");
-  $self->log("Matches total: $totalMatchCount");
-  $self->log("Locations loaded: $self->{locationCount}");
-  $self->log("Locations loaded (noIPR): $self->{noIPR}->{locationCount}");
-  $self->log("Locations total: $totalLocationCount");
-  $self->log("testnumber = " . $self->getArg('testnumber'))
-  if $self->getArg('testnumber');
-  $self->testRowsLoaded;
-  return "Done inserting Interpro scan results\n";
+
+  return "Done inserting Interpro2GO Associations\n";
 }
 
 # ======================================================================================================================
@@ -257,6 +206,8 @@ sub run {
 sub processProteinResults {
   my ($self, $interproFamilyGoAssociations, $proteins) = @_;
 
+
+  my $interproId = $proteins->[11];
   my $tableName = $self->getArg('aaSeqTable');
   my $regex = $self->getArg('srcIdRegex');
   my $queryTable = "GUS::Model::DoTS::$tableName";
@@ -269,28 +220,13 @@ sub processProteinResults {
 
   return unless $aaId; #remove this - DP
 
-  my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
-  $gusAASeq->retrieveFromDB()
-    || die "Can't find AA sequence with aa_sequence_id '$aaId'";
-
-    my $parentId;
-    if (!$proteins->[11]) {
-      $self->{noIPR}->{interproCount}++;
-    } else {
-      my $parentDomain = 
-	$self->buildDomainFeature($proteins->[11], $aaId,
-				"INTERPRO", undef);
-      $parentId = $parentDomain->getId();
-      $self->{'interproCount'}++;
-    }
-
     # Load found mappings from interpro AND from interpro2GO file from EBI
     if ($proteins->[13] || $interproFamilyGoAssociations){
-	my @classificationKids = split(/\|/,$proteins->[13]);
-	my @classificationFromEbi = split(/\|/,$interproFamilyGoAssociations);
-        my @allClassifications = (@classificationKids, @classificationFromEbi);
-	my %seen;
-	foreach my $classification (@allClassifications) {
+      my @classificationKids = split(/\|/,$proteins->[13]);
+      my @classificationFromEbi = split(/\|/,$interproFamilyGoAssociations);
+      my @allClassifications = (@classificationKids, @classificationFromEbi);
+      my %seen;
+      foreach my $classification (@allClassifications) {
             next if ($seen{$classification} || $classification =~ /-/);
             my $go_term;
             if ($classification =~ /(GO:\d+)/) {
@@ -301,74 +237,13 @@ sub processProteinResults {
 
             $self->buildGOAssociation($aaId, $go_term);
             $seen{$classification} = "true";
-	}
+      }
     }
 
-    my $childDomain;
-    if (!$proteins->[11]) {
-	$self->{noIPR}->{matchCount}++;
-      } else {
-	$self->{'matchCount'}++;
-      }
-      my $dbname = uc $proteins->[3];
-
-      $childDomain = $self->buildDomainFeature($proteins->[4], $aaId, $dbname,
-				  $parentId, $proteins->[8]);
-      if (!$proteins->[11]) {
-	  $self->{noIPR}->{locationCount}++;
-      } else {
-	  $self->{locationCount}++;
-      }
-
-      $self->buildLocation($proteins->[6], $proteins->[7], $childDomain);
-
-
-
-    last if ($self->getArg('testnumber') && $self->{interproCount}
-	     + $self->{noIPR}->{interproCount} >= $self->getArg('testnumber'));
-  
   $self->undefPointerCache();
-  $self->{'protCount'}++;
+
 }
 
-sub buildDomainFeature {
-  my ($self, $domainSourceId, $aaId, $dbName, $parentId, $evalue) = @_;
-	
-  my $domainFeat = GUS::Model::DoTS::DomainFeature->
-    new({ source_id => $domainSourceId,
-	  external_database_release_id => $self->{extDbRlsId},
-	  aa_sequence_id => $aaId,
-          is_predicted => 1,
-	  parent_id => $parentId,
-	  e_value => $evalue
-	});
-
-  $domainFeat->submit() unless $domainFeat->retrieveFromDB();
-	
-  my $dbRefId = $self->{$dbName}->{dbRefIds}->{$domainSourceId};
-
-  my $dbRefAaFeat = GUS::Model::DoTS::DbRefAAFeature->
-    new({ db_ref_id => $dbRefId,
-	  aa_feature_id => $domainFeat->getId()
-	});
-
-  $dbRefAaFeat->submit() if ($dbRefId && !$dbRefAaFeat->retrieveFromDB());
-
-  return $domainFeat;
-}
-
-sub buildLocation {
-  my ($self, $start, $end, $domainFeature) = @_;
-
-  my $loc = GUS::Model::DoTS::AALocation->
-    new({ start_min => $start,
-	  start_max => $start,
-	  end_min => $end,
-	  end_max => $end,
-	  aa_feature_id => $domainFeature->getId()
-	});
-  $loc->submit() unless $loc->retrieveFromDB();
-}
 
 sub buildGOAssociation {
   my ($self, $aaId, $classId) = @_;
@@ -418,82 +293,8 @@ sub buildGOAssociation {
 
 }
 
-sub loadConfig{
-  my ($self, $resultFile) = @_;
-
-  my $cFile = $self->getArg('confFile');
-
-  my $conf = $self->parseSimple($cFile);
-
-  my $dbs = $conf->{'db'};	#list of Db names and versions
-
-  foreach my $dbName (keys %$dbs) {
-    $self->log("Getting dbRefIds for $dbName");
-    $self->{$dbName}->{dbRefIds} =
-      $self->getDbRefIds($dbName, $dbs->{$dbName}->{ver});
-  }
-
-  my %dbsInResult;
-  $self->log("Scanning result files to find DBs that we matched against");
-  $self->findDbsInResult("$resultFile", \%dbsInResult); 
-
-  my @uncoolDbs;
-  $self->log("Checking that all matched DBs are loaded in GUS");
-  foreach my $dbInResult (keys %dbsInResult) {
-    push(@uncoolDbs, $dbInResult) unless ($self->{$dbInResult});
-  }
-  if (scalar(@uncoolDbs) != 0) {
-    $self->error("Result contains matches to databases that are not loaded into GUS: " . join(", ", @uncoolDbs));
-  }
-}
-
-sub parseSimple{
-  my ($self,$file) = @_;
 
 
-  # wrap in eval to dodge xml simple error handling issue
-  # can lose the eval when GusApplication retires use of Error.pm
-  # see redmine #5982
-  my $tree;
-  eval {
-    my $simple = XML::Simple->new();
-    $tree = $simple->XMLin($file, keyattr=>['name'], forcearray=>1);
-  };
-  if ( $@ ) {
-    die "$@";
-  }
-  return $tree;
-
-}
-
-# return a hash of domain sourceId to DbRef ID
-sub getDbRefIds {
-  my ($self, $dbName, $version) = @_;
-
-  my %sourceId2dbRefId;
-  my $sql = "
-SELECT dbr.primary_identifier, dbr.db_ref_id
-FROM SRes.DbRef dbr, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr
-WHERE ed.name = '$dbName'
-AND edr.version = '$version'
-AND edr.external_database_id = ed.external_database_id
-AND dbr.external_database_release_id = edr.external_database_release_id
-";
-  my $stmt = $self->prepareAndExecute($sql);
-  while ( my($sourceId, $dbrefId) = $stmt->fetchrow_array()) {
-    $sourceId2dbRefId{$sourceId} = $dbrefId;
-  }
-  return \%sourceId2dbRefId;
-}
-
-sub findDbsInResult {
-  my ($self, $resultFile, $dbsInResult) = @_;
-
-  open(FILE, $resultFile) || die "couldn't open result file '$resultFile'\n";
-  while (<FILE>) {
-   $dbsInResult->{$1} = 1 if /dbname=\"(\w+)\"/;
- }
-}
 
 # this could (should) be improved to take the ext db info of the aa's.
 # as is, it assumes the source_ids are unique in the table, and that the
@@ -527,24 +328,6 @@ FROM Dots.$aaSeqTable
   return $self->{sourceId2aaSeqId}->{$sourceId};
 }
 
-
-sub testRowsLoaded {
-  my ($self) = @_;
-  
-  my $algInvId   = $self->getAlgInvocation()->getId();
-
-  my $sql = "SELECT count(*) FROM DoTS.DomainFeature where row_alg_invocation_id in ($algInvId)";
-
-  my $stmt = $self->prepareAndExecute($sql);
-
-  my $loadedDomainFeature = $stmt->fetchrow_array();
- 
-  die "The plugin loaded no result rows!\n" unless ($loadedDomainFeature);
-}
-
-
-
-
 sub undoPreprocess {
   my ($self, $dbh, $rowAlgInvocationList) = @_;
 
@@ -555,9 +338,9 @@ sub undoTables {
   my ($self) = @_;
 
   return (
-	  'DoTS.AALocation',
-	  'DoTS.DbRefAAFeature',
-	  'DoTS.DomainFeature',
+    'DoTS.AALocation',
+    'DoTS.DbRefAAFeature',
+    'DoTS.DomainFeature',
 	  GUS::Supported::Utility::GOAnnotater->undoTables()
 	 );
 }
