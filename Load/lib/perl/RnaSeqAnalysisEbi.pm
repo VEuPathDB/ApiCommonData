@@ -59,7 +59,7 @@ sub munge {
             # this location to be used for the config and output
             my $mainDirectory = $self->getMainDirectory();
             # input files in here TODO change to results
-            my $mainDir = "$mainDirectory/final";
+            my $mainDir = "$mainDirectory/results";
             my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
                                                                                 inputs => $samplesHash->{$sampleName},
                                                                                 mainDirectory => $mainDir,
@@ -70,11 +70,11 @@ sub munge {
             $intronJunctions->setProtocolName("GSNAP/Junctions");
             $intronJunctions->setDisplaySuffix(" [junctions]");
             $intronJunctions->setTechnologyType($self->getTechnologyType());
-            $intronJunctions->setConfigFilePath($mainDirectory);
+            $intronJunctions->setConfigFilePath("$mainDirectory/analysis_output");
             my $cleanSampleName = $intronJunctions->getSampleName();
             $cleanSampleName =~ s/\s/_/g; 
             $cleanSampleName=~ s/[\(\)]//g;
-            $intronJunctions->setOutputFile($mainDirectory . "/analyzeRnaSeqExperiment/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
+            $intronJunctions->setOutputFile($mainDirectory . "/analysis_output/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
 
             $intronJunctions->munge();
         }
@@ -120,14 +120,9 @@ sub makeProfiles {
     # this location to be used for the config
     my $mainDirectory = $self->getMainDirectory();
     
-    # counts and TPM files will be in a subdir
-    # do thisin RnaSeqCounts
-    #my $mainDir = $valueType =~ /tpm/ ? "$mainDirectory/TPM" : "$mainDirectory/final"; 
-
-    print STDERR Dumper "$mainDirectory/$outputFile";
     my $profile = ApiCommonData::Load::RnaSeqCounts->
 	new({mainDirectory => $mainDirectory,
-	     outputFile => "$mainDirectory/analyzeRnaSeqExperiment/$outputFile",
+	     outputFile => "$mainDirectory/analysis_output/$outputFile",
 	     makePercentiles => $makePercentiles,
 	     isLogged => 0,
 	     fileSuffix => "$featureType.$quantificationType.$strand.$valueType",
@@ -165,7 +160,7 @@ sub makeProfiles {
 
     $profile->setTechnologyType($self->getTechnologyType());
 
-    $profile->setConfigFilePath($mainDirectory);
+    $profile->setConfigFilePath("$mainDirectory/analysis_output");
     $profile->munge();
     
     return($outputFile);
