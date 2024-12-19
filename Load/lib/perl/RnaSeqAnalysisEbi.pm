@@ -44,7 +44,7 @@ sub munge {
     my ($self) = @_;
     
     my $featureType = 'genes';
-    my @valueTypes = ('tpm', 'counts');
+    my @valueTypes = ('tpm');
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
     my $samplesHash = $self->groupListHashRef($self->getSamples());
@@ -58,7 +58,7 @@ sub munge {
         foreach my $sampleName (keys %$samplesHash) {
             # this location to be used for the config and output
             my $mainDirectory = $self->getMainDirectory();
-            # input files in here
+            # input files in here TODO change to results
             my $mainDir = "$mainDirectory/final";
             my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
                                                                                 inputs => $samplesHash->{$sampleName},
@@ -74,7 +74,7 @@ sub munge {
             my $cleanSampleName = $intronJunctions->getSampleName();
             $cleanSampleName =~ s/\s/_/g; 
             $cleanSampleName=~ s/[\(\)]//g;
-            $intronJunctions->setOutputFile($mainDirectory . "/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
+            $intronJunctions->setOutputFile($mainDirectory . "/analyzeRnaSeqExperiment/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
 
             $intronJunctions->munge();
         }
@@ -121,12 +121,13 @@ sub makeProfiles {
     my $mainDirectory = $self->getMainDirectory();
     
     # counts and TPM files will be in a subdir
-    my $mainDir = $valueType =~ /tpm/ ? "$mainDirectory/TPM" : "$mainDirectory/final"; 
+    # do thisin RnaSeqCounts
+    #my $mainDir = $valueType =~ /tpm/ ? "$mainDirectory/TPM" : "$mainDirectory/final"; 
 
     print STDERR Dumper "$mainDirectory/$outputFile";
     my $profile = ApiCommonData::Load::RnaSeqCounts->
-	new({mainDirectory => $mainDir,
-	     outputFile => "$mainDirectory/$outputFile",
+	new({mainDirectory => $mainDirectory,
+	     outputFile => "$mainDirectory/analyzeRnaSeqExperiment/$outputFile",
 	     makePercentiles => $makePercentiles,
 	     isLogged => 0,
 	     fileSuffix => "$featureType.$quantificationType.$strand.$valueType",
@@ -140,7 +141,7 @@ sub makeProfiles {
     $profile->setHasHeader($header);
 
     # protocolName will be TPM for normalised values or HTSeq for counts
-    my $protocolName = $valueType =~ /tpm/ ? 'TPM': 'HTSeq';
+    my $protocolName = 'HTSeq';
 
     $profile->setProtocolName("HISAT2/$protocolName");
 
