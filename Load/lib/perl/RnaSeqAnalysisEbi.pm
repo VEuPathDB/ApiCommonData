@@ -111,7 +111,6 @@ sub makeProfiles {
 
     # cleanup for non unique
     if(!$isUnique) {
-      $valueType = "nonunique.$valueType";
       $makePercentiles = 0;
     }
 

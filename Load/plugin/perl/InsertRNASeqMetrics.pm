@@ -90,10 +90,10 @@ sub run {
     my $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec);
 
     my $panSql = "select pan.name, pan.protocol_app_node_id 
-                  from study.protocolappnode pan, study.studylink sl, study.study s 
-                  where pan.protocol_app_node_id = sl.protocol_app_node_id 
-                  and sl.study_id = s.study_id
-                  and s.external_database_release_id = $studyExtDbRlsId";
+                  from study.protocolappnode pan, study.nodenodeset nns, study.nodeset ns
+                  where pan.protocol_app_node_id = nns.protocol_app_node_id
+                  and nns.node_set_id = ns.node_set_id
+                  and ns.external_database_release_id = $studyExtDbRlsId";
 
     my $dbh = $self->getQueryHandle();
     my $sh = $dbh->prepare($panSql);
@@ -151,16 +151,15 @@ sub run {
       $ontologyTerms{$termName} = $ontologyTerm;
     }
 
-    my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') .  "/analyze*/master/mainresult/mappingStats.txt";
+#    my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') .  "/analyze*/master/mainresult/mappingStats.txt";
 
     #if no files, check dir structure for EBI RNAseq
-    @mappingStatsFiles = scalar @mappingStatsFiles == 0 ? glob $self->getArg('rnaseqExperimentDirectory') . "/*/mappingStats.txt" : @mappingStatsFiles;
+    my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') . "/results/*/mappingStats.txt";
 
     $self->error("No mapping stats file found for this dataset\n") unless scalar @mappingStatsFiles > 0;
 
     foreach my $mappingStats (@mappingStatsFiles) {
-      my ($internalSampleName) = $mappingStats =~ /analyze_(.+)\/master\/mainresult/;
-      ($internalSampleName) = defined $internalSampleName ? $internalSampleName : (split "/", dirname($mappingStats))[-1];
+      my ($internalSampleName) =  (split "/", dirname($mappingStats))[-1];
 
       my $protocolAppNodeName;
       if(my ($combinedInternalName) = $internalSampleName =~ /(.+)_combined/) {
@@ -172,7 +171,7 @@ sub run {
 
       my $protocolAppNode = $protocolAppNodes{$protocolAppNodeName};
       if (! defined $protocolAppNode) {
-        $protocolAppNodeName = "$internalSampleName (RNASeqEbi)";
+        $protocolAppNodeName = "$internalSampleName (RNASeq)";
         $protocolAppNode = $protocolAppNodes{$protocolAppNodeName};
       }
       $self->error("Could not find protocolappnode row for name:  $protocolAppNodeName") unless($protocolAppNode);

@@ -40,8 +40,7 @@ foreach my $key (keys %$sampleHash) {
         die "No samples found for key $key\n";
     }
 
-    my $sampleDirName = -e "$dir/analyze_$sampleDirName/master/mainresult" ? "$dir/analyze_$sampleDirName/master/mainresult" : "$dir/analyze_$sampleDirName";
-    my @files = glob "$sampleDirName/normalized/final/*";
+    my @files = glob "$dir/normalize_coverage/results/$sampleDirName/normalized/final/*";
 
     my @files = grep !/logged/, @files;
     my @files = grep !/non_unique/, @files;
@@ -65,6 +64,7 @@ else{
 
 sub convertBigwig {
     my ($fileList, $outDir, $chromSize, $experimentName, $pattern) = @_;
+
     my $fileNames = join ' ', @$fileList;
     #Check if more than 1 input bigwig file
     if (scalar @$fileList > 1){ 
