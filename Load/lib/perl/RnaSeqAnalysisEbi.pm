@@ -44,7 +44,7 @@ sub munge {
     my ($self) = @_;
     
     my $featureType = 'genes';
-    my @valueTypes = ('tpm', 'counts');
+    my @valueTypes = ('tpm');
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
     my $samplesHash = $self->groupListHashRef($self->getSamples());
@@ -58,8 +58,8 @@ sub munge {
         foreach my $sampleName (keys %$samplesHash) {
             # this location to be used for the config and output
             my $mainDirectory = $self->getMainDirectory();
-            # input files in here
-            my $mainDir = "$mainDirectory/final";
+            # input files in here TODO change to results
+            my $mainDir = "$mainDirectory/results";
             my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
                                                                                 inputs => $samplesHash->{$sampleName},
                                                                                 mainDirectory => $mainDir,
@@ -70,11 +70,11 @@ sub munge {
             $intronJunctions->setProtocolName("GSNAP/Junctions");
             $intronJunctions->setDisplaySuffix(" [junctions]");
             $intronJunctions->setTechnologyType($self->getTechnologyType());
-            $intronJunctions->setConfigFilePath($mainDirectory);
+            $intronJunctions->setConfigFilePath("$mainDirectory/analysis_output");
             my $cleanSampleName = $intronJunctions->getSampleName();
             $cleanSampleName =~ s/\s/_/g; 
             $cleanSampleName=~ s/[\(\)]//g;
-            $intronJunctions->setOutputFile($mainDirectory . "/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
+            $intronJunctions->setOutputFile($mainDirectory . "/analysis_output/" . $cleanSampleName . "_results" . $intronJunctions->getSuffix());
 
             $intronJunctions->munge();
         }
@@ -111,7 +111,6 @@ sub makeProfiles {
 
     # cleanup for non unique
     if(!$isUnique) {
-      $valueType = "nonunique.$valueType";
       $makePercentiles = 0;
     }
 
@@ -120,13 +119,9 @@ sub makeProfiles {
     # this location to be used for the config
     my $mainDirectory = $self->getMainDirectory();
     
-    # counts and TPM files will be in a subdir
-    my $mainDir = $valueType =~ /tpm/ ? "$mainDirectory/TPM" : "$mainDirectory/final"; 
-
-    print STDERR Dumper "$mainDirectory/$outputFile";
     my $profile = ApiCommonData::Load::RnaSeqCounts->
-	new({mainDirectory => $mainDir,
-	     outputFile => "$mainDirectory/$outputFile",
+	new({mainDirectory => $mainDirectory,
+	     outputFile => "$mainDirectory/analysis_output/$outputFile",
 	     makePercentiles => $makePercentiles,
 	     isLogged => 0,
 	     fileSuffix => "$featureType.$quantificationType.$strand.$valueType",
@@ -140,7 +135,7 @@ sub makeProfiles {
     $profile->setHasHeader($header);
 
     # protocolName will be TPM for normalised values or HTSeq for counts
-    my $protocolName = $valueType =~ /tpm/ ? 'TPM': 'HTSeq';
+    my $protocolName = 'HTSeq';
 
     $profile->setProtocolName("HISAT2/$protocolName");
 
@@ -164,7 +159,7 @@ sub makeProfiles {
 
     $profile->setTechnologyType($self->getTechnologyType());
 
-    $profile->setConfigFilePath($mainDirectory);
+    $profile->setConfigFilePath("$mainDirectory/analysis_output");
     $profile->munge();
     
     return($outputFile);
