@@ -148,7 +148,7 @@ while (my $feature = $gffIo->next_feature()) {
         $peptide->submit();
         $linesInserted++;
     }
-    elsif ($primaryTag eq 'modified_peptide') {
+    elsif ($primaryTag eq 'ms_residue') {
         my $residue = ($feature->has_tag('residue') ? ($feature->get_tag_values('residue'))[0] : undef);
         my $residueLocation = ($feature->has_tag('residueLocation') ? ($feature->get_tag_values('residueLocation'))[0] : undef);
 
