@@ -74,9 +74,11 @@ sub getGoInfoFromDbs {
   ## use apidbtuning.GoTermSummary table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
   my $sqlSub = "
 select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, IS_NOT, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, EVIDENCE_CODE_PARAMETER, 
-decode(ontology, 'Biological Process', 'P',
-                 'Molecular Function', 'F',
-                 'Cellular Component', 'C', ontology) 
+  CASE
+    WHEN ontology = 'Biological Process' THEN 'P'
+    WHEN ontology = 'Molecular Function' THEN 'F'
+    WHEN ontology = 'Cellular Component' THEN 'C'
+  END
 from apidbtuning.${tuningTablePrefix}GeneGoTerms
 ";
 
