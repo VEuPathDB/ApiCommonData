@@ -108,6 +108,22 @@ sub run {
 
     my $extDbRlsId = $self->getExtDbRlsId($dbName, $version);
 
+    my $peptideInfo = $self->loadMsPeptides($dataFile, $extDbRlsId);
+
+    $self->loadMsResidues($dataFile, $extDbRlsId, $peptideInfo);
+
+    my $linesInserted = $self->{_lines_inserted};
+    my $linesProcessed = $self->{_lines_processed};
+
+    my $resultDescription = "Processed $linesProcessed lines, inserted $linesInserted rows.";
+    $self->setResultDescr($resultDescription);
+    $self->logData($resultDescription);
+}
+
+
+sub loadMsResidues {
+    my ($self, $dataFile, $extDbRlsId, $peptideInfo) = @_;
+
     my $fh;
     if($dataFile =~ /\.gz$/) {
         open($fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
@@ -117,40 +133,26 @@ sub run {
     }
     my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
-    my $linesProcessed = 0;
-    my $linesInserted  = 0;
+    while (my $feature = $gffIo->next_feature()) {
+        my $primaryTag = $feature->primary_tag;
 
-while (my $feature = $gffIo->next_feature()) {
-    my $primaryTag = $feature->primary_tag;
+        next unless $primaryTag eq 'ms_residue';
 
-    next unless $primaryTag eq 'ms_peptide' || $primaryTag eq 'modified_peptide';
+        my $seqId = $feature->seq_id;
+        my $start = $feature->start;
+        my $end   = $feature->end;
 
-    my $seqId = $feature->seq_id;
-    my $start = $feature->start;
-    my $end   = $feature->end;
 
-    # Extract attributes using get_tag_values
-    my $spectrumCount = ($feature->has_tag('spectrum_count') ? ($feature->get_tag_values('spectrum_count'))[0] : undef);
-    my $sample = ($feature->has_tag('sample_name') ? ($feature->get_tag_values('sample_name'))[0] : undef);
-    my $peptideSequence = ($feature->has_tag('peptide') ? ($feature->get_tag_values('peptide'))[0] : undef);
+        # Extract some things from this residue's peptide (parent)
+        my ($peptideId) = $feature->get_tag_values('Parent');
+        my $spectrumCount = $peptideInfo->{$peptideId}->{spectrum_count};
+        my $sample = $peptideInfo->{$peptideId}->{sample};
+        my $peptideSequence = $peptideInfo->{$peptideId}->{peptide_sequence};
+        $self->error("could not find sample or peptide sequence for peptide: $peptideId") unless($sample && $peptideSequence);
 
-    if ($primaryTag eq 'ms_peptide') {
-        my $peptide = GUS::Model::ApiDB::MassSpecPeptide->new({
-            protein_source_id            => $seqId,
-            peptide_start                => $start,
-            peptide_end                  => $end,
-            spectrum_count               => $spectrumCount,
-            sample                       => $sample,
-            peptide_sequence             => $peptideSequence,
-            external_database_release_id => $extDbRlsId,
-        });
-
-        $peptide->submit();
-        $linesInserted++;
-    }
-    elsif ($primaryTag eq 'ms_residue') {
+        # Extract attributes using get_tag_values
         my $residue = ($feature->has_tag('residue') ? ($feature->get_tag_values('residue'))[0] : undef);
-        my $residueLocation = ($feature->has_tag('residueLocation') ? ($feature->get_tag_values('residueLocation'))[0] : undef);
+        my ($residueLocation) = $feature->get_tag_values('relative_position') + 1;
 
         my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
             protein_source_id            => $seqId,
@@ -162,20 +164,76 @@ while (my $feature = $gffIo->next_feature()) {
             external_database_release_id => $extDbRlsId,
             residue                      => $residue,
             residue_location             => $residueLocation,
-        });
+                                                                                });
 
         $modifiedPeptide->submit();
-        $linesInserted++;
+        $self->{_lines_inserted}++;
+        $self->{_lines_processed}++;
+
+        $self->undefPointerCache();
+    }
+    $gffIo->close();
+
+}
+
+
+sub loadMsPeptides {
+    my ($self, $dataFile, $extDbRlsId) = @_;
+
+    my $fh;
+    if($dataFile =~ /\.gz$/) {
+        open($fh, "gzip -dc $dataFile |") or die "Could not open '$dataFile': $!";
+    }
+    else {
+        open($fh, $dataFile) or die "Could not open '$dataFile': $!";
+    }
+    my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
+
+    my %peptideInfo;
+
+    # first read through and load the peptides.  keep a hash of peptideID-> spectrum count, sample, peptide sequence
+    while (my $feature = $gffIo->next_feature()) {
+        my $primaryTag = $feature->primary_tag;
+
+        next unless $primaryTag eq 'ms_peptide';
+
+        my $seqId = $feature->seq_id;
+        my $start = $feature->start;
+        my $end   = $feature->end;
+
+        # Extract attributes using get_tag_values
+        my $spectrumCount = ($feature->has_tag('spectrum_count') ? ($feature->get_tag_values('spectrum_count'))[0] : undef);
+        my $sample = ($feature->has_tag('sample_name') ? ($feature->get_tag_values('sample_name'))[0] : undef);
+        my $peptideSequence = ($feature->has_tag('peptide') ? ($feature->get_tag_values('peptide'))[0] : undef);
+
+        my ($peptideId) = $feature->get_tag_values('ID');
+
+        my $peptide = GUS::Model::ApiDB::MassSpecPeptide->new({
+            protein_source_id            => $seqId,
+            peptide_start                => $start,
+            peptide_end                  => $end,
+            spectrum_count               => $spectrumCount,
+            sample                       => $sample,
+            peptide_sequence             => $peptideSequence,
+            external_database_release_id => $extDbRlsId,
+                                                              });
+
+        $peptide->submit();
+
+        $self->{_lines_inserted}++;
+        $self->{_lines_processed}++;
+
+        $self->undefPointerCache();
+
+        $peptideInfo{$peptideId} = {spectrum_count => $spectrumCount, sample => $sample, peptide_sequence => $peptideSequence}
     }
 
-    $linesProcessed++;
-    $self->undefPointerCache();
+    $gffIo->close();
+
+
+    return \%peptideInfo;;
 }
 
-    my $resultDescription = "Processed $linesProcessed lines, inserted $linesInserted rows.";
-    $self->setResultDescr($resultDescription);
-    $self->logData($resultDescription);
-}
 
 sub undoTables {
     return ('ApiDB.MassSpecPeptide', 'ApiDB.ModifiedMassSpecPeptide');
