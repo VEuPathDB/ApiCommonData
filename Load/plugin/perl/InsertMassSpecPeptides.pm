@@ -154,6 +154,8 @@ sub loadMsResidues {
         my $residue = ($feature->has_tag('residue') ? ($feature->get_tag_values('residue'))[0] : undef);
         my ($residueLocation) = $feature->get_tag_values('relative_position') + 1;
 
+        my ($modificationType) = $feature->get_tag_values('modification_type');
+
         my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
             protein_source_id            => $seqId,
             peptide_start                => $start,
@@ -163,6 +165,7 @@ sub loadMsResidues {
             peptide_sequence             => $peptideSequence,
             external_database_release_id => $extDbRlsId,
             residue                      => $residue,
+            modification_type            => $modificationType,
             residue_location             => $residueLocation,
                                                                                 });
 
