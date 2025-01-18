@@ -101,6 +101,10 @@ sub uninstallData {
     my $installJsonFile = $self->getInstallJsonFile();
     my $userDatasetId = $self->getUserDatasetId();
 
+    my $schema = $self->getDbSchema();
+    my $datasetDir = $self->getDataFilesDir();
+    my $dbh = $self->getDbh();
+
     # check if already uninstalled
     if (!(-e $installJsonFile) && $self->hasUserDatasetId()) {
         my $sql = "select count(*) from $schema.study where user_dataset_id = '$userDatasetId'";
@@ -251,6 +255,8 @@ sub loadTable {
   my $dbh = $self->getDbh();
   my $schema = $self->getDbSchema();
   my $userDatasetId = $self->getUserDatasetId();
+  my $platform = $self->getDbPlatform();
+
 
   my @colNames;
   my $fields = $tableConfig->{fields};
