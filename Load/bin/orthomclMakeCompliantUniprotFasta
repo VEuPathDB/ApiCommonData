@@ -1,0 +1,51 @@
+#!/usr/bin/perl
+ 
+use strict;
+
+usage() unless scalar(@ARGV) == 2;
+
+my ($inputFastaFile, $outputFastaFile) = @ARGV;
+
+open(INPUT, $inputFastaFile) || die "Can't open '$inputFastaFile' for reading\n";
+open(OUT, ">$outputFastaFile") || die "Can't open '$outputFastaFile' for writing\n";
+
+# sample input defline: >sp|D0VWU4|SECE_AQUAE Protein translocase subunit SecE OS=Aquifex aeolicus (strain VF5) OX=224324 GN=secE PE=1 SV=1
+
+# sample output defline: >D0VWU4 gene=D0VWU4 product=Protein translocase subunit SecE
+
+while(<INPUT>) {
+    my $line = $_;
+    if ($line =~ /^>/) {
+	my $proteinName;
+	my $proteinProduct;
+	if ($line =~ />\w\w\|([^|]+)\|\S+ (.+) OS=/) {
+	    $proteinName = $1;
+	    $proteinProduct = $2;
+	} else {
+	    die "unexpected defline format: $_";
+	}
+	print OUT ">$proteinName gene=$proteinName product=$proteinProduct\n";
+    } else {
+	print OUT;
+    }
+}
+
+exit;
+
+
+
+sub usage {
+
+die "
+Make a fasta file that is orthomcl compliant, for a uniprot reference proteome.
+
+Usage: orthomclMakeCompliantUniprotFasta input_fasta_file output_fasta_file
+
+Where: 
+  input_fasta_file:             uniprot fasta file
+  output_fasta_file:            the file to write to
+
+sample input defline: >sp|D0VWU4|SECE_AQUAE Protein translocase subunit SecE OS=Aquifex aeolicus (strain VF5) OX=224324 GN=secE PE=1 SV=1          
+sample output defline: >D0VWU4 gene=D0VWU4 product=Protein translocase subunit SecE
+";
+}

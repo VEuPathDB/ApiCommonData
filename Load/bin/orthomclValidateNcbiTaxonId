@@ -1,0 +1,48 @@
+#!/usr/bin/perl
+
+# confirm that a organism abbrev, ncbi taxon id pair conforms to what is in the ApiDB.OrthomclTaxon table
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my ($abbrev, $ncbiTaxonId, $taxIdIsAtSpeciesLevel) = @ARGV;
+
+usage() unless ($abbrev && $ncbiTaxonId);
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+my $dbh = $db->getQueryHandle();
+
+my $sql = "
+select * from apidb.orthomcltaxon o, sres.taxon t
+where o.three_letter_abbrev = '$abbrev'
+and t.ncbi_tax_id = $ncbiTaxonId
+and t.taxon_id = o.taxon_id";
+
+my $queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
+ 
+$queryHandle->execute() or die $dbh->errstr;
+
+die "Proteome with abbrev '$abbrev' has ncbiTaxonId of '$ncbiTaxonId' but that pair is not in ApiDB.OrthomclTaxon.  Correct either the proteome or the taxon tree\n" unless $queryHandle->fetchrow_array();
+
+
+$queryHandle->finish();
+
+sub usage {
+    die "
+
+Confirm that an organism abbrev, ncbi taxon id pair conforms to what is in the ApiDB.OrthomclTaxon table
+
+Usage: orthomclValidateNcbiTaxonId abbrev ncbi_taxon_id
+
+Throws an error if invalid.  Otherwise, just returns;
+
+";
+}
+
