@@ -103,17 +103,20 @@ sub run {
 
     while (my $line = <$fh>) {
         chomp $line;
-        my ($query_id, $subject_id, $pident, $length, $mismatch, $query_start, $query_end, $subject_start, $subject_end, $evalue_mant, $evalue_exp, $bit_score) = split "\t", $line;
+        my ($query_id, $subject_id, $pident, $length, $alignedLength, $mismatch, $query_start, $query_end, $subject_start, $subject_end, $evalue, $bit_score) = split "\t", $line;
 
         my $protein_data_bank_id = $proteinDataBankIDs->{$subject_id};
 
         my $aa_sequence_id = &GUS::Supported::Util::getAASequenceId($self, $query_id);
 
+	my ($evalue_mant, $evalue_exp) = split (/e/, $evalue);
+	if ($evalue == 0) {$evalue_mant = 0; $evalue_exp = -1; }
+
         my $pdb_similarity = GUS::Model::ApiDB::PDBSimilarity->new({
             protein_data_bank_id              => $protein_data_bank_id,
             aa_sequence_id                    => $aa_sequence_id,
             pident                            => $pident,
-            length                            => $length,
+            length                            => $alignedLength,
             mismatch                          => $mismatch,
             query_start                       => $query_start,
             query_end                         => $query_end,

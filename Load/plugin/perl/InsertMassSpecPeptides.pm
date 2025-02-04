@@ -152,7 +152,7 @@ sub loadMsResidues {
 
         # Extract attributes using get_tag_values
         my $residue = ($feature->has_tag('residue') ? ($feature->get_tag_values('residue'))[0] : undef);
-        my ($residueLocation) = $feature->get_tag_values('relative_position') + 1;
+        my $residueLocation = ($feature->get_tag_values('relative_position'))[0] + 1;
 
         my ($modificationType) = $feature->get_tag_values('modification_type');
 
