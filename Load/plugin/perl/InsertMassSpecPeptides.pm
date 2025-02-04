@@ -158,15 +158,15 @@ sub loadMsResidues {
 
         my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
             protein_source_id            => $seqId,
-            peptide_start                => $start,
-            peptide_end                  => $end,
+            residue_start                => $start,
+            residue_end                  => $end,
             spectrum_count               => $spectrumCount,
             sample                       => $sample,
             peptide_sequence             => $peptideSequence,
             external_database_release_id => $extDbRlsId,
             residue                      => $residue,
             modification_type            => $modificationType,
-            residue_location             => $residueLocation,
+            relative_residue_location             => $residueLocation,
                                                                                 });
 
         $modifiedPeptide->submit();
