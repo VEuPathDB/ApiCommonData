@@ -147,6 +147,10 @@ sub loadMsResidues {
         my ($peptideId) = $feature->get_tag_values('Parent');
         my $spectrumCount = $peptideInfo->{$peptideId}->{spectrum_count};
         my $sample = $peptideInfo->{$peptideId}->{sample};
+
+        my $peptideStart = $peptideInfo->{$peptideId}->{peptide_start};
+        my $peptideEnd = $peptideInfo->{$peptideId}->{peptide_end};
+
         my $peptideSequence = $peptideInfo->{$peptideId}->{peptide_sequence};
         $self->error("could not find sample or peptide sequence for peptide: $peptideId") unless($sample && $peptideSequence);
 
@@ -158,15 +162,16 @@ sub loadMsResidues {
 
         my $modifiedPeptide = GUS::Model::ApiDB::ModifiedMassSpecPeptide->new({
             protein_source_id            => $seqId,
-            residue_start                => $start,
-            residue_end                  => $end,
+            peptide_start                => $peptideStart,
+            peptide_end                  => $peptideEnd,
             spectrum_count               => $spectrumCount,
             sample                       => $sample,
             peptide_sequence             => $peptideSequence,
             external_database_release_id => $extDbRlsId,
             residue                      => $residue,
             modification_type            => $modificationType,
-            relative_residue_location             => $residueLocation,
+            residue_protein_loc             => $start,
+            residue_peptide_loc             => $residueLocation,
                                                                                 });
 
         $modifiedPeptide->submit();
@@ -228,7 +233,7 @@ sub loadMsPeptides {
 
         $self->undefPointerCache();
 
-        $peptideInfo{$peptideId} = {spectrum_count => $spectrumCount, sample => $sample, peptide_sequence => $peptideSequence}
+        $peptideInfo{$peptideId} = {spectrum_count => $spectrumCount, sample => $sample, peptide_sequence => $peptideSequence, peptide_start => $start, peptide_end => $end}
     }
 
     $gffIo->close();
