@@ -297,7 +297,7 @@ where ea.entity_type_id = $entityTypeId
 
   if($rowCount){
     $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
-    $dbh->do("CREATE INDEX attrs_${studyAbbrev}_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX attrs_${studyAbbrev}_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) ") or die $dbh->errstr;
   }
   return $tableName;
 }
@@ -480,8 +480,8 @@ PRIMARY KEY ($stableIdField)
 
   # create a pair of indexes for each field
   foreach my $field (@fields) {
-    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
-    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) ") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancest_${studyInternalAbbrev}_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) ") or die $dbh->errstr;
   }
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");

@@ -1061,11 +1061,11 @@ date_value DATE
 
   $dbh->do($createTableSql) or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_1_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_1_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_2_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_3_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_4_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_2_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_3_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_4_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
 
