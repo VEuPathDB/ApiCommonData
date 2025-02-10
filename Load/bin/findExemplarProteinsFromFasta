@@ -1,0 +1,183 @@
+#! /usr/bin/perl
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use FileHandle;
+
+my ($maxStopCodonPercent,$fastaFile,$outputFile, $verbose, $preferredSource, $geneIdRegex, $proteinIdRegex, $protein2geneFile);
+&GetOptions("maxStopCodonPercent=i" => \$maxStopCodonPercent,
+            "fastaFile=s" => \$fastaFile,
+            "outputFile=s" => \$outputFile,
+            "preferredSource=s" => \$preferredSource,
+            "geneIdRegex=s" => \$geneIdRegex,
+            "proteinToGeneFile=s" => \$protein2geneFile,
+            "proteinIdRegex=s" => \$proteinIdRegex,
+            "verbose!" => \$verbose);
+
+usage() unless ($fastaFile && $maxStopCodonPercent && $outputFile && ($geneIdRegex || $protein2geneFile) && $proteinIdRegex);
+
+my $f  = ($fastaFile =~ /\.gz$|\.Z$/) ? "zcat $fastaFile|" : '<'. $fastaFile;
+my $fastaFh = FileHandle->new($f);
+die "Can't open file $fastaFile\n" unless $fastaFh;
+
+my $outputFh = FileHandle->new(">$outputFile");
+die "Can't open file $outputFile for writing\n" unless $outputFh;
+
+my %exemplars;  # best protein per gene
+
+my %geneIds;    # gene IDs seen in fasta file, including those w/ no qualifying exemplar
+
+my $noGeneCount = 0;
+my $seqCount = 0;
+
+my $proteinInfo;
+my $seq;
+
+# first get protein id -> gene id mapping
+my %proteinIdToGeneId;
+if ($protein2geneFile) {
+  open(F, $protein2geneFile) || die "Can't open protein to gene file '$protein2geneFile'\n";
+  while(<F>) {
+    my ($p, $g) = split(/\t/);
+    $proteinIdToGeneId{$p} = $g;
+  }
+  close(F);
+} else  {
+  open(F, $fastaFile) || die "Can't open fasta file '$fastaFile'\n";
+  while(<F>) {
+    next unless /\>/;
+    my ($p, $g);
+    if (/$proteinIdRegex/) {
+      $p= $1;
+    }
+    die "Can't parse protein ID from defline:\n  $_\n" unless $p;
+    if (/$geneIdRegex/) {
+      $g = $1;
+    } else {
+      $noGeneCount++;
+    }
+    $proteinIdToGeneId{$p} = $g if $g;
+  }
+  close(F);
+}
+
+die "Found 0 gene IDs.  Must be something wrong with the gene ID regex '$geneIdRegex'\n" if scalar(keys(%proteinIdToGeneId)) == 0;
+
+while (<$fastaFh>){
+  chomp;
+  if ($_ =~ /^>/) {
+    if ($seq) {
+      $proteinInfo->{seq} = $seq;
+      checkForExemplar($proteinInfo);
+      $seq = "";
+      $seqCount++;
+    }
+    $proteinInfo = extractFromDefline($_, $geneIdRegex, $proteinIdRegex);
+  } else {
+    $_ =~ s/\s//g;
+    $proteinInfo->{seqLength} += length($_);
+    $seq .= "$_\n";
+  }
+}
+$seqCount++;
+
+$proteinInfo->{seq} = $seq;
+die "Protein with ID $proteinInfo->{proteinId} has no sequence" unless $proteinInfo->{seq};
+
+checkForExemplar($proteinInfo);
+
+printFile();
+
+printLog();
+
+sub extractFromDefline {
+  my ($line, $geneIdRegex, $proteinIdRegex) = @_;
+
+  my ($proteinId, $source);
+  if ($line =~ /$proteinIdRegex/) {
+    $proteinId= $1;
+  }
+  die "Can't parse protein ID from defline:\n  $line\n" unless $proteinId;
+
+  my $geneId = $proteinIdToGeneId{$proteinId};
+  return undef unless $geneId;
+
+  if ($line =~ /\>\s*(\w+)\|/) {
+    $source = $1;
+  }
+  return {geneId=>$geneId, proteinId=>$proteinId, source=>$source, defline=>$line};
+}
+
+sub checkForExemplar {
+  my ($proteinInfo) = @_;
+
+  my $gene = $proteinInfo->{geneId};
+
+  return unless $gene;
+
+  my $prot = $proteinInfo->{proteinId};
+  my $source = $proteinInfo->{source};
+  my $seq = $proteinInfo->{seq};
+  my $seqLength = $proteinInfo->{seqLength};
+
+  return if $seqLength <= 10;
+
+  $geneIds{$gene} = 1;
+
+  my $aaCount = ($seq =~ tr/[^A-Za-z]//);
+
+  # Return if sequence contains a stop codon
+  return if $seqLength > $aaCount;
+
+  if (!$exemplars{$gene}) {
+    $exemplars{$gene}= $proteinInfo;
+  }
+
+  elsif ($preferredSource) {
+    if ($source eq $preferredSource) {
+      if ($exemplars{$gene}->{source} ne $preferredSource || $seqLength > $exemplars{$gene}->{seqLength}) {
+	$exemplars{$gene}= $proteinInfo;
+      }
+    } elsif ($exemplars{$gene}->{source} ne $preferredSource && $seqLength > $exemplars{$gene}->{seqLength}) {
+	$exemplars{$gene}= $proteinInfo;
+    }
+  }
+
+  elsif ($seqLength > $exemplars{$gene}->{seqLength}) {
+    $exemplars{$gene}= $proteinInfo;
+  }
+
+}
+
+sub printFile {
+  foreach my $protein (values %exemplars) {
+    print $outputFh "$protein->{defline}\n$protein->{seq}";
+  }
+}
+
+sub printLog {
+  my $geneNum = scalar (keys %geneIds);
+  my $protNum = scalar (keys %exemplars);
+  print STDERR ("There are $seqCount proteins, $geneNum genes (and $noGeneCount sequences with no gene ID) in $fastaFile\nThere are $protNum exemplars in $outputFile\n");
+}
+
+sub usage {
+  die "
+Find an example protein sequence per gene.  Use these criteria:
+  1) if a preferred source is provided (eg sp for swissprot), then there should be only one per gene, and use that
+  2) otherwise, use the longest (but filter away those with too many stop codons and those with 10 or less amino acids)
+
+Usage: findExmplarProteins --fastaFile file --outputFile file < --geneIdRegex regex | --proteinToGeneFile file > --proteinIdRegex regex --maxStopCodonPercent percent --log file [--preferredSource source] [--verbose]
+
+Where:
+ geneIdRegex: a regex to find a gene ID in the defline. Provide this or proteinToGeneFile
+ proteinToGeneFile: a two column tab file (proteinId, geneId) to map protein to gene ID.  Provide this or geneIdRegex
+ proteinIdRegex: a regex to find a protein ID in the defline
+ maxStopCodonPercent: reject proteins with too many stop codons
+ preferredSource: this is mostly to distinguish sp proteins (swissprot) from trembl.  the source is expected like this:   > sp|protein_id_here
+
+Logs to STDERR.
+";
+}

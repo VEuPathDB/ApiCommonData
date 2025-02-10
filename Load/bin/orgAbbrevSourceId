@@ -1,0 +1,51 @@
+#! /usr/bin/perl
+
+#####################################################################################################################
+### script to append the orthomcl abbrev with a pipe to the source_id in the proteome file
+#####################################################################################################################
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+
+my ($inputFile, $outputFile, $abbrev, $geneRegex, $verbose);
+&GetOptions("abbrev=s" => \$abbrev,
+	    "geneRegex=s" => \$geneRegex,
+            "outputFile=s" => \$outputFile,
+	    "inputFile=s" => \$inputFile,
+            "verbose!" => \$verbose);
+
+print STDERR "orgAbbrevSourceId --inputFile --abbrev --geneRegex --outputFile --log --verbose\n" unless ($inputFile && $abbrev && $geneRegex && $outputFile);
+
+
+if ($inputFile =~ /\.gz$/) {
+    open(IN, "zcat $inputFile |") || die "Can't gunzip and read input file '$inputFile'";
+} else {
+    open(IN, $inputFile) || die "Can't read input file '$inputFile'";
+}
+open(OUT, ">$outputFile") || die "Can't open output file '$outputFile'";
+
+while (<IN>) {
+    my $line=$_;
+    if ($line =~ /^>/) {
+	if ($line =~ /${geneRegex}/) {
+	    my $geneName = $1;
+	    my $endOfLine = "\n";
+	    if ( $line =~ /^>\S+(\s+.*\n)/ ) {
+		$endOfLine = $1;
+	    }
+	    $line = ">".${abbrev}."|".$geneName.$endOfLine;
+	} else {
+	    die "Can't find gene name using regex '${geneRegex}'. Here is the defline:\n$line\n";
+	}
+    }
+    print OUT $line;
+}
+
+close IN;
+close OUT;
+exit;
+
+
+

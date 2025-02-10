@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+ 
+use strict;
+
+usage() unless scalar(@ARGV) == 4;
+
+my ($abbrev, $inputFastaFile, $inputExemplarsFastaFile, $outputAliasesFile) = @ARGV;
+
+open(ALIASES, ">$outputAliasesFile") || die "Can't open '$outputAliasesFile' for writing\n";
+open(EXEMPLARS, "$inputExemplarsFastaFile") || die "Can't open '$inputExemplarsFastaFile' for reading\n";
+open(FASTA, "$inputFastaFile") || die "Can't open '$inputFastaFile' for reading\n";
+
+# sample defline: >sp|Q8VCI5|PEX19_MOUSE Peroxisomal biogenesis factor 19 OS=Mus musculus GN=Pex19 PE=1 SV=1
+
+# first read in exemplars, to find the protein that is exemplar for each gene
+
+my %exemplars;
+while((<EXEMPLARS>)) {
+    next unless />(\S+) .*gene=(\S+)/;
+    my $proteinId = $1;
+    my $geneId = $2;
+    $exemplars{$geneId} = $proteinId;
+}
+
+close EXEMPLARS;
+
+my %geneIds;
+while(<FASTA>) {
+    chomp;
+    next unless />(\S+) .*gene=(\S+)/;
+
+    my $proteinId = $1;
+    my $geneId = $2;
+    
+    print ALIASES "$abbrev|$geneId\t$geneId\t$abbrev\n" unless $geneIds{$geneId};
+    $geneIds{$geneId} = 1;
+
+    if ($exemplars{$geneId} eq $proteinId) {
+	print ALIASES "$abbrev|$geneId\t$proteinId\tEXEMPLAR\n";  # flag this transcript as an exemplar                          
+    } else {
+	print ALIASES "$abbrev|$geneId\t$proteinId\t\n";  # empty remark column                                                  
+    }
+
+}
+
+close ALIASES;
+close FASTA;
+
+
+sub usage {
+
+die "
+Make a file of protein aliases.  All IDs are protein IDs.  In this example, 123456 and 222222 are uniprot protein IDs.  Included aliases are:
+  - 123456 -> hsap|123456
+  - 222222 -> hsap|123456  (if the latter is an exemplar of the former)
+  - hsap|222222 -> hsap|123456  (if the latter is an exemplar of the former)
+  - hsap|123456 -> hsap|123456 (unity)
+
+Usage: orthomclMakeUniprotAliasesFile abbrev input_compliant_fasta_file input_exemplars_fasta_file output_aliases_file
+
+Where:
+  abbrev:                       the organism abbreviation for this proteome
+  input_fasta_file:             orthomcl compliant fasta file with all uniprot proteins for this organism
+  input_exemplars_fasta_file:   only includes exemplars
+  output_aliases_file:          a mapping between protein IDs and the representative protein.  Three columns:  rep_protein_id, alias_id, remark.  If the mapping is between a uniprot non-exemplar protein ID (no abbrev) and the orthomcl exemplar (with abbrev), the remark is EXEMPLAR.  (This way we can show this relationship in the UI)
+
+";
+}
