@@ -16,10 +16,10 @@ open(GOOD, ">$goodProteinsFile");
 open(BAD, ">$poorProteinsFile");
 my $fastaFileCnt;
 
-$inputFile =~ /(\w+)\.fasta$/ || die "File '$file' does not have a name in xxxx.fasta format\n";;
+$inputFile =~ /(\w+)\.fasta$/ || die "File '$inputFile' does not have a name in xxxx.fasta format\n";
 my $abbrev = $1;
 open(F, "$inputFile") || die "Can't open input file '$inputFile'\n";
-print STDERR "processing file $file\n";
+print STDERR "processing file $inputFile\n";
 $fastaFileCnt++;
 my $seqCount;
 my $rejectSeqCount;
@@ -34,7 +34,7 @@ while (<F>) {
   if (/\>/) {
     (/\>([^|]+)|/ && $1 eq $abbrev) || die "The ID on def line '$_' has prefix '$1|' but, based on the input file name, it should be  '$abbrev|'\n" unless $1 eq $abbrev;
     if ($currentSeq) {
-      die "Error: zero length sequence in file $file.  Look near line '$_'\n" if $currentLen == 0;
+      die "Error: zero length sequence in file $inputFile.  Look near line '$_'\n" if $currentLen == 0;
       $seqCount++;
       $rejectSeqCount += &handleSeq($currentSeq, $currentLen, $currentStopCnt);
       $currentSeq = "";
@@ -55,7 +55,7 @@ $seqCount++;
 if ($rejectSeqCount) {
   my $pct = $rejectSeqCount/$seqCount * 100;
   if ($pct > 10) {
-    push(@$rejectRates, [$file, $pct]);
+    push(@$rejectRates, [$inputFile, $pct]);
   }
 }
 close(F);
