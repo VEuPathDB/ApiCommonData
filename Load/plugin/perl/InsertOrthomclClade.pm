@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertOrthomclTaxon;
+package ApiCommonData::Load::Plugin::InsertOrthomclClade;
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
@@ -28,11 +28,9 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
 
-use GUS::Model::ApiDB::OrthomclTaxon;
-
+use GUS::Model::ApiDB::OrthomclClade;
 use GUS::Supported::Util;
 use Data::Dumper;
-
 
 my $argsDeclaration =
 [
@@ -84,7 +82,7 @@ ALL All
 NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
-ApiDB.OrthomclTaxon,
+ApiDB.OrthomclClade,
 TABLES_AFFECTED
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
@@ -201,7 +199,7 @@ sub makeTree {
 sub parseCladeLine {
     my ($self) = @_;
 
-    my $clade = GUS::Model::ApiDB::OrthomclTaxon->
+    my $clade = GUS::Model::ApiDB::OrthomclClade->
       new({depth_first_index => 999999,
 	   sibling_depth_first_index => -99999});
     my $level;
@@ -253,7 +251,7 @@ sub parseSpeciesFile {
 
 	my $clade = $self->{clades}->{$cladeAbbrev};
 	$clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
-	my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
+	my $species = GUS::Model::ApiDB::OrthomclClade->new();
 	$species->setThreeLetterAbbrev($speciesAbbrev);
 	$species->setParent($clade);
 	$species->setIsSpecies(1);
@@ -279,7 +277,7 @@ sub printCladeList {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.OrthomclTaxon',
+  return ('ApiDB.OrthomclClade',
 	 );
 }
 
