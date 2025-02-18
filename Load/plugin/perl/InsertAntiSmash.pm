@@ -104,3 +104,82 @@ sub new {
     return $self;
 }
 
+
+
+sub loadClsuters{
+
+	my ($self, $gffFile, $samplesConfig) = @_; 		
+        my $extDbSpec = $self->getArg('extDbSpec');
+        my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";    
+        my $samplesData = displayAndBaseName($samplesConfig); 
+
+	
+	my $fh = IO::Zlib->new($gff_file, "rb") or die "Cannot open $gff_file: $!\n";
+    	while (my $line = <$fh>) {
+        	chomp($line);
+        	my @lineContent = split('\t', $line);
+       		my $geneID = $lineContent[0];
+        	my $region = $lineContent[2];
+        	my $strand = $lineContent[6];
+        	my $cluster_string = '';
+        	my $feature_string = '';
+        	my $noType = 'None';
+        
+        	if ($region  eq 'protocluster') {
+           		my @region_split = split(';',$lineContent[8]);
+            		my @id = split("=",$region_split[0]);
+            		my $start = $lineContent[3];
+            		my $end = $lineContent[4];
+            		my @product = split("=",$region_split[2]);
+            		#$cluster_string = "$geneID\t$id[1]\t$start\t$end\t$product[1]\n";
+			
+			my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
+                                                                internal_id => $id[1],
+                                                                cluster_start => $start,
+                                                                cluster_end => $end,
+                                                                category => $product[1],
+                                                                external_database_release_id => $extDbRlsId});
+                	$row_cluster->submit();
+                	$self->undefPointerCache()
+            		#print($cluster_string);
+            
+        	}    
+
+        	if ($region  eq 'gene') {
+            		my @region_split = split(';',$lineContent[8]);
+            		my $start = $lineContent[3];
+            		my $end = $lineContent[4];
+            		my @product = split("=",$region_split[2]);
+            		my @id = split("=",$region_split[0]);
+            		if (my ($item) = grep /gene_kind/, @region_split ) {
+                		my @product = split("=",$item);
+				$kind = $product[1];
+            		} else {
+				$kind = 'None'
+            		}
+		#$feature_string = "$geneID\t$id[1]\t$start\t $end\t$kind\t$strand\n";
+            	#print($feature_string);
+            	my $row_features = GUS::Model::ApiDB::antiSmashFeatures->new({
+                                                                antismash_feature_id => $,
+                                                                internal_id => $,
+                                                                na_feature_id => $,
+                                                                gene_start => $start,
+                                                                gene_end => $end,
+                                                                antiSmash_annotation => $kind,
+                                                                strand => $strand,
+                                                                external_database_release_id => $extDbRlsId});
+                $row_features->submit();
+                $self->undefPointerCache()
+        }
+    }
+
+}
+
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB.antiSmashCluster');
+  return ('ApiDB.antiSmashFeatures');
+}
+
+1;
