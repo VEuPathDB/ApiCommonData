@@ -162,7 +162,7 @@ sub loadClsuters{
             	my $row_features = GUS::Model::ApiDB::antiSmashFeatures->new({
                                                                 antismash_feature_id => $,
                                                                 internal_id => $,
-                                                                na_feature_id => $,
+                                                                na_feature_id => $id[1],
                                                                 gene_start => $start,
                                                                 gene_end => $end,
                                                                 antiSmash_annotation => $kind,
