@@ -121,8 +121,6 @@ sub loadClsuters{
        		my $geneID = $lineContent[0];
         	my $region = $lineContent[2];
         	my $strand = $lineContent[6];
-        	my $cluster_string = '';
-        	my $feature_string = '';
         	my $noType = 'None';
         
         	if ($region  eq 'protocluster') {
@@ -131,7 +129,6 @@ sub loadClsuters{
             		my $start = $lineContent[3];
             		my $end = $lineContent[4];
             		my @product = split("=",$region_split[2]);
-            		#$cluster_string = "$geneID\t$id[1]\t$start\t$end\t$product[1]\n";
 			
 			my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
                                                                 internal_id => $id[1],
@@ -141,7 +138,6 @@ sub loadClsuters{
                                                                 external_database_release_id => $extDbRlsId});
                 	$row_cluster->submit();
                 	$self->undefPointerCache()
-            		#print($cluster_string);
             
         	}    
 
@@ -157,8 +153,6 @@ sub loadClsuters{
             		} else {
 				$kind = 'None'
             		}
-		#$feature_string = "$geneID\t$id[1]\t$start\t $end\t$kind\t$strand\n";
-            	#print($feature_string);
             	my $row_features = GUS::Model::ApiDB::antiSmashFeatures->new({
                                                                 antismash_feature_id => $,
                                                                 internal_id => $,
