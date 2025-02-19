@@ -250,11 +250,11 @@ sub munge {
     $self->SUPER::munge();
     
     unlink($tpmFile);
+
     if ($isUnique) {
+        # can only unlink if we made it above
         unlink($countFile);
-    }
-    
-    if ($isUnique) {
+        # only want to create for unique profiles
         $self->createEDACountsFile();
     }
     
