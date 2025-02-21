@@ -232,7 +232,7 @@ EOF
     my $numCladeRows = 0;
     $sql = <<EOF;
 INSERT INTO apidb.orthologgrouptaxon (three_letter_abbrev,number_of_proteins,number_of_taxa,group_id,modification_date)
-VALUES (?,?,?,?,sysdate)
+VALUES (?,?,?,?,CURRENT_TIMESTAMP)
 EOF
     $stmt = $dbh->prepare($sql);
     foreach my $clade (keys %{$clades}) {
