@@ -111,7 +111,7 @@ FROM apidb.orthologgroup og
 JOIN apidb.orthologgroupaasequence ogas ON ogas.group_id = og.group_id
 JOIN dots.aasequence das ON das.aa_sequence_id = ogas.aa_sequence_id
 JOIN apidb.organism org ON org.taxon_id = das.taxon_id
-GROUP BY org.orthomcl_abbrev, og.group_id;
+GROUP BY org.orthomcl_abbrev, og.group_id
 EOF
 
     $dbh->prepareAndExecute($sql);
@@ -128,7 +128,7 @@ CURRENT_TIMESTAMP AS modification_date,
 1 AS number_of_taxa,
 NULL AS group_id
 FROM apidb.orthomclclade
-WHERE core_peripheral = 'Z';
+WHERE core_peripheral = 'Z'
 EOF
 
     $self->log("Adding clade rows to apidb.orthologgrouptaxon.");
