@@ -38,14 +38,19 @@ open(OUT, ">", $taxonFile)
     or die "cannot open residuals file \"$taxonFile\" for writing: $!";
 my $dbh = getDbHandle();
 my $query = $dbh->prepare(<<SQL);
-select ot1.three_letter_abbrev,ot1.name,ot2.three_letter_abbrev,ot1.core_peripheral
-from 
-     (select parent_id,taxon_id,three_letter_abbrev,name,core_peripheral
-        from apidb.orthomcltaxon) ot1,
-     (select orthomcl_taxon_id,three_letter_abbrev
-        from apidb.orthomcltaxon) ot2
-where ot1.parent_id=ot2.orthomcl_taxon_id
-    AND ot1.core_peripheral IN ('C','P')
+SELECT 
+    t2.orthomcl_abbrev,
+    t2.name_for_filenames,
+    t1_parent.three_letter_abbrev AS parent_three_letter_abbrev,
+    t2.core_peripheral
+FROM 
+    apidb.organism t2
+JOIN 
+    apidb.orthomclclade t1 
+    ON t2.orthomcl_abbrev = t1.three_letter_abbrev
+LEFT JOIN 
+    apidb.orthomclclade t1_parent 
+    ON t1.parent_id = t1_parent.orthomcl_clade_id
 SQL
 
 $query->execute();
