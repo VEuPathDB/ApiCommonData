@@ -127,7 +127,7 @@ CURRENT_TIMESTAMP AS modification_date,
 0 AS number_of_proteins,
 1 AS number_of_taxa,
 NULL AS group_id
-FROM apidb.orthomcltaxon 
+FROM apidb.orthomclclade
 WHERE core_peripheral = 'Z';
 EOF
 
@@ -177,8 +177,8 @@ EOF
     $self->undefPointerCache();
 
     my $cladeSql = <<EOF;
-SELECT taxon_id, parent_id, three_letter_abbrev, core_peripheral
-FROM apidb.orthomcltaxon
+SELECT orthomcl_clade_id, parent_id, three_letter_abbrev, core_peripheral
+FROM apidb.orthomclclade
 WHERE core_peripheral = 'Z'
 EOF
 
