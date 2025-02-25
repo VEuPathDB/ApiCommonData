@@ -27,14 +27,6 @@ sub getArgsDeclaration {
                      mustExist => 1,
                      format=>'Text',
                    }), 
-        fileArg({ name => 'analysisConfig',
-                     descr => 'analysisConfig used for the analysis of the dataset',
-                     constraintFunc=> undef,
-                     reqd  => 1,
-                     isList => 0,
-                     mustExist => 1,
-                     format=>'Text',
-                   }), 
         stringArg({name => 'extDbSpec',
                      descr => 'External database from whence this data came|version',
                      constraintFunc=> undef,
@@ -108,10 +100,9 @@ sub new {
 
 sub loadClsuters{
 
-	my ($self, $gffFile, $samplesConfig) = @_; 		
+	my ($self, $gffFile) = @_; 		
         my $extDbSpec = $self->getArg('extDbSpec');
         my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";    
-        my $samplesData = displayAndBaseName($samplesConfig); 
 
 	
 	my $fh = IO::Zlib->new($gff_file, "rb") or die "Cannot open $gff_file: $!\n";
@@ -131,7 +122,7 @@ sub loadClsuters{
             		my @product = split("=",$region_split[2]);
 			
 			my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
-                                                                internal_id => $id[1],
+                                                                antismash_cluster_id => $,
                                                                 cluster_start => $start,
                                                                 cluster_end => $end,
                                                                 category => $product[1],
@@ -155,7 +146,6 @@ sub loadClsuters{
             		}
             	my $row_features = GUS::Model::ApiDB::antiSmashFeatures->new({
                                                                 antismash_feature_id => $,
-                                                                internal_id => $,
                                                                 na_feature_id => $id[1],
                                                                 gene_start => $start,
                                                                 gene_end => $end,
