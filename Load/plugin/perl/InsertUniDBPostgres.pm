@@ -902,7 +902,7 @@ FROM
      WHERE lower(t.table_type) != 'version'
       AND t.DATABASE_ID = d.DATABASE_ID
       AND d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
-      AND t.name not in ('AlgorithmParam','GlobalNaturalKey','DatabaseTableMapping','SnpLinkage', 'CompoundPeaksChebi')
+      AND t.name not in ('AlgorithmParam','GlobalNaturalKey','DatabaseTableMapping','SnpLinkage', 'CompoundPeaksChebi','OrthologGroup','OrthomclClade', 'OrthologGroupStats', 'OrthologGroupAASequence')
      EXCEPT
      -- minus Views on tables
      SELECT * FROM core.tableinfo WHERE view_on_table_id is not null
