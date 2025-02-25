@@ -15,8 +15,10 @@ my $coreMapFile = $ARGV[3];
 my $residualMapFile = $ARGV[4];
 my $cladeFile = $ARGV[5];
 my $ecFile = $ARGV[6];
+my $gusConfigFile = $ARGV[7];
 
-usage() unless scalar(@ARGV) == 7;
+usage() unless scalar(@ARGV) == 8;
+
 
 $| = 1;
 
@@ -36,7 +38,7 @@ print STDERR "Creating orthomclTaxons.txt file in $outputDir using data from dat
 my $taxonFile = $outputDir."/orthomclTaxons.txt";
 open(OUT, ">", $taxonFile)
     or die "cannot open residuals file \"$taxonFile\" for writing: $!";
-my $dbh = getDbHandle();
+my $dbh = getDbHandle($gusConfigFile);
 my $query = $dbh->prepare(<<SQL);
 SELECT 
     t2.orthomcl_abbrev,
@@ -130,8 +132,9 @@ sub cleanGeneArray {
 }
 
 sub getDbHandle {
+  my ($gusConfigFile) = @_;
 
-  my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" if (!$gusConfigFile);
   my @properties = ();
   my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 
