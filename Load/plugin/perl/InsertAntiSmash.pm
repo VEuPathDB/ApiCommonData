@@ -106,8 +106,8 @@ sub loadClsuters{
 
 	
 	my $fh;
-    	if($peptideResultFile =~ /\.gz$/) {
-        	open($fh, "gzip -dc $peptideResultFile |") or die "Could not open '$peptideResultFile': $!";
+    	if($gffFile =~ /\.gz$/) {
+        	open($fh, "gzip -dc $gffFile |") or die "Could not open '$gffFile': $!";
     	}	
     	else {
         	open($fh, $peptideResultFile) or die "Could not open '$peptideResultFile': $!";
