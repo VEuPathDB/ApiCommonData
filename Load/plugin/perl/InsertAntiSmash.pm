@@ -11,6 +11,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::antiSmashCluster;
 use GUS::Model::ApiDB::antiSmashFeatures;
+use GUS::Model::ApiDB::AntismashClusterFeature;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
