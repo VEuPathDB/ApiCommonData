@@ -166,6 +166,7 @@ sub undoTables {
 
   return ('ApiDB.antiSmashCluster');
   return ('ApiDB.antiSmashFeatures');
+  return ('ApiDB.AntismashClusterFeature');
 }
 
 1;
