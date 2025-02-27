@@ -129,7 +129,7 @@ sub loadClsuters{
             		#print($name, "\t",$start, "\t", $end,"\t", $category, "\n");
 			
 			my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
-                                                                 antismash_cluster_id => $,
+                                                                 #antismash_cluster_id => $,
 								 cluster_name => $name
                                                                  cluster_start => $start,
                                                                  cluster_end => $end,
@@ -141,15 +141,17 @@ sub loadClsuters{
 
         	if ($primaryTag  eq 'gene') {
             		my ($gene_kind);
-            		if ($feature->has_tag('gene_kind')){
+            	
+			if ($feature->has_tag('gene_kind')){
                 		($gene_kind) = $feature->get_tag_values('gene_kind');
             		} else {
-                	($gene_kind) = ""
-            	}
+                		($gene_kind) = ""
+	
+	            	}
             	
 			#print($name, "\t",$gene_kind, "\n");
 			my $row_features = GUS::Model::ApiDB::antiSmashFeatures->new({
-                                                                 antismash_feature_id => $,
+                                                                 #antismash_feature_id => $,
                                                                  na_feature_id => $name,
                                                                  antiSmash_annotation => $gene_kind,
                                                                  external_database_release_id => $extDbRlsId});
