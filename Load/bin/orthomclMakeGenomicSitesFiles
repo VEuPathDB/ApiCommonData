@@ -1,0 +1,181 @@
+#!/usr/bin/perl
+
+# This script generates three files that are needed by Data Loaders to update ortholog data on the
+# genomic websites. These files are: orthomclClades.txt, orthomclGroups.txt, orthomclTaxons.txt, ec_organism.txt
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::PropertySet;
+use DBI;
+
+my $outputDir = $ARGV[0];
+my $peripheralDir = $ARGV[1];
+my $peripheralMapFileName = $ARGV[2];
+my $coreMapFile = $ARGV[3];
+my $residualMapFile = $ARGV[4];
+my $cladeFile = $ARGV[5];
+my $ecFile = $ARGV[6];
+my $gusConfigFile = $ARGV[7];
+
+usage() unless scalar(@ARGV) == 8;
+
+
+$| = 1;
+
+print STDERR "Creating $outputDir directory at " . `date` . "\n";
+my $cmd = "mkdir -p $outputDir";
+system($cmd) && die "Failed running cmd\n$cmd";
+
+print STDERR "Copying $cladeFile to $outputDir at" . `date` . "\n";
+$cmd = "cp $cladeFile $outputDir";
+system($cmd) && die "Failed running cmd\n$cmd";
+
+print STDERR "Moving $ecFile to $outputDir at" . `date` . "\n";
+$cmd = "mv $ecFile $outputDir";
+system($cmd) && die "Failed running cmd\n$cmd";
+
+print STDERR "Creating orthomclTaxons.txt file in $outputDir using data from database at " . `date` . "\n";
+my $taxonFile = $outputDir."/orthomclTaxons.txt";
+open(OUT, ">", $taxonFile)
+    or die "cannot open residuals file \"$taxonFile\" for writing: $!";
+my $dbh = getDbHandle($gusConfigFile);
+my $query = $dbh->prepare(<<SQL);
+SELECT 
+    t2.orthomcl_abbrev,
+    t2.name_for_filenames,
+    t1_parent.three_letter_abbrev AS parent_three_letter_abbrev,
+    t2.core_peripheral
+FROM 
+    apidb.organism t2
+JOIN 
+    apidb.orthomclclade t1 
+    ON t2.orthomcl_abbrev = t1.three_letter_abbrev
+LEFT JOIN 
+    apidb.orthomclclade t1_parent 
+    ON t1.parent_id = t1_parent.orthomcl_clade_id
+SQL
+
+$query->execute();
+while (my($abbrev,$name,$clade,$corePeripheral) = $query->fetchrow_array()) {
+    next if ($abbrev =~ /-old/);
+    print OUT "$abbrev\t$name\t$clade\t$corePeripheral\n";
+}
+$query->finish();
+
+close(OUT);
+$dbh->disconnect();
+
+
+print STDERR "Getting groups from:\n$coreMapFile\n$residualMapFile\n$peripheralMapFileName files in $peripheralDir\n";
+my %orthoGroups;
+
+# GROUP FILE FORMAT:   OG6_100000: cbra|A0A388L692 cbra|A0A388LB57
+
+my @peripheralFolders = glob( $peripheralDir."/*RSRC" );
+my @peripheralMapFiles = map { $_."/".$peripheralMapFileName } @peripheralFolders;
+my @groupFiles = ($coreMapFile,@peripheralMapFiles,$residualMapFile);
+
+my $filePresent=0;
+my $fileAbsent=0;
+
+foreach my $file (@groupFiles) {
+    if (-e $file) {
+	$filePresent++;
+    } else {
+	$fileAbsent++;
+	next;
+    }
+    open(IN, $file) or die "cannot open file '$file' for reading: $!";
+    while (<IN>) {
+    	my $line = $_;
+    	chomp $line;
+    	if ( $line =~ /^([^:]+):\s(.+)$/ ) {
+    	    my ($group,$genes) = ($1,$2);
+    	    my @geneArray = split(" ",$genes);
+	    my $cleanedGeneArray = cleanGeneArray(\@geneArray);
+    	    $group =~ s/://g;
+    	    if ( exists $orthoGroups{$group} ) {
+    		push @{$orthoGroups{$group}}, @{$cleanedGeneArray};
+    	    } else {
+    		$orthoGroups{$group} = [@{$cleanedGeneArray}]; 
+    	    }
+    	}
+    }
+    close(IN);   
+}
+
+print STDERR "Number of expected group files present: $filePresent\n";
+print STDERR "Number of expected group files absent:  $fileAbsent\n";
+
+print STDERR "Writing out orthogroups into '$outputDir/orthomclGroups.txt' at " . `date` . "\n";
+open(OUT, ">", $outputDir."/orthomclGroups.txt") || die "Can't open groups file '$outputDir/orthomclGroups.txt' for writing\n";
+foreach my $group (sort keys %orthoGroups) {
+    my @a = sort @{$orthoGroups{$group}};
+    print OUT "$group: " . join(" ", @a) . "\n";
+}
+close(OUT);
+
+print STDERR "Finished at " . `date` . "\n";
+
+
+
+sub cleanGeneArray {
+    my ($geneArray) = @_;
+    
+    my @cleanedGeneArray;
+
+    foreach my $gene (@{$geneArray}) {
+	next if ($gene =~ /^[A-Za-z]{4}-old\|/);
+	push @cleanedGeneArray, $gene;
+    }
+    return \@cleanedGeneArray;
+}
+
+sub getDbHandle {
+  my ($gusConfigFile) = @_;
+
+  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" if (!$gusConfigFile);
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+  my $u = $gusconfig->{props}->{databaseLogin};
+  my $pw = $gusconfig->{props}->{databasePassword};
+  my $dsn = $gusconfig->{props}->{dbiDsn};
+
+  my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+  $dbh->{RaiseError} = 1;
+  $dbh->{AutoCommit} = 0;
+
+  return $dbh;
+}
+
+sub usage() {
+  die "
+This script generates three files that are needed by Data Loaders to update ortholog data on the
+genomic websites. These files are: orthomclClades.txt, orthomclGroups.txt, orthomclTaxons.txt, ec_organism.txt
+
+Usage: orthomclMakeGenomicSitesFiles outputDir peripheralDir peripheralMapFileName coreMapFile residualMapFile cladeFile ecFile
+
+Where:
+  outputDirectory: the directory that will contain all output files. This is inded to be a sub-directory of the workflow
+       data directory (e.g., /eupath/data/EuPathDB/workflows/OrthoMCL/OrthoMCL6/data/6r1/)
+
+  peripheralDir: the directory that contains all of the peripheral genomes and group files
+       (e.g., /eupath/data/EuPathDB/workflows/OrthoMCL/OrthoMCL6/data/getPeripheralProteins/proteomeDatasets)
+
+  peripheralMapFileName: the common name of each group file (e.g., peripheralsMapToCoreGroup)
+
+  coreMapFile: the full path and name of the Core group file
+       (e.g., /eupath/data/EuPathDB/workflows/OrthoMCL/OrthoMCL6/data/coreGroups/orthomclGroups.txt)
+
+  residualMapFile: the full path and name of the Residual group file
+       (e.g., /eupath/data/EuPathDB/workflows/OrthoMCL/OrthoMCL6/data/residualGroups/orthomclGroups.txt)
+
+  cladeFile: the full path and name of the clade file that will be copied into the new directory
+       (e.g., /eupath/data/EuPathDB/workflows/OrthoMCL/OrthoMCL6/data/orthomclClades_RSRC/OrthoMCL6/orthomclClades.txt)
+
+  ecFile: the full path and name of the ec file that will be copied into the new directory
+       (e.g., /eupath/data/EuPathDB/workflows/OrthoMCL/OrthoMCL6/data/OrganismNameResources/ec_organism.txt)
+
+";
+}

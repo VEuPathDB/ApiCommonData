@@ -26,6 +26,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 use Bio::Tools::GFF;
+use IO::Uncompress::Gunzip qw(gunzip);
 
 use GUS::Model::ApiDB::GFF3;
 use GUS::Model::ApiDB::GFF3AttributeKey;
@@ -191,10 +192,27 @@ sub run {
                                               where external_database_release_id = $soExtDbRlsId");
  
   my $processed;
-
-  my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('file'),
+  my $file = $self->getArg('file');
+#  my $fh;
+#  if ($file =~ /\.gz$/) {
+#    open($fh, "gzip -dc $file |") or die "Could not open '$file': $!";
+#  } else {
+#    open($fh, "<", $file) or die "Could not open '$file': $!";
+#  }
+  my $was_gzipped = 0;
+  if ($file =~ /\.gz$/) {
+    $was_gzipped = 1;
+    my $unzipped_file = $file;
+    $unzipped_file =~ s/\.gz$//;
+    system("gzip -d -f $file") == 0 or die "Failed to unzip '$file': $!\n";
+    $file = $unzipped_file;
+  } 
+  my $gffIO = Bio::Tools::GFF->new(-file => $file,
                                    -gff_version => $self->getArg('gffFormat'),
                                   );
+  if ($was_gzipped) {
+    system("gzip -f $file") == 0 or die "Failed to gzip '$file': $!\n";
+  }
 
   $self->getDb()->manageTransaction(0,'begin');
 
@@ -210,7 +228,6 @@ sub run {
   }
   $self->getDb()->manageTransaction(0,'commit');
   return "$processed gff3 lines parsed and loaded";
-
 }
 
 

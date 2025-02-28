@@ -136,6 +136,12 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 0,
 		 isList => 0,
 	       }),
+     stringArg({ name => 'corePeripheral',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
 
     ];
 
@@ -217,6 +223,7 @@ sub run {
   my $familyNcbiTaxonIds = $self->getArg('familyNcbiTaxonIds');
   my $familyNameForFiles = $self->getArg('familyNameForFiles');
   my $projectName = $self->getArg('projectName');
+  my $corePeripheral = $self->getArg('corePeripheral');
 
   # validate full name against ncbi taxon id
   my $sql = "select t.taxon_id, t.ncbi_tax_id 
@@ -255,6 +262,7 @@ sub run {
 						    'family_representative_abbrev' => $familyRepOrganismAbbrev,
 						    'family_ncbi_taxon_ids' => $familyNcbiTaxonIds,
 						    'family_name_for_files' => $familyNameForFiles,
+                                                    'core_peripheral' => $corePeripheral,
 						   });
 
   $organism->submit() unless $organism->retrieveFromDB();

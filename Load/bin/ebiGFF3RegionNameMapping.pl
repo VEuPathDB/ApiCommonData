@@ -10,18 +10,19 @@ use IO::Zlib;
 use File::Temp qw/ tempfile /;
 use File::Copy;
 
-my ($help, $gff3, $samplesDirectory, $organismAbbrev);
+my ($help, $gff3, $samplesDirectory, $organismAbbrev, $gusConfigFile);
 
 &GetOptions('help|h' => \$help,
             'GFF3File=s' => \$gff3,
             'organism_abbrev=s' => \$organismAbbrev,
+            'gusConfigFile=s' => \$gusConfigFile,
             );
       
 &usage("organismAbbrev not defined") unless $organismAbbrev;
 
 chomp $organismAbbrev;
 
-my $map = getGenomicSequenceIdMapSql($organismAbbrev);
+my $map = getGenomicSequenceIdMapSql($organismAbbrev, $gusConfigFile);
 
 
 #  my $oldGff3 = "$gff3.old";

@@ -85,6 +85,9 @@ sub run {
      my $rowCount++;
      chomp $line;
      my ($proteinSourceId, $seqMd5Digest, $seqLen, $interproDbName, $interproPrimaryId, $analysisDesc, $interproStartMin, $interproEndMin, $interproEValue, $status, $date, $interproFamilyId, $interproDescription) = split(/\t/, $line);
+
+     next if ($interproEValue eq "-");  ##temporarily fix in order to let the plugin run
+
      my $transcriptSourceId = $proteinToTranscript{$proteinSourceId};
      my $geneSourceId = $proteinToGene{$proteinSourceId};
      my $row = GUS::Model::ApiDB::InterproResults->new({TRANSCRIPT_SOURCE_ID => $transcriptSourceId,
