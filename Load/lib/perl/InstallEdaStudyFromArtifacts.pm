@@ -9,6 +9,10 @@ use Time::HiRes qw ( time );
 use JSON qw( decode_json );
 use File::Copy;
 use strict;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Psql;
+use DBD::Pg;
 
 my $SQLLDR_STREAM_SIZE = 512000;
 my $SQLLDR_ROWS = 5000;
@@ -37,6 +41,7 @@ sub new {
     my $dbh;
     unless ($self->isDryRun) {
         my $connectString = "dbi:${dbPlatform}://${dbHost}:${dbPort}/${dbName}";
+	$connectString = "DBI:Pg:dbname=$dbName;host=$dbHost;port=$dbPort" if $dbPlatform eq 'Postgres';
         $dbh = DBI->connect($connectString, $dbUser, $dbPass)
             || die "Couldn't connect to database: " . DBI->errstr;
     }
@@ -298,7 +303,7 @@ sub mapColValues {
   my $schema = $self->getDbSchema();
   my $platform = $self->getDbPlatform();
 
-  if ($valueFromFile eq '@USER_DATASET_ID@') { "'$userDatasetId'"  }
+  if ($valueFromFile eq '@USER_DATASET_ID@') { return "'$userDatasetId'"  }
   if ($valueFromFile eq '@STUDY_ID@') { return $platform eq 'Oracle'? "$schema.study_sq.nextval" : "nextval($schema.study_sq)"; }
   if ($valueFromFile eq '@MODIFICATION_DATE@') { return "SYSDATE" ; }
   if ($valueFromFile eq '@ENTITY_TYPE_GRAPH_ID@') { return $platform eq 'Oracle'? "$schema.entitytypegraph_sq.nextval" : "nextval($schema.entitytypegraph_sq)"; }
@@ -331,74 +336,122 @@ $cols
     $dbh->do($grantGusR) unless $self->isDryRun();
 }
 
-
 sub bulkLoadTable {
-    my ($self, $tableConfig) = @_;
+  my ($self, $tableConfig) = @_;
 
-    my $inputDir = $self->getInputDir();
-    my $platform = $self->getDbPlatform();
-    my $dbUser = $self->getDbUser();
-    my $dbPassword = $self->getDbPass();
-    my $dbHost = $self->getDbHost();
-    my $dbPort = $self->getDbPort();
-    my $dbName = $self->getDbName();
-    my $schema = $self->getDbSchema();
+  if ($self->getDbPlatform() eq 'Oracle') {
+    bulkLoadTableOracle($self, $tableConfig);
+  } elsif ($self->getDbPlatform() eq 'Postgres') {
+    bulkLoadTablePostgres($self, $tableConfig);
+  } else {
+    die "Invalid platform '" . $self->getDbPlatform() . "'";
+  }
+}
 
-    print STDERR "Bulk loading table $tableConfig->{name}\n";
-    if ($platform eq 'Oracle') {
-        my $controlFileName = $tableConfig->{name} . '.ctl';
-        my $dataFileName = "$inputDir/" . $tableConfig->{name} . '.cache';
-        my $logFileName = $tableConfig->{name} . '.log';
-        my $direct = $tableConfig->{is_preexisting_table}? 0 : 1;
-        &writeSqlloaderCtl($tableConfig->{fields}, $schema, $tableConfig->{name}, $controlFileName, $dataFileName, !$direct);
-        my $cmdLine = &getSqlLdrCmdLine($dbUser, $dbPassword, $dbHost, $dbPort, $dbName, $controlFileName, $logFileName, $direct);
+sub bulkLoadTableOracle {
+  my ($self, $tableConfig) = @_;
 
-        unless ($self->isDryRun()) {
-            if (system($cmdLine)) {
-                print STDERR ">>> sqlldr execution failed: $!\n\n";
+  my $inputDir = $self->getInputDir();
+  my $platform = $self->getDbPlatform();
+  my $dbUser = $self->getDbUser();
+  my $dbPassword = $self->getDbPass();
+  my $dbHost = $self->getDbHost();
+  my $dbPort = $self->getDbPort();
+  my $dbName = $self->getDbName();
+  my $schema = $self->getDbSchema();
 
-                $cmdLine =~ s/\Q$dbPassword/******/gi;
-                print STDERR ">>> sqlldr failed command: $cmdLine\n\n";
+  print STDERR "Bulk loading table $tableConfig->{name}\n";
+  my $controlFileName = $tableConfig->{name} . '.ctl';
+  my $dataFileName = "$inputDir/" . $tableConfig->{name} . '.cache';
+  my $logFileName = $tableConfig->{name} . '.log';
+  my $direct = $tableConfig->{is_preexisting_table}? 0 : 1;
+  &writeSqlloaderCtl($tableConfig->{fields}, $schema, $tableConfig->{name}, $controlFileName, $dataFileName, !$direct);
+  my $cmdLine = &getSqlLdrCmdLine($dbUser, $dbPassword, $dbHost, $dbPort, $dbName, $controlFileName, $logFileName, $direct);
 
-                print STDERR ">>> sqlldr $controlFileName file content\n\n";
+  unless ($self->isDryRun()) {
 
-                open(LF, $controlFileName);
-                while (my $ctlLine = <LF>) {
-                    print STDERR "$ctlLine";
-                }
-                close(LF);
+      if (system($cmdLine)) {
+      print STDERR ">>> sqlldr execution failed: $!\n\n";
 
-                my $logFileName = $tableConfig->{name} . ".log";
+      $cmdLine =~ s/\Q$dbPassword/******/gi;
+      print STDERR ">>> sqlldr failed command: $cmdLine\n\n";
 
-                if (-f $logFileName) {
-                    print STDERR ">>> sqlldr $logFileName file content\n\n";
+      print STDERR ">>> sqlldr $controlFileName file content\n\n";
 
-                    open(LF, $logFileName);
-                    while (my $logLine = <LF>) {
-                        print STDERR "$logLine";
-                    }
-                    close(LF);
-                }
+      open(LF, $controlFileName);
+      while (my $ctlLine = <LF>) {
+	print STDERR "$ctlLine";
+      }
+      close(LF);
 
-                my $badFileName = $tableConfig->{name} . ".bad";
+      my $logFileName = $tableConfig->{name} . ".log";
 
-                if (-f $badFileName) {
-                    print STDERR ">>> sqllder $badFileName file content\n\n";
+      if (-f $logFileName) {
+	print STDERR ">>> sqlldr $logFileName file content\n\n";
 
-                    open(LF, $badFileName);
-                    while (my $badLine = <LF>) {
-                        print STDERR "$badLine";
-                    }
-                    close(LF);
-                }
+	open(LF, $logFileName);
+	while (my $logLine = <LF>) {
+	  print STDERR "$logLine";
+	}
+	close(LF);
+      }
 
-                die "Error running sqlloader";
-            }
-        }
+      my $badFileName = $tableConfig->{name} . ".bad";
+
+      if (-f $badFileName) {
+	print STDERR ">>> sqllder $badFileName file content\n\n";
+
+	open(LF, $badFileName);
+	while (my $badLine = <LF>) {
+	  print STDERR "$badLine";
+	}
+	close(LF);
+      }
+
+      die "Error running sqlloader";
     }
-    else {
-        die "Bulk Loader not yet supported for non oracle platform"
+  }
+}
+
+sub bulkLoadTablePostgres {
+  my ($self, $tableConfig) = @_;
+
+  my $dataFileName = $self->getInputDir . "/" . $tableConfig->{name} . '.cache';
+
+  my $fullHost = $self->getDbHost();
+  $fullHost .= ':' . $self->getDbPort() if $self->getDbPort();
+
+  my $psqlObj = ApiCommonData::Load::Psql->new({_login => $self->getDbUser(),
+                                             _password => $self->getDbPass(),
+                                             _database => $self->getDbName(),
+                                             _hostName => $fullHost,
+                                             _quiet => 0,
+                                             _infile_name => $dataFileName,
+                                            });
+  my $logFileName = $tableConfig->{name} . '.log';
+  $psqlObj->setLogFileName($logFileName);
+
+  my $attributeList = $tableConfig->{columns};
+  my @fields = map { lc($_) } @$attributeList;
+  $psqlObj->setFields(\@fields);
+
+  $psqlObj->setTableName($tableConfig->{name});
+  my $cmdLine = $psqlObj->getCommandLine();
+
+  my $dbPassword = $self->getDbPass();
+
+  unless ($self->isDryRun()) {
+
+      if (system($cmdLine)) {
+      print STDERR ">>> sqlldr execution failed: $!\n\n";
+
+      $cmdLine =~ s/\Q$dbPassword/******/gi;
+      print STDERR ">>> sqlldr failed command: $cmdLine\n\n";
+
+      printLogFileToErrLog($logFileName, "sqlldr");
     }
+    die;
+  }
 }
 
 sub createIndex {
@@ -420,17 +473,13 @@ sub createView {
 
     my $dbh = $self->getDbh();
     my $schema = $self->getDbSchema();
-    
+
     my $viewName = "$schema.$viewConfig->{name}";
     my $def = $viewConfig->{definition};
     $def =~ s/\@SCHEMA\@/$schema/g;
     my $createView = "CREATE VIEW $viewName as $def";
     $dbh->do($createView) unless $self->isDryRun();
 }
-
-
-
-
 
 # STATIC METHODS
 sub writeSqlloaderCtl {
