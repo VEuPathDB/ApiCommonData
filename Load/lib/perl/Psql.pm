@@ -21,7 +21,7 @@ module to manage a Psql
 my $psql = ApiCommonData::Load::psql->new({'_login' => 'user',
                                                '_password' => 'pswd', 
                                                '_database' => 'dbname', 
-                                               '_dbiDsn' => 'dbiDsn',
+                                               '_hostName' => 'hostName',
                                                '_controlFilePrefix' => 'shortName',
                                                });
 
@@ -50,8 +50,8 @@ sub setPassword {$_[0]->{_password} = $_[1]}
 sub getDatabase {$_[0]->{_database}}
 sub setDatabase {$_[0]->{_database} = $_[1]}
 
-sub getDbiDsn {$_[0]->{_dbiDsn}}
-sub setDbiDsn {$_[0]->{_dbiDsn} = $_[1]}
+sub getHostName {$_[0]->{_hostName}}
+sub setHostName {$_[0]->{_hostName} = $_[1]}
 
 sub getFilePrefix {$_[0]->{_control_file_prefix}}
 sub setFilePrefix {$_[0]->{_control_file_prefix} = $_[1]}
@@ -89,7 +89,7 @@ sub addField {
 sub new {
   my ($class, $args) = @_;
 
-  my @required = ('_login', '_password', '_database', '_dbiDsn');
+  my @required = ('_login', '_password', '_database', '_hostName');
 
   foreach(@required) {
     die "missing required value for param $_" unless(defined($args->{$_}));
@@ -110,10 +110,8 @@ sub getCommandLine {
   my $login = $self->getLogin();
   my $password = $self->getPassword();
   my $database = $self->getDatabase();
-  my $dbiDsn = $self->getDbiDsn();
-
-  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
-  my $hostname = $2;
+  my $hostname = $self->getHostName();
+  
   my $connectionString = "postgresql://$login:$password\@$hostname/$database";
 
   my $logFileName = $self->getLogFileName();
