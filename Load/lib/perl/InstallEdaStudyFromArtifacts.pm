@@ -32,6 +32,7 @@ sub new {
     my $self = bless $hash, $class;
 
     my $dbPlatform = $self->getDbPlatform();
+    die "Invalid db platform '$dbPlatform'\n" unless $dbPlatform eq 'Oracle' or $dbPlatform eq 'Postgres';
     my $dbHost = $self->getDbHost();
     my $dbPort = $self->getDbPort();
     my $dbName = $self->getDbName();
@@ -289,6 +290,7 @@ sub loadTable {
     my $valuesStr = join(", ", @values);
     my $sql = "INSERT INTO $schema.$tableName ($colNamesStr) SELECT $valuesStr";
     $sql .= " FROM DUAL" if $platform eq "Oracle";
+
     $dbh->do($sql) unless $self->isDryRun();
   }
   $dbh->commit() unless $self->isDryRun();;
@@ -305,7 +307,7 @@ sub mapColValues {
 
   if ($valueFromFile eq '@USER_DATASET_ID@') { return "'$userDatasetId'"  }
   if ($valueFromFile eq '@STUDY_ID@') { return $platform eq 'Oracle'? "$schema.study_sq.nextval" : "nextval($schema.study_sq)"; }
-  if ($valueFromFile eq '@MODIFICATION_DATE@') { return "SYSDATE" ; }
+  if ($valueFromFile eq '@MODIFICATION_DATE@') { return $platform eq 'Oracle'? "SYSDATE" : 'LOCALTIMESTAMP' ; }
   if ($valueFromFile eq '@ENTITY_TYPE_GRAPH_ID@') { return $platform eq 'Oracle'? "$schema.entitytypegraph_sq.nextval" : "nextval($schema.entitytypegraph_sq)"; }
   if (($colType eq 'SQL_NUMBER' or $colType eq 'SQL_DATE') and $valueFromFile eq "")  { return "NULL"; }
   if ($colType eq 'SQL_VARCHAR' or $colType eq 'SQL_DATE') { return "'$valueFromFile'"; }
@@ -320,7 +322,7 @@ sub createTable {
 
     my $tableName = "$schema.$tableConfig->{name}";
     print STDERR "Creating table $tableName\n";
-    my $cols = &createColumns($tableConfig);
+    my $cols = &createColumns($tableConfig, $self->getDbPlatform());
 
     my $create = "
 CREATE TABLE $tableName (
@@ -378,35 +380,13 @@ sub bulkLoadTableOracle {
 
       print STDERR ">>> sqlldr $controlFileName file content\n\n";
 
-      open(LF, $controlFileName);
-      while (my $ctlLine = <LF>) {
-	print STDERR "$ctlLine";
-      }
-      close(LF);
+      printFileToStdErr($controlFileName, 'sqlldr');
 
       my $logFileName = $tableConfig->{name} . ".log";
-
-      if (-f $logFileName) {
-	print STDERR ">>> sqlldr $logFileName file content\n\n";
-
-	open(LF, $logFileName);
-	while (my $logLine = <LF>) {
-	  print STDERR "$logLine";
-	}
-	close(LF);
-      }
+      printFileToStdErr($logFileName, 'sqlldr');
 
       my $badFileName = $tableConfig->{name} . ".bad";
-
-      if (-f $badFileName) {
-	print STDERR ">>> sqllder $badFileName file content\n\n";
-
-	open(LF, $badFileName);
-	while (my $badLine = <LF>) {
-	  print STDERR "$badLine";
-	}
-	close(LF);
-      }
+      printFileToStdErr($badFileName, 'sqlldr');
 
       die "Error running sqlloader";
     }
@@ -428,30 +408,47 @@ sub bulkLoadTablePostgres {
                                              _quiet => 0,
                                              _infile_name => $dataFileName,
                                             });
+  $psqlObj->setNullValue('');
+
+  my $schema = $self->getDbSchema();
   my $logFileName = $tableConfig->{name} . '.log';
   $psqlObj->setLogFileName($logFileName);
 
-  my $attributeList = $tableConfig->{columns};
-  my @fields = map { lc($_) } @$attributeList;
+  my $fieldList = $tableConfig->{fields};
+  my @fields = map { lc($_->{name}) } @$fieldList;
   $psqlObj->setFields(\@fields);
 
-  $psqlObj->setTableName($tableConfig->{name});
+  $psqlObj->setTableName($schema . '.' . $tableConfig->{name});
   my $cmdLine = $psqlObj->getCommandLine();
 
   my $dbPassword = $self->getDbPass();
-
+  print STDERR "$cmdLine\n";
   unless ($self->isDryRun()) {
 
-      if (system($cmdLine)) {
-      print STDERR ">>> sqlldr execution failed: $!\n\n";
+    if (system($cmdLine)) {
+      print STDERR ">>> psql execution failed: $!\n\n";
 
       $cmdLine =~ s/\Q$dbPassword/******/gi;
-      print STDERR ">>> sqlldr failed command: $cmdLine\n\n";
+      print STDERR ">>> psql failed command: $cmdLine\n\n";
 
-      printLogFileToErrLog($logFileName, "sqlldr");
+      printFileToStdErr($logFileName, "psql");
+      die;
     }
-    die;
   }
+}
+
+sub printFileToStdErr {
+  my ($fileName, $descrip) = @_;
+
+  return unless -f $fileName;
+
+  print STDERR ">>> $descrip $fileName file content\n\n";
+
+  open(LF, $fileName);
+  while (my $line = <LF>) {
+    print STDERR "$line";
+  }
+  close(LF);
 }
 
 sub createIndex {
@@ -461,10 +458,11 @@ sub createIndex {
     my $schema = $self->getDbSchema();
     my $indxTableSpace = $self->getIndxTableSpace();
 
-    my $indexName = "$schema.$indexConfig->{name}";
+    my $indexName = $indexConfig->{name};
     my $colArray = $indexConfig->{orderedColumns};
     my $cols = join(", ", @$colArray);
-    my $createIndex = "CREATE INDEX $indexName on $schema.$indexConfig->{tableName} ($cols) $indxTableSpace";
+    my $createIndex = "CREATE INDEX $schema.$indexName on $schema.$indexConfig->{tableName} ($cols) $indxTableSpace";
+    $createIndex = "CREATE INDEX $indexName on $schema.$indexConfig->{tableName} ($cols)" if $self->getDbPlatform() eq 'Postgres';
     $dbh->do($createIndex) unless $self->isDryRun();
 }
 
@@ -516,25 +514,60 @@ EOF
 }
 
 sub createColumns {
-    my ($tableConfig) = @_;
-
-    my @colSpecs;
-    my $fields = $tableConfig->{fields};
-    foreach my $field (@$fields) {
-        my $colSpec = $field->{name};
-        if ($field->{type} eq 'SQL_VARCHAR') {
-            if ($field->{maxLength} > 4000) { $colSpec .= " CLOB"; }
-            else { $colSpec .= " VARCHAR" . ($field->{maxLength} eq 'NA'? "" : "($field->{maxLength})"); }
-        } elsif ($field->{type} eq 'SQL_DATE') {
-            $colSpec .= " DATE";
-        } elsif ($field->{type} eq 'SQL_NUMBER')  {
-            $colSpec .= " NUMBER" . ($field->{prec} eq 'NA'? "" : "($field->{prec})");
-        } else { die "unrecognized SQL type: " + $field->{type}}
-        $colSpec .= $field->{isNullable} eq 'YES'? "" : " NOT NULL";
-        push(@colSpecs, $colSpec);
-    }
-    return join(",\n", @colSpecs);
+  my ($tableConfig, $dbPlatform) = @_;
+  return $dbPlatform eq 'Oracle'? createColumnsOracle($tableConfig) : createColumnsPostgres($tableConfig);
 }
+
+sub createColumnsOracle {
+  my ($tableConfig) = @_;
+
+  my @colSpecs;
+  my $fields = $tableConfig->{fields};
+  foreach my $field (@$fields) {
+    my $colSpec = $field->{name};
+    if ($field->{type} eq 'SQL_VARCHAR') {
+      if ($field->{maxLength} > 4000) { $colSpec .= " CLOB"; }
+      else { $colSpec .= " VARCHAR" . ($field->{maxLength} eq 'NA'? "" : "($field->{maxLength})"); }
+    } elsif ($field->{type} eq 'SQL_DATE') {
+      $colSpec .= " DATE";
+    } elsif ($field->{type} eq 'SQL_NUMBER')  {
+      $colSpec .= " NUMBER" . ($field->{prec} eq 'NA'? "" : "($field->{prec})");
+    } else {
+      die "unrecognized SQL type: " . $field->{type}
+    }
+    $colSpec .= $field->{isNullable} eq 'YES'? "" : " NOT NULL";
+    push(@colSpecs, $colSpec);
+  }
+  return join(",\n", @colSpecs);
+}
+
+sub createColumnsPostgres {
+  my ($tableConfig) = @_;
+
+  my @colSpecs;
+  my $fields = $tableConfig->{fields};
+  foreach my $field (@$fields) {
+    my $colSpec = $field->{name};
+    if ($field->{type} eq 'SQL_VARCHAR') {
+      if ($field->{maxLength} > 255) {
+	$colSpec .= " TEXT";
+      }			      # PostgreSQL uses TEXT for large strings
+      else {
+	$colSpec .= " VARCHAR" . ($field->{maxLength} eq 'NA'? "" : "($field->{maxLength})");
+      }
+    } elsif ($field->{type} eq 'SQL_DATE') {
+      $colSpec .= " DATE";
+    } elsif ($field->{type} eq 'SQL_NUMBER') {
+      $colSpec .= " NUMERIC" . ($field->{prec} eq 'NA'? "" : "($field->{prec})"); # NUMERIC for precision values
+    } else {
+      die "unrecognized SQL type: " . $field->{type};
+    }
+    $colSpec .= $field->{isNullable} eq 'YES'? "" : " NOT NULL";
+    push(@colSpecs, $colSpec);
+  }
+  return join(",\n", @colSpecs);
+}
+
 
 # sqlldr userid=dbuser@\"\(description=\(address=\(host=remote.db.com\)\(protocol=tcp\)\(port=1521\)\)\(connect_data=\(sid=dbsid\)\)\)\"/dbpass control=controlfilename.ctl data=data.csv
 sub getSqlLdrCmdLine {
