@@ -14,6 +14,16 @@ my $SQLLDR_ROWS = 5000;
 my $SQLLDR_BINDSIZE = 2048000;
 my $SQLLDR_READSIZE = 1048576;
 
+=pod
+This is a library module to perform install and uninstall of EDA datasets.  It supports both oracle and postgres.
+
+For install it expects an input directory containing install-ready artifacts.  It handles both user datasets (which have a
+user dataset ID), and internal datasets (which do not).
+
+Caveat: uninstall of internal datasets expects the *caller* to clean out rows of shared tables.  (This program cannot do so
+because the code here requires a user dataset ID, which internal datasets do not have.)
+=cut   
+
 sub new {
     my ($class, $hash) = @_;
 
