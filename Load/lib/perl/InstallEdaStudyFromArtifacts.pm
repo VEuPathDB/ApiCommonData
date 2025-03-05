@@ -5,14 +5,9 @@ use warnings;
 
 use DBI;
 use DBI qw(:sql_types);
-use Time::HiRes qw ( time );
 use JSON qw( decode_json );
 use File::Copy;
-use strict;
-use FindBin;
-use lib "$FindBin::Bin/../lib/perl";
-use Psql;
-use DBD::Pg;
+use ApiCommonData::Load::Psql;
 
 my $SQLLDR_STREAM_SIZE = 512000;
 my $SQLLDR_ROWS = 5000;
@@ -41,8 +36,11 @@ sub new {
 
     my $dbh;
     unless ($self->isDryRun) {
-        my $connectString = "dbi:${dbPlatform}://${dbHost}:${dbPort}/${dbName}";
-	$connectString = "DBI:Pg:dbname=$dbName;host=$dbHost;port=$dbPort" if $dbPlatform eq 'Postgres';
+	
+        my $connectString = $dbPlatform eq 'Oracle'?
+	    "dbi:${dbPlatform}://${dbHost}:${dbPort}/${dbName}" :
+	    "DBI:Pg:dbname=$dbName;host=$dbHost;port=$dbPort";
+	
         $dbh = DBI->connect($connectString, $dbUser, $dbPass)
             || die "Couldn't connect to database: " . DBI->errstr;
     }
@@ -73,9 +71,7 @@ sub hasUserDatasetId { defined $_[0]->{USER_DATASET_ID} ? 1 : 0 }
 sub isDryRun {defined $_[0]->{DRYRUN} ? 1 : 0 }
 
 sub getConfigsArrayFromInstallJsonFile {
-    my ($self) = @_;
-
-    my $installJsonFile = $self->getInstallJsonFile();
+    my ($self, $installJsonFile) = @_;
 
     open my $fh, '<', $installJsonFile or die "error opening $installJsonFile: $!";
     my $jsonString = do { local $/; <$fh> };
@@ -89,13 +85,11 @@ sub getIndxTableSpace {
 
 
 sub getInstallJsonFile {
-    my ($self) = @_;
+    my ($self, $dir) = @_;
 
-    my $inputDir = $self->getInputDir();
+    my $installJsonFile = "$dir/install.json";
 
-    my $installJsonFile = "$inputDir/install.json";
-
-    die "No install.json file found." unless -e $installJsonFile;
+    die "No install.json file found in '$dir'\n" unless -e $installJsonFile;
 
     return $installJsonFile;
 }
@@ -104,8 +98,8 @@ sub getInstallJsonFile {
 sub uninstallData {
     my ($self) = @_;
 
-    my $installJsonFile = $self->getInstallJsonFile();
     my $userDatasetId = $self->getUserDatasetId();
+    my $installJsonFile = $self->getInstallJsonFile($self->getDataFilesDir());
 
     my $schema = $self->getDbSchema();
     my $datasetDir = $self->getDataFilesDir();
@@ -122,72 +116,73 @@ sub uninstallData {
         exit 0;
     }
 
-    my $configsArray = $self->getConfigsArrayFromInstallJsonFile();
+    my $configsArray = $self->getConfigsArrayFromInstallJsonFile($installJsonFile);
 
     # drop views
     foreach my $config (@$configsArray) {
         next if $config->{type} ne 'view';
-        $self->dropTableOrView($dbh, 'view', "$schema.$config->{name}");
+        $self->dropTableOrView('view', "$schema.$config->{name}");
     }
 
     # drop tables
     foreach my $config (@$configsArray) {
         next if $config->{type} ne 'table' || $config->{is_preexisting_table} ;
-        $self->dropTableOrView($dbh, 'table', "$schema.$config->{name}");
+        $self->dropTableOrView('table', "$schema.$config->{name}");
     }
 
-    # TODO fix below
+    if ($self->hasUserDatasetId()) {
+	
+	# delete rows from shared tables
+	my $sql = "
+ delete from $schema.entitytypegraph
+ where study_stable_id in (
+ select stable_id from $schema.study where user_dataset_id = '$userDatasetId'
+ )";
+	print STDERR "RUNNING SQL: $sql\n\n";
+	$dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
 
-#     # delete rows from shared tables
-#     my $sql = "
-# delete from $schema.entitytypegraph
-# where study_stable_id in (
-#  select stable_id from $schema.study where user_dataset_id = '$userDatasetId'
-# )";
-#     print STDERR "RUNNING SQL: $sql\n\n";
-#     $dbh->do($sql) || die "Failed running sql: $sql\n";
+	$sql = "delete from $schema.study where user_dataset_id = '$userDatasetId'";
+	print STDERR "RUNNING SQL: $sql\n\n";
+	$dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
 
-#     $sql = "delete from $schema.study where user_dataset_id = '$userDatasetId'";
-#     print STDERR "RUNNING SQL: $sql\n\n";
-#     $dbh->do($sql) || die "Failed running sql: $sql\n";
-
-#     # finally, remove UD data dir.  leave this for last, to retain install.json if there are any errors
-#     if (-e "$datasetDir/install.json") {
-#         unlink("$datasetDir/install.json") || die "Can't remove file '$datasetDir/install.json'\n";
-#     }
-#     if (-e $datasetDir) {
-#         rmdir($datasetDir) || die "Can't remove UD dir '$datasetDir'\n";
-#     }
-
+	# finally, remove UD data dir.  leave this for last, to retain install.json if there are any errors
+	if (-e "$datasetDir/install.json") {
+	    print STDERR "Deleting $datasetDir/install.json\n";
+	    unlink("$datasetDir/install.json") || die "Can't remove file '$datasetDir/install.json'\n" unless $self->isDryRun();
+	}
+	if (-e $datasetDir) {
+	    print STDERR "Deleting $datasetDir\n";
+	    rmdir($datasetDir) || die "Can't remove UD dir '$datasetDir'\n" unless $self->isDryRun();
+	}
+    }
 }
-
 
 sub dropTableOrView {
   my ($self, $tableOrView, $thing) = @_;
 
   my $dbh = $self->getDbh();
 
-  if ($ENV{DB_PLATFORM} eq 'Oracle') {
+  if ($self->getDbPlatform() eq 'Oracle') {
     $dbh->{RaiseError} = 0; $dbh->{PrintError} = 0;
     my $sql = "drop $tableOrView $thing";
     print STDERR "RUNNING SQL: $sql\n\n";
-    my $status = $dbh->do($sql);
+    my $status = 1;
+    $status = $dbh->do($sql) unless $self->isDryRun();
     # ignore error that table or view does not exist (ORA-00942)
     die "Error trying to drop $tableOrView $thing " . $DBI::errstr unless ($status || $DBI::errstr =~ /ORA-00942/);
     $dbh->{RaiseError} = 1; $dbh->{PrintError} = 1;
   } else {
     my $sql = "drop $tableOrView if exists $thing";  # pg offers the sensible thing
     print STDERR "RUNNING SQL: $sql\n\n";
-    $dbh->do($sql);
+    $dbh->do($sql) unless $self->isDryRun();
   }
 }
 
 sub installData {
     my ($self) = @_;
 
-
-    my $installJsonFile = $self->getInstallJsonFile();
-    my $configsArray = $self->getConfigsArrayFromInstallJsonFile();
+    my $installJsonFile = $self->getInstallJsonFile($self->getInputDir());
+    my $configsArray = $self->getConfigsArrayFromInstallJsonFile($installJsonFile);
 
     my $inputDir = $self->getInputDir();
 
@@ -224,9 +219,6 @@ sub installData {
         next unless $config->{type} eq 'view';
         $self->createView($config);
     }
-
-
-
 }
 
 
@@ -260,7 +252,6 @@ sub loadTable {
   my $inputDir = $self->getInputDir();
   my $dbh = $self->getDbh();
   my $schema = $self->getDbSchema();
-  my $userDatasetId = $self->getUserDatasetId();
   my $platform = $self->getDbPlatform();
 
 
@@ -293,7 +284,6 @@ sub loadTable {
 
     $dbh->do($sql) unless $self->isDryRun();
   }
-  $dbh->commit() unless $self->isDryRun();;
   close $info;
 }
 
@@ -422,10 +412,10 @@ sub bulkLoadTablePostgres {
   my $cmdLine = $psqlObj->getCommandLine();
 
   my $dbPassword = $self->getDbPass();
-  print STDERR "$cmdLine\n";
+
   unless ($self->isDryRun()) {
 
-    if (system($cmdLine)) {
+    if (system("$cmdLine")) {
       print STDERR ">>> psql execution failed: $!\n\n";
 
       $cmdLine =~ s/\Q$dbPassword/******/gi;
