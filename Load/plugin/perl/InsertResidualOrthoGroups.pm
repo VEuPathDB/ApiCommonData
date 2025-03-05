@@ -136,7 +136,7 @@ sub _parseGroup {
 
     # example line: OG2_1009: osa|ENS1222992 pfa|PF11_0844
     my $groupId;
-    if ($line = /^(OGR\d+_\d+):\s.*/) {
+    if ($line = /^(OGR\d+r\d+_\d+):\s.*/) {
         $groupId = $1;
     }
     else {
