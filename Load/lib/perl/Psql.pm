@@ -35,7 +35,7 @@ $psql->writeConfigFile();
 # DEFAULT VALUES
 my $CHARACTER_SET = "UTF8";
 my $FIELD_DELIMITER = "\t";
-my $NULL_VALUE  = "null";
+my $NULL_VALUE  = "";
 my $QUOTE_CHARACTER = "`";
 
 sub getQuiet {$_[0]->{_quiet}}
@@ -136,17 +136,17 @@ sub getCommand {
   my $quoteCharacter = $self->getQuoteCharacter();
   my $null = $self->getNullValue();
 
-
   my $fields = $self->getFields();
   my $fieldsString = join(",", @$fields);
 
+  my $nullStr = $null? "NULL  \"$null\"," : ""; # NULL value must be absent to read input with empty fields
+      
   return "\\COPY $tableName ( $fieldsString )
 FROM $infileName
 WITH (
   FORMAT CSV,
   DELIMITER \"$fieldDelimiter\",
-  QUOTE \"$quoteCharacter\",
-  NULL  \"$null\",
+  QUOTE \"$quoteCharacter\", $nullStr
   ENCODING $characterSet
 )";
 }
@@ -156,6 +156,3 @@ sub DESTROY {
 }
 
 1;
-
-
-
