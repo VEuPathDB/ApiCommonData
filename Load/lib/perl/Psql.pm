@@ -21,7 +21,7 @@ module to manage a Psql
 my $psql = ApiCommonData::Load::psql->new({'_login' => 'user',
                                                '_password' => 'pswd', 
                                                '_database' => 'dbname', 
-                                               '_dbiDsn' => 'dbiDsn',
+                                               '_hostName' => 'hostName',
                                                '_controlFilePrefix' => 'shortName',
                                                });
 
@@ -35,7 +35,7 @@ $psql->writeConfigFile();
 # DEFAULT VALUES
 my $CHARACTER_SET = "UTF8";
 my $FIELD_DELIMITER = "\t";
-my $NULL_VALUE  = "null";
+my $NULL_VALUE  = "";
 my $QUOTE_CHARACTER = "`";
 
 sub getQuiet {$_[0]->{_quiet}}
@@ -50,8 +50,8 @@ sub setPassword {$_[0]->{_password} = $_[1]}
 sub getDatabase {$_[0]->{_database}}
 sub setDatabase {$_[0]->{_database} = $_[1]}
 
-sub getDbiDsn {$_[0]->{_dbiDsn}}
-sub setDbiDsn {$_[0]->{_dbiDsn} = $_[1]}
+sub getHostName {$_[0]->{_hostName}}
+sub setHostName {$_[0]->{_hostName} = $_[1]}
 
 sub getFilePrefix {$_[0]->{_control_file_prefix}}
 sub setFilePrefix {$_[0]->{_control_file_prefix} = $_[1]}
@@ -81,15 +81,15 @@ sub getFields {$_[0]->{_fields} || []}
 sub setFields {$_[0]->{_fields} = $_[1]}
 
 sub addField {
-  my ($self, $field, $dataType) = @_;
+  my ($self, $field) = @_;
 
-  push @{$self->{_fields}}, "$field $dataType";
+  push @{$self->{_fields}}, "$field";
 }
 
 sub new {
   my ($class, $args) = @_;
 
-  my @required = ('_login', '_password', '_database', '_dbiDsn');
+  my @required = ('_login', '_password', '_database', '_hostName');
 
   foreach(@required) {
     die "missing required value for param $_" unless(defined($args->{$_}));
@@ -110,10 +110,8 @@ sub getCommandLine {
   my $login = $self->getLogin();
   my $password = $self->getPassword();
   my $database = $self->getDatabase();
-  my $dbiDsn = $self->getDbiDsn();
-
-  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
-  my $hostname = $2;
+  my $hostname = $self->getHostName();
+  
   my $connectionString = "postgresql://$login:$password\@$hostname/$database";
 
   my $logFileName = $self->getLogFileName();
@@ -121,7 +119,9 @@ sub getCommandLine {
   my $quiet = $self->getQuiet() ? '>/dev/null 2>&1' : '';
   my $copyCommand = $self->getCommand();
 
-  return "psql --echo-all --echo-errors --log-file='$logFileName' --command='$copyCommand' $connectionString $quiet"
+  # Temporarily remove --echo-errors as it is not supported in older psql versions
+  # return "psql --echo-all --echo-errors --log-file='$logFileName' --command='$copyCommand' $connectionString $quiet"
+  return "psql --echo-all --log-file='$logFileName' --command='$copyCommand' $connectionString $quiet"
 }
 
 sub getCommand {
@@ -136,17 +136,17 @@ sub getCommand {
   my $quoteCharacter = $self->getQuoteCharacter();
   my $null = $self->getNullValue();
 
-
   my $fields = $self->getFields();
   my $fieldsString = join(",", @$fields);
 
+  my $nullStr = $null? "NULL  \"$null\"," : ""; # NULL value must be absent to read input with empty fields
+      
   return "\\COPY $tableName ( $fieldsString )
 FROM $infileName
 WITH (
   FORMAT CSV,
   DELIMITER \"$fieldDelimiter\",
-  QUOTE \"$quoteCharacter\",
-  NULL  \"$null\",
+  QUOTE \"$quoteCharacter\", $nullStr
   ENCODING $characterSet
 )";
 }
@@ -156,6 +156,3 @@ sub DESTROY {
 }
 
 1;
-
-
-
