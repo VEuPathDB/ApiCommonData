@@ -22,7 +22,7 @@ sub process_file {
     $uncompressedFile =~ s/\.gz$// if $is_gz;
     
     my $fileType;
-    if ($uncompressedFile =~ /\.gff$/) {
+    if ($uncompressedFile =~ /\.gff3?$/) {  # Match both .gff and .gff3
         $fileType = "gff";
     } elsif ($uncompressedFile =~ /\.vcf$/) {
         $fileType = "vcf";
@@ -66,7 +66,7 @@ sub process_file {
         push @commands, "rm ${uncompressedFile}";
     } 
     elsif ($fileType eq "vcf") {
-        push @commands, "bcftools sort $uncompressedFile -o ${uncompressedFile}.sorted";
+        push @commands, "bedtools sort -i $uncompressedFile > ${uncompressedFile}.sorted";
         push @commands, "bgzip -c ${uncompressedFile}.sorted > ${uncompressedFile}.gz";
         push @commands, "tabix -p vcf ${uncompressedFile}.gz";
         push @commands, "rm ${uncompressedFile}.sorted";
