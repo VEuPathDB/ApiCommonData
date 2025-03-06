@@ -63,12 +63,14 @@ sub process_file {
         push @commands, "bgzip -c ${uncompressedFile}.sorted > ${uncompressedFile}.gz";
         push @commands, "tabix -p gff ${uncompressedFile}.gz";
         push @commands, "rm ${uncompressedFile}.sorted";
+        push @commands, "rm ${uncompressedFile}";
     } 
     elsif ($fileType eq "vcf") {
         push @commands, "bcftools sort $uncompressedFile -o ${uncompressedFile}.sorted";
         push @commands, "bgzip -c ${uncompressedFile}.sorted > ${uncompressedFile}.gz";
         push @commands, "tabix -p vcf ${uncompressedFile}.gz";
         push @commands, "rm ${uncompressedFile}.sorted";
+        push @commands, "rm ${uncompressedFile}";
     } 
     elsif ($fileType eq "bam") {
         push @commands, "samtools sort -o ${uncompressedFile}.sorted.bam $uncompressedFile";
