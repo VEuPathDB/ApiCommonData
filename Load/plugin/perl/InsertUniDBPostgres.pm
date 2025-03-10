@@ -714,12 +714,15 @@ sub getFifoFileHandle(){
   my $dbiDsn      = $self->getDb->getDSN();
   $dbiDsn =~ /(:|;)dbname=((\w|\.)+);?/ ;
   my $db = $2;
+  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
+  my $hostName = $2;
+#  $self->log ( "\$dbiDsn = $dbiDsn\n\$db = $db\n\$hostName = $hostName" );
 
   my $psqlObj = ApiCommonData::Load::Psql->new({
     _login => $login,
     _password => $password,
     _database => $db,
-    _dbiDsn => $dbiDsn,
+    _hostName=> $hostName,
     _quiet => 0,
   });
 
