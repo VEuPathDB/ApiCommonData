@@ -1054,12 +1054,29 @@ sub foundValueInArray {
 }
 
 sub undoTables {
-  return ('DoTS.AASequenceEnzymeClass',
+  return (
+      'DoTS.GOAssociationInstanceLOE',
+      'DoTS.AASequenceEnzymeClass',
 	  'DoTS.AAFeatureExon',
 	  'DoTS.RNAFeatureExon',
 	  'DoTS.NALocation',
 	  'ApiDB.SeqEdit',
 	  'ApiDB.GeneFeatureName',
+      'DoTS.DbRefAAFeature',
+      'DoTS.GOAssocInstEvidCode',
+      'DoTS.DbRefNASequence',
+      'DoTS.DbRefNAFeature',
+      'SRes.DbRef',
+      'ApiDB.AaSequenceAttribute',
+      'DoTS.GOAssociationInstance',
+      'DoTS.GOAssociation',
+      'DoTS.AAFeatureImp',
+      'DoTS.NAFeatureImp',
+      'DoTS.NASequenceImp',
+      'DoTS.AASequenceImp',
+      'SRes.OntologyTerm',
+      'SRes.ExternalDatabaseRelease',
+      'SRes.ExternalDatabase',
 	 );
 }
 
