@@ -1054,6 +1054,14 @@ sub foundValueInArray {
 }
 
 sub undoTables {
+  return ('DoTS.AASequenceEnzymeClass',
+	  'DoTS.AAFeatureExon',
+	  'DoTS.RNAFeatureExon',
+	  'DoTS.NALocation',
+	  'ApiDB.SeqEdit',
+	  'ApiDB.GeneFeatureName',
+	 );
 }
+
 
 1;
