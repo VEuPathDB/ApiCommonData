@@ -1062,13 +1062,14 @@ sub getTranscriptLocations {
 
   my %transcriptSummary;
 
-my $sql = "select listagg(taf.source_id, ',') WITHIN GROUP (ORDER BY taf.aa_feature_id) as transcripts,
+my $sql = "
+select string_agg(taf.source_id, ',' ORDER BY taf.aa_feature_id) as transcripts,
        s.source_id, 
        tf.parent_id as gene_na_feature_id, 
        el.start_min as exon_start, 
        el.end_max as exon_end,
-       decode(el.is_reversed, 1, afe.coding_end, afe.coding_start) as cds_start,
-       decode(el.is_reversed, 1, afe.coding_start, afe.coding_end) as cds_end,
+       CASE el.is_reversed WHEN 1 THEN afe.coding_end ELSE afe.coding_start END as cds_start,
+       CASE el.is_reversed WHEN 1 THEN afe.coding_start ELSE afe.coding_end END as cds_end,
        el.is_reversed
 from dots.transcript tf
    , dots.translatedaafeature taf

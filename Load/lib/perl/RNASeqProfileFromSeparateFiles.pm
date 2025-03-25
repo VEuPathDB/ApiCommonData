@@ -1,5 +1,5 @@
 package ApiCommonData::Load::RNASeqProfileFromSeparateFiles;
-use base qw(CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles);
+use base qw(CBIL::StudyAssayResults::DataMunger::ProfileFromSeparateFiles);
 
 sub getProtocolName {
   return "RNASeq";

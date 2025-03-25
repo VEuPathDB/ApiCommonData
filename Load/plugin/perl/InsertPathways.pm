@@ -204,9 +204,9 @@ select 'SRes::Pathway', source_id, pathway_id from sres.pathway
 union
 select 'DoTS::GeneFeature', source_id, na_feature_id from dots.genefeature
 union
-select 'chEBI::Compounds', chebi_accession, nvl(parent_id, id) from chebi.compounds
+select 'chEBI::Compounds', chebi_accession, coalesce(parent_id, id) from chebi.compounds
 union
-select 'chEBI::Compounds', da.accession_number as accession, nvl(c.parent_id, c.id)
+select 'chEBI::Compounds', da.accession_number as accession, coalesce(c.parent_id, c.id)
 from chebi.database_accession da
    , chebi.compounds c
 where c.id = da.compound_id

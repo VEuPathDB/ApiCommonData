@@ -31,11 +31,21 @@ my $db = GUS::ObjRelP::DbiDatabase->
 my $dbh = $db->getQueryHandle();
 
 my $sql = <<SQL;
-  select ncbi_tax_id
-  from SRes.Taxon
-  start with ncbi_tax_id in ($taxon_id)
-  connect by taxon_id = prior parent_id
-  and rank = 'species'
+WITH RECURSIVE cte AS (
+  SELECT
+    taxon_id
+    , parent_id
+  FROM Sres.Taxon
+  WHERE ncbi_tax_id IN ($taxon_id)
+  UNION
+  SELECT dtl.taxon_id, dtl.parent_id
+  FROM Sres.taxon dtl, cte
+  WHERE cte.parent_id = dtl.taxon_id
+    AND dtl.rank = 'species'
+)
+SELECT ncbi_tax_id
+FROM cte, sres.taxon t
+WHERE cte.taxon_id = t.taxon_id
 SQL
 
 print STDERR "Query: $sql\n" if $verbose;

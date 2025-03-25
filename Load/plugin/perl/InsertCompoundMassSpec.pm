@@ -4,7 +4,7 @@ package ApiCommonData::Load::Plugin::InsertCompoundMassSpec;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use ApiCommonData::Load::Plugin::InsertStudyResults;
 use ApiCommonData::Load::MetaboliteProfiles;
-use CBIL::TranscriptExpression::DataMunger::Profiles;
+use CBIL::StudyAssayResults::DataMunger::Profiles;
 use GUS::Model::ApiDB::CompoundPeaksChebi;
 use GUS::Model::ApiDB::CompoundPeaks;
 use GUS::PluginMgr::Plugin;

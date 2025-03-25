@@ -124,7 +124,7 @@ sub addPercentileAndWriteOutput {
   my $header = "FALSE";
 
   my $rString = "
-  source(\"$ENV{GUS_HOME}/lib/R/TranscriptExpression/profile_functions.R\");
+  source(\"$ENV{GUS_HOME}/lib/R/StudyAssayResults/profile_functions.R\");
   dat = read.table(\"$in\", header=$header, sep=\"\\t\", check.names=FALSE, row.names=1);
   pct = percentileMatrix(m=dat, ties=\"$ties\");
   output = cbind(rownames(dat), dat, pct);
@@ -142,7 +142,7 @@ sub addPercentileAndWriteOutput {
   my $systemResult = system($command);
 
   unless($systemResult / 256 == 0) {
-    CBIL::TranscriptExpression::Error->new("Error while attempting to run R:\n$command")->throw();
+    CBIL::StudyAssayResults::Error->new("Error while attempting to run R:\n$command")->throw();
   }
 
   unlink($tempFn);

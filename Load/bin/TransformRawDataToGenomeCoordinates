@@ -1,122 +1,65 @@
 #!/usr/bin/perl
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 use Getopt::Long;
-use GUS::Supported::GusConfig;
-use GUS::ObjRelP::DbiDatabase;
+
+use Bio::DB::Sam;
+
 use List::Util qw(sum);
 
 
-my ($gusConfigFile,$extDbSpec,$outputFile,$inputFile,$verbose);
-&GetOptions("gusConfigFile=s" => \$gusConfigFile,
-            "extDbSpec=s" => \$extDbSpec,
-            "inputFile=s" => \$inputFile,
+my ($outputFile,$inputFile,$verbose, $probesBamFile);
+&GetOptions("inputFile=s" => \$inputFile,
             "verbose!" => \$verbose,
+            "probesBamFile=s" => \$probesBamFile,
             "outputFile=s" => \$outputFile);
-
-print STDERR "Establishing dbi login\n";
-
-my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
-
-my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
-                                        $gusconfig->getDatabaseLogin(),
-                                        $gusconfig->getDatabasePassword(),
-                                        $verbose,0,1,
-                                        $gusconfig->getCoreSchemaName());
-
-my $dbh = $db->getQueryHandle(0);
-
-my $extDbRlsId = getDbRlsId($extDbSpec);
-
-
-my $sql = "select R.SOURCE_ID, NS.SOURCE_ID, RL.REPORTER_START
-from PLATFORM.REPORTER R
-   , PLATFORM.REPORTERLOCATION rl
-   , DOTS.NASEQUENCE NS
-where R.REPORTER_ID = RL.REPORTER_ID
- and RL.NA_SEQUENCE_ID = NS.NA_SEQUENCE_ID
- and r.external_database_release_id = $extDbRlsId";
-
-my %probeFeatureHash;
-my %reversedProbeFeatureHash;
-my %scoreHash;
-my $sh = $dbh->prepareAndExecute($sql);
-
-while(my @ar = $sh->fetchrow_array()) {
-  $probeFeatureHash{$ar[0]}="$ar[1]\t$ar[2]";
-  $reversedProbeFeatureHash{"$ar[1]\t$ar[2]"}=$ar[0];
-}
-$sh->finish();
-$dbh->disconnect();
 
 
 open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
 
+my %scoreHash;
+my %probeLocations;
+
 while (<TABFILE>){
   chomp;
-  my @myArray = split(/\t/, $_);
-  if($probeFeatureHash{$myArray[0]}){
-    #print STDERR "$probeFeatureHash{$myArray[0]}\t$myArray[1]\n";
-      push(@{$scoreHash{$probeFeatureHash{$myArray[0]}}}, $myArray[1]);
+  my ($probeId, $score)= split(/\t/, $_);
+  if($probeId){
+    $scoreHash{$probeId} = $score;
   }
 }
 close(TABFILE);
 open(FILE, "> $outputFile") or die "Cannot open file for writing:  $!";
 
-foreach my $k (keys %scoreHash) {
-    my $average = sum(@{$scoreHash{$k}}) / @{$scoreHash{$k}};
-    my $probeId = $reversedProbeFeatureHash{$k};
-    print FILE "$k\t$average\n";
+
+my $bam = Bio::DB::Sam->new(-bam => $probesBamFile);
+my @alignments = $bam->features();
+
+foreach my $alignment (@alignments) {
+  my $probeId = $alignment->query->name;
+  my $sequenceSourceId = $alignment->seq_id;
+  next unless (defined $sequenceSourceId);
+
+  my $start = $alignment->start + 1; # adjust because BAM is zero based
+
+  my $key = "$sequenceSourceId\t$start";
+
+  push @{$probeLocations{$key}}, $probeId;
+
+#  print FILE join("\t", $sequenceSourceId, $start, $end, $name, $score) . "\n";
+}
+
+
+foreach my $key (keys %probeLocations) {
+
+  my @scores = map { $scoreHash{$_}} @{$probeLocations{$key}};
+
+  my $score  = sum(@scores) / scalar(@scores);
+
+  print FILE $key . "\t" . $score . "\n";
 }
 
 close FILE;
-
-sub getDbRlsId {
-
-  my ($extDbRlsSpec) = @_;
-
-  my ($extDbName, $extDbRlsVer) = &getExtDbInfo($extDbRlsSpec);
-
-  my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
-
-  $stmt->execute($extDbName,$extDbRlsVer);
-
-  my ($extDbRlsId) = $stmt->fetchrow_array();
-
-  return $extDbRlsId;
-}
-
-sub getExtDbInfo {
-  my ($extDbRlsSpec) = @_;
-  if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
-    my $extDbName = $1;
-    my $extDbRlsVer = $2;
-    return ($extDbName, $extDbRlsVer);
-  } else {
-    die("Database specifier '$extDbRlsSpec' is not in 'name|version' format");
-  }
-}
 

@@ -47,6 +47,12 @@ sub getArgsDeclaration {
 	       mustExist => 1,
 	       format => 'Two column tab delimited file in the order identifier, comment',
 	     }),
+     stringArg({ name => 'datasetVersion',
+		 descr => 'the version of the dataset',
+		 constraintFunc=> undef,
+		 reqd  => 0,
+		 isList => 0
+	       }),
      stringArg({ name => 'organismAbbrev',
 		 descr => 'organismAbbrev for gene comment source',
 		 constraintFunc=> undef,
@@ -134,6 +140,7 @@ sub run {
   my $self = shift;
 
   my $organismAbbrev = $self->getArg('organismAbbrev');
+  my $datasetVersion = $self->getArg('datasetVersion') if ($self->getArg('datasetVersion'));
   my $organismInfo = GUS::Model::ApiDB::Organism->new({'abbrev' => $organismAbbrev});
   $organismInfo->retrieveFromDB();
   my $projectId = $organismInfo->getRowProjectId();
@@ -153,6 +160,9 @@ sub run {
 
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
       my $transcript  = GUS::Model::DoTS::Transcript->new({source_id => $sourceId, row_project_id => $projectId});
+
+      # if there is no comment_date available in the input file, then use the version of the dataset
+      $comment_date = $datasetVersion if (!$comment_date && $datasetVersion);
 
       if($geneFeature->retrieveFromDB()){
 

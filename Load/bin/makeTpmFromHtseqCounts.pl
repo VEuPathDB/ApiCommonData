@@ -6,19 +6,21 @@ use warnings;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use Data::Dumper;
+use File::Path qw( make_path );
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
-use CBIL::TranscriptExpression::CalculationsForTPM qw(doTPMCalculation);
+use CBIL::StudyAssayResults::CalculationsForTPM qw(doTPMCalculation);
 
 
 my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $analysisConfig, $isStranded);
 &GetOptions("verbose!"=>\$verbose,
             "geneFootprintFile=s"=> \$geneFootprintFile,
             "studyDir=s"=>\$studyDir,
+            "outputDir=s"=>\$outputDir,
             "analysisConfig=s"=>\$analysisConfig,
             "isStranded!"=>\$isStranded
     );
 
-if(!$geneFootprintFile || !$studyDir || !$analysisConfig) {
+if(!$geneFootprintFile || !$studyDir || !$analysisConfig || !$outputDir) {
 	die "usage: makeTpmFromhtseqCounts.pl --geneFootprintFile <geneFootprintFile> --studyDir <study directory for this experiment> --analysisConfig <analysisConfigFile> --isStranded <use this flag if the data is stranded>\n";
 }
 
@@ -43,27 +45,32 @@ foreach my $group (keys %{$samplesHash}) {
 
 foreach my $sample (@{$samples}) {
     my $sampleDir = "$studyDir/$sample";
+    my $sampleOutDir = "$outputDir/$sample";
+
+    if ( !-d $sampleOutDir ) {
+        make_path $sampleOutDir or die "Failed to create directory: $sampleOutDir";
+    }
 
     my ($senseUniqueCountFile, $senseNUCountFile, $antisenseUniqueCountFile, $antisenseNUCountFile, $senseUniqueTpmFile, $senseNUTpmFile, $antisenseUniqueTpmFile, $antisenseNUTpmFile);
     if ($isStranded) {
         $senseUniqueCountFile = "$sampleDir/genes.htseq-union.firststrand.counts";
-        $senseUniqueTpmFile = "$sampleDir/genes.htseq-union.firststrand.tpm";
+        $senseUniqueTpmFile = "$sampleOutDir/genes.htseq-union.firststrand.tpm";
 
         $senseNUCountFile = "$sampleDir/genes.htseq-union.firststrand.nonunique.counts";
-        $senseNUTpmFile = "$sampleDir/genes.htseq-union.firststrand.nonunique.tpm";
+        $senseNUTpmFile = "$sampleOutDir/genes.htseq-union.firststrand.nonunique.tpm";
 
         $antisenseUniqueCountFile = "$sampleDir/genes.htseq-union.secondstrand.counts";
-        $antisenseUniqueTpmFile = "$sampleDir/genes.htseq-union.secondstrand.tpm";
+        $antisenseUniqueTpmFile = "$sampleOutDir/genes.htseq-union.secondstrand.tpm";
 
         $antisenseNUCountFile = "$sampleDir/genes.htseq-union.secondstrand.nonunique.counts";
-        $antisenseNUTpmFile = "$sampleDir/genes.htseq-union.secondstrand.nonunique.tpm";
+        $antisenseNUTpmFile = "$sampleOutDir/genes.htseq-union.secondstrand.nonunique.tpm";
     }
     else {
         $senseUniqueCountFile = "$sampleDir/genes.htseq-union.unstranded.counts";
-        $senseUniqueTpmFile = "$sampleDir/genes.htseq-union.unstranded.tpm";
+        $senseUniqueTpmFile = "$sampleOutDir/genes.htseq-union.unstranded.tpm";
 
         $senseNUCountFile = "$sampleDir/genes.htseq-union.unstranded.nonunique.counts";
-        $senseNUTpmFile = "$sampleDir/genes.htseq-union.unstranded.nonunique.tpm";
+        $senseNUTpmFile = "$sampleOutDir/genes.htseq-union.unstranded.nonunique.tpm";
     }
     &doTPMCalculation($geneLengths, $senseUniqueCountFile, $senseNUCountFile, $antisenseUniqueCountFile, $antisenseNUCountFile, $senseUniqueTpmFile, $senseNUTpmFile, $antisenseUniqueTpmFile, $antisenseNUTpmFile);
 }

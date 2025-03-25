@@ -11,7 +11,7 @@ package ApiCommonData::Load::MBioResults;
 # Source -> Sample -> Extract -> Assay -> DataTransformation
 # and DataTransformation has a cool suffix, "(OTU)"
 # see: https://github.com/VEuPathDB/ApiCommonMetadataRepository/blob/master/ISA/metadata/MBSTDY0020/i_Investigation.xml
-# known as technologyType in CBIL::TranscriptExpression::DataMunger::Loadable
+# known as technologyType in CBIL::StudyAssayResults::DataMunger::Loadable
 #
 
 @ISA = ('GUS::PluginMgr::Plugin');

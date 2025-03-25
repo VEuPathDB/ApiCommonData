@@ -1,8 +1,8 @@
 package ApiCommonData::Load::IterativeWGCNA;
-use base qw(CBIL::TranscriptExpression::DataMunger);
+use base qw(CBIL::StudyAssayResults::DataMunger);
 
 use strict;
-use CBIL::TranscriptExpression::Error;
+use CBIL::StudyAssayResults::Error;
 use Data::Dumper;
 use Exporter;
 use File::Basename;

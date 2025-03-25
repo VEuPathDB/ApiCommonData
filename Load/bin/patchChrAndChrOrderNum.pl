@@ -6,7 +6,6 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 use DBI;
-use DBD::Oracle;
 
 my ($help, $mapFile, $gusConfigFile, $extDbRlsId, $organismAbbrev, $genomeVersion, $sequenceTable);
 
@@ -39,7 +38,7 @@ $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
 
-my $sql = "update dots.$sequenceTable set chromosome = ?, chromosome_order_num = ?, modification_date=sysdate where (source_id = ? OR secondary_identifier = ? OR name = ?) and EXTERNAL_DATABASE_RELEASE_ID = $extDbRlsId";
+my $sql = "update dots.$sequenceTable set chromosome = ?, chromosome_order_num = ?, modification_date=localtimestamp where (source_id = ? OR secondary_identifier = ? OR name = ?) and EXTERNAL_DATABASE_RELEASE_ID = $extDbRlsId";
 my $sh = $dbh->prepare($sql);
 
 my $error;

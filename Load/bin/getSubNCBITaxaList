@@ -52,10 +52,20 @@ my $db = GUS::ObjRelP::DbiDatabase->
 my $dbh = $db->getQueryHandle();
 
 my $sql = <<SQL;
-  select ncbi_tax_id
-  from SRes.Taxon
-  start with ncbi_tax_id in ($taxon_id)
-  connect by prior taxon_id = parent_id
+WITH RECURSIVE cte AS (
+  SELECT
+    taxon_id
+    , parent_id
+  FROM Sres.Taxon
+  WHERE ncbi_tax_id IN ($taxon_id)
+  UNION
+  SELECT dtl.taxon_id, cte.taxon_id parent_id
+  FROM Sres.taxon dtl, cte
+  WHERE cte.taxon_id = dtl.parent_id
+)
+SELECT ncbi_tax_id
+FROM cte, sres.taxon t
+WHERE cte.taxon_id = t.taxon_id
 SQL
 
 print STDERR "Query: $sql\n" if $verbose;

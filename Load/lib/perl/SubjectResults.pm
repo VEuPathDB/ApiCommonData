@@ -1,5 +1,5 @@
 package ApiCommonData::Load::SubjectResults;
-use base qw(CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles);
+use base qw(CBIL::StudyAssayResults::DataMunger::NoSampleConfigurationProfiles);
 
 sub getProtocolName {
   return "subject_result";

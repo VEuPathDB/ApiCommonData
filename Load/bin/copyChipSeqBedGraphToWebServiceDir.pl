@@ -40,7 +40,7 @@ foreach my $d (sort @ds) {
     next unless $d =~ /^analyze_(\S+)/;
     my $sample = $1;
     $inputDir =~ s/\/$//;
-    my $exp_dir = "$inputDir/$d/master/mainresult/downstream/";
+    my $exp_dir = "$inputDir/$d/master/downstream/";
     
     my $output = $outputDir."/$sample"; 
     system ("mkdir $output");

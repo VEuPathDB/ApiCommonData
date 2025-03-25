@@ -21,8 +21,10 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
+use Date::Calc qw(check_date);
+
 #use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal dropTablesLike);
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms dropTablesLike dropViewsLike);
 
 use JSON;
 use Encode qw/encode/;
@@ -32,10 +34,10 @@ use Data::Dumper;
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
 my $TERM_SCHEMA = "SRES";
 
-my $END_OF_RECORD_DELIMITER = "#EOR#\n";
-my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
+my $END_OF_RECORD_DELIMITER = "\n";
+my $END_OF_COLUMN_DELIMITER = "\t";
 
-my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
+my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar(16))
 
 #my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
@@ -103,18 +105,29 @@ my $argsDeclaration =
 	     reqd            => 1,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
-   stringArg({name           => 'schema',
+
+ stringArg({name           => 'schema',
             descr          => 'GUS::Model schema for entity tables',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
 
-   booleanArg({name => 'runRLocally',
-          descr => 'if true, will assume Rscript and plot.data are installed locally.  otherwise will call singularity',
-          reqd => 1,
+   booleanArg({name => 'runStatsScriptLocally',
+          descr => 'if true, will assume GO script find-bin-widths is installed locally.  Otherwise will call singularity for Rscript and plot.data are installed locally.',
+          reqd => 0,
           constraintFunc => undef,
           isList => 0,
          }),
+
+
+     # enumArg({ name           => '',
+     #           descr          => 'The qualifier type',
+     #           constraintFunc => undef,
+     #           reqd           => 1,
+     #           isList         => 0,
+     #           enum           => 'location,host,source'
+     #         }),
+
 
 
 
@@ -191,7 +204,10 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %studies) unless(scalar keys %studies == 1);
 
-  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
+
+
+  $self->getQueryHandle()->do("SET DateStyle = 'ISO, YMD'") or $self->error($self->getQueryHandle()->errstr);
+  #$self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($self->getQueryHandle()->errstr);
 
   my $dbh = $self->getQueryHandle();
   my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'), undef, $TERM_SCHEMA);
@@ -199,7 +215,6 @@ sub run {
   my $studiesCount;
 
   foreach my $studyId (keys %studies) {
-
 
     my $maxAttrLength = $studies{$studyId}->{max_attr_length};
     my $internalAbbrev = $studies{$studyId}->{internal_abbrev};
@@ -244,6 +259,26 @@ sub run {
   return 0;
 }
 
+sub runStatsScriptLocally {
+  my ($self, $numericValsFileName, $dateValsFileName, $outputStatsFileName) = @_;
+
+  #INPUT is like: join("\t", $attributeStableId, $entityTypeId, $numberValue)
+  # OUTPUT is like: my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
+  my $script = "find-bin-width";
+
+  my @files = ($numericValsFileName,$dateValsFileName);
+
+  foreach my $file(@files) {
+
+    $self->log("Processing File $file");
+
+    # need to append to output here as we're doing both number and date
+    system("sort $file|$script -s >>$outputStatsFileName") == 0
+      or die "$script failed: $?";
+  }
+
+}
+
 
 sub statsForPlots {
   my ($self, $dateValsFileName, $numericValsFileName, $tempDirectory) = @_;
@@ -258,22 +293,29 @@ sub statsForPlots {
   print $rCommandsFh $self->rCommandsForStats();
 
   my $singularity =  "singularity exec docker://veupathdb/rserve:2.1.3";
-  if($self->getArg("runRLocally")) {
-    $singularity = "";
-  }
+  my $script = "Rscript $rCommandsFileName";
 
-  printf STDERR ("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
-  my $numberSysResult = system("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
-  if($numberSysResult) {
-    system("cat $rCommandsFileName $numericValsFileName >&2");
-    $self->error("Error Running Rscript for numericFile");
+  # requires "find-bin-widths" script to be installed locally.
+  if($self->getArg("runStatsScriptLocally")) {
+    $self->runStatsScriptLocally($numericValsFileName, $dateValsFileName, $outputStatsFileName);
   }
+  # otherwise use singularity plot.data package
+  else {
+    $self->log("STATS COMMAND:  $singularity $script $numericValsFileName $outputStatsFileName");
+    my $numberSysResult = system("$singularity $script $numericValsFileName $outputStatsFileName");
 
-  printf STDERR ("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
-  my $dateSysResult = system("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
-  if($dateSysResult) {
-    system("cat $rCommandsFileName $dateValsFileName >&2");
-    $self->error("Error Running Rscript for datesFile");
+    if($numberSysResult) {
+      system("cat $rCommandsFileName $numericValsFileName >&2") if($self->getArg("runStatsScriptLocally"));
+      $self->error("Error Running $script for numericFile $numericValsFileName");
+    }
+
+    printf STDERR ("$singularity $script $dateValsFileName $outputStatsFileName\n");
+
+    my $dateSysResult = system("$singularity $script $dateValsFileName $outputStatsFileName");
+    if($dateSysResult) {
+      system("cat $rCommandsFileName $dateValsFileName >&2") if($self->getArg("runStatsScriptLocally"));
+      $self->error("Error Running $script for datesFile $dateValsFileName");
+    }
   }
 
   unless (-e $outputStatsFileName){
@@ -399,9 +441,10 @@ sub queryForEntityTypeIds {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select t.name, t.entity_type_id, ot.source_id, t.internal_abbrev
-from $SCHEMA.entitytype t, ${TERM_SCHEMA}.ontologyterm ot
-where t.type_id = ot.ontology_term_id (+)
-and study_id = $studyId";
+from $SCHEMA.entitytype t
+LEFT JOIN ${TERM_SCHEMA}.ontologyterm ot
+ON t.type_id = ot.ontology_term_id
+where study_id = $studyId";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
@@ -505,8 +548,8 @@ sub valProps {
 
   my ($dataType, $dataShape);
   my $precision = $cs{_PRECISION};
-  my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == $cs{_IS_NUMBER_COUNT};
-  my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == $cs{_IS_DATE_COUNT};
+  my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == ($cs{_IS_NUMBER_COUNT} + $cs{_MAYBE_NUMBER_OR_DATE});
+  my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == ($cs{_IS_DATE_COUNT} + $cs{_MAYBE_NUMBER_OR_DATE});
   my $valueCount = scalar(keys(%{$cs{_VALUES}}));
 #  my $isBoolean = $cs{_COUNT} == $cs{_IS_BOOLEAN_COUNT};
 
@@ -579,8 +622,7 @@ sub addUnitsToOntologyTerms {
   #   $excludeStr = sprintf(" where source_id not in (%s)", join(",", map {"'$_'"} keys %$overrideUnits));
   # }
 
-  my $sql = "select * from (
-select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
+  my $sql = "select  att.source_id, unit.ontology_term_id, unit.name
 from $SCHEMA.study pg
    , $SCHEMA.entitytype vt
    , $SCHEMA.attributeunit au
@@ -591,20 +633,6 @@ and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
 and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
 and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id
---UNION
---select ot.source_id
---     , uot.ontology_term_id
---     , json_value(annotation_properties, '\$.unitLabel[0]') label
---     , 1 as priority
---from sres.ontologysynonym os
---   , sres.ontologyterm ot
---   , sres.ontologyterm uot
---where os.ontology_term_id = ot.ontology_term_id
---and json_value(annotation_properties, '\$.unitIRI[0]') = uot.uri
---and json_value(annotation_properties, '\$.unitLabel[0]') is not null
---and os.external_database_release_id = ?
-)
- order by priority
 ";
 
 
@@ -673,7 +701,7 @@ sub makeFifosForSqlloader {
     my $fifoName = "${SCHEMA}_attributevalue_${internalAbbrev}_${timestamp}.dat";
 
     my $fields = $self->fieldsAndCreateTable($maxAttrLength, $internalAbbrev, $studyInternalAbbrev, $entityTypeId, $studyId);
-    my $fifo = $self->makeFifo($fields, $fifoName, $entityTypeId, $studyId);
+    my $fifo = $self->makeFifo($fields, $fifoName, $internalAbbrev, $studyInternalAbbrev);
 
     $entityTypeIdFifos->{$entityTypeId} = $fifo;
   }
@@ -708,16 +736,14 @@ sub loadAttributes {
 
   my $dbh = $self->getQueryHandle();
 
-
-
   #$self->log("Loading attribute values for study $studyId from sql:".$sql);
-  my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
+  my $sh = $dbh->prepare($sql );
   $sh->execute($studyId);
 
   my $clobCount = 0;
 
-  while(my ($entityAttributesId, $entityStableId, $entityTypeId, $entityTypeIdOrig, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $lobLocator) = $sh->fetchrow_array()) {
-    my $json = encode('UTF-8', $self->readClob($lobLocator));
+  while(my ($entityAttributesId, $entityStableId, $entityTypeId, $entityTypeIdOrig, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $json) = $sh->fetchrow_array()) {
+    $json = encode('UTF-8', $json); # DB driver converts to perl format, so change back to utf8
 
     my $attsHash = decode_json($json);
 
@@ -872,6 +898,10 @@ sub typedValueForAttribute {
   # consider a number if in the form 2,870,141, up to 999,999,999,999
   # reject lists, eg 8793583,9909998,7188839
   my $valueNoCommas = $value;
+
+  # use heuristic to distinguish numbers with commas from comma delimited lists of numbers.
+  # consider a number, and remove commas, if of the form 2,870,141, up to 999,999,999,999
+  # leave commas in numeric lists, eg 8793583,9909998,7188839
   if($value =~ /,/ && $value =~ /^\d{1,3}(,\d{3}){0,3}(\.\d+){0,}$/){
     $valueNoCommas =~ tr/,//d;
   }
@@ -897,13 +927,19 @@ sub typedValueForAttribute {
     $counts->{_PRECISION} ||= 0;
     $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision);#if $counts->{_PRECISION};
   }
-  elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
+  elsif($value =~ /^(\d\d\d\d)-(\d\d)-(\d\d)$/) {
     $dateValue = $value;
-    $counts->{_IS_DATE_COUNT}++;
+
+    if(check_date($1, $2, $3)) {
+      $counts->{_IS_DATE_COUNT}++;
+    }
 
     # my $parsedDate = ParseDate($dateValue);
     # $counts->{_MIN_DATE} = (sort { Date_Cmp($b, $a) } ($counts->{_MIN_DATE} || $parsedDate, $parsedDate))[-1];
     # $counts->{_MAX_DATE} = (sort { Date_Cmp($a, $b) } ($counts->{_MAX_DATE} || $parsedDate, $parsedDate))[-1];
+  }
+  elsif(lc($valueNoCommas) eq "nan" || lc($valueNoCommas) eq "inf" || lc($valueNoCommas) eq "na" || lc($valueNoCommas) eq "inf" ) {
+    $counts->{_MAYBE_NUMBER_OR_DATE}++;
   }
   # elsif($value =~ /^\d/) {
   #   $counts->{_IS_ORDINAL_COUNT}++;
@@ -922,31 +958,31 @@ sub typedValueForAttribute {
 }
 
 
-sub readClob {
-  my ($self, $lobLocator) = @_;
+# sub readClob {
+#   my ($self, $lobLocator) = @_;
 
-  my $dbh = $self->getQueryHandle();
+#   my $dbh = $self->getQueryHandle();
 
-  my $chunkSize = $self->{_lob_locator_size};
+#   my $chunkSize = $self->{_lob_locator_size};
 
-  unless($chunkSize) {
-    $self->{_lob_locator_size} = $dbh->ora_lob_chunk_size($lobLocator);
-    $chunkSize = $self->{_lob_locator_size};
-  }
+#   unless($chunkSize) {
+#     $self->{_lob_locator_size} = $dbh->ora_lob_chunk_size($lobLocator);
+#     $chunkSize = $self->{_lob_locator_size};
+#   }
 
-  my $offset = 1;   # Offsets start at 1, not 0
+#   my $offset = 1;   # Offsets start at 1, not 0
 
-  my $output;
+#   my $output;
 
-  while(1) {
-    my $data = $dbh->ora_lob_read($lobLocator, $offset, $chunkSize );
-    last unless length $data;
-    $output .= $data;
-    $offset += $chunkSize;
-  }
+#   while(1) {
+#     my $data = $dbh->ora_lob_read($lobLocator, $offset, $chunkSize );
+#     last unless length $data;
+#     $output .= $data;
+#     $offset += $chunkSize;
+#   }
 
-  return $output;
-}
+#   return $output;
+# }
 
 
 sub loadAttributesFromEntity {
@@ -1016,13 +1052,12 @@ sub fieldsAndCreateTable {
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyInternalAbbrev}_${internalAbbrev}";
 
-  my $tableSynonymName = "${SCHEMA}.AttributeValue_${studyId}_${entityTypeId}";
 
-  my $createTableSql = "create table $tableSynonymName (
-$idField VARCHAR2(200) NOT NULL,
-attribute_stable_id  VARCHAR2(255) NOT NULL,
-string_value VARCHAR2(2000) NOT NULL,
-number_value NUMBER,
+  my $createTableSql = "create table $tableName (
+$idField VARCHAR(200) NOT NULL,
+attribute_stable_id  VARCHAR(255) NOT NULL,
+string_value VARCHAR(1000),
+number_value NUMERIC,
 date_value DATE
 )
 ";
@@ -1031,22 +1066,21 @@ date_value DATE
 
   $dbh->do($createTableSql) or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableSynonymName (attribute_stable_id, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_1_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableSynonymName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableSynonymName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableSynonymName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_2_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, string_value, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_3_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, date_value, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_4_ix_${studyInternalAbbrev}_${entityTypeId} ON $tableName (attribute_stable_id, number_value, ${internalAbbrev}_stable_id) ") or die $dbh->errstr;
 
-  $dbh->do("create or replace synonym ${tableName} for ${tableSynonymName}") or die $dbh->errstr;
-  $dbh->do("GRANT SELECT ON $tableSynonymName TO gus_r") or die $dbh->errstr;
   $dbh->do("GRANT SELECT ON $tableName TO gus_r") or die $dbh->errstr;
+
 
   return \@fields;
 }
 
 
 sub makeFifo {
-  my ($self, $fields, $fifoName, $entityTypeId, $studyId) = @_;
+  my ($self, $fields, $fifoName, $entityTypeAbbrev, $studyAbbrev) = @_;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -1060,6 +1094,8 @@ sub makeFifo {
   my $dbiDsn      = $database->getDSN();
   my ($dbi, $type, $db) = split(':', $dbiDsn, 3);
 
+  my $tableName = "AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
+
   my $sqlldr = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                  _password => $password,
                                                  _database => $db,
@@ -1069,23 +1105,33 @@ sub makeFifo {
                                                  _append => 0,
                                                  _infile_name => $fifoName,
                                                  _reenable_disabled_constraints => 1,
-                                                 _table_name => "$SCHEMA.AttributeValue_${studyId}_${entityTypeId}",
+                                                 _table_name => "${SCHEMA}.${tableName}",
                                                  _fields => $fields
                                                 });
-
-  $sqlldr->setLineDelimiter($eorLiteral);
-  $sqlldr->setFieldDelimiter($eocLiteral);
-
-  $sqlldr->writeConfigFile();
 
   my $fifo = ApiCommonData::Load::Fifo->new($fifoName);
 
   my $sqlldrProcessString = $sqlldr->getCommandLine();
 
+  # for user datasets we don't run sqlldr yet
+  # make the dat/cache file on disk
+  # The input file name is what is written to the sqlldr config
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
+    my $cacheFileName = lc($tableName) . ".cache";
+
+    $sqlldrProcessString = "cat $fifoName >$cacheFileName";
+
+    $sqlldr->setInfileName($cacheFileName);
+  }
+
   my $pid = $fifo->attachReader($sqlldrProcessString);
   $self->addActiveForkedProcess($pid);
 
   my $sqlldrInfileFh = $fifo->attachWriter();
+
+#  $sqlldr->setLineDelimiter($eorLiteral);
+#  $sqlldr->setFieldDelimiter($eocLiteral);
+  $sqlldr->writeConfigFile();
 
   return $fifo;
 }
@@ -1107,13 +1153,17 @@ sub dropTables {
   my $dbh = $self->getDbHandle();
 #  my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
 
-  my $sql = "select distinct s.internal_abbrev from ${SCHEMA}.study s where s.external_database_release_id = $extDbRlsId";
+  my $sql = "select distinct s.study_id, et.entity_type_id, s.internal_abbrev
+             FROM ${SCHEMA}.study s
+             INNER JOIN ${SCHEMA}.entitytype et
+             ON s.study_id = et.study_id
+             WHERE s.external_database_release_id = $extDbRlsId";
   $self->log("Looking for tables belonging to this study :\n$sql");
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  while(my ($s) = $sh->fetchrow_array()) {
-    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${s}", $dbh);
+  while(my ($s, $et, $internalAbbrev) = $sh->fetchrow_array()) {
+    &dropTablesLike(${SCHEMA}, "ATTRIBUTEVALUE_${internalAbbrev}", $dbh);
   }
   $sh->finish();
 }

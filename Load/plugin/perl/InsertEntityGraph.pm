@@ -237,7 +237,7 @@ sub run {
   $SCHEMA = $self->getArg('schema');
   $SCHEMA ||= 'EDA';
 
-  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 
@@ -391,6 +391,14 @@ sub createGusStudy {
   my $description = $study->getDescription();
   my $studyInternalAbbrev = $cleanedIdentifier;
   $studyInternalAbbrev =~ s/[-\.\s]/_/g; #clean name/id for use in oracle table name
+
+  # TODO:  This is a temporary solution for VDI Datasets.
+  # TODO:  because an investigation can have multiple studies, the study_stable_id or study internal abbrev should be set in the investigation.xml
+  my $vdiId = $ENV{VDI_ID};
+  if($vdiId) {
+    $cleanedIdentifier = $vdiId;
+  }
+
   return $self->getGusModelClass('Study')->new({stable_id => $cleanedIdentifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
 }
 sub ifNeededUpdateStudyMaxAttrLength {
@@ -433,9 +441,11 @@ sub addEntityTypeForNode {
 
   my $mtKey = join("_", $materialOrAssayType->getTerm, $isaType);
 
+
   if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
   }
+
 
   my $entityType = $self->getGusModelClass('EntityType')->new();
   $entityType->setStudyId($gusStudyId);
@@ -446,10 +456,32 @@ sub addEntityTypeForNode {
   $entityType->setName($gusOntologyTerm->getName());
 
   my $entityTypeInternalAbbrev = $entityType->getName();
-  $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
-  $entityTypeInternalAbbrev =~ s/\W//g;
-  $entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
 
+  # replace underscore with space
+  $entityTypeInternalAbbrev =~ s/[_]/ /g;
+  # capitalize first character for each word
+  $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
+
+  # shorten entity type abbrev by taking first 4 letters from each word
+  my @firstFourLetters = $entityTypeInternalAbbrev =~ /\b(\w{1,4})/g;
+  $entityTypeInternalAbbrev = join("", @firstFourLetters);
+
+  # remove non word characters like "-" or "'"
+  $entityTypeInternalAbbrev =~ s/\W//g;
+
+  # column names cannot start with numbers
+  $entityTypeInternalAbbrev = "et_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
+
+  # if we've already seen this exact abbrev, add a unique suffix
+  if($self->{_ENTITY_TYPE_ABBREVS}->{$entityTypeInternalAbbrev}) {
+    my $entityTypeUniquePrefix = scalar(keys(%{$self->{_ENTITY_TYPE_IDS}})) + 1;
+    $entityTypeInternalAbbrev = $entityTypeUniquePrefix . "_" . $entityTypeInternalAbbrev;
+  }
+
+  # entity abbrev cannot be longer than 25 characters else we risk postgres chopping table names
+  $entityTypeInternalAbbrev = substr($entityTypeInternalAbbrev, 0, 25);
+
+  # NOTE:  we are doing fancy stuff to make an abbreviated but human readable entity type name.  Also trying to be consistent for cross study comparisons
   $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
   $entityType->submit(undef, 1);
@@ -457,6 +489,7 @@ sub addEntityTypeForNode {
   my $id = $entityType->getId();
 
   $self->{_ENTITY_TYPE_IDS}->{$mtKey} = $id;
+  $self->{_ENTITY_TYPE_ABBREVS}->{$entityTypeInternalAbbrev} = 1;
 
   return $id;
 }
@@ -786,7 +819,7 @@ sub getOntologyTermGusObj {
     }
 
     my $gusOntologyTerm;
-    if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+    if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
       $gusOntologyTerm = GUS::Model::ApidbUserDatasets::OntologyTerm->new({ontology_term_id => $ontologyTermId});
     }
     else {
@@ -1019,7 +1052,7 @@ sub checkOntologyTermsAndFetchIds {
     $ncbiTaxon = 'PREFIX_WE_DONT_WANT';
   }
 
-  if(uc($SCHEMA) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
+  if(uc($SCHEMA) eq 'APIDBUSERDATASETS') {
     $TERM_SCHEMA = 'APIDBUSERDATASETS';
   }
 

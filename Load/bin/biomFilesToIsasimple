@@ -1,0 +1,394 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use JSON;
+use Data::Dumper;
+use File::Temp qw/tempfile tempdir/;
+
+
+
+use POSIX qw/strftime/;
+
+use File::Basename;
+
+my $REASONABLE_ID_LENGTH = 100;
+my %MATERIAL_TYPES;
+my %CHAR_QUALIFIERS;
+
+
+
+my %TAXON_LEVEL_PREFIXES = (0 => "k__",
+                            1 => "p__",
+                            2 => "c__",
+                            3 => "o__",
+                            4 => "f__",
+                            5 => "g__",
+                            6 => "s__",
+    );
+
+my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom - Relative Abundance",
+                     'EUPATH_0009252' => "Phylum - Relative Abundance",
+                     'EUPATH_0009253' => "Class - Relative Abundance",
+                     'EUPATH_0009254' => "Order - Relative Abundance",
+                     'EUPATH_0009255' => "Family - Relative Abundance",
+                     'EUPATH_0009256' => "Genus - Relative Abundance",
+                     'EUPATH_0009257' => "Species - Relative Abundance",
+                     'EUPATH_0009351' => "Kingdom - Absolute Abundance",
+                     'EUPATH_0009352' => "Phylum - Absolute Abundance",
+                     'EUPATH_0009353' => "Class - Absolute Abundance",
+                     'EUPATH_0009354' => "Order - Absolute Abundance",
+                     'EUPATH_0009355' => "Family - Absolute Abundance",
+                     'EUPATH_0009356' => "Genus - Absolute Abundance",
+                     'EUPATH_0009357' => "Species - Absolute Abundance",
+                     'MBIOTEMP_TAXON_SOURCE_ID' => "Taxon ID"
+    );
+
+my $taxonIdSourceID = "MBIOTEMP_TAXON_SOURCE_ID";
+
+my $relAbundanceSourceId = "EUPATH_0009250";
+my $relAbundanceDesc = "Relative taxonomic abundance analysis";
+
+my $data = $ARGV[0];
+my $metaDataJson = $ARGV[1];
+
+my $investigationDir = $ARGV[2];
+
+my $investigationName = basename $investigationDir;
+
+my $sourceFile = "source.tsv";
+my $ontologyTermsFile = "ontology_terms.txt";
+my $ontologyRelationshipsFile = "ontology_relationships.txt";
+my $ontologyMappingFile = "ontologyMapping.xml";
+my $sourceType = "Source";
+my $abundanceFile = "${investigationName}.${sourceType}.lineage_abundance.tsv";
+
+&printInvestigationXml($investigationDir, $sourceFile, $sourceType);
+
+open(FILE, $data) or die "Cannot open file $data for reading: $!";
+
+open(TERMS, ">$investigationDir/$ontologyTermsFile") or die "Cannot open file $investigationDir/$ontologyTermsFile for writing: $!";
+open(RELS, ">$investigationDir/$ontologyRelationshipsFile") or die "Cannot open file $investigationDir/$ontologyRelationshipsFile for writing: $!";
+open(MAP, ">$investigationDir/$ontologyMappingFile") or die "Cannot open file $investigationDir/$ontologyMappingFile for writing: $!";
+
+print TERMS &makeTermLine($sourceType, undef, 'mt');
+
+
+my $dataTsvFileReader = DataTsvFileReader->new($data, undef, qr/\t/);
+
+my $json;
+{
+    local $/;
+    open my $fh, '<', $metaDataJson or die "can't open $metaDataJson: $!";
+    $json = <$fh>;
+}
+
+
+# handle malformed JSON with NaN
+$json =~ s/(,?\s?)NaN(\s?,?)/$1"NA"$2/g;
+
+
+my $decodedJson = decode_json($json);
+
+# no longer need json string;
+$json = undef;
+
+my $variables = &getDistinctVariables($decodedJson->{columns});
+
+foreach(@$variables) {
+    print TERMS &makeTermLine($_, undef, 'char');
+}
+
+
+foreach(keys %taxaSourceIds) {
+    print TERMS &makeTermLine($_, $taxaSourceIds{$_}, 'taxa');
+}
+
+print TERMS &makeTermLine($relAbundanceSourceId, $relAbundanceDesc, 'taxa');
+
+my $sourceOut;
+open($sourceOut, ">$investigationDir/$sourceFile") or die "Cannot open file $investigationDir/$sourceFile for writing:$!";
+
+my $tsvOut;
+open($tsvOut, ">${investigationDir}/${abundanceFile}") or die "Cannot open file $abundanceFile for writing:$!";
+
+my @ids = map {$_->{id}} @{$decodedJson->{columns}};
+
+print $sourceOut "$sourceType\t" . join("\t", @$variables) . "\n";
+
+foreach my $col (@{$decodedJson->{columns}}) {
+    my $metadata = $col->{metadata};
+    my $id = $col->{id};
+
+    print $sourceOut "$id\t" . join("\t", map { $metadata->{$_} } @$variables) . "\n";
+}
+
+print $tsvOut "\t", join("\t", @ids) . "\n";
+
+
+my @possibleTaxonomyKeys;
+my $hasTaxonomyCount;
+
+if(scalar @{$decodedJson->{rows}} == 0 && scalar @{$decodedJson->{columns}} == 0) {
+    print STDERR "Error Parsing Biom File:  No data matrix found\n";
+    print STDOUT "Error Parsing Biom File:  No data matrix found\n";
+    exit(99);
+}
+
+
+for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
+
+    if($i == 0 && $decodedJson->{rows}->[$i]->{metadata}) {
+        @possibleTaxonomyKeys = sort grep { /taxon/i} keys %{$decodedJson->{rows}->[$i]->{metadata}};
+    }
+
+    my @taxonomyAr;
+    # taxonomy should be either 1 string OR list of taxa k->strain
+    if(scalar @possibleTaxonomyKeys == 1) {
+        my $taxonomyThing = $decodedJson->{rows}->[$i]->{metadata}->{$possibleTaxonomyKeys[0]};
+        if(ref($taxonomyThing) eq 'ARRAY') {
+            @taxonomyAr = @$taxonomyThing;
+        }
+        else {
+            @taxonomyAr = split(/[;|]/, $taxonomyThing);
+        }
+        $hasTaxonomyCount++;
+    }
+
+    elsif(scalar @possibleTaxonomyKeys > 1) {
+        @taxonomyAr = map { $decodedJson->{rows}->[$i]->{metadata}->{$_} || 'NA' } @possibleTaxonomyKeys;
+        $hasTaxonomyCount++;
+    }
+    else {
+        my $id = $decodedJson->{rows}->[$i]->{id};
+
+        @taxonomyAr = split(/[;|]/, $id);
+        if(scalar @taxonomyAr > 1) {
+            $hasTaxonomyCount++;
+        }
+
+
+#        if(length($taxonomyAr[0]) > $REASONABLE_ID_LENGTH) {
+#            die "This is not an ID.  It is too large:  $id "
+#        }
+
+    }
+
+    my @taxArrayFixed;
+    my %seenLevels;
+    for(my $t = 0; $t < scalar(@taxonomyAr); $t++) {
+        my $level = $taxonomyAr[$t];
+        my $origLevel = $level;
+
+        if(ref($level) eq "ARRAY") {
+            print STDERR "Error:  Multiple taxon hierarchies found in metadata:  " .  join(",", @possibleTaxonomyKeys);
+            print STDOUT "Error:  Multiple taxon hierarchies found in metadata:  " .  join(",", @possibleTaxonomyKeys);
+            exit(99);
+        }
+
+        # if the taxon string starts with a letter and two underscores... remove them
+#        $level =~ s/^\s?\w?__//;
+
+        $level = "NA" unless($level);
+
+        if($t == 0 && $level eq 'NA') {
+            $level = 'unclassified';
+        }
+        if($level =~ /^(\w__)?NA$/ || lc($level) =~ /^(\w__)?none$/ || $level =~ /^(\w__)$/) {
+            my $levelPrefix = $1;
+
+            $levelPrefix = $TAXON_LEVEL_PREFIXES{$t} unless($levelPrefix);
+
+            my $prevTax = $taxArrayFixed[$t-1];
+
+            $prevTax =~ s/^\s?(\w__)/$levelPrefix/;
+
+            my $fixed = $prevTax =~ /unclassified/ ? $prevTax : $prevTax . "_unclassified";
+
+            $level = $fixed;
+
+        }
+
+        if($seenLevels{$level}) {
+            push(@taxArrayFixed,  $level . "." .  $seenLevels{$level});
+        }
+        else {
+            push(@taxArrayFixed, $level);
+        }
+
+
+        $seenLevels{$level}++;
+    }
+
+
+
+    my @line;
+    push @line, join(";", @taxArrayFixed);
+
+
+    # peek one row ahead to make sure we are getting correct row
+    my @dataPeek = $dataTsvFileReader->getPeek();
+
+    my $hasData;
+    if($i == $dataPeek[0]) {
+        # this is good.  this is the data we want to print
+        my $groupOfLines = $dataTsvFileReader->readNextGroupOfLines();
+        my %data = ();
+
+        foreach my $line (@$groupOfLines) {
+            my $col = $line->[1];
+            my $val = $line->[2];
+            $data{$col} = $val;
+        }
+
+        for(my $j = 0; $j < @ids; $j++) {
+            $hasData = 1 if $data{$j};
+            push @line, $data{$j};
+        }
+        if($hasData) {
+            print $tsvOut join("\t", @line) . "\n";
+        }
+    }
+
+}
+
+close $tsvOut;
+close $sourceOut;
+close TERMS;
+
+
+unless($hasTaxonomyCount > 0) {
+    # die "Taxonomy information missing.  Only found IDs";
+    print STDERR "Taxonomy Missing.  Only found IDs\n";
+
+    # handle this as a VDI API compatible validation error
+    print STDOUT "Taxonomy information Missing.  Only found IDs\n";
+    exit(99);
+}
+
+print MAP "<ontologymappings>\n";
+
+foreach(keys %MATERIAL_TYPES) {
+    print MAP <<MT
+ <ontologyTerm source_id="${_}" type="materialType">
+    <name>$MATERIAL_TYPES{$_}</name>
+  </ontologyTerm>
+MT
+}
+foreach(keys %CHAR_QUALIFIERS) {
+    print MAP <<CHAR;
+  <ontologyTerm parent="Source" source_id="${_}" type="characteristicQualifier">
+    <name>$CHAR_QUALIFIERS{$_}</name>
+  </ontologyTerm>
+CHAR
+
+      print RELS "${_}\tsubClassOf\tMBIOTEMP_${sourceType}\n";
+}
+
+foreach(keys %taxaSourceIds) {
+    print MAP <<CHAR;
+  <ontologyTerm parent="Source" source_id="${_}" type="characteristicQualifier">
+        <name>$taxaSourceIds{$_}</name>
+        <name>${_}</name>
+   </ontologyTerm>
+CHAR
+
+      print RELS "${_}\tsubClassOf\t$relAbundanceSourceId\n";
+}
+
+print RELS "$relAbundanceSourceId\tsubClassOf\tMBIOTEMP_${sourceType}\n";
+
+print MAP "</ontologymappings>\n";
+
+sub printInvestigationXml {
+    my ($investigationDir, $sourceFile, $sourceType) = @_;
+
+    my $xml = <<XML;
+<investigation identifier="$investigationDir">
+
+  <study fileName="$sourceFile" identifierSuffix="-1">
+
+    <dataset>MicrobiomeStudyEDA_${investigationDir}_RSRC</dataset>
+    <node name="$sourceType" type="$sourceType" suffix="$sourceType" idColumn="$sourceType" />
+
+  </study>
+</investigation>
+XML
+
+    open(XML, ">$investigationDir/investigation.xml") or die "Cannot open file $investigationDir/investigation.xml for writing: $!";
+
+    print XML $xml;
+
+    close XML;
+}
+
+
+sub makeTermLine {
+    my ($term, $name, $type) = @_;
+
+    my $sourceId = "MBIOTEMP_$term";
+    $sourceId =~ s/[^a-zA-Z0-9._]/_/g;
+
+    if($type eq 'mt') {
+        $MATERIAL_TYPES{$sourceId} = $term;
+    }
+    elsif($type eq 'char') {
+        if($term eq 'Source') {
+            $sourceId .= "_CHARACTERISTIC";
+        }
+
+        $CHAR_QUALIFIERS{$sourceId} = $term;
+    }
+    elsif($type eq 'taxa') {}
+
+    else {
+        die "unhandled Type for variable: $term, Type=$type";
+    }
+
+    if($name) {
+        return "$term\t$name\n";
+    }
+
+    return "$sourceId\t$term\n";
+}
+
+sub getDistinctVariables {
+    my ($columns) = @_;
+
+    my %vars;
+
+    foreach(@$columns) {
+        my $metadata = $_->{metadata};
+
+        foreach(keys %$metadata) {
+            $vars{$_}++;
+        }
+    }
+
+    my @variables = keys %vars;
+
+    return \@variables
+}
+
+package DataTsvFileReader;
+use base qw(ApiCommonData::Load::FileReader);
+
+
+use strict;
+
+
+# @OVERRIDE
+sub isSameGroup {
+  my ($self, $a, $b) = @_;
+
+  return $a->[0] == $b->[0];
+}
+
+# @OVERRIDE
+sub skipLine {
+  return 0;
+}
+
+
+1;

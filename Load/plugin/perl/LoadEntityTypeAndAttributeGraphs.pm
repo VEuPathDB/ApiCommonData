@@ -142,7 +142,7 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
 
-  $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
+  $self->getQueryHandle()->do("SET DateStyle = 'ISO, YMD'") or $self->error($self->getQueryHandle()->errstr);
 
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
@@ -308,9 +308,9 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
     foreach my $collection (@$yaml) {}
   }
 
-  my $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), nvl(os.definition, ot.definition)) as description";
+  my $definitionSql = "COALESCE((ap.props::json -> 'definition' ->> 0)::text, COALESCE(os.definition, ot.definition)) as description";
   if($noCommonDef){
-    $definitionSql = "nvl(json_value(ap.props, '\$.definition[0]'), os.definition) as description";
+    $definitionSql = "COALESCE((ap.props::json -> 'definition' ->> 0)::text, os.definition) as description";
   }
 
   my $sql = "
@@ -322,20 +322,13 @@ select s.study_id
      , p.out_entity_id as out_entity_id
      , ot.entity_type_id out_entity_type_id
 from $SCHEMA.processattributes p
-   , $SCHEMA.entityclassification i
-   , $SCHEMA.entityclassification o
-   , $SCHEMA.entitytype it
-   , $SCHEMA.study s
-   , $SCHEMA.entitytype ot
-   , ${TERM_SCHEMA}.ontologyterm iot
+inner join $SCHEMA.entityclassification i ON p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
+inner join $SCHEMA.entitytype it ON it.ENTITY_TYPE_ID = i.entity_type_id
+inner join $SCHEMA.study s ON it.STUDY_ID = s.study_id
+inner join $SCHEMA.entitytype ot ON ot.STUDY_ID = s.study_id
+inner join $SCHEMA.entityclassification o ON ot.entity_type_id = o.entity_type_id and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID
+RIGHT join ${TERM_SCHEMA}.ontologyterm iot ON it.type_id = iot.ontology_term_id
 where s.study_id = $studyId
-and it.STUDY_ID = s.study_id
-and ot.STUDY_ID = s.study_id
-and it.ENTITY_TYPE_ID = i.entity_type_id
-and ot.entity_type_id = o.entity_type_id
-and p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
-and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID
-and it.type_id = iot.ontology_term_id (+)
 ),
 processCounts as (select in_entity_type_id
                        , out_entity_type_id
@@ -348,44 +341,48 @@ processCounts as (select in_entity_type_id
 )
 select DISTINCT p.parent_id
      , p.parent_stable_id
-     , nvl(json_value(ap.props, '\$.displayName[0]'), nvl(json_value(ap.props, '\$.label[0]'), nvl(os.ontology_synonym, t.name))) as display_name
+     , COALESCE((ap.props::json -> 'displayName' ->> 0)::text
+         , COALESCE((ap.props::json -> 'label' ->> 0)::text
+             , COALESCE(os.ontology_synonym, t.name))) as display_name
      , t.entity_type_id
      , t.internal_abbrev
      , ot.source_id as stable_id
      , $definitionSql
      , s.study_id
      , s.stable_id as study_stable_id
-     , nvl(json_value(ap.props, '\$.display_name_plural[0]'), nvl(json_value(ap.props, '\$.plural[0]'), os.plural)) as display_name_plural
+     , COALESCE((ap.props::json -> 'display_name_plural' ->> 0)::text
+         , COALESCE((ap.props::json -> 'plural' ->> 0)::text
+             , os.plural)) as display_name_plural
      , t.cardinality
      , 0 as has_attribute_collections
      , case when maxProcessCountPerEntity.maxOutputCount is null then null
             when maxProcessCountPerEntity.maxOutputCount = 0 then null
             when maxProcessCountPerEntity.maxOutputCount = 1 then 0
            else 1 end as is_many_to_one_with_parent
-from  (select distinct study_id
-                     , in_stable_type_id as parent_stable_id
-                     , in_entity_type_id as parent_id
-                     , out_entity_type_id as entity_type_id
-       from process) p
-   , (select in_entity_type_id
-                       , out_entity_type_id
-                       , max(ct) as maxOutputCount
-     from processCounts
-     group by in_entity_type_id
-            , out_entity_type_id) maxProcessCountPerEntity
-   , $SCHEMA.entitytype t
-   , $SCHEMA.study s
-   , ${TERM_SCHEMA}.ontologyterm ot
-   , (select * from ${TERM_SCHEMA}.ontologysynonym where external_database_release_id = $ontologyExtDbRlsId) os
-   , (select * from ${SCHEMA}.annotationproperties where external_database_release_id = $extDbRlsId) ap
+from $SCHEMA.study s
+INNER JOIN $SCHEMA.entitytype t ON s.study_id = t.study_id
+LEFT JOIN (select distinct study_id
+                , in_stable_type_id as parent_stable_id
+                , in_entity_type_id as parent_id
+                , out_entity_type_id as entity_type_id
+           from process) p ON t.entity_type_id = p.entity_type_id
+LEFT JOIN (select in_entity_type_id
+                , out_entity_type_id
+                , max(ct) as maxOutputCount
+           from processCounts
+           group by in_entity_type_id
+                  , out_entity_type_id
+          ) maxProcessCountPerEntity ON t.entity_type_id = maxProcessCountPerEntity.out_entity_type_id
+LEFT JOIN ${TERM_SCHEMA}.ontologyterm ot ON t.type_id = ot.ontology_term_id
+LEFT JOIN (select *
+           from ${TERM_SCHEMA}.ontologysynonym
+           where external_database_release_id = $ontologyExtDbRlsId
+          ) os ON ot.ontology_term_id = os.ontology_term_id
+LEFT JOIN (select *
+           from ${SCHEMA}.annotationproperties
+           where external_database_release_id = $extDbRlsId
+          ) ap ON ot.ontology_term_id = ap.ontology_term_id
 where s.study_id = $studyId 
- and s.study_id = t.study_id
- and t.entity_type_id = maxProcessCountPerEntity.out_entity_type_id (+)
- and t.entity_type_id = p.entity_type_id (+)
-and t.entity_type_id = out_entity_type_id (+)
- and t.type_id = ot.ontology_term_id (+)
- and ot.ontology_term_id = os.ontology_term_id (+)
- and ot.ontology_term_id = ap.ontology_term_id (+)
 ";
 
   my $sh = $dbh->prepare($sql);

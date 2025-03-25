@@ -27,7 +27,7 @@ use CBIL::Util::Utils;
 use List::Util qw(min max);
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 use File::Basename;
-use CBIL::TranscriptExpression::SplitBamUniqueNonUnique qw(splitBamUniqueNonUnique);
+use CBIL::StudyAssayResults::SplitBamUniqueNonUnique qw(splitBamUniqueNonUnique);
 use Data::Dumper;
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
@@ -42,7 +42,7 @@ my %hash;
 my ($inputDir, $strandSpecific, $topLevelSeqSizeFile, $isPairedEnd); 
 
 &GetOptions("inputDir=s"            => \$inputDir,
-            "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
+            "seqSizeFile=s" => \$topLevelSeqSizeFile,
             "strandSpecific!"       => \$strandSpecific,
 	    "isPairedEnd!" => \$isPairedEnd
  );

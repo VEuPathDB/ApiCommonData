@@ -25,7 +25,7 @@ select distinct create_index as "-- create_index"
 from (select 'create index ' || acc.owner || '.' || substr(acc.table_name, 1, 23)
              || '_revix' || mod(rownum, 10) ||' on ' || acc.owner || '.'
              || acc.table_name || ' (' || acc.column_name || ', '
-             || nvl(pks.column_name, '??PK??') || ') tablespace indx /* constraint '
+             || nvl(pks.column_name, '??PK??') || ') /* constraint '
              || ac.owner || '.' || ac.constraint_name || ' */ ;'
              as create_index
       from all_cons_columns acc, all_constraints ac,

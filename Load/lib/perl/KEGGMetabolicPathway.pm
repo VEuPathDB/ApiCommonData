@@ -21,7 +21,7 @@ sub makeGusObjects {
 
   my $reader = $self->getReader();
   my $pathwayHash = $reader->getPathwayHash();
-  print STDERR Dumper $pathwayHash;
+  # print STDERR Dumper $pathwayHash;
 
   my $typeToTableMap = {compound => 'chEBI::Compounds', enzyme => 'SRes::EnzymeClass', reaction => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
   my $typeToOntologyTerm = {compound => 'molecular entity', map => 'metabolic process', enzyme => 'enzyme', reaction => 'enzyme'};

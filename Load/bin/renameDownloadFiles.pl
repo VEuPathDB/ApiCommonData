@@ -67,13 +67,13 @@ foreach my $folder (@folders) {
 }
 
 
-## change txt,transcriptExpression and gaf files
+## change txt,StudyAssayResults and gaf files
 ## all are appended with annotation version
 my $folderString = "$stagingDir/$project/$workflowVersion/real/downloadSite/$project/release-CURRENT/*/gaf";
 my @folders = glob($folderString);
 $folderString = "$stagingDir/$project/$workflowVersion/real/downloadSite/$project/release-CURRENT/*/txt";
 push @folders, glob($folderString);
-$folderString = "$stagingDir/$project/$workflowVersion/real/downloadSite/$project/release-CURRENT/*/transcriptExpression";
+$folderString = "$stagingDir/$project/$workflowVersion/real/downloadSite/$project/release-CURRENT/*/StudyAssayResults";
 push @folders, glob($folderString);
 
 foreach my $folder (@folders) {
@@ -81,7 +81,7 @@ foreach my $folder (@folders) {
     if ($folder =~ /release-CURRENT\/([^\/]+)\//) {
 	$currentOrganism = $1;
 	if (! exists $organisms->{$currentOrganism}) {
-	    print "ERROR: This organism has a transcriptExpression, txt, or gaf folder but is not in the database.\n";
+	    print "ERROR: This organism has a StudyAssayResults, txt, or gaf folder but is not in the database.\n";
 	    print "Folder: $folder\nOrganism: $currentOrganism\n";
 	    exit;
 	}

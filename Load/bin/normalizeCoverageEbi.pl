@@ -6,7 +6,7 @@ use CBIL::Util::Utils;
 use List::Util qw(min max);
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 use File::Basename;
-use CBIL::TranscriptExpression::SplitBamUniqueNonUnique qw(splitBamUniqueNonUnique);
+use CBIL::StudyAssayResults::SplitBamUniqueNonUnique qw(splitBamUniqueNonUnique);
 use Data::Dumper;
 use Cwd;
 
@@ -18,7 +18,7 @@ my %hash;
 my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix, $analysisConfig);
 
 &GetOptions("inputDir=s"            => \$inputDir,
-            "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
+            "seqSizeFile=s" => \$topLevelSeqSizeFile,
             "analysisConfig=s"      => \$analysisConfig,
             "seqIdPrefix=s"         => \$seqIdPrefix
  );
@@ -38,7 +38,14 @@ die $usage unless -e $topLevelSeqSizeFile;
 die $usage unless -e $analysisConfig;
 
 my $samplesHash = displayAndBaseName($analysisConfig);
-   
+
+
+# input dir will have subdirectories results,tpm,and analisis_output
+my $artifactsDirName = "results";
+
+# let's write all of our output to this directory
+my $workingDirectory = "${inputDir}/normalize_coverage";
+mkdir $workingDirectory;
 
 my %dealingWithReps;
 
@@ -46,7 +53,7 @@ my $mappingStatsBasename = "mappingStats.txt";
 
 foreach my $groupKey (keys %$samplesHash) {
     my @samples = @{$samplesHash->{$groupKey}->{samples}};
-    my @mappingStatsFiles = map {"$inputDir/${_}"} @samples;
+    my @mappingStatsFiles = map {"$inputDir/${artifactsDirName}/${_}"} @samples;
 
     if(scalar @mappingStatsFiles > 1) {
         push @{$dealingWithReps{$groupKey}}, @mappingStatsFiles;
@@ -54,16 +61,17 @@ foreach my $groupKey (keys %$samplesHash) {
     else {
         my $directory_short = $mappingStatsFiles[0];
         $directory_short=~ s/$inputDir\///;
-        $directory_short = "analyze_$directory_short";
+        $directory_short = "$directory_short";
         $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
     } 
 }
- 
+
+
 foreach my $expWithReps (keys %dealingWithReps) {
 
     my $count = 0;
     my %scoreHash;
-    my $exp_dir = "$inputDir/analyze_$expWithReps"."_combined";
+    my $exp_dir = "$workingDirectory/$expWithReps"."_combined";
     my $cmd = "mkdir -p $exp_dir";
     &runCmd($cmd);
     my $listOfUniqueRepBwFiles;
@@ -122,7 +130,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
         &runCmd($cmd);
     }
     my $direct= $exp_dir;
-    $direct =~ s/$inputDir\///;
+    $direct =~ s/$workingDirectory//;
 	$hash{$direct} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
 
@@ -133,34 +141,34 @@ foreach my $expWithReps (keys %dealingWithReps) {
 sub merge_normalized_coverage {
     my $hash = shift;
     while(my ($k, $v) = each %$hash) {  # $k is exp directory; %v is sum_coverage
-        my $dir = "$inputDir/$k/normalized";
+        my $dir = "$workingDirectory/$k/normalized";
         if(!-e "$dir/final") {
             &runCmd("mkdir $dir/final");
         }
         my $cwd = getcwd;
-        chdir "$inputDir/$k/normalized/";
+        chdir "$workingDirectory/$k/normalized/";
         my @bedFiles = glob "*.bed";
         chdir "$cwd";
      	foreach my $bedFile (@bedFiles) {
      	    my $baseBed = basename $bedFile;
      	    my $bwFile = $baseBed;
      	    $bwFile =~ s/\.bed$/.bw/;
-    
-            &sortBedGraph("$inputDir/$k/normalized/$baseBed");
-     	    &runCmd("bedGraphToBigWig $inputDir/$k/normalized/$baseBed $topLevelSeqSizeFile $inputDir/$k/normalized/final/$bwFile"); 
+
+            &sortBedGraph("$workingDirectory/$k/normalized/$baseBed");
+     	    &runCmd("bedGraphToBigWig $workingDirectory/$k/normalized/$baseBed $topLevelSeqSizeFile $workingDirectory/$k/normalized/final/$bwFile");
      	}
     }
 }
 
-
 sub sortBedGraph {
   my $bedFile = shift;
 
-  my $cmd = "mv $bedFile ${bedFile}.tmp; LC_COLLATE=C sort -k1,1 -k2,2n ${bedFile}.tmp > $bedFile; rm ${bedFile}.tmp"; 
+  my $cmd = "mv $bedFile ${bedFile}.tmp; LC_COLLATE=C sort -k1,1 -k2,2n ${bedFile}.tmp > $bedFile; rm ${bedFile}.tmp";
   &runCmd($cmd);
 
   return $bedFile;
 }
+
 
 # # updates coverage file - score * normalization_ratio
 # # save updated coverage file to the new 'normalized' directory
@@ -171,14 +179,18 @@ sub update_coverage {
     foreach my $k (keys %hash2) {  # $k is exp directory; $v is sum_coverage  
         my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
         my $kIn;
-        if ($k =~ /analyze_(.+)_combined/) {
+        if ($k =~ /(.+)_combined/) {
             $kIn = $k;
-        } elsif ($k =~ /analyze_(.+)/) {
-            ($kIn = $k) =~ s/analyze_//;
+        } elsif ($k =~ /(.+)/) {
+            $kIn = $k;
         }
-        my $out_dir = "$inputDir/$k/normalized";;
+        my $out_dir = "$workingDirectory/$k/normalized";;
         my $dir_open = $inputDir."/".$kIn;
-        opendir(D, $dir_open);
+
+
+        print "OUT_DIR=$out_dir\n";
+        print "DIR_OPEN=$dir_open\n";
+        opendir(D, $dir_open) or die "Cannot open dir $dir_open for reading: $!";
         my @fs = readdir(D);
         my $cmd = "mkdir -p $out_dir";
         if(!-e $out_dir) {
@@ -187,7 +199,7 @@ sub update_coverage {
         
         my $normFactor = 1;
 
-        if($k =~ /analyze_(.+)_combined/) {
+        if($k =~ /(.+)_combined/) {
           if($samplesHash->{$1}->{samples}) {
             $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
           }
@@ -198,13 +210,13 @@ sub update_coverage {
         
         foreach my $f (@fs) {
             next if $f !~ /\.bed$/i;
-            open(F, "$inputDir/$kIn/$f");
-            open OUT, ">$out_dir/$f";
+            open(F, "$inputDir/$kIn/$f") or die "cannot open file $inputDir/${artifactsDirName}/$kIn/$f for reading: $!";
+            open OUT, ">$out_dir/$f" or die "Cannot open file $out_dir/$f for writing: $!";
             my $outputFile = $f;
             my $bamfile = $f;
             $bamfile =~ s/\.bed$/.bam/;
             $outputFile =~ s/\.bed$/_unlogged.bed/;
-            open OUTUNLOGGED, ">$out_dir/$outputFile";
+            open OUTUNLOGGED, ">$out_dir/$outputFile" or die "cannot open file $out_dir/$outputFile for writing :$!";
             my $coverage = $hash2{$k}{$bamfile}->[0];
             my $avgReadLength = $hash2{$k}{$bamfile}->[1];
 
@@ -239,7 +251,7 @@ sub getCountHash {
     my %hash;
     my $d = shift;
     my $f = shift;
-    open my $IN, "$d/$f" or die "cant find mapping file $d/$f\n\n\n";
+    open my $IN, "$d/$f" or die "cant open mapping file $d/$f\n\n\n";
     while(my $line = <$IN>) {
 	chomp $line;
 	if ($line =~ /^file/) {

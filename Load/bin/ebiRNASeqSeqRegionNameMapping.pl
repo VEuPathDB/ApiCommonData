@@ -16,6 +16,7 @@ my ($help, $samplesDirectory, $gusConfigFile, $organismAbbrev);
 &GetOptions('help|h' => \$help,
             'samples_directory=s' => \$samplesDirectory,
             'organism_abbrev=s' => \$organismAbbrev,
+            'gusConfigFile=s' => \$gusConfigFile,
             );
 
 &usage("Sample directory does not exist") unless -d $samplesDirectory;
@@ -23,7 +24,7 @@ my ($help, $samplesDirectory, $gusConfigFile, $organismAbbrev);
 
 chomp $organismAbbrev;
 
-my $map = getGenomicSequenceIdMapSql($organismAbbrev);
+my $map = getGenomicSequenceIdMapSql($organismAbbrev, $gusConfigFile);
 
 foreach my $bed (glob "$samplesDirectory/*/*.bed") {
   my $oldBed = "$bed.old";

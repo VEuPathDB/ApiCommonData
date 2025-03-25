@@ -8,13 +8,12 @@ use Getopt::Long;
 use File::Temp qw/ tempfile /;
 
 use DBI;
-use DBD::Oracle;
 
 use CBIL::Util::PropertySet;
 
 my $databaseName = "core";
 
-my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile, $organismAbbrev);
+my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile, $organismAbbrev);
 
 &GetOptions('help|h' => \$help,
             'container_name=s' => \$containerName,
@@ -22,7 +21,6 @@ my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $schemaDe
             'socket_directory=s' => \$socketDir, 
             'mysql_directory=s' => \$dataDir,
             'output_directory=s' => \$outputDir,
-            'schema_definition_file=s' => \$schemaDefinitionFile,
             'chromosome_map_file=s' => \$chromosomeMapFile,
             'dataset_name=s' => \$datasetName,
             'dataset_version=s' => \$datasetVersion,
@@ -33,11 +31,6 @@ my ($help, $containerName, $initDir, $dataDir, $socketDir, $outputDir, $schemaDe
             'gusConfigFile=s' => \$gusConfigFile,
             'organism_abbrev=s' => \$organismAbbrev,
             );
-
-##Create db handle
-if(!$gusConfigFile) {
-  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-}
 
 &usage("Config file $gusConfigFile does not exist.") unless -e $gusConfigFile;
 
@@ -71,11 +64,9 @@ foreach($initDir,$dataDir,$outputDir,$socketDir) {
   }
 }
 
-foreach($schemaDefinitionFile, $chromosomeMapFile) {
-  unless(-e $_) {
-    &usage();
-    die "file $_ does not exist";
-  }
+unless(-e $chromosomeMapFile) {
+  &usage();
+  die "file $chromosomeMapFile does not exist";
 }
 
 foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName, $projectRelease, $organismAbbrev, $ebi2gusVersion) {
@@ -86,7 +77,7 @@ foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName,
 }
 
 sub usage {
-  print "ebiDumper.pl -init_directory=DIR --mysql_directory=DIR --output_directory=DIR --schema_definition_file=FILE --chromosome_map_file=FILE container_name=s dataset_name=s dataset_version=s ncbi_tax_id=s\n";
+  print "ebiDumper.pl -init_directory=DIR --mysql_directory=DIR --output_directory=DIR --chromosome_map_file=FILE container_name=s dataset_name=s dataset_version=s ncbi_tax_id=s\n";
 }
 
 
@@ -102,7 +93,7 @@ if($containerExists) {
   die "There is an existing container named $containerName";
 }
 
-my $mysqlServiceCommand = "singularity instance start --bind ${schemaDefinitionFile}:/usr/local/etc/gusSchemaDefinitions.xml --bind ${outputDir}:/tmp --bind ${registryFn}:/usr/local/etc/ensembl_registry.conf --bind ${socketDir}:/run/mysqld --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus:${ebi2gusVersion} $containerName";
+my $mysqlServiceCommand = "singularity instance start --bind ${outputDir}:/tmp --bind ${registryFn}:/usr/local/etc/ensembl_registry.conf --bind ${socketDir}:/run/mysqld --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus:${ebi2gusVersion} $containerName";
 
 system($mysqlServiceCommand) == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
@@ -179,8 +170,11 @@ and d.external_database_id = r.external_database_id";
   $sh->execute($dbName);
 
   my ($rv) = $sh->fetchrow_array();
-
   $sh->finish();
+
+  unless ( defined $rv ) {
+    $rv = "N/A";
+  }
 
   return $rv;
 }

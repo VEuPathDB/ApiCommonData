@@ -1,5 +1,5 @@
 package ApiCommonData::Load::IntronJunctions;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 
 use strict;
 use CBIL::Util::V;

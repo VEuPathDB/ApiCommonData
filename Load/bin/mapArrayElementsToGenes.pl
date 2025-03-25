@@ -31,7 +31,21 @@ use GUS::Community::GeneModelLocations;
 
 use Data::Dumper;
 
-my ($gusConfigFile);
+my ($geneExtDbSpec,$aefExtDbSpec,$aefSense,$outputFile,$delimiter,$gusConfigFile);
+
+&GetOptions('aefExtDbSpec=s' => \$aefExtDbSpec,
+            'geneExtDbSpec=s' => \$geneExtDbSpec,
+            'aefSense=s' =>\$aefSense,
+            'outputFile=s' =>\$outputFile,
+            'delimiter=s' => \$delimiter,
+            'gusConfigFile=s' => \$gusConfigFile,
+           );
+
+die "ERROR: Please provide a valid External Database Spec ('name|version') for the Array Element Features"  unless ($aefExtDbSpec);
+die "ERROR: Please provide a valid External Database Spec ('name|version') for Gene Features" unless ($geneExtDbSpec);
+die "ERROR: Please provide a valid sense/direction ('sense','anitsense' or 'either') for the Array Element Features" unless (lc($aefSense) eq 'sense' || lc($aefSense) eq 'antisense' || lc($aefSense) eq 'either' );
+die "ERROR: Please provide a valid delimiter ('\\t', ',') for the Array Element Features" unless $delimiter eq '\t' || $delimiter eq ',';
+
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
 unless(-e $gusConfigFile) {
@@ -48,22 +62,6 @@ my $pw = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 #----------------------------------------------------------------------
-
-my ($geneExtDbSpec,$aefExtDbSpec,$aefSense,$outputFile,$delimiter);
-
-&GetOptions('aefExtDbSpec=s' => \$aefExtDbSpec,
-            'geneExtDbSpec=s' => \$geneExtDbSpec,
-            'aefSense=s' =>\$aefSense,
-            'outputFile=s' =>\$outputFile,
-            'delimiter=s' => \$delimiter,
-           );
-
-die "ERROR: Please provide a valid External Database Spec ('name|version') for the Array Element Features"  unless ($aefExtDbSpec);
-die "ERROR: Please provide a valid External Database Spec ('name|version') for Gene Features" unless ($geneExtDbSpec);
-die "ERROR: Please provide a valid sense/direction ('sense','anitsense' or 'either') for the Array Element Features" unless (lc($aefSense) eq 'sense' || lc($aefSense) eq 'antisense' || lc($aefSense) eq 'either' );
-die "ERROR: Please provide a valid delimiter ('\\t', ',') for the Array Element Features" unless $delimiter eq '\t' || $delimiter eq ',';
-
-
 my $geneExtDbRlsId = getDbRlsId($geneExtDbSpec);
 my $aefExtDbRlsId = getDbRlsId($aefExtDbSpec);
 

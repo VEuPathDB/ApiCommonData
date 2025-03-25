@@ -1,24 +1,4 @@
 package ApiCommonData::Load::Plugin::InsertProductFromTabFile;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -37,6 +17,8 @@ use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
 use GUS::Model::SRes::OntologyTerm;
+use GUS::Supported::OntologyLookup;
+
 # ----------------------------------------------------------
 # Load Arguments
 # ----------------------------------------------------------
@@ -44,6 +26,13 @@ use GUS::Model::SRes::OntologyTerm;
 sub getArgsDeclaration {
   my $argsDeclaration  =
     [
+     fileArg({name           => 'soGusConfigFile',
+              descr          => 'The gus config file for database containing SO term info',
+              reqd           => 0,
+              mustExist      => 0,
+              format         =>'TXT',
+              constraintFunc => undef,
+              isList         => 0 }),
      fileArg({ name => 'file',
 	       descr => 'tab delimited file containing gene or transcript identifiers and product names',
 	       constraintFunc=> undef,
@@ -229,6 +218,7 @@ sub makeTranscriptProduct {
 }
 
 sub makeGeneFeatureProduct {
+
   my ($self,$geneReleaseId,$naFeatId,$product,$preferred, $pmid, $evCode, $with, $assignedBy) = @_;
 
   my $evCodeLink = getEvidCodeLink ($self, $evCode) if ($evCode);
@@ -254,15 +244,27 @@ sub getEvidCodeLink {
   my ($self, $evCodeName) = @_;
 
   my $evCodeLink;
+
+  my $soGusConfigFile = $self->getArg('soGusConfigFile') if ($self->getArg('soGusConfigFile'));
+  my $soExtDbSpec = "GO_evidence_codes_RSRC|%";
+  my $soLookup = GUS::Supported::OntologyLookup->new($soExtDbSpec, $soGusConfigFile);
+  my $soSourceId = $soLookup->getSourceIdFromName($evCodeName);
+  unless($soSourceId) {
+    $self->error("Could not determine sourceId from evidence code: $evCodeName\n");
+  }
+
+  my $goecExtDbRlsId= $self->getOrCreateExtDbAndDbRls("GO_evidence_codes_RSRC", "N/A");
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new ({
-						       'source_id' => $evCodeName
+						       'name' => $evCodeName,
+						       'source_id' => $soSourceId,
+                                                       'external_database_release_id' => $goecExtDbRlsId
 						       });
 
-  if ($ontologyTerm->retrieveFromDB()) {
-    $evCodeLink = $ontologyTerm->getOntologyTermId();
-  } else {
-    $self->log ("ERROR", "Evidence code $evCodeName does not exists in SRes::OntologyTerm table");
+  unless ($ontologyTerm->retrieveFromDB()) {
+    $self->log ("WARNING", "Evidence code $evCodeName does not exists in SRes::OntologyTerm table... adding");
+    $ontologyTerm->submit();
   }
+  $evCodeLink = $ontologyTerm->getOntologyTermId();
 
   return $evCodeLink;
 }
@@ -286,17 +288,13 @@ sub InsertExternalDatabase{
     my $sth = $self->prepareAndExecute($sql);
     $extDbId = $sth->fetchrow_array();
 
-    if ($extDbId){
-	print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
-    }
-
-    else {
+    unless ($extDbId){
 	my $newDatabase = GUS::Model::SRes::ExternalDatabase->new({
 	    name => $dbName,
 	   });
 	$newDatabase->submit();
 	$extDbId = $newDatabase->getId();
-	print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
+	print STDERR "created new entry for database $dbName with primary key $extDbId\n";
     }
     return $extDbId;
 }
@@ -305,13 +303,9 @@ sub InsertExternalDatabaseRls{
 
     my ($self,$dbName,$dbVer,$extDbId) = @_;
 
-    my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
+    my $extDbRlsId = $self->releaseAlreadyExists($dbName, $extDbId,$dbVer);
 
-    if ($extDbRlsId){
-	print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
-    }
-
-    else{
+    unless ($extDbRlsId){
         $extDbRlsId = $self->makeNewReleaseId($extDbId,$dbVer);
 	print STDERR "Created new release id for $dbName with version $dbVer and release id $extDbRlsId\n";
     }
@@ -320,12 +314,20 @@ sub InsertExternalDatabaseRls{
 
 
 sub releaseAlreadyExists{
-    my ($self, $extDbId,$dbVer) = @_;
+    my ($self, $dbName, $extDbId,$dbVer) = @_;
 
-    my $sql = "select external_database_release_id 
+    my $sql;
+
+    if ($dbName =~ /GO_evidence_codes_RSRC/i || $dbName =~ /SO_RSRC/i) {
+      $sql = "select external_database_release_id 
+               from SRes.ExternalDatabaseRelease
+               where external_database_id = $extDbId";
+    } else {
+      $sql = "select external_database_release_id 
                from SRes.ExternalDatabaseRelease
                where external_database_id = $extDbId
                and version = '$dbVer'";
+    }
 
     my $sth = $self->prepareAndExecute($sql);
     my ($relId) = $sth->fetchrow_array();
@@ -361,6 +363,7 @@ sub makeNewReleaseId{
 sub undoTables {
   return ('ApiDB.TranscriptProduct',
 	  'ApiDB.GeneFeatureProduct',
+	  'SRes.OntologyTerm',
 	  'SRes.ExternalDatabaseRelease',
 	  'SRes.ExternalDatabase',
 	 );

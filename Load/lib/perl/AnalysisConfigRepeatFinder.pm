@@ -2,7 +2,7 @@ package ApiCommonData::Load::AnalysisConfigRepeatFinder;
 use strict;
 use warnings;
 
-use CBIL::TranscriptExpression::XmlParser;
+use CBIL::StudyAssayResults::XmlParser;
 
 use Data::Dumper;
 
@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(displayAndBaseName);
 sub displayAndBaseName {
   my ($analysisConfig) = @_;
 
-  my $xmlParser = CBIL::TranscriptExpression::XmlParser->new($analysisConfig);
+  my $xmlParser = CBIL::StudyAssayResults::XmlParser->new($analysisConfig);
   my $nodes = $xmlParser->parse();
 
   my $order = "000";

@@ -1,10 +1,10 @@
 package ApiCommonData::Load::OTUAnalysis;
-use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+use base qw(CBIL::StudyAssayResults::DataMunger::Loadable);
 
 use strict;
 
-use CBIL::TranscriptExpression::Error;
-use CBIL::TranscriptExpression::Utils;
+use CBIL::StudyAssayResults::Error;
+use CBIL::StudyAssayResults::Utils;
 
 use ApiCommonData::Load::AlphaDiversityStats;
 
@@ -108,7 +108,7 @@ sub parseBiomFile {
 
 file_input = "$inputFile";
 file_output = "$dataFile";
-#source("$ENV{GUS_HOME}/lib/R/TranscriptExpression/parse_biom.R");
+#source("$ENV{GUS_HOME}/lib/R/StudyAssayResults/parse_biom.R");
 library(biomformat)
 biom.obj = read_biom(file_input);
 

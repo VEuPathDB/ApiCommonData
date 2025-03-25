@@ -1,0 +1,61 @@
+#!/usr/bin/perl
+
+use strict;
+use Data::Dumper;
+
+
+my ($inputFile, $outputFile, $orthomclTaxonAbbrev) = @ARGV;
+
+usage() unless $inputFile && $outputFile && $orthomclTaxonAbbrev;
+
+open(IN, $inputFile) || die "Can't open input file $inputFile \n";
+open(OUT, ">$outputFile") || die "Can't open output file '$outputFile'\n";
+
+=head
+
+The original Uniprot file is formatted like this:
+GENE           EC_first; EC_second; etc
+Q54W07         3.6.-.-; 2.7.11.1
+
+The format needs to change to:
+dicd|Q54W07    3.6.-.-
+dicd|Q54W07    2.7.11.1
+ 
+=cut
+
+my %geneEcCount;
+
+while (<IN>) {
+    my $line = $_;
+    chomp $line;
+    my @geneEC = split /\s*\t\s*/, $line;
+    my $gene = $geneEC[0];
+    my @ecNumbers = split /;\s*/, $geneEC[1];
+    foreach my $ecNumber (@ecNumbers) {
+	if ($ecNumber =~ /[0-9]{1,3}(\.(\-|[0-9]{1,3})){3}/) {
+	    if (!$geneEcCount{$gene.$ecNumber}) {
+		print OUT "$orthomclTaxonAbbrev|$gene\t$ecNumber\n";
+		$geneEcCount{$gene.$ecNumber}=1;
+	    }
+	}
+    }
+}
+
+close IN;
+close OUT;
+
+
+sub usage {
+
+die "
+Parse downloadedfile from Vectorbase Biomart that contains gene IDs and EC numbers.
+
+Usage: inputDownloadFile outputTabFile orthomclTaxonAbbrev
+
+Where:
+  inputDownloadFile:  a file downloaded from Vectorbase Biomart.
+  outputTabFile: two columns ID and EC number.  One line per EC assignment.
+  orthomclTaxonAbbrev: to be prepended on the EuPathDB ID
+
+";
+}
