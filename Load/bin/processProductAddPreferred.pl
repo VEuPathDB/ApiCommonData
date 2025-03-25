@@ -63,7 +63,7 @@ foreach my $k (sort keys %products) {
 
     ## assign source as assigned_by only when there is no assigned_by available in input file
     if ($#pValue < 4) {
-      print OUT "$assignedBy\n";
+      ($assignedBy =~ /\_DELETED\_/) ? print OUT "\n" : print OUT "$assignedBy\n";
     } else {
       print OUT "$pValue[4]\n";
     }

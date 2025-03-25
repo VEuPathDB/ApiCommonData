@@ -645,15 +645,50 @@ sub addGeohashAndGadm {
 
   my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
   my $longitudeSourceId = ${ApiCommonData::Load::StudyUtils::longitudeSourceId};
+  my $genbankCountrySourceId = ${ApiCommonData::Load::StudyUtils::genbankCountrySourceId};
+  my $geoFromPostGisSourceId = ${ApiCommonData::Load::StudyUtils::geoFromPostGisSourceId};
 
-  return unless(defined($hash->{$latitudeSourceId}) && defined($hash->{$longitudeSourceId}));
+  my $coordsWereLookedUpFromCountry = 0;
+
+  # if not already provided, look up lat/long from the "genbank country" variable if we have it
+  if (!(defined($hash->{$latitudeSourceId}) && defined($hash->{$longitudeSourceId}))) {
+    # we can't do the lookup if we don't have the means to do it
+    return unless ($hash->{$genbankCountrySourceId} && $self->{_geolookup});
+
+    # extract the country name from the free-text-ish genbank 'field'
+    # example values to parse:
+    # - Afghanistan
+    # - Afghanistan:Kabul
+    # - Algeria: Region of Bayadh,Laghouat,Adrar
+    # Note: leading/trailing whitespace already removed
+    my ($country) = $hash->{$genbankCountrySourceId}->[0] =~ /^([^:]+)\s*/; 
+    return unless ($country); # TO DO: perhaps warn here???
+
+    # now do the lookup
+    my ($latitude, $longitude) = @{$self->{_geolookup}->lookup_from_placenames($country)};
+    if (defined $latitude && defined $longitude) {
+      # here we set the lat/longs that were missing
+      $hash->{$latitudeSourceId} = [ $latitude ];
+      $hash->{$longitudeSourceId} = [ $longitude ];
+      # TO DO: add a new variable location qualifier along the lines of
+      # 'geolocation provenance information'
+      # https://ontobee.org/ontology/EUPATH?iri=http://purl.obolibrary.org/obo/EUPATH_0043211
+      # with a value such as 'geolocation estimation from administrative region information'
+      # https://ontobee.org/ontology/EUPATH?iri=http://purl.obolibrary.org/obo/EUPATH_0043241
+      # or one of its children if we look up more fine-grained info from the genbank country
+      $coordsWereLookedUpFromCountry = 1;
+      $hash->{$geoFromPostGisSourceId} = ["Yes"];
+    } else {
+      $self->log(sprintf("PostGIS lookup failed for genbank_country:%s", $hash->{$genbankCountrySourceId}->[0]));
+      return; # don't continue to geohash stuff if we didn't get lat/long!
+    }
+  }
 
   my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}->[0], $hash->{$longitudeSourceId}->[0], $geohashLength);
 
   for my $n (1 .. $geohashLength) {
-    my $subvalue = substr($geohash, 0, $n);         
+    my $subvalue = substr($geohash, 0, $n);
     my $geohashSourceId = $GEOHASH_SOURCE_IDS[$n - 1];
-
 
     unless($geohashSourceId) {
       print Dumper \@GEOHASH_SOURCE_IDS;
@@ -661,14 +696,16 @@ sub addGeohashAndGadm {
       $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n")
     }
 
-
     $hash->{$geohashSourceId} = [$subvalue];
   }
-  if ($self->getArg('gadmDsn')) {
-    $self->addLookedUpPlacenames($hash);
+  if ($self->{_geolookup}) {
+    if ($coordsWereLookedUpFromCountry) {
+      # don't look up more fine-grained place names if all we used was country to get lat/long
+      $self->addLookedUpPlacenames($hash, 0);
+    } else {
+      $self->addLookedUpPlacenames($hash);
+    }
   }
-
-
 }
 
 sub encodeGeohash {
@@ -698,7 +735,7 @@ sub encodeGeohash {
 }
 
 sub addLookedUpPlacenames {
-  my ($self, $hash) = @_;
+  my ($self, $hash, $maxAdminLevel) = @_;
 
   # find $lat and $long from $hash
   my $latitudeSourceId = ${ApiCommonData::Load::StudyUtils::latitudeSourceId};
@@ -710,18 +747,15 @@ sub addLookedUpPlacenames {
 
   # maxAdminLevel is a per row value the data provider can use to control how many levels of placenames
   # are looked up. It's OK to be undefined, will fall back to default (2) in lookup method:
-
-  my $maxAdminLevel;
-  if($hash->{$maxAdminLevelSourceId}) {
+  if(!defined $maxAdminLevel && $hash->{$maxAdminLevelSourceId}) {
     $maxAdminLevel = $hash->{$maxAdminLevelSourceId}[0];
   }
 
-  my ($gadm_names, $gadm_ids, $veugeo_names) = @{$self->{_geolookup}->lookup($lat, $long, $maxAdminLevel)};
+  my $gadm_names = $self->{_geolookup}->lookup_from_coords($lat, $long, $maxAdminLevel);
   foreach (my $level = 0; $level < @{$gadm_names}; $level++) {
     next unless(defined $gadm_names->[$level]);
     my $variable_iri = ${ApiCommonData::Load::StudyUtils::adminLevelSourceIds}[$level];
     if ($variable_iri) {
-      ### TODO: find disambiguated name with vgeo
       $hash->{$variable_iri} = [ $gadm_names->[$level] ];
     }
   }

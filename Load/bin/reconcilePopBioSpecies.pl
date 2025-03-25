@@ -87,6 +87,12 @@ if ($testFunctions) {
   printf "'gambiae species complex' is not a child of 'Anopheles arabiensis' %s (should be no)\n",
     isAchildofB(termNameToId('gambiae species complex'), termNameToId('Anopheles arabiensis'), $veupathOntologyId) ? 'yes' : 'no';
 
+  printf "'Anopheles gambiae' is a child of 'gambiae species complex' %s (should be yes)\n",
+    isAchildofB(termNameToId('Anopheles gambiae'), termNameToId('gambiae species complex'), $veupathOntologyId) ? 'yes' : 'no';
+
+  printf "'gambiae species complex' is not a child of 'Anopheles arabiensis' %s (should be no)\n",
+    isAchildofB(termNameToId('gambiae species complex'), termNameToId('Anopheles arabiensis'), $veupathOntologyId) ? 'yes' : 'no';
+
   printf "Common ancestor of 'Anopheles arabiensis' and 'Anopheles funestus' is '%s' (should be 'Cellia')\n",
     termIdToName(commonAncestor(termNameToId('Anopheles arabiensis'), termNameToId('Anopheles funestus'), $veupathOntologyId));
 
@@ -97,13 +103,24 @@ if ($testFunctions) {
     termIdToName(commonAncestor(termNameToId('Anopheles melas'), termNameToId('Anopheles merus'), $veupathOntologyId));
 
   # two that are EUPATH not NCBITaxon: 'Anopheles perplexens' and 'Culex chorleyi'
-  # not sure why 'culicidae' is lowercase, while other terms such as 'Culicinae' is capitalised
-  # 'Culicidae' is capitalised in eupath_dev.owl, for example.
-  printf "Common ancestor of 'Anopheles perplexens' and 'Culex chorleyi' is '%s' (should be 'culicidae')\n",
+  printf "Common ancestor of 'Anopheles perplexens' and 'Culex chorleyi' is '%s' (should be 'Culicidae')\n",
     termIdToName(commonAncestor(termNameToId('Anopheles perplexens'), termNameToId('Culex chorleyi'), $veupathOntologyId));
 
+  # now test bug #48 - it used to return Pyretophorus
+  printf "Common ancestor of 'gambiae species complex' and 'Anopheles melas' is '%s' (should be 'gambiae species complex')\n",
+    termIdToName(commonAncestor(termNameToId('gambiae species complex'), termNameToId('Anopheles melas'), $veupathOntologyId));
 
-  die "finished tests, quitting...\n";
+  printf "And in the opposite direction is also '%s'\n",
+    termIdToName(commonAncestor(termNameToId('Anopheles melas'), termNameToId('gambiae species complex'), $veupathOntologyId));
+
+  printf "Reconciling 'Anopheles melas' and 'Anopheles merus' -> '%s'/'%s' (should be 'gambiae species complex'/'ambiguous')\n", reconcile(['Anopheles melas', 'Anopheles merus']);
+
+  printf "Reconciling 'Anopheles gambiae' and 'gambiae species complex' -> '%s'/'%s' (should be 'Anopheles gambiae'/'unambiguous')\n", reconcile(['Anopheles gambiae', 'gambiae species complex']);
+
+  # and the other way round
+  printf "Reconciling 'gambiae species complex' and 'Anopheles gambiae' -> '%s'/'%s' (should be 'Anopheles gambiae'/'unambiguous')\n", reconcile(['gambiae species complex', 'Anopheles gambiae']);
+
+  die "finished tests (you have to evaluate the results by eye), quitting...\n";
 }
 
 
@@ -183,34 +200,9 @@ my $update_stmt = $dbh->prepare('
 my $row_count = 0;
 
 foreach my $sample_id (keys %sample2atts_json) {
-  my $result; # id of computed reconciled species term
-  my $qualifier = 'unambiguous'; # what type of result was computed
-  my $internalResult; # Boolean flag
 
-  foreach my $species_name (keys %{$sample2species{$sample_id}}) {
-
-    my $speciesTermId = termNameToId($species_name);
-
-    if (!defined $result) {
-      $result = $speciesTermId;
-    } elsif (isAchildofB($speciesTermId, $result)) {
-      # return the leaf-wards term unless we already chose an internal node
-      $result = $speciesTermId unless ($internalResult);
-    } elsif ($speciesTermId == $result || isAchildofB($result, $speciesTermId)) {
-      # that's fine - stick with the leaf term
-    } else {
-      # we need to return a common 'ancestral' internal node
-      $result = commonAncestor($result, $speciesTermId, $veupathOntologyId);
-      $internalResult = 1;
-      $qualifier = 'ambiguous';
-    }
-  }
-
-  $qualifier = 'fallback' unless defined $result;
-  my $reconciled_species_name =
-    defined $result
-      ? termIdToName($result)
-      : $fallbackSpecies;
+  my @species_names = keys %{$sample2species{$sample_id}};
+  my ($reconciled_species_name, $qualifier) = reconcile(\@species_names);
 
   if (!defined $reconciled_species_name) {
     die "FATAL ERROR: No species reconciliation result and no --fallbackSpecies option provided";
@@ -238,11 +230,59 @@ $update_stmt->finish();
 
 $dbh->commit;
 
+
+#
+# reconcile
+#
+# args: array_ref_species_names, fallback_species
+# returns: $reconciled_species_name, $qualifier
+#
+
+sub reconcile {
+  my ($names, $fallback_species) = @_;
+
+  my $result; # id of computed reconciled species term
+  my $qualifier = 'unambiguous'; # what type of result was computed
+  my $internalResult; # Boolean flag
+
+  foreach my $species_name (@$names) {
+
+    my $speciesTermId = termNameToId($species_name);
+
+    if (!defined $result) {
+      $result = $speciesTermId;
+    } elsif (isAchildofB($speciesTermId, $result, $veupathOntologyId)) {
+      # return the leaf-wards term unless we already chose an internal node
+      $result = $speciesTermId unless ($internalResult);
+    } elsif ($speciesTermId == $result || isAchildofB($result, $speciesTermId, $veupathOntologyId)) {
+      # that's fine - stick with the leaf term
+    } else {
+      # we need to return a common 'ancestral' internal node
+      $result = commonAncestor($result, $speciesTermId, $veupathOntologyId);
+      $internalResult = 1;
+      $qualifier = 'ambiguous';
+    }
+  }
+
+  $qualifier = 'fallback' unless defined $result;
+  my $reconciled_species_name =
+    defined $result
+      ? termIdToName($result)
+      : $fallback_species;
+
+  return ($reconciled_species_name, $qualifier);
+}
+
+
 #
 # warning, Oracle specific code!
 #
 sub readLob {
   my ($lobLocator, $dbh, $chunkSize) = @_;
+
+  # Return an empty JSON object string if the LOB locator is undefined
+  return '{}' unless defined $lobLocator;
+
   my $offset = 1;   # Offsets start at 1, not 0
   $chunkSize //= 65536;
   my $output;
@@ -352,6 +392,8 @@ sub termIdToName {
 sub isAchildofB {
   my ($termA_id, $termB_id, $external_database_release_id) = @_;
 
+  die "didn't give external_database_release_id\n" unless defined $external_database_release_id;
+
   my $sql = << 'EOT';
 with r1(subject_term_id, object_term_id) as (
   select subject_term_id, object_term_id
@@ -383,17 +425,39 @@ sub commonAncestor {
 #
 
   my $sql = << 'EOT';
-with r1(subject_term_id, object_term_id, query_term_id, lvl, external_database_release_id) as (
-  select subject_term_id, object_term_id, subject_term_id as query_term_id, 1 as lvl, external_database_release_id
-  from sres.ontologyrelationship r
-  where subject_term_id in (?, ?) and external_database_release_id = ?
-  union all
-  select r2.subject_term_id, r2.object_term_id, query_term_id, lvl+1, r2.external_database_release_id
-  from sres.ontologyrelationship r2, r1
-  where r2.subject_term_id = r1.object_term_id
-    and r2.subject_term_id != r2.object_term_id -- prevents circular issues
-    and r2.external_database_release_id = r1.external_database_release_id
-)
+with
+  params as (select
+    ? as term_a,
+    ? as term_b,
+    ? as ext_db_rls_id
+  from dual),
+  r1(subject_term_id, object_term_id, query_term_id, lvl, external_database_release_id)
+     as (select *
+           from (  -- base case: input term is a subject
+                   select distinct subject_term_id, object_term_id, subject_term_id as query_term_id,
+                          1 as lvl, external_database_release_id
+                   from sres.ontologyrelationship r, params
+                   where subject_term_id in (params.term_a, params.term_b)
+                     and external_database_release_id = params.ext_db_rls_id
+                 union all
+                   -- other base case: input term is an object
+                   select distinct object_term_id as subject_term_id, object_term_id,
+                          object_term_id as query_term_id, 0 as lvl, external_database_release_id
+                   from sres.ontologyrelationship r, params
+                   where object_term_id in (params.term_a, params.term_b)
+                     and external_database_release_id = params.ext_db_rls_id
+                )
+         union all
+           -- recursion step
+           select r2.subject_term_id, r2.object_term_id, query_term_id, lvl+1, r2.external_database_release_id
+           from r1,
+                (select distinct subject_term_id, object_term_id, external_database_release_id
+                 from sres.OntologyRelationship
+                ) r2
+           where r2.subject_term_id = r1.object_term_id
+             and r2.subject_term_id != r2.object_term_id -- prevents circular issues
+             and r2.external_database_release_id = r1.external_database_release_id
+        )
 select object_term_id
 from r1
 group by object_term_id

@@ -64,6 +64,9 @@ annotation property	defaultDisplayRangeMin|EUPATH_0001017
 annotation property	defaultDisplayRangeMax|EUPATH_0001018
 annotation property	defaultBinWidth|EUPATH_0001019
 annotation property	forceStringType|EUPATH_0001020
+annotation property	plural|EUPATH_0001021
+annotation property	ISA_Type|ISA_1
+annotation property	ISA_Parent|ISA_2
 TEMPLATE_END
 
 if ($clean || ! -e $setFile ){

@@ -1030,8 +1030,7 @@ sub loadTable {
     my $dbh = $self->getQueryHandle();  
     my $sequenceName = "${abbreviatedTablePeriod}_sq";
     my $sequenceSql = "select ${sequenceName}.nextval from dual";
-    # TODO
-    #$sequenceSh = $dbh->prepare($sequenceSql);
+    $sequenceSh = $dbh->prepare($sequenceSql);
 
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $sqlldrDat = ApiCommonData::Load::Sqlldr->new({_login => $login,
@@ -1091,7 +1090,7 @@ sub loadTable {
   my $sqlldrGlobProcessString = $sqlldrGlob->getCommandLine();
 
   # TODO may add this back if using the sequence is too slow for all cases
-  my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
+  #my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
@@ -1171,13 +1170,10 @@ sub loadTable {
       $rowCount++;
 
       if($loadDatWithSqlldr) {
+        $sequenceSh->execute();
+        ($primaryKey) = $sequenceSh->fetchrow_array();
 
-
-        # TODO
-        #$sequenceSh->execute();
-        # ($primaryKey) = $sequenceSh->fetchrow_array();
-
-        $primaryKey = ++$maxPrimaryKey;
+        #$primaryKey = ++$maxPrimaryKey;
 
         $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
 
@@ -1270,19 +1266,17 @@ sub loadTable {
   if($loadDatWithSqlldr) {
     $datFifo->cleanup();
 
-    #todo
-    #$sequenceSh->finish();
-
+    $sequenceSh->finish();
     # update the sequence;  may add this back if using sequence for pk is too slow
-    my $sequenceName = "${abbreviatedTablePeriod}_sq";
-    my $dbh = $self->getQueryHandle();  
-    my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
-    my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-    if($sequenceDifference > 0) {
-      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
-      $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
-      $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
-    }
+    # my $sequenceName = "${abbreviatedTablePeriod}_sq";
+    # my $dbh = $self->getQueryHandle();
+    # my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual");
+    # my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
+    # if($sequenceDifference > 0) {
+    #   $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
+    #   $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
+    #   $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
+    # }
   }
   else {
     $self->getDb()->manageTransaction(0, 'commit');

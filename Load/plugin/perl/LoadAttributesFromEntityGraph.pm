@@ -894,7 +894,11 @@ sub typedValueForAttribute {
 
   $counts->{_COUNT}++;
 
+  # use heuristic to distinguish numbers with commas from comma delimited lists of numbers.
+  # consider a number if in the form 2,870,141, up to 999,999,999,999
+  # reject lists, eg 8793583,9909998,7188839
   my $valueNoCommas = $value;
+
   # use heuristic to distinguish numbers with commas from comma delimited lists of numbers.
   # consider a number, and remove commas, if of the form 2,870,141, up to 999,999,999,999
   # leave commas in numeric lists, eg 8793583,9909998,7188839
@@ -1047,6 +1051,7 @@ sub fieldsAndCreateTable {
   my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } @$attributeList;
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyInternalAbbrev}_${internalAbbrev}";
+
 
   my $createTableSql = "create table $tableName (
 $idField VARCHAR(200) NOT NULL,
