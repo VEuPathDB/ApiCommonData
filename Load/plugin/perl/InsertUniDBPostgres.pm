@@ -12,6 +12,9 @@ use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Psql;
 
+use GUS::Supported::Utility::GOAnnotater;
+use GUS::Supported::Utility::ECAnnotater;
+
 my $END_OF_COLUMN_DELIMITER = "\t";
 my $END_OF_RECORD_DELIMITER = "\n";
 
@@ -288,9 +291,10 @@ sub run {
   my $mode = $self->getArg('mode');
 
   if($mode eq 'undo') {
-    foreach my $tableName (reverse @$orderedTables) {
-      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
-    }
+    $self->undoTables();
+#    foreach my $tableName (reverse @$orderedTables) {
+#      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+#    }
   }
 
   if($mode eq 'load') {
@@ -1055,28 +1059,26 @@ sub foundValueInArray {
 
 sub undoTables {
   return (
-      'DoTS.GOAssociationInstanceLOE',
-      'DoTS.AASequenceEnzymeClass',
+      GUS::Supported::Utility::GOAnnotater->undoTables(),
+      GUS::Supported::Utility::ECAnnotater->undoTables(),
 	  'DoTS.AAFeatureExon',
 	  'DoTS.RNAFeatureExon',
 	  'DoTS.NALocation',
 	  'ApiDB.SeqEdit',
 	  'ApiDB.GeneFeatureName',
       'DoTS.DbRefAAFeature',
-      'DoTS.GOAssocInstEvidCode',
       'DoTS.DbRefNASequence',
       'DoTS.DbRefNAFeature',
       'SRes.DbRef',
       'ApiDB.AaSequenceAttribute',
-      'DoTS.GOAssociationInstance',
-      'DoTS.GOAssociation',
       'DoTS.AAFeatureImp',
       'DoTS.NAFeatureImp',
       'DoTS.NASequenceImp',
       'DoTS.AASequenceImp',
-      'SRes.OntologyTerm',
-      'SRes.ExternalDatabaseRelease',
-      'SRes.ExternalDatabase',
+# ignore for now
+#      'SRes.OntologyTerm',
+#      'SRes.ExternalDatabaseRelease',
+#      'SRes.ExternalDatabase',
 	 );
 }
 
