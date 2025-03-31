@@ -23,6 +23,22 @@ sub getTableNameFromPackageName {
   return uc $tableName;
 }
 
+
+sub skipTable {
+    my ($self, $tableName) = @_;
+
+    my $fileName = $self->getTableNameFromPackageName($tableName);
+
+    my $databaseDir = $self->getDatabaseDirectory();
+
+    my $fullFilePath = "$databaseDir/$fileName";
+
+    if(-e $fullFilePath) {
+        return 0;
+    }
+    return 1;
+}
+
 sub prepareTable {
   my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 

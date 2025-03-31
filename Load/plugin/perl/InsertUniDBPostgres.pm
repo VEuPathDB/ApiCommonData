@@ -314,6 +314,8 @@ sub undoTable {
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
+  return if $tableReader->skipTable($tableName); 
+
   $self->resetActiveForkedProcesses();
 
   my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
