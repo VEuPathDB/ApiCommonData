@@ -91,9 +91,11 @@ sub makeGusObjects {
                 my $gusReaction = GUS::Model::ApiDB::PathwayReaction->new();
                 if ($nodeData->{'reaction_source_id'} ne 'null') {
                     $gusReaction->setSourceId($nodeData->{'reaction_source_id'});
+                    $gusReaction->retrieveFromDB();
                     $self->addReaction($gusReaction, $uniqueId);
                 }else {
                     $gusReaction->setSourceId('MPMP_'.$pathwaySourceId.'_'.$uniqueId);
+                    $gusReaction->retrieveFromDB();
                     $self->addReaction($gusReaction, $uniqueId);
                     
                 }
@@ -121,6 +123,7 @@ sub makeGusObjects {
             my $associatedNode = $self->getNodeByUniqueId($associatedNodeUniqueId);
             $gusReaction = GUS::Model::ApiDB::PathwayReaction->new();
             $gusReaction->setSourceId('MPMP_'.$pathwaySourceId.'_'.$nodeUniqueId.'_'.$associatedNodeUniqueId);
+            $gusReaction->retrieveFromDB();
         }
 
         die("Could not find GUS reaction\n") unless defined($gusReaction);
