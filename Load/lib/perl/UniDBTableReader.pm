@@ -44,6 +44,11 @@ sub isRowGlobal {}
 sub skipRow {}
 sub loadRow {}
 
+sub skipTable {
+    my ($self, $tableName) = @_;
+
+    return 0;
+}
 
 =head2 Helpers for Caching Foreign Keys
 
