@@ -291,7 +291,6 @@ sub run {
   my $mode = $self->getArg('mode');
 
   if($mode eq 'undo') {
-    $self->undoTables();
 #    foreach my $tableName (reverse @$orderedTables) {
 #      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
 #    }
@@ -1077,12 +1076,12 @@ sub undoTables {
       'DoTS.NAFeatureImp',
       'DoTS.NASequenceImp',
       'DoTS.AASequenceImp',
+      'ApiDB.DatabaseTableMapping',
 # ignore for now
 #      'SRes.OntologyTerm',
 #      'SRes.ExternalDatabaseRelease',
 #      'SRes.ExternalDatabase',
 	 );
 }
-
 
 1;
