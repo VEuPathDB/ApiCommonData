@@ -316,30 +316,76 @@ sub getFasta {
 
 sub getSubTaxa {
   my ($self, $dbh, $ncbiTaxonId) = @_;
-  my $sql = "select taxon_id,ncbi_tax_id from SRes.Taxon WHERE NCBI_TAX_ID < 999999999 start with ncbi_tax_id=? connect by prior taxon_id = parent_id";
+ #my $sql = "select taxon_id,ncbi_tax_id from SRes.Taxon WHERE NCBI_TAX_ID < 999999999 start with ncbi_tax_id=? connect by prior taxon_id = parent_id";
+  my $sql = <<_SQL;
+WITH RECURSIVE taxon_hierarchy AS (
+    -- Base case: Find the initial taxon_id for the given NCBI_TAX_ID
+    SELECT taxon_id, ncbi_tax_id, parent_id
+    FROM SRes.Taxon
+    WHERE ncbi_tax_id = ?
+
+    UNION ALL
+
+    -- Recursive case: Traverse down the hierarchy
+    SELECT t.taxon_id, t.ncbi_tax_id, t.parent_id
+    FROM SRes.Taxon t
+    INNER JOIN taxon_hierarchy th ON t.parent_id = th.taxon_id
+    WHERE t.ncbi_tax_id < 999999999
+)
+SELECT taxon_id, ncbi_tax_id 
+FROM taxon_hierarchy;
+
+_SQL
   my $taxonId2ncbiTax = $self->selectHashRef($dbh,$sql,[$ncbiTaxonId]);
   return $taxonId2ncbiTax
 }
 sub getInternalSpeciesSubTaxa {
   my ($self, $dbh, $ncbiTaxonId) = @_;
   my $sql = <<_SQL;
-select taxon_id,ncbi_tax_id
-   from
-  (select taxon_id, ncbi_tax_id, rank 
-   from sres.taxon
-   connect by taxon_id = prior parent_id
-   start with taxon_id = 
-  (SELECT o.taxon_id FROM apidb.organism o 
-  LEFT JOIN sres.TAXON t ON o.TAXON_ID =t.TAXON_ID 
-WHERE t.NCBI_TAX_ID = ? 
+WITH RECURSIVE taxon_hierarchy AS (
+    -- Base case: Find the taxon_id for the given NCBI_TAX_ID
+    SELECT t.taxon_id, t.ncbi_tax_id, t.parent_id, t.rank
+    FROM sres.taxon t
+    WHERE t.taxon_id = (
+        SELECT o.taxon_id 
+        FROM apidb.organism o 
+        LEFT JOIN sres.taxon t ON o.taxon_id = t.taxon_id 
+        WHERE t.ncbi_tax_id = ?
+    )
+
+    UNION ALL
+
+    -- Recursive case: Traverse up the hierarchy
+    SELECT t.taxon_id, t.ncbi_tax_id, t.parent_id, t.rank
+    FROM sres.taxon t
+    INNER JOIN taxon_hierarchy th ON t.taxon_id = th.parent_id
 )
-  ) t
-   where t.rank = 'species'
+SELECT taxon_id, ncbi_tax_id 
+FROM taxon_hierarchy
+WHERE rank = 'species';
+
 _SQL
   # printf STDERR ("DEBUG: Searching with params: %s\n", Dumper $ncbiTaxonId);
   my $speciesResult = $self->selectHashRef($dbh,$sql,[$ncbiTaxonId]);
   my ($taxonId) = keys %$speciesResult;
-  $sql = "select taxon_id from SRes.Taxon WHERE NCBI_TAX_ID < 999999999 start with taxon_id=? connect by prior taxon_id = parent_id";
+  #$sql = "select taxon_id from SRes.Taxon WHERE NCBI_TAX_ID < 999999999 start with taxon_id=? connect by prior taxon_id = parent_id";
+  my $sql = <<_SQL;
+WITH RECURSIVE taxon_hierarchy AS (
+    SELECT taxon_id, parent_id
+    FROM SRes.Taxon
+    WHERE taxon_id = ?
+    
+    UNION ALL
+    
+    SELECT t.taxon_id, t.parent_id
+    FROM SRes.Taxon t
+    INNER JOIN taxon_hierarchy th ON t.parent_id = th.taxon_id
+)
+SELECT taxon_id 
+FROM taxon_hierarchy
+WHERE ncbi_tax_id < 999999999;
+_SQL
+
   my $ids = $self->selectHashRef($dbh,$sql,[$taxonId]);
   return $ids;
 }
@@ -350,24 +396,50 @@ sub getSubTaxaSearchParams {
 #
 #  This query finds the first species above this organism in the taxonomy tree
  my $sql = <<_SQL;
-select ncbi_tax_id, taxon_id
-   from
-  (select taxon_id, ncbi_tax_id, rank 
-   from sres.taxon
-   connect by taxon_id = prior parent_id
-   start with taxon_id = 
-  (SELECT o.taxon_id FROM apidb.organism o 
-  LEFT JOIN sres.TAXON t ON o.TAXON_ID =t.TAXON_ID 
-WHERE t.NCBI_TAX_ID = ? 
+WITH RECURSIVE taxon_hierarchy AS (
+    -- Start with the base case (the taxon_id of the organism)
+    SELECT taxon_id, ncbi_tax_id, parent_id, rank
+    FROM sres.taxon
+    WHERE taxon_id = (
+        SELECT o.taxon_id
+        FROM apidb.organism o
+        LEFT JOIN sres.TAXON t ON o.TAXON_ID = t.TAXON_ID
+        WHERE t.NCBI_TAX_ID = ?
+    )
+    UNION ALL
+    -- Recursive part: Find the children based on parent_id
+    SELECT t.taxon_id, t.ncbi_tax_id, t.parent_id, t.rank
+    FROM sres.taxon t
+    INNER JOIN taxon_hierarchy th ON t.parent_id = th.taxon_id
 )
-  ) t
-   where t.rank = 'species'
+-- Select only the taxons of rank 'species'
+SELECT ncbi_tax_id, taxon_id
+FROM taxon_hierarchy
+WHERE rank = 'species';
 _SQL
   my $speciesResult = $self->selectHashRef($dbh,$sql,[$ncbiTaxonId]);
   my ($spTaxId) = keys %$speciesResult;
   printf STDERR ("DB: looking for subtaxa for species $spTaxId\n");
 # This query finds all subtaxa of the species (note: not subtaxa of the reference organism)
-  $sql = "select ncbi_tax_id from SRes.Taxon WHERE NCBI_TAX_ID < 999999999 start with ncbi_tax_id=? connect by prior taxon_id = parent_id";
+  #$sql = "select ncbi_tax_id from SRes.Taxon WHERE NCBI_TAX_ID < 999999999 start with ncbi_tax_id=? connect by prior taxon_id = parent_id";
+  my $sql = <<_SQL;
+WITH RECURSIVE taxon_hierarchy AS (
+    -- Base case: Start with the given ncbi_tax_id
+    SELECT taxon_id, parent_id, ncbi_tax_id
+    FROM SRes.Taxon
+    WHERE ncbi_tax_id = ?
+
+    UNION ALL
+
+    -- Recursive case: Find all child nodes by connecting on parent_id
+    SELECT t.taxon_id, t.parent_id, t.ncbi_tax_id
+    FROM SRes.Taxon t
+    INNER JOIN taxon_hierarchy th ON t.parent_id = th.taxon_id
+)
+SELECT ncbi_tax_id
+FROM taxon_hierarchy
+WHERE ncbi_tax_id < 999999999;
+_SQL
   my $ids = $self->selectHashRef($dbh,$sql,[$spTaxId]);
   return undef unless( 0 < scalar keys %$ids);
   my $termList = sprintf("(%s) AND is_est[filter]", 
@@ -429,6 +501,7 @@ sub getLoadedESTAccessionsBySubTaxa{
   my $taxIdList = join(",", keys %$taxa );
   printf STDERR ("EST audit: Taxon ID %d search expanded to %d subtaxa\n",
     $ncbiTaxonId, scalar keys %$taxa); 
+  return {} if !$taxIdList;  # Return an empty hash if there are no taxon IDs
   my $sql = <<_SQL;
 SELECT DISTINCT e.ACCESSION, l.DBEST_NAME
 FROM dots.est e
