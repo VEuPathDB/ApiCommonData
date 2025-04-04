@@ -7,7 +7,7 @@ package ApiCommonData::Load::Plugin::UpdateSpeciesResourcesEc;
 use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::OrthomclResource;
-use GUS::Model::ApiDB::OrthomclTaxon;
+use GUS::Model::ApiDB::Organism;
 use FileHandle;
 use Data::Dumper;
 
@@ -38,11 +38,11 @@ NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
 ApiDB.OrthomclResource,
-ApiDB.OrthomclTaxon
+ApiDB.Organism
 TABLES_AFFECTED
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
-ApiDB.OrthomclTaxon,
+ApiDB.Organism,
 Sres.ExternalDatabase,
 Sres.ExternalDatabaseRelease,
 Sres.TaxonName
