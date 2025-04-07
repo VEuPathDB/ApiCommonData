@@ -131,6 +131,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
     }
     my $direct= $exp_dir;
     $direct =~ s/$workingDirectory//;
+    $direct =~ s/\///;
 	$hash{$direct} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
 
@@ -141,12 +142,13 @@ foreach my $expWithReps (keys %dealingWithReps) {
 sub merge_normalized_coverage {
     my $hash = shift;
     while(my ($k, $v) = each %$hash) {  # $k is exp directory; %v is sum_coverage
-        my $dir = "$workingDirectory/$k/normalized";
+        (my $kOut = $k) =~ s/results\///;
+        my $dir = "$workingDirectory/$kOut/normalized";
         if(!-e "$dir/final") {
             &runCmd("mkdir $dir/final");
         }
         my $cwd = getcwd;
-        chdir "$workingDirectory/$k/normalized/";
+        chdir "$workingDirectory/$kOut/normalized/";
         my @bedFiles = glob "*.bed";
         chdir "$cwd";
      	foreach my $bedFile (@bedFiles) {
@@ -154,8 +156,8 @@ sub merge_normalized_coverage {
      	    my $bwFile = $baseBed;
      	    $bwFile =~ s/\.bed$/.bw/;
 
-            &sortBedGraph("$workingDirectory/$k/normalized/$baseBed");
-     	    &runCmd("bedGraphToBigWig $workingDirectory/$k/normalized/$baseBed $topLevelSeqSizeFile $workingDirectory/$k/normalized/final/$bwFile");
+            &sortBedGraph("$workingDirectory/$kOut/normalized/$baseBed");
+     	    &runCmd("bedGraphToBigWig $workingDirectory/$kOut/normalized/$baseBed $topLevelSeqSizeFile $workingDirectory/$kOut/normalized/final/$bwFile");
      	}
     }
 }
@@ -180,12 +182,13 @@ sub update_coverage {
         my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
         my $kIn;
         if ($k =~ /(.+)_combined/) {
-            $kIn = $k;
+            $kIn = "/normalize_coverage/$k";
         } elsif ($k =~ /(.+)/) {
             $kIn = $k;
         }
-        my $out_dir = "$workingDirectory/$k/normalized";;
-        my $dir_open = $inputDir."/".$kIn;
+        (my $kOut = $k) =~ s/results\///;
+        my $out_dir = "$workingDirectory/$kOut/normalized";
+        my $dir_open = "$inputDir/$kIn";
 
 
         print "OUT_DIR=$out_dir\n";
@@ -210,7 +213,7 @@ sub update_coverage {
         
         foreach my $f (@fs) {
             next if $f !~ /\.bed$/i;
-            open(F, "$inputDir/$kIn/$f") or die "cannot open file $inputDir/${artifactsDirName}/$kIn/$f for reading: $!";
+            open(F, "$inputDir/$kIn/$f") or die "cannot open file $inputDir/$kIn/$f for reading: $!";
             open OUT, ">$out_dir/$f" or die "Cannot open file $out_dir/$f for writing: $!";
             my $outputFile = $f;
             my $bamfile = $f;
