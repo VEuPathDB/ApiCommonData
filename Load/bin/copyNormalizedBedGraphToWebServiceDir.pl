@@ -111,7 +111,7 @@ foreach my $key (keys %$sampleHash) {
   }
 
 
-  my $d = "$inputDir/results/$sampleDirName/";
+  my $d = "$inputDir/$sampleDirName/";
 
     $inputDir =~ s/\/$//;
     my $exp_dir = "$d/normalized/final";

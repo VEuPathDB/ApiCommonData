@@ -40,7 +40,7 @@ foreach my $key (keys %$sampleHash) {
         die "No samples found for key $key\n";
     }
 
-    my @files = glob "$dir/normalize_coverage/results/$sampleDirName/normalized/final/*";
+    my @files = glob "$dir/normalize_coverage/$sampleDirName/normalized/final/*";
 
     my @files = grep !/logged/, @files;
     my @files = grep !/non_unique/, @files;
