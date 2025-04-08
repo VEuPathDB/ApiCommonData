@@ -9,7 +9,7 @@ use GUS::PluginMgr::Plugin;
 use FileHandle;
 
 use GUS::Model::ApiDB::OrthologGroup;
-use GUS::Model::ApiDB::OrthologGroupAaSequence;
+use GUS::Model::ApiDB::OrthologGroupAASequence;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
