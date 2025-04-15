@@ -215,6 +215,9 @@ printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "isAnnotatedGenome");
 printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "hasTemporaryNcbiTaxonId", $excelInfo{$organismAbbrev}{'ncbiTaxonId'});
 
 printRegularLine (\%excelInfo, $organismAbbrev, "orthomclAbbrev");
+## add isCore and set it to false for now
+print PO "    <prop name=\"isCore\">false</prop>\n";
+
 printRegularLine (\%excelInfo, $organismAbbrev, "strainAbbrev");
 printRegularLine (\%excelInfo, $organismAbbrev, "genomeSource");
 
@@ -239,6 +242,11 @@ if ($excelInfo{$organismAbbrev}{'isFamilyRepresentative'}) {
   printSpecialFamilyRepLines (\%excelInfo, $organismAbbrev);
 } else {
 ## TODO, get familyRepresentative from dataset xml file or database
+## print empty lines as a placeholder for now
+  print PO "    <prop name=\"isFamilyRepresentative\"></prop>\n";
+  print PO "    <prop name=\"familyRepOrganismAbbrev\"></prop>\n";
+  print PO "    <prop name=\"familyNcbiTaxonIds\"></prop>\n";
+  print PO "    <prop name=\"familyNameForFiles\"></prop>\n";
 }
 printTailerLine();
 
@@ -300,15 +308,15 @@ printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $exc
 print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
 printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-#printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);  ## 2020-03-23 will put in general dataset
+printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i && $isEbiGenome !~ /^y/i);
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 printRefStrainGenbankEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB
 printRefStraindbEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB
-printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printIsolatesFromFamilyRep ($ofh, \%excelInfo) if ($projectName ne "VectorBase" && $projectName ne "HostDB"); ## do not print it if VectorBase or HostDB
+#printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i); ## no need for GenomicsDB
+#printIsolatesFromFamilyRep ($ofh, \%excelInfo) if ($projectName ne "VectorBase" && $projectName ne "HostDB"); ## do not print it if VectorBase or HostDB, no need for GenomicsDB
 
-printBUSCO ($ofh, \%excelInfo) if ($projectName ne "HostDB"); ## not sure if HostDB has BUSCO score
+#printBUSCO ($ofh, \%excelInfo) if ($projectName ne "HostDB"); ## not sure if HostDB has BUSCO score, no need for GenomicsDB
 
 print $ofh "</datasets>\n";
 
