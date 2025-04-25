@@ -561,7 +561,7 @@ sub makeContactRow {
       my $fax = $self->getArg('contactFax');
       $contact->setFax($fax);
     }
-    $contact->submit();
+    $contact->submit() if (!$contact->retrieveFromDB());
   }
 
   $self->{contactId} = $contact->getId();
