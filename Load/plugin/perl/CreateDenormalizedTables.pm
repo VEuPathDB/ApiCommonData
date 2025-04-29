@@ -1,6 +1,6 @@
 
 package ApiCommonData::Load::Plugin::CreateDenormalizedTables;
-@ISA = qw(GUS::PluginMgr::Plugin);
+@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 
 use strict;
 use File::Basename;
@@ -182,44 +182,6 @@ sub run {
   }
 }
 
-sub getAlgorithmParam {
-  my ($self, $dbh, $rowAlgInvocationList, $paramKey) = @_;
-  my $pluginName = ref($self);
-  my %paramValues;
-  foreach my $rowAlgInvId (@$rowAlgInvocationList){
-    my $sql  = "SELECT p.STRING_VALUE
-      FROM core.ALGORITHMPARAMKEY k
-      LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
-      LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
-      WHERE a.EXECUTABLE = ? 
-      AND p.ROW_ALG_INVOCATION_ID = ?
-      AND k.ALGORITHM_PARAM_KEY = ?";
-    my $sh = $dbh->prepare($sql);
-    $sh->execute($pluginName,$rowAlgInvId, $paramKey);
-    while(my ($name) = $sh->fetchrow_array){
-      $paramValues{ $name } = 1;
-    }
-    $sh->finish();
-  }
-  my @values = keys %paramValues;
-
-  return \@values;
-}
-
-
-sub preprocessUndoGetSchemas {
-  my($self, $dbh, $rowAlgInvocationList) = @_;
-  my $pluginName = ref($self);
-
-  my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'schema');
-
-  unless(scalar @$schemas > 1) {
-      $schemas = ['EDA', 'ApiDBUserDatasets'];
-  }
-
-  return $schemas;
-}
-
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
 
@@ -251,9 +213,7 @@ sub undoPreprocess {
 sub undoTables {
   my ($self) = @_;
 
-  return (
-	 );
+  return @{ $self->{_undo_tables} }
 }
-
 
 1;
