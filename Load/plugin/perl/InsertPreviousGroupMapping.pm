@@ -57,11 +57,19 @@ sub run {
 	my $rowCount++;
 	chomp $line;
 	my ($oldGroupId, $newGroupIdsLine) = split(/\t/, $line);
-	my @newGroupIds = split(/,/, $newGroupIdsLine);
-	foreach my $newGroupId (@newGroupIds) {
-	    my $row = GUS::Model::ApiDB::GroupMapping->new({OLD_GROUP_ID => $oldGroupId,NEW_GROUP_ID => $newGroupId});
-	    $row->submit();
-	    $rowCount+=1;
+	my @newGroupIds = split(/\s/, $newGroupIdsLine);
+	foreach my $newGroupIdInfo (@newGroupIds) {
+	    if ($newGroupIdInfo =~ /(OG\S+):(\d+)\/(\d+)/) {
+		my $newGroupId = $1;
+		my $overlapCount = $2;
+		my $groupSize = $3;
+                my $row = GUS::Model::ApiDB::GroupMapping->new({OLD_GROUP_ID => $oldGroupId,NEW_GROUP_ID => $newGroupId,OVERLAP_COUNT => $overlapCount, GROUP_SIZE => $groupSize});
+                $row->submit();
+	        $rowCount+=1;
+	    }
+	    else {
+		die "Improper new group info format: $newGroupIdInfo\n";
+	    }
 	}
 	$self->undefPointerCache();
 	$groupCount+=1;
