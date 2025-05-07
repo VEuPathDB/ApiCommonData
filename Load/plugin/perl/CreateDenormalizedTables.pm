@@ -1,4 +1,3 @@
-
 package ApiCommonData::Load::Plugin::CreateDenormalizedTables;
 @ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 
@@ -132,6 +131,7 @@ sub new {
                       documentation     => $documentation
                    });
 
+  $self->{_undo_tables} = [];
   return $self;
 }
 
@@ -200,7 +200,7 @@ sub undoPreprocess {
   my $tableName = $1;
 
   if ($mode eq 'insert') {
-     $self->{_undo_tables} = ["$schema.$tableName"];
+    $self->{_undo_tables} = ["$schema.$tableName"];
   } elsif ($mode eq 'create') {
     my $sql = "drop table $schema.$tableName";
     $dbh->do($sql) || $self->error("Failed executing $sql");
