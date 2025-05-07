@@ -69,7 +69,7 @@ my $documentation = { purpose=>$purpose,
 
 my $PSQL_FILE_ARG = 'psqlFile';
 my $SCHEMA_ARG = 'schema';
-my $ORG_ARG = 'schema';
+my $ORG_ARG = 'organismAbbrev';
 
 my $argsDeclaration =
   [
@@ -105,7 +105,7 @@ my $argsDeclaration =
 	      reqd => 0,
 	      isList => 0
 	     }),
-   stringArg({name => $TAXON_ID_ARG,
+   stringArg({name => 'taxonId',
 	      descr => 'taxon id, if this table has organism specific rows',
 	      constraintFunc => undef,
 	      reqd => 0,
@@ -159,46 +159,48 @@ sub run {
   my $sqls = do { local $/; <$fh> };
 
   my $startTimeAll = time;
-  # TODO: log timing info
+
   my @sqlList = split(/;\n\s*/, $sqls);
   foreach my $sql (@sqlList) {
     my $startTime = time;
 
     # for child we do not create indexes on the denorm table
-    next if ($sql =~ /create.+index.+\n?.+on\s+(\:SCHEMA.:ORG_ABBREV)?$tableName\s/i) && mode eq 'child';
+    next if ($sql =~ /create.+index.+\n?.+on\s+(\:SCHEMA.:ORG_ABBREV)?$tableName\s/i) && $mode eq 'child';
 
-    my $newSql = instantiateSql($tableName, $schema, $organismAbbrev, $mode);
+    my $newSql = instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId);
     $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
     if ($commitMode) {
       $dbh->do($newSql);
     }
-    $self->log("INDVIDUAL SQL TIME (sec): " . time - $startTime);
+    my $t = time - $startTime;
+    $self->log("INDVIDUAL SQL TIME (sec): $t");
   }
-  $self->log("TOTAL SQL TIME (sec) for table $tableName: " . time - $startTimeAll);
+  my $t = time - $startTimeAll;
+  $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
 }
 
 sub instantiateSql {
-  my ($tableName, $schema, $organismAbbrev, $mode) = @_;
+  my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId) = @_;
 
   if ($mode eq 'parent') {
-    $newSql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
-    $newSql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
+    $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
+    $sql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
   } elsif ($mode eq 'child') {
 
     my $s = "
-create table :SCHEMA.:ORG_ABBREVmy_table
-partition of my_table
+create table :SCHEMA.:ORG_ABBREV$tableName
+partition of $tableName
 for values in (':ORG_ABBREV');
 
-insert into :SCHEMA.:ORG_ABBREVmy_table from
+insert into :SCHEMA.:ORG_ABBREV$tableName from
 ";
-    $newSql =~ s/\:CREATE_AND_POPULATE/$s/g;
-    $newSql =~ s/\:DECLARE_PARTITION//g;
+    $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
+    $sql =~ s/\:DECLARE_PARTITION//g;
   }
-  $newSql =~ s/\:TAXON_ID/$taxonId/g;
-  $newSql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
-  $newSql =~ s/\:SCHEMA/$schema/g;
-  return $newSql;
+  $sql =~ s/\:TAXON_ID/$taxonId/g;
+  $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
+  $sql =~ s/\:SCHEMA/$schema/g;
+  return $sql;
 }
 
 sub undoPreprocess {
@@ -208,7 +210,7 @@ sub undoPreprocess {
 
   my $fileNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $PSQL_FILE_ARG);
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
-  my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ABBREV_ARG);
+  my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
   my $filePath = $fileNames->[0];
   my $fileName = basename($filePath);
