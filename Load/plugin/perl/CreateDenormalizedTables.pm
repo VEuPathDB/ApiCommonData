@@ -67,14 +67,13 @@ my $documentation = { purpose=>$purpose,
 		      notes=>$notes
 		    };
 
-my $MODE_ARG = 'mode';
 my $PSQL_FILE_ARG = 'psqlFile';
 my $SCHEMA_ARG = 'schema';
 my $ORG_ARG = 'schema';
 
 my $argsDeclaration =
   [
-   enumArg({ name => $MODE_ARG,
+   enumArg({ name => 'mode',
 	     descr => 'standard for non-org-specific.  parent for parent partition.  child for child partition',
 	     constraintFunc => undef,
 	     reqd => 1,
@@ -133,11 +132,12 @@ sub new {
 
 sub run {
   my ($self) = @_;
+
   my $psqlFilePath = $self->getArg($PSQL_FILE_ARG);
   my $schema = $self->getArg($SCHEMA_ARG);
   my $projectId = $self->getArg('projectId');
   my $organismAbbrev = $self->getArg($ORG_ARG);
-  my $mode = $self->getArg($MODE_ARG);
+  my $mode = $self->getArg('mode');
   my $taxonId = $self->getArg('taxonId');
 
   my $dbh = $self->getQueryHandle();
@@ -158,32 +158,47 @@ sub run {
   open my $fh, '<', $psqlFilePath or $self->error("error opening $psqlFilePath: $!");
   my $sqls = do { local $/; <$fh> };
 
+  my $startTimeAll = time;
   # TODO: log timing info
   my @sqlList = split(/;\n\s*/, $sqls);
   foreach my $sql (@sqlList) {
-    my $newSql = $sql;
-    if ($mode eq 'parent') {
-      $newSql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
-      $newSql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
-    } elsif ($mode eq 'child') {
-      my $s = "
+    my $startTime = time;
+
+    # for child we do not create indexes on the denorm table
+    next if ($sql =~ /create.+index.+\n?.+on\s+(\:SCHEMA.:ORG_ABBREV)?$tableName\s/i) && mode eq 'child';
+
+    my $newSql = instantiateSql($tableName, $schema, $organismAbbrev, $mode);
+    $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
+    if ($commitMode) {
+      $dbh->do($newSql);
+    }
+    $self->log("INDVIDUAL SQL TIME (sec): " . time - $startTime);
+  }
+  $self->log("TOTAL SQL TIME (sec) for table $tableName: " . time - $startTimeAll);
+}
+
+sub instantiateSql {
+  my ($tableName, $schema, $organismAbbrev, $mode) = @_;
+
+  if ($mode eq 'parent') {
+    $newSql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
+    $newSql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
+  } elsif ($mode eq 'child') {
+
+    my $s = "
 create table :SCHEMA.:ORG_ABBREVmy_table
 partition of my_table
 for values in (':ORG_ABBREV');
 
 insert into :SCHEMA.:ORG_ABBREVmy_table from
 ";
-      $newSql =~ s/\:CREATE_AND_POPULATE/$s/g;
-      $newSql =~ s/\:DECLARE_PARTITION//g;
-    }
-    $newSql =~ s/\:TAXON_ID/$taxonId/g;
-    $newSql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
-    $newSql =~ s/\:SCHEMA/$schema/g;
-    $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
-    if ($commitMode) {
-      $dbh->do($newSql);
-    }
+    $newSql =~ s/\:CREATE_AND_POPULATE/$s/g;
+    $newSql =~ s/\:DECLARE_PARTITION//g;
   }
+  $newSql =~ s/\:TAXON_ID/$taxonId/g;
+  $newSql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
+  $newSql =~ s/\:SCHEMA/$schema/g;
+  return $newSql;
 }
 
 sub undoPreprocess {
@@ -191,12 +206,10 @@ sub undoPreprocess {
 
   $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
 
-  my $modes = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $MODE_ARG);
   my $fileNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $PSQL_FILE_ARG);
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
   my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ABBREV_ARG);
 
-  my $mode = $modes->[0];
   my $filePath = $fileNames->[0];
   my $fileName = basename($filePath);
   my $schema = $schemas->[0];
