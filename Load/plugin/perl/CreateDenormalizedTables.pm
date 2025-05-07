@@ -31,36 +31,31 @@ Input is a MY_DENORM_TABLE.psql file that controls creation of or insertion into
 
 The files are named using this pattern: MY_DENORM_TALE.psql
 
-The following values are passed in to the psql as macro values:
- - :SCHEMA     - the schema where denormalized tables are made
- - :ALG_INV_ID - algorithm invocation (for undo)
- - :TAXON_ID - taxon_id, if organism specific
- - :CREATE_OR_INSERT - a CREATE TABLE AS or a INSERT FROM clause, depending on the mode we're running in.  (only used for organism specific)
- - :SUFFIX - to make temp tables unique.  
+The following values are passed in to the psql as macro values, for use in org-specific .psql files:
+ - :SCHEMA                 - the target schema
+ - :ORG_ABBREV             - only for org-specific tables
+ - :TAXON_ID               - only for org-specific tables
+ - :CREATE_AND_POPULATE    - only for org-specific tables
+ - :DECLARE_PARTITION      - only for org-specific tables
 
-We rely on postgres-specific syntax (IF EXISTS), so this is not oracle compatible.
+A typical org-specific file might look like this:
+create :SCHEMA.:ORG_ABBREVtemp_table_1 as select...
+:CREATE_AND_POPULATE 
+select ....           --this is the main SELECT statement for the web table
+:DECLARE_PARTITION
+create :SCHEMA.:ORG_ABBREVmy_table_ix_1
+drop :SCHEMA.:ORG_ABBREVtemp_table_1
 
-A typical file might look like this:
-create table MY_TMP_TABLE_1:SUFFIX as (select ...)  -- use plugin-supplied suffix (timestamp) to avoid collisions with other plugins
-create table MY_TMP_TABLE_2:SUFFIX as (select ...)
-&operation (select ...)         -- operation is one of: CREATE TABLE AS or INSERT FROM. insert uses &algInvId macro to mark rows for future undo
-create index MY_DENORM_IX if not exists
-drop table MY_TMP_TABLE_1:SUFFIX
-drop table MY_TMP_TABLE_2:SUFFIX
+This plugin requires that org specific tables in the .psql file be of the form :SCHEMA.:ORG_ABBREVmy_table
 
-The plugin runs in one of two modes:
- - create
- - insert
+For organism-specific cases, the plugin runs in one of two modes:
+ - parent
+ - child
 
-Create mode uses "create table MY_DENORM_TABLE as" for the operation.  this is used for comparative tables and for organism-specific tables
-before the organism graph.  In the latter case we pass in a fictitious organism to force creation of an empty table.  Thus before the
-organism specific graphs are run we expect an empty table to exist.
+If any table we try to create already exists, we will get a database error.
 
-Insert mode is for organism-specific graphs.  It first runs a "select count (*) where organismAbbrev = " query to ensure that the target table does not have
-rows for this organism.   Then it runs a "insert into MY_DENORM_TABLE from" to populate the table
-
-The undo logic is custom.  It acquires the plugin arg values, and from those infers MY_DENORM_TABLE, and other args.  If the plugin was
-run in creation mode, the undo drops the table.  Otherwise it clears out the rows for this alg_inv_id
+The undo logic is custom.  It acquires the plugin arg values, and from those infers SCHEMA, ORG_ABBREV and MY_DENORM_TABLE.  
+It drops the denormalized table.
 PLUGIN_NOTES
 
 my $documentation = { purpose=>$purpose,
@@ -75,15 +70,16 @@ my $documentation = { purpose=>$purpose,
 my $MODE_ARG = 'mode';
 my $PSQL_FILE_ARG = 'psqlFile';
 my $SCHEMA_ARG = 'schema';
+my $ORG_ARG = 'schema';
 
 my $argsDeclaration =
   [
    enumArg({ name => $MODE_ARG,
-	     descr => '',
+	     descr => 'standard for non-org-specific.  parent for parent partition.  child for child partition',
 	     constraintFunc => undef,
 	     reqd => 1,
 	     isList => 0,
-	     enum => 'create, insert'
+	     enum => 'standard, parent, child'
 	   }),
    fileArg({name           => $PSQL_FILE_ARG,
             descr          => '',
@@ -104,18 +100,18 @@ my $argsDeclaration =
 	      reqd => 1,
 	      isList => 0
 	     }),
-   stringArg({name => 'organismAbbrev',
+   stringArg({name => $ORG_ARG,
 	      descr => 'internal organism abbrev, if this table has organism specific rows',
 	      constraintFunc => undef,
 	      reqd => 0,
 	      isList => 0
 	     }),
-   stringArg({name => 'taxonId',
-	      descr => 'used as filter in the sql, if this table has organism specific rows',
+   stringArg({name => $TAXON_ID_ARG,
+	      descr => 'taxon id, if this table has organism specific rows',
 	      constraintFunc => undef,
 	      reqd => 0,
 	      isList => 0
-	     })
+	     }),
   ];
 
 sub new {
@@ -137,13 +133,12 @@ sub new {
 
 sub run {
   my ($self) = @_;
-  my $psqlFilePath = $self->getArg('psqlFile');
-  my $schema = $self->getArg('schema');
+  my $psqlFilePath = $self->getArg($PSQL_FILE_ARG);
+  my $schema = $self->getArg($SCHEMA_ARG);
   my $projectId = $self->getArg('projectId');
-  my $organismAbbrev = $self->getArg('organismAbbrev');
-  my $mode = $self->getArg('mode');
+  my $organismAbbrev = $self->getArg($ORG_ARG);
+  my $mode = $self->getArg($MODE_ARG);
   my $taxonId = $self->getArg('taxonId');
-  my $algInvId   = $self->getAlgInvocation()->getId();
 
   my $dbh = $self->getQueryHandle();
   $dbh->{RaiseError} = 1;
@@ -153,28 +148,37 @@ sub run {
   my $fileName = basename($psqlFilePath);
   $fileName =~ /(.+).psql/ or $self->error("psqlFile name must be in form MY_DENORM_TABLE.psql");
   my $tableName = $1;
-  my $suffix = "_" . $tableName.$organismAbbrev.time;  # unique suffix for this run.
 
-  if ($mode eq 'insert') {
-    $self->error("organismAbbrev and taxonId are required args if mode is 'insert'") unless $organismAbbrev && $taxonId;
-    checkForPreviousRows("$schema.$tableName", $organismAbbrev, $dbh);
+  if ($mode eq 'child') {
+    $self->error("organismAbbrev and taxonId are required if mode is 'child'") unless $organismAbbrev && $taxonId;
+  } else {
+    $self->error("organismAbbrev and taxon_id must be null if mode is 'standard' or 'parent") if $organismAbbrev || $taxonId;
   }
 
   open my $fh, '<', $psqlFilePath or $self->error("error opening $psqlFilePath: $!");
   my $sqls = do { local $/; <$fh> };
 
+  # TODO: log timing info
   my @sqlList = split(/;\n\s*/, $sqls);
   foreach my $sql (@sqlList) {
     my $newSql = $sql;
-    $newSql =~ s/\:ALG_INV_ID/$algInvId/g;
-    $newSql =~ s/\:TAXON_ID/$taxonId/g;
-    $newSql =~ s/\:SCHEMA/$schema/g;
-    $newSql =~ s/\:SUFFIX/$suffix/g;
-    if ($mode eq 'create') {
-      $newSql =~ s/\:CREATE_OR_INSERT/CREATE TABLE $schema.$tableName AS /g;
-    } else {
-      $newSql =~ s/\:CREATE_OR_INSERT/INSERT INTO $schema.$tableName /g;
+    if ($mode eq 'parent') {
+      $newSql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
+      $newSql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
+    } elsif ($mode eq 'child') {
+      my $s = "
+create table :SCHEMA.:ORG_ABBREVmy_table
+partition of my_table
+for values in (':ORG_ABBREV');
+
+insert into :SCHEMA.:ORG_ABBREVmy_table from
+";
+      $newSql =~ s/\:CREATE_AND_POPULATE/$s/g;
+      $newSql =~ s/\:DECLARE_PARTITION//g;
     }
+    $newSql =~ s/\:TAXON_ID/$taxonId/g;
+    $newSql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
+    $newSql =~ s/\:SCHEMA/$schema/g;
     $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
     if ($commitMode) {
       $dbh->do($newSql);
@@ -190,24 +194,21 @@ sub undoPreprocess {
   my $modes = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $MODE_ARG);
   my $fileNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $PSQL_FILE_ARG);
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
+  my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ABBREV_ARG);
 
   my $mode = $modes->[0];
   my $filePath = $fileNames->[0];
   my $fileName = basename($filePath);
   my $schema = $schemas->[0];
+  my $orgAbbrev = $orgAbbrevs->[0];
 
   $fileName =~ /(.+).psql/ or $self->error("Invalid file name $fileName");
   my $tableName = $1;
 
-  if ($mode eq 'insert') {
-    $self->{_undo_tables} = ["$schema.$tableName"];
-  } elsif ($mode eq 'create') {
-    my $sql = "drop table $schema.$tableName";
-    $dbh->do($sql) || $self->error("Failed executing $sql");
-    $self->log("Dropped $schema.$tableName");
-  } else {
-    $self->error("Invalid mode param: $mode");
-  }
+  my $sql = "drop table $schema.$orgAbbrev$tableName";
+  $dbh->do($sql) || $self->error("Failed executing $sql");
+  $self->log("Dropped $schema.$tableName");
+
 }
 
 sub undoTables {
