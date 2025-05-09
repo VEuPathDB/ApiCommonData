@@ -206,6 +206,9 @@ sub undoTables {
   return ();
 }
 
+
+# Add this functionality to apidb.orthologgroup
+# Don't clobber sql
 sub undoPreprocess {
     my ($self, $dbh) = @_;
 
