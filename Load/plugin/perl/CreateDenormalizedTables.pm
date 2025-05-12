@@ -25,26 +25,31 @@ None.
 PLUGIN_FAILURE_CASES
 
 my $notes = <<PLUGIN_NOTES;
-Input is a MY_DENORM_TABLE.psql file that controls creation of or insertion into MY_DENORM_TABLE.  The file contains multiple SQL statements
-(roughly corresponding to SQL blocks in tuning manager XML files).   The sqls are delimited by a semi-colon followed by newline.  The files use
-.psql style macro variables.
+Input is directory containing a .psql file, and the name of the table this .psql file will create, eg MY_DENORM_TABLE. The file MY_DENORM_TABLE.psql
+controls creation of MY_DENORM_TABLE.  The file contains multiple SQL statements (roughly corresponding to SQL blocks in tuning manager XML files).
+ The sqls are delimited by a semi-colon followed by newline.  The files use .psql style macro variables.
 
-The files are named using this pattern: MY_DENORM_TALE.psql
+The files are named using this pattern:
+ - MY_DENORM_TABLE.psql
+ - MY_DENORM_TABLE_ix.psql    -declares indexes for MY_DENORM_TABLE
 
 The following values are passed in to the psql as macro values, for use in org-specific .psql files:
  - :SCHEMA                 - the target schema
+ - :PROJECT_ID
  - :ORG_ABBREV             - only for org-specific tables
  - :TAXON_ID               - only for org-specific tables
  - :CREATE_AND_POPULATE    - only for org-specific tables
  - :DECLARE_PARTITION      - only for org-specific tables
 
-A typical org-specific file might look like this:
+A typical MY_DENORM_TABLE.psql file might look like this:
 create :SCHEMA.:ORG_ABBREVtemp_table_1 as select...
 :CREATE_AND_POPULATE 
 select ....           --this is the main SELECT statement for the web table
 :DECLARE_PARTITION
-create :SCHEMA.:ORG_ABBREVmy_table_ix_1
 drop :SCHEMA.:ORG_ABBREVtemp_table_1
+
+The parallel MY_DENORM_TABLE_ix.psql file might look like this:
+create index :SCHEMA.:ORG_ABBREVmy_index on :SCHEMA.:ORG_ABBREVMY_DENORM_TABLE;
 
 This plugin requires that org specific tables in the .psql file be of the form :SCHEMA.:ORG_ABBREVmy_table
 
@@ -67,7 +72,7 @@ my $documentation = { purpose=>$purpose,
 		      notes=>$notes
 		    };
 
-my $PSQL_FILE_ARG = 'psqlFile';
+my $TABLE_NAME_ARG = 'tableName';
 my $SCHEMA_ARG = 'schema';
 my $ORG_ARG = 'organismAbbrev';
 
@@ -80,14 +85,20 @@ my $argsDeclaration =
 	     isList => 0,
 	     enum => 'standard, parent, child'
 	   }),
-   fileArg({name           => $PSQL_FILE_ARG,
+   fileArg({name           => psqlDirPath,
             descr          => '',
             reqd           => 1,
             mustExist      => 1,
             format         => '',
             constraintFunc => undef,
             isList         => 0, }),
-   stringArg({name => $SCHEMA_ARG,
+   stringArg({name => $TABLE_NAME_ARG,
+	      descr => 'name of table to create, eg MY_DENOM_TABLE',
+	      constraintFunc => undef,
+	      reqd => 1,
+	      isList => 0
+	     }),
+    stringArg({name => $SCHEMA_ARG,
 	      descr => 'schema to hold MY_DENOM_TABLE and temp tables',
 	      constraintFunc => undef,
 	      reqd => 1,
@@ -133,7 +144,8 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $psqlFilePath = $self->getArg($PSQL_FILE_ARG);
+  my $psqlDirPath = $self->getArg('psqlDirPath');
+  my $tableName = $self->getArg($TABLE_NAME_ARG);
   my $schema = $self->getArg($SCHEMA_ARG);
   my $projectId = $self->getArg('projectId');
   my $organismAbbrev = $self->getArg($ORG_ARG);
@@ -145,9 +157,8 @@ sub run {
   $dbh->{AutoCommit} = 1;
   my $commitMode = $self->getArg('commit');
 
-  my $fileName = basename($psqlFilePath);
-  $fileName =~ /(.+).psql/ or $self->error("psqlFile name must be in form MY_DENORM_TABLE.psql");
-  my $tableName = $1;
+  my $fileName = "$psqlDirPath/$tableName.psql";
+  -e $fileName or $self->error("psqlFile $fileName does not exist");
 
   if ($mode eq 'child') {
     $self->error("organismAbbrev and taxonId are required if mode is 'child'") unless $organismAbbrev && $taxonId;
@@ -155,19 +166,27 @@ sub run {
     $self->error("organismAbbrev and taxon_id must be null if mode is 'standard' or 'parent") if $organismAbbrev || $taxonId;
   }
 
+  my $startTimeAll = time;
+  $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
+  if (-e "$psqlDirPath/${tableName}_ix.psql") {
+    $self->processPsqlFile,("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare');
+  }
+  my $t = time - $startTimeAll;
+  $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
+}
+
+sub processPsqlFile {
+  my ($self, $psqlFilePath, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
+
   open my $fh, '<', $psqlFilePath or $self->error("error opening $psqlFilePath: $!");
   my $sqls = do { local $/; <$fh> };
 
-  my $startTimeAll = time;
 
   my @sqlList = split(/;\n\s*/, $sqls);
   foreach my $sql (@sqlList) {
     my $startTime = time;
 
-    # for child we do not create indexes on the denorm table
-    next if ($sql =~ /create.+index.+\n?.+on\s+(\:SCHEMA.:ORG_ABBREV)?$tableName\s/i) && $mode eq 'child';
-
-    my $newSql = instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId);
+    my $newSql = instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
     $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
     if ($commitMode) {
       $dbh->do($newSql);
@@ -175,12 +194,10 @@ sub run {
     my $t = time - $startTime;
     $self->log("INDVIDUAL SQL TIME (sec): $t");
   }
-  my $t = time - $startTimeAll;
-  $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
 }
 
 sub instantiateSql {
-  my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId) = @_;
+  my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
 
   if ($mode eq 'parent') {
     $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
@@ -198,6 +215,7 @@ insert into :SCHEMA.:ORG_ABBREV$tableName from
     $sql =~ s/\:DECLARE_PARTITION//g;
   }
   $sql =~ s/\:TAXON_ID/$taxonId/g;
+  $sql =~ s/\:PROJECT_ID/$projectId/g;
   $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
   $sql =~ s/\:SCHEMA/$schema/g;
   return $sql;
@@ -208,17 +226,13 @@ sub undoPreprocess {
 
   $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
 
-  my $fileNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $PSQL_FILE_ARG);
+  my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
   my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
-  my $filePath = $fileNames->[0];
-  my $fileName = basename($filePath);
+  my $tableName = $fileNames->[0];
   my $schema = $schemas->[0];
   my $orgAbbrev = $orgAbbrevs->[0];
-
-  $fileName =~ /(.+).psql/ or $self->error("Invalid file name $fileName");
-  my $tableName = $1;
 
   my $sql = "drop table $schema.$orgAbbrev$tableName";
   $dbh->do($sql) || $self->error("Failed executing $sql");
