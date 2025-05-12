@@ -4,6 +4,7 @@ package ApiCommonData::Load::Plugin::CreateDenormalizedTables;
 use strict;
 use File::Basename;
 use GUS::PluginMgr::Plugin;
+use ApiCommonData::Load::InstantiatePsql;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Create denormalized tables.
@@ -187,7 +188,7 @@ sub processPsqlFile {
   foreach my $sql (@sqlList) {
     my $startTime = time;
 
-    my $newSql = instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
+    my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
     $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
     if ($commitMode) {
       $dbh->do($newSql);
@@ -195,31 +196,6 @@ sub processPsqlFile {
     my $t = time - $startTime;
     $self->log("INDVIDUAL SQL TIME (sec): $t");
   }
-}
-
-sub instantiateSql {
-  my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
-
-  if ($mode eq 'parent') {
-    $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
-    $sql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
-  } elsif ($mode eq 'child') {
-
-    my $s = "
-create table :SCHEMA.:ORG_ABBREV$tableName
-partition of $tableName
-for values in (':ORG_ABBREV');
-
-insert into :SCHEMA.:ORG_ABBREV$tableName from
-";
-    $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
-    $sql =~ s/\:DECLARE_PARTITION//g;
-  }
-  $sql =~ s/\:TAXON_ID/$taxonId/g;
-  $sql =~ s/\:PROJECT_ID/$projectId/g;
-  $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
-  $sql =~ s/\:SCHEMA/$schema/g;
-  return $sql;
 }
 
 sub undoPreprocess {

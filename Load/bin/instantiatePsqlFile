@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use ApiCommonData::Load::InstantiatePsql;
+
+my ($dirPath, $tableName, $schema, $mode, $projectId, $orgAbbrev, $taxonId) = @ARGV;
+
+usage() unless $dirPath && $tableName && $schema;
+
+die "Dir $dirPath does not exist" unless -d $dirPath;
+
+my $psqlFile = "$dirPath/$tableName.psql";
+
+die "psql file $psqlFile doesn't exist" unless -e $psqlFile;
+
+open my $fh, '<', $psqlFile or die "error opening $psqlFile: $!";
+my $sqls = do { local $/; <$fh> };
+
+my @sqlList = split(/;\n\s*/, $sqls);
+foreach my $sql (@sqlList) {
+  my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $orgAbbrev, $mode, $taxonId, $projectId);
+  print STDOUT $newSql;
+}
+
+my $ixFile = "$dirPath/${tableName}_ix.psql";
+
+exit unless -e $ixFile;
+
+open my $fh, '<', $ixFile or die "error opening $ixFile: $!";
+my $sqls = do { local $/; <$fh> };
+
+my @sqlList = split(/;\n\s*/, $sqls);
+foreach my $sql (@sqlList) {
+  my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $orgAbbrev, $mode, $taxonId, $projectId);
+  print STDOUT $newSql;
+}
+
+sub usage {
+  die "
+Instantiate the macros in a .psql file (and its matching _ix file), as used by CreateDenormalizedTables plugin.  (see the plugin for details)
+
+Usage: instantiatePsqlFile dirpath tablename schema [parent | child | dontcate] projectid orgabbrev taxonid
+
+Output to stdout
+";
+}
