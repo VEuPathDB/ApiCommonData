@@ -85,7 +85,7 @@ my $argsDeclaration =
 	     isList => 0,
 	     enum => 'standard, parent, child'
 	   }),
-   fileArg({name           => psqlDirPath,
+   fileArg({name           => 'psqlDirPath',
             descr          => '',
             reqd           => 1,
             mustExist      => 1,
@@ -167,17 +167,18 @@ sub run {
   }
 
   my $startTimeAll = time;
-  $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
+  $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh);
   if (-e "$psqlDirPath/${tableName}_ix.psql") {
-    $self->processPsqlFile,("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare');
+    $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
   }
   my $t = time - $startTimeAll;
   $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
 }
 
 sub processPsqlFile {
-  my ($self, $psqlFilePath, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
+  my ($self, $psqlFilePath, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh) = @_;
 
+  $self->log("Processing file $psqlFilePath");
   open my $fh, '<', $psqlFilePath or $self->error("error opening $psqlFilePath: $!");
   my $sqls = do { local $/; <$fh> };
 
@@ -230,7 +231,7 @@ sub undoPreprocess {
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
   my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
-  my $tableName = $fileNames->[0];
+  my $tableName = $tableNames->[0];
   my $schema = $schemas->[0];
   my $orgAbbrev = $orgAbbrevs->[0];
 
