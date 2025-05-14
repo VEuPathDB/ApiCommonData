@@ -1,4 +1,4 @@
-package OrthoMCLData::Load::Plugin::InsertOrthoGroupStats;
+package ApiCommonData::Load::Plugin::InsertOrthoGroupStats;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
