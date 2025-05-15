@@ -94,14 +94,15 @@ sub run {
     while (my $line = <$data>) {
         chomp $line;
         $rowCount++;
-        my ($group,$max,$seventyfifth,$median,$twentyfifth,$min) = split(/\t/, $line);
+        my ($group,$max,$seventyfifth,$median,$twentyfifth,$min,$count) = split(/\t/, $line);
       
         foreach my $statType (@statTypes) {
             if ($statType eq "min") {
-                if ($min == 0) {
+                if ($min eq "0") {
                     addRow($group,$statType,$min,$proteinSubset);
                 }
                 else  {
+		  $min = 1.0e-5 if ($min > 1.0e-5);
                     my ($minValue, $minExponent) = split /e-/, $min;
                     my $minValueRounded = sprintf("%.2f", $minValue);
                     my $minFormatted = "${minValueRounded}e-$minExponent";
@@ -109,10 +110,11 @@ sub run {
                 }
             }
             elsif ($statType eq "25 PCT") {
-                if ($twentyfifth == 0) {
+                if ($twentyfifth eq "0") {
                     addRow($group,$statType,$twentyfifth,$proteinSubset);
                 }
                 else  {
+		  $twentyfifth = 1.0e-5 if ($twentyfifth > 1.0e-5);
                     my ($twentyfifthValue, $twentyfifthExponent) = split /e-/, $twentyfifth;
                     my $twentyfifthValueRounded = sprintf("%.2f", $twentyfifthValue);
                     my $twentyfifthFormatted = "${twentyfifthValueRounded}e-$twentyfifthExponent";
@@ -120,10 +122,11 @@ sub run {
                 }
             }
             elsif ($statType eq "median") {
-                if ($median == 0) {
+                if ($median eq "0") {
                     addRow($group,$statType,$median,$proteinSubset);
                 }
                 else  {
+		  $median = 1.0e-5 if ($median > 1.0e-5);
                     my ($medValue, $medExponent) = split /e-/, $median;
                     my $medValueRounded = sprintf("%.2f", $medValue);
                     my $medFormatted = "${medValueRounded}e-$medExponent";
@@ -131,10 +134,11 @@ sub run {
                 }
             }
             elsif ($statType eq "75 PCT") {
-                if ($seventyfifth == 0) {
+                if ($seventyfifth eq "0") {
                     addRow($group,$statType,$seventyfifth,$proteinSubset);
                 }
                 else  {
+		  $seventyfifth = 1.0e-5 if ($seventyfifth > 1.0e-5);
                     my ($seventyfifthValue, $seventyfifthExponent) = split /e-/, $seventyfifth;
                     my $seventyfifthValueRounded = sprintf("%.2f", $seventyfifthValue);
                     my $seventyfifthFormatted = "${seventyfifthValueRounded}e-$seventyfifthExponent";
@@ -142,10 +146,11 @@ sub run {
                 }
             }
             elsif ($statType eq "max") {
-                if ($max == 0) {
+                if ($max eq "0") {
                     addRow($group,$statType,$max,$proteinSubset);
                 }
                 else  {
+		  $max = 1.0e-5 if ($max > 1.0e-5);
                     my ($maxValue, $maxExponent) = split /e-/, $max;
                     my $maxValueRounded = sprintf("%.2f", $maxValue);
                     my $maxFormatted = "${maxValueRounded}e-$maxExponent";
