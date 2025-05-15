@@ -2,23 +2,9 @@
 
 nextflow.enable.dsl=2
 
-process preprocessPair {
-  input:
-  path pair_dir
-  path gusConfigFile
-
-  output:
-  tuple path(pair_dir), path("readyToLoad"), optional: true 
-  
-  shell:
-  """
-  processSynteny --pairDir $pair_dir --gusConfigFile $gusConfigFile --outputFile readyToLoad 
-  """
-}
-
 process runPlugins {
   input:
-  tuple path(pair_dir), path("readyToLoad")
+  path(pair_dir)
   path gusConfigFile
   
   output:
@@ -32,9 +18,9 @@ process runPlugins {
   def databaseName = pairName + "_Mercator_synteny"
   def databaseVersion = "dontcare"
   """
-  ga GUS::Supported::Plugin::InsertExternalDatabase --name '$databaseName' --gusConfigFile $gusConfigFile --commit
-  ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName '$databaseName' --databaseVersion '$databaseVersion' --commit
-  ga ApiCommonData::Load::Plugin::InsertSyntenySpans --writeSqlldrFiles \\
+  echo ga GUS::Supported::Plugin::InsertExternalDatabase --name '$databaseName' --gusConfigFile $gusConfigFile --commit
+  echo ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName '$databaseName' --databaseVersion '$databaseVersion' --commit
+  echo ga ApiCommonData::Load::Plugin::InsertSyntenySpans --writeSqlldrFiles \\
                                                           --inputDirectory $pair_dir \\
                                                           --outputSyntenyDatFile synteny.dat \\
                                                           --outputSyntenyCtrlFile synteny.dat.ctrl \\
@@ -57,13 +43,30 @@ process runPlugins {
 //   '''
 // }
 
+process filterPairsDir {
+  input:
+  path inputDir
+  path gusConfigFile
+
+  output:
+  path("pairs.txt")
+  
+  shell:
+  """
+  filterSyntenyPairsDirectory.pl --pairDir $inputDir --gusConfigFile $gusConfigFile --outputFile pairs.txt
+  """
+}
+
 
 workflow {
-  mercatorPairDirectories = Channel.fromPath(params.mercatorPairsDir + '/**', type: 'dir', maxDepth: 0)
+  filterPairsDir(params.mercatorPairsDir, params.gusConfigFile)
 
-  preprocessPair(mercatorPairDirectories, params.gusConfigFile)
+  pairs_ch = filterPairsDir.out
+    .splitText() {v -> params.mercatorPairsDir + "/" + v }
 
-  runPlugins(preprocessPair.out, params.gusConfigFile)
+  runPlugins(pairs_ch, params.gusConfigFile)
+  
+  
 
 
   
