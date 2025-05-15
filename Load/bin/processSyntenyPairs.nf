@@ -1,37 +1,71 @@
 #!/usr/bin/env nextflow
 
-Channel.fromPath(params.mercatorPairsDir + '/**', type: 'dir', maxDepth: 0).set{ directory_pairs_ch }
+nextflow.enable.dsl=2
 
-process processPairs {
-  errorStrategy 'terminate'
-  maxErrors 1
+process preprocessPair {
   input:
-  file pair_dir from directory_pairs_ch
+  path pair_dir
+  path gusConfigFile
 
   output:
-  file 'synteny.dat' into synteny_dat_ch
-  file 'synteny.dat.ctrl' into synteny_ctrl_ch
-  file 'syntenic_gene.dat' into syntenic_gene_dat_ch
-  file 'syntenic_gene.dat.ctrl' into syntenic_gene_ctrl_ch
-
+  tuple path(pair_dir), path("readyToLoad"), optional: true 
+  
   shell:
-  '''
-  echo Running processSynteny --pair_dir !{params.mercatorPairsDir}/!{pair_dir}
-  processSynteny --pair_dir !{params.mercatorPairsDir}/!{pair_dir}
-  '''
+  """
+  processSynteny --pairDir $pair_dir --gusConfigFile $gusConfigFile --outputFile readyToLoad 
+  """
 }
-process loader {
-  errorStrategy 'terminate'
-  maxErrors 1
-  input:
-  file synteny_dat_ch
-  file synteny_ctrl_ch
-  file syntenic_gene_dat_ch
-  file syntenic_gene_ctrl_ch
 
-  shell:
-  '''
-  runSqlldr --ctrlFile !{synteny_ctrl_ch} --silent ALL
-  runSqlldr --ctrlFile !{syntenic_gene_ctrl_ch} --silent ALL
-  '''
+process runPlugins {
+  input:
+  tuple path(pair_dir), path("readyToLoad")
+  path gusConfigFile
+  
+  output:
+  path 'synteny.dat'
+  path 'synteny.dat.ctrl'
+  path 'syntenic_gene.dat'
+  path 'syntenic_gene.dat.ctrl'
+
+  script:
+  def pairName = pair_dir.baseName
+  def databaseName = pairName + "_Mercator_synteny"
+  def databaseVersion = "dontcare"
+  """
+  ga GUS::Supported::Plugin::InsertExternalDatabase --name '$databaseName' --gusConfigFile $gusConfigFile --commit
+  ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName '$databaseName' --databaseVersion '$databaseVersion' --commit
+  ga ApiCommonData::Load::Plugin::InsertSyntenySpans --writeSqlldrFiles \\
+                                                          --inputDirectory $pair_dir \\
+                                                          --outputSyntenyDatFile synteny.dat \\
+                                                          --outputSyntenyCtrlFile synteny.dat.ctrl \\
+                                                          --outputSyntenicGeneDatFile syntenic_gene.dat \\
+                                                          --outputSyntenicGeneCtrlFile syntenic_gene.dat.ctrl \\
+                                                          --syntenyDbRlsSpec '$databaseName|dontcare'
+  """
+}
+// process loader {
+//   input:
+//   file synteny_dat_ch
+//   file synteny_ctrl_ch
+//   file syntenic_gene_dat_ch
+//   file syntenic_gene_ctrl_ch
+
+//   shell:
+//   '''
+//   runSqlldr --ctrlFile !{synteny_ctrl_ch} --silent ALL --errors 0
+//   runSqlldr --ctrlFile !{syntenic_gene_ctrl_ch} --silent ALL --errors 0
+//   '''
+// }
+
+
+workflow {
+  mercatorPairDirectories = Channel.fromPath(params.mercatorPairsDir + '/**', type: 'dir', maxDepth: 0)
+
+  preprocessPair(mercatorPairDirectories, params.gusConfigFile)
+
+  runPlugins(preprocessPair.out, params.gusConfigFile)
+
+
+  
+  
 }

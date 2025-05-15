@@ -35,7 +35,7 @@ use GUS::Model::ApiDB::SyntenicGene;
 use GUS::Model::ApiDB::SyntenicGene_Table;
 #use GUS::Model::ApiDB::SyntenicScale;
 
-use CBIL::Util::V;
+#use CBIL::Util::V;
 
 use GUS::Supported::Util;
 
