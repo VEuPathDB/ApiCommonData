@@ -13,7 +13,7 @@ sub instantiateSql {
 ;
 
 create table $schema.$tableName (like $schema.${tableName}_temporary including all)
-parition by list (organismAbbrev);
+partition by list (organismAbbrev);
 
 drop table $schema.${tableName}_temporary;
 ";

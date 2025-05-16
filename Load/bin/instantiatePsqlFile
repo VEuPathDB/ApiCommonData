@@ -16,11 +16,11 @@ die "psql file $psqlFile doesn't exist" unless -e $psqlFile;
 
 open my $fh, '<', $psqlFile or die "error opening $psqlFile: $!";
 my $sqls = do { local $/; <$fh> };
+my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $tableName, $schema, $orgAbbrev, $mode, $taxonId, $projectId);
 
-my @sqlList = split(/;\n\s*/, $sqls);
+my @sqlList = split(/;\n\s*/, $newSqls);
 foreach my $sql (@sqlList) {
-  my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $orgAbbrev, $mode, $taxonId, $projectId);
-  print STDOUT $newSql;
+  print STDOUT $sql;
 }
 
 my $ixFile = "$dirPath/${tableName}_ix.psql";
