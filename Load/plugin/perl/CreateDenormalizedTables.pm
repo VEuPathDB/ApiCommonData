@@ -5,6 +5,7 @@ use strict;
 use File::Basename;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::InstantiatePsql;
+use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Create denormalized tables.
@@ -164,7 +165,7 @@ sub run {
   if ($mode eq 'child') {
     $self->error("organismAbbrev and taxonId are required if mode is 'child'") unless $organismAbbrev && $taxonId;
   } else {
-    $self->error("organismAbbrev and taxon_id must be null if mode is 'standard' or 'parent") if $organismAbbrev || $taxonId;
+    $self->error("organismAbbrev must be null if mode is 'standard' or 'parent") if $organismAbbrev;
   }
 
   my $startTimeAll = time;
@@ -189,7 +190,7 @@ sub processPsqlFile {
     my $startTime = time;
 
     my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
-    $self->log($commitMode? "FOR REAL" : "TEST ONLY" . " - SQL: \n$newSql\n\n");
+    $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$newSql\n\n");
     if ($commitMode) {
       $dbh->do($newSql);
     }
@@ -211,7 +212,7 @@ sub undoPreprocess {
   my $schema = $schemas->[0];
   my $orgAbbrev = $orgAbbrevs->[0];
 
-  my $sql = "drop table $schema.$orgAbbrev$tableName";
+  my $sql = "drop table if exists $schema.$orgAbbrev$tableName";
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $schema.$tableName");
 
