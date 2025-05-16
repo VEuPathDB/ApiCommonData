@@ -184,15 +184,15 @@ sub processPsqlFile {
   open my $fh, '<', $psqlFilePath or $self->error("error opening $psqlFilePath: $!");
   my $sqls = do { local $/; <$fh> };
 
+  my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
 
-  my @sqlList = split(/;\n\s*/, $sqls);
+  my @sqlList = split(/;\n\s*/, $newSqls);
   foreach my $sql (@sqlList) {
     my $startTime = time;
 
-    my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
-    $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$newSql\n\n");
+    $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$sql\n\n");
     if ($commitMode) {
-      $dbh->do($newSql);
+      $dbh->do($sql);
     }
     my $t = time - $startTime;
     $self->log("INDVIDUAL SQL TIME (sec): $t");
