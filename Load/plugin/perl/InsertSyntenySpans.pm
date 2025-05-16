@@ -1,24 +1,3 @@
-
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | broken
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 package ApiCommonData::Load::Plugin::InsertSyntenySpans;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
@@ -28,14 +7,17 @@ use GUS::PluginMgr::Plugin;
 
 use GUS::Model::DoTS::NASequence;
 
+use ApiCommonData::Load::Fifo;
+use ApiCommonData::Load::Psql;
+
 use GUS::Model::ApiDB::Synteny;
 use GUS::Model::ApiDB::Synteny_Table;
-#use GUS::Model::ApiDB::SyntenyAnchor;
+
 use GUS::Model::ApiDB::SyntenicGene;
 use GUS::Model::ApiDB::SyntenicGene_Table;
-#use GUS::Model::ApiDB::SyntenicScale;
 
 #use CBIL::Util::V;
+use POSIX qw(strftime);
 
 use GUS::Supported::Util;
 
@@ -77,14 +59,14 @@ my $argsDeclaration =
              isList         => 0,
            }),
 
-   fileArg({ name           => 'outputSyntenyCtrlFile',
-             descr          => '',
-             reqd           => 0,
-             mustExist      => 0,
-             format         => 'custom',
-             constraintFunc => undef,
-             isList         => 0,
-           }),
+   # fileArg({ name           => 'outputSyntenyCtrlFile',
+   #           descr          => '',
+   #           reqd           => 0,
+   #           mustExist      => 0,
+   #           format         => 'custom',
+   #           constraintFunc => undef,
+   #           isList         => 0,
+   #         }),
    fileArg({ name           => 'outputSyntenicGeneDatFile',
              descr          => '',
              reqd           => 0,
@@ -93,16 +75,16 @@ my $argsDeclaration =
              constraintFunc => undef,
              isList         => 0,
            }),
-   fileArg({ name           => 'outputSyntenicGeneCtrlFile',
-             descr          => '',
-             reqd           => 0,
-             mustExist      => 0,
-             format         => 'custom',
-             constraintFunc => undef,
-             isList         => 0,
-           }),
+   # fileArg({ name           => 'outputSyntenicGeneCtrlFile',
+   #           descr          => '',
+   #           reqd           => 0,
+   #           mustExist      => 0,
+   #           format         => 'custom',
+   #           constraintFunc => undef,
+   #           isList         => 0,
+   #         }),
 
-booleanArg({name => 'writeSqlldrFiles',
+booleanArg({name => 'loadWithPsql',
        descr => 'write files for sqlloader',
        constraintFunc=> undef,
        reqd  => 0,
@@ -184,6 +166,30 @@ sub new {
 
 #--------------------------------------------------------------------------------
 
+sub error {
+  my ($self, $msg) = @_;
+  print STDERR "\nERROR: $msg\n";
+
+  foreach my $pid (@{$self->getActiveForkedProcesses()}) {
+    kill(9, $pid);
+  }
+
+  $self->SUPER::error($msg);
+}
+
+sub getActiveForkedProcesses {
+  my ($self) = @_;
+
+  return $self->{_active_forked_processes} || [];
+}
+
+sub addActiveForkedProcess {
+  my ($self, $pid) = @_;
+
+  push @{$self->{_active_forked_processes}}, $pid;
+}
+
+
 sub run {
   my ($self) = @_;
 
@@ -194,34 +200,40 @@ sub run {
 
   my ($sdat, $sgdat);
 
-  if($self->getArg('writeSqlldrFiles')) {
+  my ($syntenyFifo,$syntenicGeneFifo);
+  
+  if($self->getArg('loadWithPsql')) {
+
+    $self->setPsqlLogin();
+    $self->setPsqlPassword();
+    $self->setPsqlHostname();
+    $self->setPsqlDatabase();
+    $self->setModificationDate();
 
     my $syntenyDatFile = $self->getArg('outputSyntenyDatFile');
-    my $syntenyCtrlFile = $self->getArg('outputSyntenyCtrlFile');
-    
     my $syntenicGeneDatFile = $self->getArg('outputSyntenicGeneDatFile');
-    my $syntenicGeneCtrlFile = $self->getArg('outputSyntenicGeneCtrlFile');
 
-    open($sdat, ">$syntenyDatFile") or die "Cannot open synteny data file for writing";
-    open($sgdat, ">$syntenicGeneDatFile") or die "Cannot open syntenic_gene data file for writing";
+    
+    $syntenyFifo = ApiCommonData::Load::Fifo->new($syntenyDatFile);
+    my $syntenyTable = GUS::Model::ApiDB::Synteny_Table->new();
+    my $syntenyPsqlObj = $self->makePsqlObj('ApiDB.Synteny', $syntenyDatFile, $syntenyTable->getAttributeList());
+    my $syntenyPsqlProcessString = $syntenyPsqlObj->getCommandLine();
+    my $syntenyPsqlPid = $syntenyFifo->attachReader($syntenyPsqlProcessString);
 
-    open(my $sctrl, ">$syntenyCtrlFile") or die "Cannot open synteny ctrl file for writing";
-    open(my $sgctrl, ">$syntenicGeneCtrlFile") or die "Cannot open syntenic_gene ctrl file for writing";
+
+    print "syntenyPsqlPid=$syntenyPsqlPid\n";
+    $self->addActiveForkedProcess($syntenyPsqlPid);
+    $syntenicGeneFifo = ApiCommonData::Load::Fifo->new($syntenicGeneDatFile);
+    my $syntenicGeneTable = GUS::Model::ApiDB::SyntenicGene_Table->new();
+    my $syntenicGenePsqlObj = $self->makePsqlObj('ApiDB.SyntenicGene', $syntenicGeneDatFile, $syntenicGeneTable->getAttributeList());
+    my $syntenicGenePsqlProcessString = $syntenicGenePsqlObj->getCommandLine();
+    my $syntenicGenePsqlPid = $syntenicGeneFifo->attachReader($syntenicGenePsqlProcessString);       
+    $self->addActiveForkedProcess($syntenicGenePsqlPid);
 
     my %fileHandles;
-    $fileHandles{'synteny.dat'} = $sdat;
-    $fileHandles{'syntenic_gene.dat'} = $sgdat;
-
+    $fileHandles{'synteny.dat'} = $syntenyFifo->attachWriter();
+    $fileHandles{'syntenic_gene.dat'} = $syntenicGeneFifo->attachWriter();
     $self->setOutputFileHandles(\%fileHandles);
-
-    my $syntenyTable = GUS::Model::ApiDB::Synteny_Table->new();
-    $self->writeConfigFile('ApiDB.Synteny', $syntenyDatFile, $syntenyTable->getAttributeList(), $sctrl);
-
-    my $syntenicGeneTable = GUS::Model::ApiDB::SyntenicGene_Table->new();
-    $self->writeConfigFile('ApiDB.SyntenicGene', $syntenicGeneDatFile, $syntenicGeneTable->getAttributeList(), $sgctrl);
-
-    close $sctrl;
-    close $sgctrl;
   }
 
   my $alignDir = "$dirname/alignments";
@@ -260,7 +272,7 @@ sub run {
                                                  and is_top_level = 1");
 
 
-  $self->getDb()->manageTransaction(0, 'begin') unless($self->getArg('writeSqlldrFiles'));
+  $self->getDb()->manageTransaction(0, 'begin') unless($self->getArg('loadWithPsql'));
 
 
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
@@ -334,18 +346,18 @@ sub run {
       }
 
       my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId, $organismAbbrevB);
-      $syntenyObjA->submit(undef, 1) unless($self->getArg('writeSqlldrFiles'));
+      $syntenyObjA->submit(undef, 1) unless($self->getArg('loadWithPsql'));
 
       my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId, $organismAbbrevA);
-      $syntenyObjB->submit(undef, 1) unless($self->getArg('writeSqlldrFiles'));
+      $syntenyObjB->submit(undef, 1) unless($self->getArg('loadWithPsql'));
 
       if($count && $count % 500 == 0) {
         $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
       }
 
       if($count && $count % 1000 == 0) {
-        $self->getDb()->manageTransaction(0, 'commit') unless($self->getArg('writeSqlldrFiles'));
-        $self->getDb()->manageTransaction(0, 'begin') unless($self->getArg('writeSqlldrFiles'));
+        $self->getDb()->manageTransaction(0, 'commit') unless($self->getArg('loadWithPsql'));
+        $self->getDb()->manageTransaction(0, 'begin') unless($self->getArg('loadWithPsql'));
       }
 
       $self->undefPointerCache();
@@ -356,15 +368,59 @@ sub run {
   }
   close MAP;
 
-  close $sdat;
-  close $sgdat;
-
-  $self->getDb()->manageTransaction(0, 'commit') unless($self->getArg('writeSqlldrFiles'));
+  $self->getDb()->manageTransaction(0, 'commit') unless($self->getArg('loadWithPsql'));
   my $syntenicGeneCount = $self->getSyntenicGeneCount();
+
+  if($self->getArg('loadWithPsql')) {
+    $syntenyFifo->cleanup();
+    $syntenicGeneFifo->cleanup();
+  }
+  # if($self->getArg('loadWithPsql')) {
+  #   my $outputFileHandles = $self->getOutputFileHandles();
+  #   foreach(keys %$outputFileHandles) {
+  #     close $outputFileHandles->{$_};
+  #   }
+  # }
 
   return "inserted $count synteny spans and $syntenicGeneCount syntenic genes ";
 }
 
+sub getModificationDate() { $_[0]->{_modification_date} }
+sub setModificationDate {
+  my ($self) = @_;
+  my $modificationDate = strftime "%m-%d-%Y", localtime();
+  $self->{_modification_date} = $modificationDate;
+}
+
+
+sub getPsqlLogin() { $_[0]->{_psql_login} }
+sub setPsqlLogin() {
+  my ($self) = @_;
+  $self->{_psql_login} = $self->getDb->getLogin();
+}
+sub getPsqlPassword() { $_[0]->{_psql_password} }
+sub setPsqlPassword() {
+  my ($self) = @_;
+  $self->{_psql_password} = $self->getDb->getPassword();
+}
+sub getPsqlDatabase() { $_[0]->{_psql_database} }
+sub setPsqlDatabase {
+  my ($self) = @_;
+
+  my $dbiDsn      = $self->getDb->getDSN();
+  $dbiDsn =~ /(:|;)dbname=((\w|\.)+);?/ ;
+  my $db = $2;
+  $self->{_psql_database} = $db;
+}
+sub getPsqlHostname() { $_[0]->{_psql_hostname} }
+sub setPsqlHostname {
+  my ($self) = @_;
+
+  my $dbiDsn      = $self->getDb->getDSN();
+  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
+  my $hostName = $2;
+  $self->{_psql_hostname} = $hostName;
+}
 
 sub getNaSequenceMap {$_[0]->{_na_sequence_map}}
 sub lookupNaSeqIdsByAbbrev {
@@ -414,19 +470,31 @@ sub makeSynteny {
 
   my $isReversed = $syntenyA->strand == $syntenyB->strand ? 0 : 1;
 
+  my $dbiDatabase = $self->getDb();
 
   my $synteny = GUS::Model::ApiDB::Synteny->new({ a_na_sequence_id => $naSequenceMap->{$syntenyA->seq_id},
-						  b_na_sequence_id => $naSequenceMap->{$syntenyB->seq_id},
-						  a_start => $syntenyA->start,
-						  b_start => $syntenyB->start,
-						  a_end   => $syntenyA->end,
-						  b_end   => $syntenyB->end,,
-						  is_reversed => $isReversed,
-						  external_database_release_id => $synDbRlsId,
-						});
+                                                  b_na_sequence_id => $naSequenceMap->{$syntenyB->seq_id},
+                                                  a_start => $syntenyA->start,
+                                                  b_start => $syntenyB->start,
+                                                  a_end   => $syntenyA->end,
+                                                  b_end   => $syntenyB->end,,
+                                                  is_reversed => $isReversed,
+                                                  external_database_release_id => $synDbRlsId,
+                                                  row_group_id => $dbiDatabase->getDefaultGroupId(),
+                                                  row_user_id => $dbiDatabase->getDefaultUserId(),
+                                                  row_project_id => $dbiDatabase->getDefaultProjectId(),
+                                                  row_alg_invocation_id => $dbiDatabase->getDefaultAlgoInvoId(),
+                                                  user_read => $dbiDatabase->getDefaultUserRead(),
+                                                  user_write =>  $dbiDatabase->getDefaultUserWrite(),
+                                                  group_read => $dbiDatabase->getDefaultGroupRead(),
+                                                  group_write => $dbiDatabase->getDefaultGroupWrite(),
+                                                  other_read => $dbiDatabase->getDefaultOtherRead(),
+                                                  other_write => $dbiDatabase->getDefaultOtherWrite(),
+                                                  modification_date => $self->getModificationDate(),
+                                                });
 
 
-  if($self->getArg('writeSqlldrFiles')) {
+  if($self->getArg('loadWithPsql')) {
     $synteny->getNextID();
     my @values = map { $synteny->get($_)} @{$self->getSyntenyFields()};
     my $fh = $self->getOutputFileHandles()->{'synteny.dat'};
@@ -854,16 +922,29 @@ sub loadSyntenicGene {
 
   my $synNaFeatureId = $geneRow->{NA_FEATURE_ID};
 
+  my $dbiDatabase = $self->getDb();
   my $syntenicGeneObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
-                                                             start_min => $mappedStart,
-                                                             end_max => $mappedEnd,
-                                                             is_reversed => $isReversed,
-                                                             syn_na_feature_id => $synNaFeatureId,
-                                                             syn_organism_abbrev => $synOrganismAbbrev});
+                                                              start_min => $mappedStart,
+                                                              end_max => $mappedEnd,
+                                                              is_reversed => $isReversed,
+                                                              syn_na_feature_id => $synNaFeatureId,
+                                                              syn_organism_abbrev => $synOrganismAbbrev,
+                                                              row_group_id => $dbiDatabase->getDefaultGroupId(),
+                                                              row_user_id => $dbiDatabase->getDefaultUserId(),
+                                                              row_project_id => $dbiDatabase->getDefaultProjectId(),
+                                                              row_alg_invocation_id => $dbiDatabase->getDefaultAlgoInvoId(),
+                                                              user_read => $dbiDatabase->getDefaultUserRead(),
+                                                              user_write =>  $dbiDatabase->getDefaultUserWrite(),
+                                                              group_read => $dbiDatabase->getDefaultGroupRead(),
+                                                              group_write => $dbiDatabase->getDefaultGroupWrite(),
+                                                              other_read => $dbiDatabase->getDefaultOtherRead(),
+                                                              other_write => $dbiDatabase->getDefaultOtherWrite(),
+                                                              modification_date => $self->getModificationDate(),
+                                                             });
 
 
 
-  if($self->getArg('writeSqlldrFiles')) {
+  if($self->getArg('loadWithPsql')) {
     $syntenicGeneObj->getNextID();
     $syntenicGeneObj->setSyntenyId($syntenyObj->getId());
     my @values = map { $syntenicGeneObj->get($_)} @{$self->getSyntenicGeneFields()};
@@ -964,56 +1045,22 @@ sub addAnchorToGusObj {
 
 
 
-sub writeConfigFile {
-  my ($self, $tableName, $datFileName, $attributeList, $ctrlFh) = @_;
+sub makePsqlObj {
+  my ($self, $tableName, $datFileName, $attributeList) = @_;
 
-  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
-  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
-  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+  my $psqlObj = ApiCommonData::Load::Psql->new({
+    _login => $self->getPsqlLogin(),
+    _password => $self->getPsqlPassword(),
+    _database => $self->getPsqlDatabase(),
+    _hostName=> $self->getPsqlHostname(),
+    _quiet => 0,
+  });
 
-  my $database = $self->getDb();
-  my $projectId = $database->getDefaultProjectId();
-  my $userId = $database->getDefaultUserId();
-  my $groupId = $database->getDefaultGroupId();
-  my $algInvocationId = $database->getDefaultAlgoInvoId();
-  my $userRead = $database->getDefaultUserRead();
-  my $userWrite = $database->getDefaultUserWrite();
-  my $groupRead = $database->getDefaultGroupRead();
-  my $groupWrite = $database->getDefaultGroupWrite();
-  my $otherRead = $database->getDefaultOtherRead();
-  my $otherWrite = $database->getDefaultOtherWrite();
 
-  my $datatypeMap = {'synteny_id' => " CHAR(10)",
-                     'external_database_release_id' => " CHAR(10)",
-                     'a_na_sequence_id' => " CHAR(10)",
-                     'b_na_sequence_id' => " CHAR(10)",
-                     'a_start' => " CHAR(12)",
-                     'a_end' => " CHAR(12)",
-                     'b_start' => " CHAR(12)",
-                     'b_end' => " CHAR(12)",
-                     'is_reversed' => " CHAR(3)",
-                     'syntenic_gene_id' => " CHAR(10)",
-                     'na_sequence_id' => " CHAR(10)",
-                     'start_min' => " CHAR(12)",
-                     'end_max' => " CHAR(12)",
-                     'is_reversed' => " CHAR(3)",
-                     'syn_na_feature_id' => " CHAR(10)",
-                     'syn_organism_abbrev' => " CHAR(40)",
-  };
-
-  my $housekeeping ={'user_read' => " constant $userRead", 
-                     'user_write' => " constant $userWrite", 
-                     'group_read' => " constant $groupRead", 
-                     'group_write' => " constant $groupWrite", 
-                     'other_read' => " constant $otherRead", 
-                     'other_write' => " constant $otherWrite", 
-                     'row_user_id' => " constant $userId", 
-                     'row_group_id' => " constant $groupId", 
-                     'row_alg_invocation_id' => " constant $algInvocationId",
-                     'row_project_id' => " constant $projectId",
-                     'modification_date' => " constant \"$modDate\"",
-  };
-
+  $psqlObj->setInfileName($datFileName);
+  $psqlObj->setTableName($tableName);
+  $psqlObj->setFieldDelimiter("\t");
+  
   my @dataFields = map { lc($_) } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
   if($tableName eq 'ApiDB.Synteny') {
     $self->setSyntenyFields(\@dataFields);
@@ -1025,27 +1072,9 @@ sub writeConfigFile {
     $self->error("Invalid tableName $tableName:  expected ApiDB.Synteny or ApiDB.SynetenicGene");
   }
 
-  # add housekeeping to datatypeMap
-  foreach(keys %$housekeeping) {
-    $datatypeMap->{$_} = $housekeeping->{$_};
-  }
-
-
-
-
-  my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
-  my $fieldsString = join(",\n", @fields);
-  print $ctrlFh "LOAD DATA
-CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
-INFILE '$datFileName' \"str '\\n'\"
-APPEND
-INTO TABLE $tableName
-REENABLE DISABLED_CONSTRAINTS
-FIELDS TERMINATED BY '\\t'
-TRAILING NULLCOLS
-($fieldsString
-)
-";
+  $psqlObj->setFields(\@dataFields);
+  
+  return $psqlObj;
 
 }
 

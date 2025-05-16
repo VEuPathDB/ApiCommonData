@@ -60,8 +60,7 @@ opendir(my $dh, $pairDir) or die "Could not open '$pairDir' for reading: $!\n";
 while (my $d = readdir($dh)) {
   next if $d =~ /^\.{1,2}$/; # Skip '.' and '..'
   if(-d "$pairDir/$d") {
-    #print OUT $d . "\n" unless($existingDatabaseNames{$d});
-    print OUT $d . "\n";
+    print OUT $d . "\n" unless($existingDatabaseNames{$d});
   }
 }
 closedir($dh);
