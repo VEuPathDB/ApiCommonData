@@ -212,6 +212,9 @@ sub undoPreprocess {
   my $schema = $schemas->[0];
   my $orgAbbrev = $orgAbbrevs->[0];
 
+  my $sql = "drop table if exists $schema.$orgAbbrev${tableName}_temporary";
+  $dbh->do($sql) || $self->error("Failed executing $sql");
+  $self->log("Dropped $schema.$tableName");
   my $sql = "drop table if exists $schema.$orgAbbrev$tableName";
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $schema.$tableName");
