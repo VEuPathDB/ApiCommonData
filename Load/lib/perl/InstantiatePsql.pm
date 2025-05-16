@@ -16,7 +16,7 @@ create table :SCHEMA.:ORG_ABBREV$tableName
 partition of $tableName
 for values in (':ORG_ABBREV');
 
-insert into :SCHEMA.:ORG_ABBREV$tableName from
+insert into :SCHEMA.:ORG_ABBREV$tableName 
 ";
     $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
     $sql =~ s/\:DECLARE_PARTITION//g;
