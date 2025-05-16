@@ -7,8 +7,18 @@ sub instantiateSql {
   my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
 
   if ($mode eq 'parent') {
-    $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.$tableName AS /g;
-    $sql =~ s/\:DECLARE_PARTITION/partition by list (organismAbbrev)/g;
+    $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.${tableName}_temporary AS /g;
+
+    my $s = "
+;
+
+create table $schema.$tableName (like $schema.${tableName}_temporary including all)
+parition by list (organismAbbrev);
+
+drop table $schema.${tableName}_temporary;
+";
+    $sql =~ s/\:DECLARE_PARTITION/$s/g;
+
   } elsif ($mode eq 'child') {
 
     my $s = "
