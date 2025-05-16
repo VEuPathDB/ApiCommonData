@@ -170,7 +170,7 @@ sub run {
 
   my $startTimeAll = time;
   $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh);
-  if (-e "$psqlDirPath/${tableName}_ix.psql") {
+  if ($mode eq 'parent' && -e "$psqlDirPath/${tableName}_ix.psql") {
     $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
   }
   my $t = time - $startTimeAll;
