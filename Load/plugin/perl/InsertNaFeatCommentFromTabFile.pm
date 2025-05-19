@@ -154,7 +154,7 @@ sub run {
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
   my @fileStats = stat($tabFile);
-  my $fileModificationDate = strftime("%Y-%m-%d %H:%M:%S", localtime($stats[9]));
+  my $fileModificationDate = strftime("%Y-%m-%d %H:%M:%S", localtime($fileStats[9]));
 
 
   while(<FILE>){
