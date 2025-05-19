@@ -40,7 +40,7 @@ process runPlugins {
   def databaseVersion = "dontcare"
   """
   ga GUS::Supported::Plugin::InsertExternalDatabase --name '$databaseName' --gusConfigFile $gusConfigFile --commit
-  ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName '$databaseName' --databaseVersion '$databaseVersion' --commit
+  ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName '$databaseName' --databaseVersion '$databaseVersion' --gusConfigFile $gusConfigFile --commit
   ga ApiCommonData::Load::Plugin::InsertSyntenySpans --loadWithPsql \\
                                                      --inputDirectory $pair_dir \\
                                                      --outputSyntenyDatFile synteny.dat \\
