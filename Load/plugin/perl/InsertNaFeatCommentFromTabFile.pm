@@ -32,6 +32,8 @@ use GUS::Model::DoTS::NAFeatureComment;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
 
+use POSIX qw(strftime);
+
 # ----------------------------------------------------------
 # Load Arguments
 # ----------------------------------------------------------
@@ -151,6 +153,10 @@ sub run {
 
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
+  my @fileStats = stat($tabFile);
+  my $fileModificationDate = strftime("%Y-%m-%d %H:%M:%S", localtime($fileStats[9]));
+
+
   while(<FILE>){
       next if (/^\s*$/);
 
@@ -161,8 +167,14 @@ sub run {
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
       my $transcript  = GUS::Model::DoTS::Transcript->new({source_id => $sourceId, row_project_id => $projectId});
 
-      # if there is no comment_date available in the input file, then use the version of the dataset
-      $comment_date = $datasetVersion if (!$comment_date && $datasetVersion);
+      if(!$comment_date) {
+        if ($datasetVersion =~ /^\d{4}-\d{2}-\d{2}$/) {
+          $comment_date = $datasetVersion;
+        }
+        else {
+          $comment_date = $fileModificationDate
+        }
+      }
 
       if($geneFeature->retrieveFromDB()){
 
