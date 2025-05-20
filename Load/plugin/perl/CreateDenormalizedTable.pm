@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::CreateDenormalizedTables;
+package ApiCommonData::Load::Plugin::CreateDenormalizedTable;
 @ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 
 use strict;
