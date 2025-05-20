@@ -56,12 +56,16 @@ sub run {
     while (my $line = <$data>) {
 	my $rowCount++;
 	chomp $line;
+        # Format is like "OG6_0000000    OG7_0000000:110/120 OG7_0000001:10/120"
 	my ($oldGroupId, $newGroupIdsLine) = split(/\t/, $line);
 	my @newGroupIds = split(/\s/, $newGroupIdsLine);
 	foreach my $newGroupIdInfo (@newGroupIds) {
 	    if ($newGroupIdInfo =~ /(OG\S+):(\d+)\/(\d+)/) {
+                # New group Id
 		my $newGroupId = $1;
+                # Number of sequences from old group that are found in the new group
 		my $overlapCount = $2;
+                # Number of sequences in the old group
 		my $groupSize = $3;
                 my $row = GUS::Model::ApiDB::GroupMapping->new({OLD_GROUP_ID => $oldGroupId,NEW_GROUP_ID => $newGroupId,OVERLAP_COUNT => $overlapCount, GROUP_SIZE => $groupSize});
                 $row->submit();
