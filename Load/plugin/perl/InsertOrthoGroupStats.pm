@@ -90,29 +90,51 @@ sub run {
     my $proteinSubset = $self->getArg('proteinSubset');
     open(my $data, '<', $statsFile) || die "Could not open file $statsFile: $!";
     my $rowCount = 0;
-    my @statTypes = ("min","25 PCT","median","75 PCT", "max");
     while (my $line = <$data>) {
         chomp $line;
-        $rowCount++;
-        my ($group,$min,$twentyfifth,$median,$seventyfifth,$max) = split(/\t/, $line);
-        foreach my $statType (@statTypes) {
-            if ($statType eq "min") {
-                addRow($group,$statType,$min,$proteinSubset);
-            }
-            elsif ($statType eq "25 PCT") {
-                addRow($group,$statType,$twentyfifth,$proteinSubset);
-            }
-            elsif ($statType eq "median") {
-                addRow($group,$statType,$median,$proteinSubset);
-            }
-            elsif ($statType eq "75 PCT") {
-                addRow($group,$statType,$seventyfifth,$proteinSubset);
-            }
-            elsif ($statType eq "max") {
-                addRow($group,$statType,$max,$proteinSubset);
-            }
-        }
 
+        my ($group,$max,$seventyfifth,$median,$twentyfifth,$min,$count) = split(/\t/, $line);
+      
+        if ($min eq "0") {
+            addRow($group,"min",$min,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$min,"min");
+            $rowCount++;
+        }
+        if ($twentyfifth eq "0") {
+            addRow($group,"25 PCT",$twentyfifth,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$twentyfifth,"25 PCT");
+            $rowCount++;
+        }
+        if ($median eq "0") {
+            addRow($group,"median",$median,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$median,"median");
+            $rowCount++;
+        }
+        if ($seventyfifth eq "0") {
+            addRow($group,"75 PCT",$seventyfifth,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$seventyfifth,"75 PCT");
+            $rowCount++;
+        }
+        if ($max eq "0") {
+            addRow($group,"max",$max,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$max,"max");
+            $rowCount++;
+        }
     }
     print "$rowCount rows added.\n"
 }
@@ -122,12 +144,21 @@ sub run {
 sub addRow {
   my ($group,$statType,$evalue,$proteinSubset) = @_;
   my $row = GUS::Model::ApiDB::OrthologGroupStats->new({GROUP_ID => $group,
-                                                        STAT_TYPE => $statType,
-                                                        EVALUE => $evalue,
-                                                        PROTEIN_SUBSET => $proteinSubset
+                                                         STAT_TYPE => $statType,
+                                                         EVALUE => $evalue,
+                                                         PROTEIN_SUBSET => $proteinSubset
                                                      });
   $row->submit();
   $row->undefPointerCache();
+}
+
+sub formatValueAndAddRow {
+  my ($group,$proteinSubset,$value,$statType) = @_;
+  $value = 1.0e-5 if ($value > 1.0e-5);
+  my ($statValue, $statExponent) = split /e-/, $value;
+  my $statValueRounded = sprintf("%.2f", $statValue);
+  my $valueFormatted = "${statValueRounded}e-$statExponent";
+  addRow($group,"${statType}",$valueFormatted,$proteinSubset);
 }
 
 sub undoTables {

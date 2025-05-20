@@ -188,11 +188,4 @@ sub undoTables {
   return ('ApiDB.OrthologGroup');
 }
 
-sub undoPreprocess {                                                                                                                                                                                         my ($self, $dbh, $rowAlgInvocationList) = @_;                                                                                                                                                         
-  my $sql = "DELETE FROM apidb.orthologgroup WHERE IS_RESIDUAL = 0";                                                                                                                                         
-  my $sh = $dbh->prepare($sql);                                                                                                                                                                           
-  $sh->execute();                                                                                                                                                                                         
-  $sh->finish();                                                                                                                                                                                          
-} 
-
 1;
