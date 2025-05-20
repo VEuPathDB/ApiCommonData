@@ -90,75 +90,51 @@ sub run {
     my $proteinSubset = $self->getArg('proteinSubset');
     open(my $data, '<', $statsFile) || die "Could not open file $statsFile: $!";
     my $rowCount = 0;
-    my @statTypes = ("min","25 PCT","median","75 PCT", "max");
     while (my $line = <$data>) {
         chomp $line;
-        $rowCount++;
+
         my ($group,$max,$seventyfifth,$median,$twentyfifth,$min,$count) = split(/\t/, $line);
       
-        foreach my $statType (@statTypes) {
-            if ($statType eq "min") {
-                if ($min eq "0") {
-                    addRow($group,$statType,$min,$proteinSubset);
-                }
-                else  {
-		  $min = 1.0e-5 if ($min > 1.0e-5);
-                    my ($minValue, $minExponent) = split /e-/, $min;
-                    my $minValueRounded = sprintf("%.2f", $minValue);
-                    my $minFormatted = "${minValueRounded}e-$minExponent";
-                    addRow($group,$statType,$minFormatted,$proteinSubset);
-                }
-            }
-            elsif ($statType eq "25 PCT") {
-                if ($twentyfifth eq "0") {
-                    addRow($group,$statType,$twentyfifth,$proteinSubset);
-                }
-                else  {
-		  $twentyfifth = 1.0e-5 if ($twentyfifth > 1.0e-5);
-                    my ($twentyfifthValue, $twentyfifthExponent) = split /e-/, $twentyfifth;
-                    my $twentyfifthValueRounded = sprintf("%.2f", $twentyfifthValue);
-                    my $twentyfifthFormatted = "${twentyfifthValueRounded}e-$twentyfifthExponent";
-                    addRow($group,$statType,$twentyfifthFormatted,$proteinSubset);
-                }
-            }
-            elsif ($statType eq "median") {
-                if ($median eq "0") {
-                    addRow($group,$statType,$median,$proteinSubset);
-                }
-                else  {
-		  $median = 1.0e-5 if ($median > 1.0e-5);
-                    my ($medValue, $medExponent) = split /e-/, $median;
-                    my $medValueRounded = sprintf("%.2f", $medValue);
-                    my $medFormatted = "${medValueRounded}e-$medExponent";
-                    addRow($group,$statType,$medFormatted,$proteinSubset);
-                }
-            }
-            elsif ($statType eq "75 PCT") {
-                if ($seventyfifth eq "0") {
-                    addRow($group,$statType,$seventyfifth,$proteinSubset);
-                }
-                else  {
-		  $seventyfifth = 1.0e-5 if ($seventyfifth > 1.0e-5);
-                    my ($seventyfifthValue, $seventyfifthExponent) = split /e-/, $seventyfifth;
-                    my $seventyfifthValueRounded = sprintf("%.2f", $seventyfifthValue);
-                    my $seventyfifthFormatted = "${seventyfifthValueRounded}e-$seventyfifthExponent";
-                    addRow($group,$statType,$seventyfifthFormatted,$proteinSubset);
-                }
-            }
-            elsif ($statType eq "max") {
-                if ($max eq "0") {
-                    addRow($group,$statType,$max,$proteinSubset);
-                }
-                else  {
-		  $max = 1.0e-5 if ($max > 1.0e-5);
-                    my ($maxValue, $maxExponent) = split /e-/, $max;
-                    my $maxValueRounded = sprintf("%.2f", $maxValue);
-                    my $maxFormatted = "${maxValueRounded}e-$maxExponent";
-                    addRow($group,$statType,$maxFormatted,$proteinSubset);
-                }
-            }
+        if ($min eq "0") {
+            addRow($group,"min",$min,$proteinSubset);
+            $rowCount++;
         }
-
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$min,"min");
+            $rowCount++;
+        }
+        if ($twentyfifth eq "0") {
+            addRow($group,"25 PCT",$twentyfifth,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$twentyfifth,"25 PCT");
+            $rowCount++;
+        }
+        if ($median eq "0") {
+            addRow($group,"median",$median,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$median,"median");
+            $rowCount++;
+        }
+        if ($seventyfifth eq "0") {
+            addRow($group,"75 PCT",$seventyfifth,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$seventyfifth,"75 PCT");
+            $rowCount++;
+        }
+        if ($max eq "0") {
+            addRow($group,"max",$max,$proteinSubset);
+            $rowCount++;
+        }
+        else  {
+            &formatValueAndAddRow($group,$proteinSubset,$max,"max");
+            $rowCount++;
+        }
     }
     print "$rowCount rows added.\n"
 }
@@ -174,6 +150,15 @@ sub addRow {
                                                      });
   $row->submit();
   $row->undefPointerCache();
+}
+
+sub formatValueAndAddRow {
+  my ($group,$proteinSubset,$value,$statType) = @_;
+  $value = 1.0e-5 if ($value > 1.0e-5);
+  my ($statValue, $statExponent) = split /e-/, $value;
+  my $statValueRounded = sprintf("%.2f", $statValue);
+  my $valueFormatted = "${statValueRounded}e-$statExponent";
+  addRow($group,"${statType}",$valueFormatted,$proteinSubset);
 }
 
 sub undoTables {
