@@ -159,6 +159,8 @@ sub run {
   $dbh->{AutoCommit} = 1;
   my $commitMode = $self->getArg('commit');
 
+  $dbh->do("set role gus_w");
+
   my $fileName = "$psqlDirPath/$tableName.psql";
   -e $fileName or $self->error("psqlFile $fileName does not exist");
 
