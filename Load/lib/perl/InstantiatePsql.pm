@@ -23,7 +23,7 @@ drop table $schema.${tableName}_temporary;
 
     my $s = "
 create table :SCHEMA.:ORG_ABBREV$tableName
-partition of $tableName
+partition of :SCHEMA.$tableName
 for values in (':ORG_ABBREV');
 
 insert into :SCHEMA.:ORG_ABBREV$tableName 
