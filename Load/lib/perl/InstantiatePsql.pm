@@ -22,11 +22,11 @@ drop table $schema.${tableName}_temporary;
   } elsif ($mode eq 'child') {
 
     my $s = "
-create table :SCHEMA.:ORG_ABBREV$tableName
+create table :SCHEMA.$tableName:ORG_SUFFIX
 partition of :SCHEMA.$tableName
 for values in (':ORG_ABBREV');
 
-insert into :SCHEMA.:ORG_ABBREV$tableName 
+insert into :SCHEMA.$tableName:ORG_SUFFIX
 ";
     $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
     $sql =~ s/\:DECLARE_PARTITION//g;
@@ -34,6 +34,7 @@ insert into :SCHEMA.:ORG_ABBREV$tableName
   $sql =~ s/\:TAXON_ID/$taxonId/g;
   $sql =~ s/\:PROJECT_ID/$projectId/g;
   $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
+  $sql =~ $organismAbbrev? s/\:ORG_SUFFIX/_$organismAbbrev/g : s/\:ORG_SUFFIX//g;
   $sql =~ s/\:SCHEMA/$schema/g;
   return $sql;
 }
