@@ -8,12 +8,14 @@ use DBI;
 
 use CBIL::Bio::SequenceUtils; #reverseComplementSequence
 use CBIL::Util::PropertySet;
+use Getopt::Long;
 
-my ($gusConfigFile, $organismAbbrev, $projectId, $schema, $mode);
-&GetOptions("gusConfigFile=s" => $gusConfigFile,
+
+my ($gusConfigFile, $orgAbbrev, $projectId, $schema, $mode);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "projectName=s" => \$projectId,
-	    "organismAbbrev=s" => \$organismAbbrev,
-	    "schema=s" => \$organismAbbrev,
+	    "organismAbbrev=s" => \$orgAbbrev,
+	    "schema=s" => \$schema,
             "mode=s" => \$mode);  # parent or child
 
 my $TABLENAME = "TranscriptGenomicSequence";
@@ -45,6 +47,8 @@ if ($mode eq 'parent') {
   populateChildTable($dbh, $schema, $projectId, $orgAbbrev);
 }
 
+$dbh->disconnect();
+
 #################################################################################################
 
 sub createParentTable {
@@ -56,6 +60,7 @@ sub createParentTable {
 create table $schema.tgs_temporary as
 $createSqlSelect
 ";
+  print STDERR "$createTmpSql\n";
   $dbh->do($createTmpSql);
 
   my $createSql = "
@@ -66,8 +71,8 @@ partition by list(org_abbrev)";
 
   $dbh->do("drop table $schema.tgs_temporary");
 
-  $dbh->do("create unique index txgseq_idx on $schema.$TABLENAME (source_id, gene_source_id, project_id)");
-
+  $dbh->do("create unique index txgseq_idx on $schema.$TABLENAME (org_abbrev, source_id, gene_source_id, project_id)");
+  $dbh->commit();
 }
 
 sub createChildTable {
@@ -100,14 +105,17 @@ sub populateChildTable {
      , gss.source_id
      , gss.sequence
 FROM apidb.transcriptlocation tl
-   , apidbtuning.geneattributes ga
+   , $schema.geneattributes ga
    , dots.transcript t
-   , apidbtuning.genomicsequencesequence gss
+   , $schema.genomicsequencesequence gss
 WHERE t.na_feature_id  = tl.na_feature_id
 AND t.parent_id = ga.na_feature_id
 AND tl.sequence_source_id = gss.source_id
+AND ga.org_abbrev = '$orgAbbrev'
+AND gss.org_abbrev = '$orgAbbrev'
 ORDER BY gss.source_id";
 
+  print STDERR "$sql\n";
 
   my $sh = $dbh->prepare($sql)
     or die "Can't prepare SQL statement: " . $dbh->errstr();
