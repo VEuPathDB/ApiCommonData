@@ -206,6 +206,8 @@ sub undoPreprocess {
 
   $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
 
+  $self->log("UNDOing alg invocation id: $rowAlgInvocationList->[0]");
+
   my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
   my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
