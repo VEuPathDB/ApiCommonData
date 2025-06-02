@@ -122,7 +122,7 @@ EOF
 
     my $cladeSql = <<EOF;
 INSERT INTO apidb.orthologgrouptaxon (three_letter_abbrev, number_of_proteins, number_of_taxa, group_id, modification_date)
-SELECT three_letter_abbrev AS three_letter_abbrev, 
+SELECT distinct(three_letter_abbrev) AS three_letter_abbrev, 
 CURRENT_TIMESTAMP AS modification_date, 
 0 AS number_of_proteins,
 1 AS number_of_taxa,
