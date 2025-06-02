@@ -97,8 +97,7 @@ CREATE TABLE apidb.orthologgrouptaxon (
     number_of_proteins VARCHAR(40),
     number_of_taxa VARCHAR(40),
     group_id VARCHAR(40),
-    modification_date TIMESTAMP,
-    PRIMARY KEY (three_letter_abbrev, number_of_proteins, number_of_taxa, group_id)
+    modification_date TIMESTAMP
     );
 
 INSERT INTO apidb.orthologgrouptaxon (three_letter_abbrev, number_of_proteins, number_of_taxa, group_id, modification_date)
@@ -122,11 +121,12 @@ EOF
 
     my $cladeSql = <<EOF;
 INSERT INTO apidb.orthologgrouptaxon (three_letter_abbrev, number_of_proteins, number_of_taxa, group_id, modification_date)
-SELECT distinct(three_letter_abbrev) AS three_letter_abbrev, 
-CURRENT_TIMESTAMP AS modification_date, 
-0 AS number_of_proteins,
-1 AS number_of_taxa,
-NULL AS group_id
+SELECT 
+  DISTINCT three_letter_abbrev,
+  0 AS number_of_proteins,     
+  1 AS number_of_taxa,         
+  NULL AS group_id,    
+  CURRENT_TIMESTAMP AS modification_date
 FROM apidb.orthomclclade
 WHERE core_peripheral = 'Z'
 EOF
