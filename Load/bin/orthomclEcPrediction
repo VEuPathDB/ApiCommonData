@@ -1467,23 +1467,23 @@ sub getGroupsFromDatabase {
 
 sub domainsSql {
     my ($group) = @_;
-    return "SELECT full_id,accession FROM ApidbTuning.DomainAssignment
+    return "SELECT full_id,accession FROM ApidbTuning.ProteinGroupDomainAssignment
             WHERE group_name = '$group' ORDER BY full_id,start_min";
 }
 
 sub ecsSql {
     my ($group) = @_;
-    return "SELECT sa.full_id,ec.ec_number
+    return "SELECT pg.full_id,ec.ec_number
             FROM SRes.EnzymeClass ec, DoTS.AASequenceEnzymeClass aaec,
-                 apidbTuning.SequenceAttributes sa
-            WHERE ec.enzyme_class_id = aaec.enzyme_class_id AND aaec.aa_sequence_id = sa.aa_sequence_id
-                  AND evidence_code NOT LIKE 'OrthoMCL%' AND sa.group_name='$group'";
+                 apidbTuning.ProteinGroup pg
+            WHERE ec.enzyme_class_id = aaec.enzyme_class_id AND aaec.aa_sequence_id = pg.aa_sequence_id
+                  AND evidence_code NOT LIKE 'OrthoMCL%' AND pg.group_name='$group'";
 }
 
 sub proteinsSql {
     my ($group) = @_;
     return "SELECT full_id,product,length,core_peripheral,group_name,organism_name                                     
-            FROM ApidbTuning.SequenceAttributes WHERE group_name='$group'";
+            FROM ApidbTuning.ProteinGroup WHERE group_name='$group'";
 }
 
 sub groupsSql {
@@ -1494,7 +1494,7 @@ sub groupsSql {
     }
     return "SELECT group_name
             FROM (SELECT group_name,count(ec_numbers) as num_proteins                         
-                  FROM ApidbTuning.SequenceAttributes sa
+                  FROM ApidbTuning.ProteinGroup pg
                   WHERE ec_numbers IS NOT NULL AND group_name IS NOT NULL
                   GROUP BY group_name)
             WHERE num_proteins >= $minNumProteinsWithEc $maxClause";
