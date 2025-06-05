@@ -1,37 +1,52 @@
 #!/usr/bin/env nextflow
 
-Channel.fromPath(params.mercatorPairsDir + '/**', type: 'dir', maxDepth: 0).set{ directory_pairs_ch }
+nextflow.enable.dsl=2
 
-process processPairs {
-  errorStrategy 'terminate'
-  maxErrors 1
+
+workflow {
+  filterPairsDir(params.mercatorPairsDir, params.gusConfigFile)
+
+  pairs_ch = filterPairsDir.out
+    .splitText() {v -> params.mercatorPairsDir + "/" + v }
+
+  runPlugins(pairs_ch, params.gusConfigFile)
+}
+
+
+process filterPairsDir {
   input:
-  file pair_dir from directory_pairs_ch
+  path inputDir
+  path gusConfigFile
 
   output:
-  file 'synteny.dat' into synteny_dat_ch
-  file 'synteny.dat.ctrl' into synteny_ctrl_ch
-  file 'syntenic_gene.dat' into syntenic_gene_dat_ch
-  file 'syntenic_gene.dat.ctrl' into syntenic_gene_ctrl_ch
+  path("pairs.txt")
 
   shell:
-  '''
-  echo Running processSynteny --pair_dir !{params.mercatorPairsDir}/!{pair_dir}
-  processSynteny --pair_dir !{params.mercatorPairsDir}/!{pair_dir}
-  '''
+  """
+  filterSyntenyPairsDirectory.pl --pairDir $inputDir --gusConfigFile $gusConfigFile --outputFile pairs.txt
+  """
 }
-process loader {
-  errorStrategy 'terminate'
-  maxErrors 1
-  input:
-  file synteny_dat_ch
-  file synteny_ctrl_ch
-  file syntenic_gene_dat_ch
-  file syntenic_gene_ctrl_ch
 
-  shell:
-  '''
-  runSqlldr --ctrlFile !{synteny_ctrl_ch} --silent ALL
-  runSqlldr --ctrlFile !{syntenic_gene_ctrl_ch} --silent ALL
-  '''
+process runPlugins {
+  maxForks 20
+
+  input:
+  path(pair_dir)
+  path gusConfigFile
+  
+  script:
+  def pairName = pair_dir.baseName
+  def databaseName = pairName + "_Mercator_synteny"
+  def databaseVersion = "dontcare"
+  """
+  ga GUS::Supported::Plugin::InsertExternalDatabase --name '$databaseName' --gusConfigFile $gusConfigFile --commit
+  ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName '$databaseName' --databaseVersion '$databaseVersion' --gusConfigFile $gusConfigFile --commit
+  ga ApiCommonData::Load::Plugin::InsertSyntenySpans --loadWithPsql \\
+                                                     --inputDirectory $pair_dir \\
+                                                     --outputSyntenyDatFile synteny.dat \\
+                                                     --outputSyntenicGeneDatFile syntenic_gene.dat \\
+                                                     --syntenyDbRlsSpec '$databaseName|dontcare' \\
+                                                     --gusConfigFile $gusConfigFile \\
+                                                     --commit
+  """
 }

@@ -142,7 +142,7 @@ sub getCommand {
   my $nullStr = $null? "NULL  \"$null\"," : ""; # NULL value must be absent to read input with empty fields
       
   return "\\COPY $tableName ( $fieldsString )
-FROM $infileName
+FROM '$infileName'
 WITH (
   FORMAT CSV,
   DELIMITER \"$fieldDelimiter\",
