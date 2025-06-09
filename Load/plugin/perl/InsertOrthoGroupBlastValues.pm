@@ -7,6 +7,8 @@ use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Psql;
 use GUS::Model::ApiDB::OrthoGroupBlastValue;
 
+use POSIX qw(strftime);
+
 my $argsDeclaration = 
 
   [
@@ -121,7 +123,8 @@ sub getOrthoGroupBlastValueFields {$_[0]->{_orthogroupblastvalue_fields} }
 sub getModificationDate() { $_[0]->{_modification_date} }
 sub setModificationDate {
   my ($self) = @_;
-  my $modificationDate = strftime "%m-%d-%Y", localtime();
+  my  $modificationDate;
+  $modificationDate = strftime "%m-%d-%Y", localtime();
   $self->{_modification_date} = $modificationDate;
 }
 
