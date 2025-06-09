@@ -99,7 +99,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
   ## 1) make genome fasta file
   my $dnaFastaFile = $orgOutputFileDir. "\/". $abbrev . "_dna.fa";
-  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and sa.NCBI_TAX_ID=$ncbiTaxonId'";
+  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from webready.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and sa.NCBI_TAX_ID=$ncbiTaxonId'";
   system($makeGenomeFastaCmd);
 
   ## 2) make gff3, protein, and etc. files that related with annotation

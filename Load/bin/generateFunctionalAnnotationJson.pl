@@ -219,8 +219,9 @@ sub getProductNameFromTuningTable {
 
   ## only grep the preferred product name
   my $sql = "select source_id as transcript_source_id, transcript_product
-             from apidbtuning.transcriptAttributes
-             where external_db_rls_id=$extDbRlsId";
+             from webready.transcriptAttributes
+             where external_db_rls_id=$extDbRlsId
+             and org_abbrev = '$organismAbbrev'";
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
