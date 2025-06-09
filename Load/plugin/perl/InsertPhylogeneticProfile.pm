@@ -95,7 +95,7 @@ sub run {
 
 
   # put our taxa into a hash
-  my %ourTaxa = map {$_ => 1} @$taxaToLoad;
+  my %ourTaxa = map {$_ => 1} @taxaToLoad;
 
   # first pass: go through file, collecting:
   #  - all taxa in file
