@@ -109,9 +109,10 @@ sub run {
 
   my $groupBlastValuesFile = $self->getArg('groupBlastValuesFile');
      
-  my @attributes = ("qseq","sseq","evalue","group_id");
+  my @attributes = ['qseq','sseq','evalue','group_id'];
 
-  my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
+  #  my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
+  my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue->new();
   my $groupBlastValuePsqlObj = $self->makePsqlObj('ApiDB.OrthoGroupBlastValue', $groupBlastValuesFile, @attributes);
   my $groupBlastValueProcessString = $groupBlastValuePsqlObj->getCommandLine();
   system("$groupBlastValueProcessString");
