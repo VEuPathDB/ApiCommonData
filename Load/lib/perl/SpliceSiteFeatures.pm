@@ -58,14 +58,13 @@ sub munge {
 
   my $mainDirectory = $self->getMainDirectory();
 
-  my $file = $mainDirectory . "/" .$input . ".bt";
+  my $file = $mainDirectory . "/" .$input . ".bam";
 
   my $all_uniq_counts = 0; # to keep count of ALL unique alignments; needed for normalizing counts later
 
   my $key;
 
-  open(FILE, $file) or die "Cannot open file $file for reading: $!";
-
+  open(FILE, '-|', "singularity exec docker://veupathdb/bowtiemapping:1.0.0 samtools view -h $file") or die "Cannot open pipe to samtools: $!";
 
   while (<FILE>){
     chomp;
