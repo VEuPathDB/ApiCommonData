@@ -109,7 +109,7 @@ sub run {
 
   my $groupBlastValuesFile = $self->getArg('groupBlastValuesFile');
      
-  my @attributes = ['qseq','sseq','evalue','group_id'];
+  my @attributes = ['group_id','qseq','sseq','evalue'];
 
   #  my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
   my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue->new();
