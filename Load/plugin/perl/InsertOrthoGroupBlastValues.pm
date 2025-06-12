@@ -5,21 +5,42 @@ use strict;
 use GUS::PluginMgr::Plugin;
 
 use ApiCommonData::Load::Psql;
+use ApiCommonData::Load::Fifo;
 use GUS::Model::ApiDB::OrthoGroupBlastValue;
+use GUS::Model::ApiDB::OrthoGroupBlastValue_Table;
 
 use POSIX qw(strftime);
 
-my $argsDeclaration = 
+use GUS::Supported::Util;
+
+use File::Temp;
+use File::Basename;
+
+use Bio::Coordinate::Pair;
+use Bio::Location::Simple;
+
+use POSIX;
+use Data::Dumper;
+
+my $argsDeclaration =
 
   [
    fileArg({ name           => 'groupBlastValuesFile',
-	     descr          => 'InterGroup blast value file',
-	     reqd           => 1,
-	     mustExist      => 0,
-	     format         => 'tsv',
-	     constraintFunc => undef,
-	     isList         => 0,
-	   })
+             descr          => 'InterGroup blast value file',
+             reqd           => 1,
+             mustExist      => 0,
+             format         => 'tsv',
+             constraintFunc => undef,
+             isList         => 0,
+           }),
+   fileArg({ name           => 'outputBlastValuesDatFile',
+             descr          => '',
+             reqd           => 0,
+             mustExist      => 0,
+             format         => 'custom',
+             constraintFunc => undef,
+             isList         => 0,
+           })
   ];
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -74,6 +95,72 @@ sub new {
 
 #--------------------------------------------------------------------------------
 
+sub run {
+  my ($self) = @_;
+
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
+  $self->setPsqlLogin();
+  $self->setPsqlPassword();
+  $self->setPsqlHostname();
+  $self->setPsqlDatabase();
+  $self->setModificationDate();
+
+  my $groupBlastValuesFile = $self->getArg('groupBlastValuesFile');
+
+  my $Fifo;
+  
+  my $outputBlastValuesDatFile = $self->getArg('outputBlastValuesDatFile');
+
+  print "Check 1\n";
+
+  $Fifo = ApiCommonData::Load::Fifo->new($outputBlastValuesDatFile);
+  my $blastValuesTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
+  my $blastValuesPsqlObj = $self->makePsqlObj('ApiDB.OrthoGroupBlastValue', $outputBlastValuesDatFile, $blastValuesTable->getAttributeList());
+  my $blastValuesPsqlProcessString = $blastValuesPsqlObj->getCommandLine();
+  my $blastValuesPsqlPid = $Fifo->attachReader($blastValuesPsqlProcessString);
+
+  #print "blastValuesPsqlPid=$blastValuesPsqlPid\n";
+  $self->addActiveForkedProcess($blastValuesPsqlPid);
+
+  print "Check 2\n";
+
+  my %fileHandles;
+  $fileHandles{'blastValues.dat'} = $Fifo->attachWriter();
+
+  my $row_group_id => $dbiDb->getDefaultGroupId();
+  my $row_user_id => $dbiDb->getDefaultUserId();
+  my $row_project_id => $dbiDb->getDefaultProjectId();
+  my $row_alg_invocation_id => $dbiDb->getDefaultAlgoInvoId();
+  my $user_read => $dbiDb->getDefaultUserRead();
+  my $user_write =>  $dbiDb->getDefaultUserWrite();
+  my $group_read => $dbiDb->getDefaultGroupRead();
+  my $group_write => $dbiDb->getDefaultGroupWrite();
+  my $other_read => $dbiDb->getDefaultOtherRead();
+  my $other_write => $dbiDb->getDefaultOtherWrite();
+  my $modification_date => $self->getModificationDate();
+
+  print "Check 3\n";
+
+  my $primaryKeyInt = 0;
+
+  open(VAL, $groupBlastValuesFile) or die "Cannot open map file $groupBlastValuesFile for reading:$!";
+  while(<VAL>) {
+    chomp;
+    my ($group_id,$qseq,$sseq,$evalue) = split(/\t/, $_);
+    $self->makeBlastValues($primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date);
+    $primaryKeyInt += 1;  
+  }
+  close VAL;
+
+  print "Check 4\n";
+
+  $Fifo->cleanup();
+}
+
+#--------------------------------------------------------------------------------
+
 sub error {
   my ($self, $msg) = @_;
   print STDERR "\nERROR: $msg\n";
@@ -91,56 +178,30 @@ sub getActiveForkedProcesses {
   return $self->{_active_forked_processes} || [];
 }
 
-#--------------------------------------------------------------------------------
+sub addActiveForkedProcess {
+  my ($self, $pid) = @_;
 
-sub run {
-  my ($self) = @_;
-
-  my $dbiDb = $self->getDb();
-  $dbiDb->setMaximumNumberOfObjects(100000);
-
-  my $dirname = $self->getArg('groupBlastValuesFile');
-
-  $self->setPsqlLogin();
-  $self->setPsqlPassword();
-  $self->setPsqlHostname();
-  $self->setPsqlDatabase();
-  $self->setModificationDate();
-
-  my $groupBlastValuesFile = $self->getArg('groupBlastValuesFile');
-     
-  my @attributes = ['group_id','qseq','sseq','evalue'];
-
-  #  my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
-  my $groupBlastValueTable = GUS::Model::ApiDB::OrthoGroupBlastValue->new();
-  my $groupBlastValuePsqlObj = $self->makePsqlObj('ApiDB.OrthoGroupBlastValue', $groupBlastValuesFile, @attributes);
-  my $groupBlastValueProcessString = $groupBlastValuePsqlObj->getCommandLine();
-  system("$groupBlastValueProcessString");
+  push @{$self->{_active_forked_processes}}, $pid;
 }
-
-sub setOrthoGroupBlastValueFields {$_[0]->{_orthogroupblastvalue_fields} = $_[1]}
-sub getOrthoGroupBlastValueFields {$_[0]->{_orthogroupblastvalue_fields} }
 
 sub getModificationDate() { $_[0]->{_modification_date} }
 sub setModificationDate {
   my ($self) = @_;
-  my  $modificationDate;
-  $modificationDate = strftime "%m-%d-%Y", localtime();
+  my $modificationDate = strftime "%m-%d-%Y", localtime();
   $self->{_modification_date} = $modificationDate;
 }
+
 
 sub getPsqlLogin() { $_[0]->{_psql_login} }
 sub setPsqlLogin() {
   my ($self) = @_;
   $self->{_psql_login} = $self->getDb->getLogin();
 }
-
 sub getPsqlPassword() { $_[0]->{_psql_password} }
 sub setPsqlPassword() {
   my ($self) = @_;
   $self->{_psql_password} = $self->getDb->getPassword();
 }
-
 sub getPsqlDatabase() { $_[0]->{_psql_database} }
 sub setPsqlDatabase {
   my ($self) = @_;
@@ -150,7 +211,6 @@ sub setPsqlDatabase {
   my $db = $2;
   $self->{_psql_database} = $db;
 }
-
 sub getPsqlHostname() { $_[0]->{_psql_hostname} }
 sub setPsqlHostname {
   my ($self) = @_;
@@ -159,6 +219,51 @@ sub setPsqlHostname {
   $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
   my $hostName = $2;
   $self->{_psql_hostname} = $hostName;
+}
+
+sub getLastPrimaryKey {
+  my ($self, $organismAbbrevA, $organismAbbrevB) =  @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "SELECT s.source_id, s.na_sequence_id 
+             FROM dots.nasequence s, sres.ontologyterm so, apidb.organism o
+             WHERE  so.ontology_term_id = s.sequence_ontology_id
+              and so.name in ('random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')
+              and o.taxon_id = s.taxon_id
+              and o.abbrev in ('$organismAbbrevA', '$organismAbbrevB')";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my ($sourceId, $naSequenceId) = $sh->fetchrow_array()) {
+    $self->{_na_sequence_map}->{$sourceId} = $naSequenceId;
+  }
+  $sh->finish();
+
+}
+
+sub makeBlastValues {
+  my ($primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date) = @_;
+
+  my $orthoGroupBlastValue = GUS::Model::ApiDB::OrthoGroupBlastValue->new({ ortholog_blast_value_id => $primaryKeyInt,
+                                                                              group_id => $group_id,
+                                                                              qseq => $qseq,
+                                                                              sseq => $sseq,
+                                                                              evalue => $evalue,
+                                                                              row_group_id => $row_group_id,
+                                                                              row_user_id => $row_user_id,
+                                                                              row_project_id => $row_project_id,
+                                                                              row_alg_invocation_id => $row_alg_invocation_id,
+                                                                              user_read => $user_read,
+                                                                              user_write =>  $user_write,
+                                                                              group_read => $group_read,
+                                                                              group_write => $group_write,
+                                                                              other_read => $other_read,
+                                                                              other_write => $other_write,
+                                                                              modification_date => $modification_date
+                                                                            });
+  return $orthoGroupBlastValue;
 }
 
 sub makePsqlObj {
@@ -172,21 +277,21 @@ sub makePsqlObj {
     _quiet => 0,
   });
 
+
   $psqlObj->setInfileName($datFileName);
   $psqlObj->setTableName($tableName);
   $psqlObj->setFieldDelimiter("\t");
-
-  my @dataFields = map { lc($_) } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;  
-
-  $self->setOrthoGroupBlastValueFields(\@dataFields);
+  
+  my @dataFields = map { lc($_) } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
 
   $psqlObj->setFields(\@dataFields);
   
   return $psqlObj;
+
 }
 
 sub undoTables {
-  return ("ApiDB.OrthoGroupBlastValue");
+    return ("ApiDB.OrthoGroupBlastValue");
 }
 
 1;
