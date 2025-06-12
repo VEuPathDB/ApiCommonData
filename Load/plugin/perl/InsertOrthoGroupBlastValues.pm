@@ -113,8 +113,6 @@ sub run {
   
   my $outputBlastValuesDatFile = $self->getArg('outputBlastValuesDatFile');
 
-  print "Check 1\n";
-
   $Fifo = ApiCommonData::Load::Fifo->new($outputBlastValuesDatFile);
   my $blastValuesTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
   my $blastValuesPsqlObj = $self->makePsqlObj('ApiDB.OrthoGroupBlastValue', $outputBlastValuesDatFile, $blastValuesTable->getAttributeList());
@@ -123,8 +121,6 @@ sub run {
 
   #print "blastValuesPsqlPid=$blastValuesPsqlPid\n";
   $self->addActiveForkedProcess($blastValuesPsqlPid);
-
-  print "Check 2\n";
 
   my %fileHandles;
   $fileHandles{'blastValues.dat'} = $Fifo->attachWriter();
@@ -141,8 +137,6 @@ sub run {
   my $other_write => $dbiDb->getDefaultOtherWrite();
   my $modification_date => $self->getModificationDate();
 
-  print "Check 3\n";
-
   my $primaryKeyInt = 0;
 
   open(VAL, $groupBlastValuesFile) or die "Cannot open map file $groupBlastValuesFile for reading:$!";
@@ -151,10 +145,11 @@ sub run {
     my ($group_id,$qseq,$sseq,$evalue) = split(/\t/, $_);
     $self->makeBlastValues($primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date);
     $primaryKeyInt += 1;  
+    $self->undefPointerCache();
   }
   close VAL;
 
-  print "Check 4\n";
+  print "$primaryKeyInt\n";
 
   $Fifo->cleanup();
 }
@@ -247,22 +242,24 @@ sub makeBlastValues {
   my ($primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date) = @_;
 
   my $orthoGroupBlastValue = GUS::Model::ApiDB::OrthoGroupBlastValue->new({ ortholog_blast_value_id => $primaryKeyInt,
-                                                                              group_id => $group_id,
-                                                                              qseq => $qseq,
-                                                                              sseq => $sseq,
-                                                                              evalue => $evalue,
-                                                                              row_group_id => $row_group_id,
-                                                                              row_user_id => $row_user_id,
-                                                                              row_project_id => $row_project_id,
-                                                                              row_alg_invocation_id => $row_alg_invocation_id,
-                                                                              user_read => $user_read,
-                                                                              user_write =>  $user_write,
-                                                                              group_read => $group_read,
-                                                                              group_write => $group_write,
-                                                                              other_read => $other_read,
-                                                                              other_write => $other_write,
-                                                                              modification_date => $modification_date
-                                                                            });
+                                                                            group_id => $group_id,
+                                                                            qseq => $qseq,
+                                                                            sseq => $sseq,
+                                                                            evalue => $evalue,
+                                                                            row_group_id => $row_group_id,
+                                                                            row_user_id => $row_user_id,
+                                                                            row_project_id => $row_project_id,
+                                                                            row_alg_invocation_id => $row_alg_invocation_id,
+                                                                            user_read => $user_read,
+                                                                            user_write =>  $user_write,
+                                                                            group_read => $group_read,
+                                                                            group_write => $group_write,
+                                                                            other_read => $other_read,
+                                                                            other_write => $other_write,
+                                                                            modification_date => $modification_date
+                                                                           });
+  #$orthoGroupBlastValue->submit();
+  #$orthoGroupBlastValue->undefPointerCache();
   return $orthoGroupBlastValue;
 }
 
