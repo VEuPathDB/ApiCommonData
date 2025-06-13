@@ -143,7 +143,16 @@ sub run {
   my $other_write = $dbiDb->getDefaultOtherWrite();
   my $modification_date = $self->getModificationDate();
 
-  my $primaryKeyInt = &getLastPrimaryKey();
+  my $dbh = $self->getQueryHandle();
+  my $sql = "SELECT MAX(ortholog_blast_value_id) from apidb.orthogroupblastvalue";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  # Set to 0 if there are no rows in this table
+  my $primaryKeyInt = 0;
+  while(my ($primaryKey) = $sh->fetchrow_array()) {
+      $primaryKeyInt = $primaryKey;
+  }
+  $sh->finish();
 
   # If we have rows in the datbase, increate the last primary key by 1
   if ($primaryKeyInt > 0) {
@@ -230,19 +239,7 @@ sub setPsqlHostname {
 sub getLastPrimaryKey {
   my ($self) =  @_;
 
-  my $dbh = $self->getQueryHandle();
 
-  my $sql = "SELECT MAX(ortholog_blast_value_id) from apidb.orthogroupblastvalue";
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-
-  # Set to 0 if there are no rows in this table
-  my $lastPrimaryKey = 0;
-  while(my ($primaryKey) = $sh->fetchrow_array()) {
-      $lastPrimaryKey = $primaryKey;
-  }
-  $sh->finish();
 
   return $lastPrimaryKey;
 }
