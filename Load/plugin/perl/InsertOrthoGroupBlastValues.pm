@@ -94,6 +94,12 @@ sub new {
 }
 
 #--------------------------------------------------------------------------------
+sub setBlastValueFields {$_[0]->{_blastValue_fields} = $_[1]}
+sub getBlastValueFields {$_[0]->{_blastValue_fields}}
+
+sub setOutputFileHandles {$_[0]->{_output_file_handles} = $_[1]}
+sub getOutputFileHandles {$_[0]->{_output_file_handles}}
+#--------------------------------------------------------------------------------
 
 sub run {
   my ($self) = @_;
@@ -124,18 +130,19 @@ sub run {
 
   my %fileHandles;
   $fileHandles{'blastValues.dat'} = $Fifo->attachWriter();
+  $self->setOutputFileHandles(\%fileHandles);
 
-  my $row_group_id => $dbiDb->getDefaultGroupId();
-  my $row_user_id => $dbiDb->getDefaultUserId();
-  my $row_project_id => $dbiDb->getDefaultProjectId();
-  my $row_alg_invocation_id => $dbiDb->getDefaultAlgoInvoId();
-  my $user_read => $dbiDb->getDefaultUserRead();
-  my $user_write =>  $dbiDb->getDefaultUserWrite();
-  my $group_read => $dbiDb->getDefaultGroupRead();
-  my $group_write => $dbiDb->getDefaultGroupWrite();
-  my $other_read => $dbiDb->getDefaultOtherRead();
-  my $other_write => $dbiDb->getDefaultOtherWrite();
-  my $modification_date => $self->getModificationDate();
+  my $row_group_id = $dbiDb->getDefaultGroupId();
+  my $row_user_id = $dbiDb->getDefaultUserId();
+  my $row_project_id = $dbiDb->getDefaultProjectId();
+  my $row_alg_invocation_id = $dbiDb->getDefaultAlgoInvoId();
+  my $user_read = $dbiDb->getDefaultUserRead();
+  my $user_write =  $dbiDb->getDefaultUserWrite();
+  my $group_read = $dbiDb->getDefaultGroupRead();
+  my $group_write = $dbiDb->getDefaultGroupWrite();
+  my $other_read = $dbiDb->getDefaultOtherRead();
+  my $other_write = $dbiDb->getDefaultOtherWrite();
+  my $modification_date = $self->getModificationDate();
 
   my $primaryKeyInt = 0;
 
@@ -239,7 +246,7 @@ sub getLastPrimaryKey {
 }
 
 sub makeBlastValues {
-  my ($primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date) = @_;
+  my ($self,$primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date) = @_;
 
   my $orthoGroupBlastValue = GUS::Model::ApiDB::OrthoGroupBlastValue->new({ ortholog_blast_value_id => $primaryKeyInt,
                                                                             group_id => $group_id,
@@ -258,8 +265,10 @@ sub makeBlastValues {
                                                                             other_write => $other_write,
                                                                             modification_date => $modification_date
                                                                            });
-  #$orthoGroupBlastValue->submit();
-  #$orthoGroupBlastValue->undefPointerCache();
+  my @values = map { $orthoGroupBlastValue->get($_)} @{$self->getBlastValueFields()};
+  my $fh = $self->getOutputFileHandles()->{'blastValues.dat'};
+  print $fh join("\t", @values) . "\n";
+
   return $orthoGroupBlastValue;
 }
 
@@ -281,6 +290,7 @@ sub makePsqlObj {
   
   my @dataFields = map { lc($_) } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
 
+  $self->setBlastValueFields(\@dataFields);
   $psqlObj->setFields(\@dataFields);
   
   return $psqlObj;
