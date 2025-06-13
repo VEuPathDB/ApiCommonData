@@ -125,7 +125,6 @@ sub run {
   my $blastValuesPsqlProcessString = $blastValuesPsqlObj->getCommandLine();
   my $blastValuesPsqlPid = $Fifo->attachReader($blastValuesPsqlProcessString);
 
-  #print "blastValuesPsqlPid=$blastValuesPsqlPid\n";
   $self->addActiveForkedProcess($blastValuesPsqlPid);
 
   my %fileHandles;
@@ -144,7 +143,12 @@ sub run {
   my $other_write = $dbiDb->getDefaultOtherWrite();
   my $modification_date = $self->getModificationDate();
 
-  my $primaryKeyInt = 0;
+  my $primaryKeyInt = &getLastPrimaryKey();
+
+  # If we have rows in the datbase, increate the last primary key by 1
+  if ($primaryKeyInt > 0) {
+    $primaryKeyInt += 1;
+  }
 
   open(VAL, $groupBlastValuesFile) or die "Cannot open map file $groupBlastValuesFile for reading:$!";
   while(<VAL>) {
@@ -224,25 +228,23 @@ sub setPsqlHostname {
 }
 
 sub getLastPrimaryKey {
-  my ($self, $organismAbbrevA, $organismAbbrevB) =  @_;
+  my ($self) =  @_;
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "SELECT s.source_id, s.na_sequence_id 
-             FROM dots.nasequence s, sres.ontologyterm so, apidb.organism o
-             WHERE  so.ontology_term_id = s.sequence_ontology_id
-              and so.name in ('random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')
-              and o.taxon_id = s.taxon_id
-              and o.abbrev in ('$organismAbbrevA', '$organismAbbrevB')";
+  my $sql = "SELECT MAX(ortholog_blast_value_id) from apidb.orthogroupblastvalue";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  while(my ($sourceId, $naSequenceId) = $sh->fetchrow_array()) {
-    $self->{_na_sequence_map}->{$sourceId} = $naSequenceId;
+  # Set to 0 if there are no rows in this table
+  my $lastPrimaryKey = 0;
+  while(my ($primaryKey) = $sh->fetchrow_array()) {
+      $lastPrimaryKey = $primaryKey;
   }
   $sh->finish();
 
+  return $lastPrimaryKey;
 }
 
 sub makeBlastValues {
