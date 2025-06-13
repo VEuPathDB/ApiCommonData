@@ -148,7 +148,7 @@ sub run {
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   # Set to 0 if there are no rows in this table
-  my $primaryKeyInt = 0;
+  my $primaryKeyInt;
   while(my ($primaryKey) = $sh->fetchrow_array()) {
       $primaryKeyInt = $primaryKey;
   }
@@ -158,6 +158,8 @@ sub run {
   if ($primaryKeyInt > 0) {
     $primaryKeyInt += 1;
   }
+
+  $primaryKeyInt = 0 unless defined $primaryKeyInt;
 
   open(VAL, $groupBlastValuesFile) or die "Cannot open map file $groupBlastValuesFile for reading:$!";
   while(<VAL>) {
@@ -234,14 +236,6 @@ sub setPsqlHostname {
   $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
   my $hostName = $2;
   $self->{_psql_hostname} = $hostName;
-}
-
-sub getLastPrimaryKey {
-  my ($self) =  @_;
-
-
-
-  return $lastPrimaryKey;
 }
 
 sub makeBlastValues {
