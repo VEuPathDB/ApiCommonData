@@ -45,10 +45,10 @@ foreach my $group (keys %{$groups}) {
     
     my ($domainStatsPerEc,$domainPerProtein) = &ecDomainStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
     my $lengthStatsPerEc = &ecLengthStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
-    my ($blastStatsPerEc,$blastStatsPerProtein) = &ecBlastStats($dbh,$group,$proteinIds,$test,$trainingIds,$viableEcNumbers,$excludeOld,$statsFh);
+    my ($blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = &ecBlastStats($dbh,$group);
     close $statsFh if ($statsFh);
 
-    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$organisms,$fHs);
+    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs);
 
      &testScores($scores,$proteinIds,$testIds,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh,$logFh) if ($test);
 }
@@ -280,154 +280,89 @@ sub makeGroupDirAndFiles {
     return ($statsFh,$proteinFile);
 }
 
+sub abs_log10 {
+    my ($num) = @_;
+
+    # Handle zero or negative input                                                                                                        
+    return undef if $num <= 0;
+
+    # Take the log base 10 and return absolute value, rounded                                                 
+    return int(abs(log($num) / log(10)) + 0.5);
+}
+
+sub getProteinToEValue {
+    my ($dbh,$groupId) = @_;
+    my $sql = "SELECT qseq, evalue FROM apidb.orthogroupblastvalue WHERE group_id = '$groupId'";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+
+    my %proteinToEValue;
+    while(my ($protein,$evalue) = $sh->fetchrow_array()) {
+        if ($evalue eq '0.0') {
+            $evalue = 1.0e-300;
+	}
+        $proteinToEValue{$protein} = abs_log10($evalue);
+    }
+    $sh->finish();
+
+    return \%proteinToEValue;
+}
+
+sub getProteinToEC {
+    my ($dbh,$groupId) = @_;
+    my $sql = "SELECT pda.full_id,ec.ec_number
+               FROM SRes.EnzymeClass ec, DoTS.AASequenceEnzymeClass aaec, webready.ProteinDomainAssignment pda
+               WHERE ec.enzyme_class_id = aaec.enzyme_class_id 
+               AND aaec.aa_sequence_id = pda.aa_sequence_id
+               AND pda.group_name = '$groupId'";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+
+    my %proteinToEC;
+    while(my ($protein,$ec) = $sh->fetchrow_array()) {
+        $proteinToEC{$protein} = $ec;
+    }
+    $sh->finish();
+
+    return \%proteinToEC;
+}
+
+
 sub ecBlastStats {
-    my ($dbh,$group,$proteinIds,$test,$trainingIds,$viableEcNumbers,$excludeOld,$statsFh) = @_;
+    my ($dbh,$group) = @_;
 
-    my ($blastEvalues,$blastPerEc) = &readBlastEvaluesFromDatabase($dbh,$group,$proteinIds,$test,$trainingIds,$viableEcNumbers,$excludeOld,$statsFh);
-    my @orderedViableEcs = sort keys %{$viableEcNumbers};
-    my $blastStatsPerEc = &calculateBlastStatsPerEc(\@orderedViableEcs,$blastPerEc,$statsFh);
-    my $blastStatsPerProtein = &calculateBlastStatsPerProtein(\@orderedViableEcs,$blastEvalues,$statsFh);
-    
-    return ($blastStatsPerEc,$blastStatsPerProtein);
-}
+    # Get all proteins from that group with an EC assignment
+    my %proteinToEc = %{ &getProteinToEC($dbh,$groupId) };
 
-sub readBlastEvaluesFromDatabase {
-    my ($dbh,$group,$proteinIds,$test,$trainingIds,$viableEcNumbers,$excludeOld,$statsFh) = @_;
+    # Get all proteins that have a significant hit to the group centroid. Note, this is stored as the absolute log of the evalue.
+    my %proteinToEValue = %{ &getProteinToEValue($dbh,$groupId) };
 
-    my $blastEvalues;    # id -> ec -> (-5,-6.4,-150.3)
-    my $blastPerEc;        # ec -> (-5,-6.4,-150.3)  only if both proteins have EC
-    my %missing;
-    my $query = $dbh->prepare(&blastSql($group));
-    
-    $query->execute();
-    while (my($query,$subject,$evalue) = $query->fetchrow_array()) {
-        if ($evalue =~ /0\.0/) {
-            my $mantua = 0;
-            my $exponent = 0;
+    my %ecBestEvalue;
+
+    # For every EC assignment in this group, record the best blast evalue to the centroid                                                                             
+    # For each protein                                                                     
+    foreach my $protein (keys %proteinToEc) {
+        # If we already have an protein with this EC, and it has a significant blast to the centroid
+        if ($ecBestEvalue{$proteinToEc{$protein}} && $proteinToEValue{$protein}) {
+            if ($ecBestEvalue{$proteinToEc{$protein}} < $proteinToEValue{$protein}) {
+                $ecBestEvalue{$proteinToEc{$protein}} = $proteinToEValue{$protein};
+            }
         }
-        else { 
-            my ($mantua,$exponent) = split(/e-/,$evalue);
+        # Another protein assigned this EC, but doesn't have a significant blast hit with the centroid
+        elsif ($ecBestEvalue{$proteinToEc{$protein}} && !$proteinToEValue{$protein}) {
+            next;
         }
-
-	next if ($excludeOld && ($query =~ /-old\|/ || $subject =~ /-old\|/));
-	next if (&proteinDoesNotExist($subject,$proteinIds,$statsFh,\%missing));
-	next if (&proteinDoesNotExist($query,$proteinIds,$statsFh,\%missing));
-	
-	my $subjectHasEc = scalar @{$proteinIds->{$subject}->{ec}} > 0 ? 1 : 0;
-	my $queryHasEc = scalar @{$proteinIds->{$query}->{ec}} > 0 ? 1 : 0;
-	next if ( ! $subjectHasEc && ! $queryHasEc );
-	
-	my $exponentFromMantua = $mantua == 0 ? 0 : log($mantua)/log(10);
-	$exponent += $exponentFromMantua;
-	foreach my $viableEc ( keys %{$viableEcNumbers} ) {
-	    if (&proteinHasThisEcNumber($proteinIds->{$query},$viableEc) && &proteinHasThisEcNumber($proteinIds->{$subject},$viableEc)) {
-		if (! $test || ($test && exists $trainingIds->{$query} && exists $trainingIds->{$subject})) {
-		    $blastPerEc->{$viableEc} = &addArrayElement($blastPerEc->{$viableEc},$exponent);
-		}
-	    }
-	    if ($subjectHasEc && &proteinHasThisEcNumber($proteinIds->{$subject},$viableEc)) {
-		if (! $test || ($test && exists $trainingIds->{$subject})) {
-		    $blastEvalues->{$query}->{$viableEc} = &addArrayElement($blastEvalues->{$query}->{$viableEc},$exponent);
-		}
-	    }
-	    if ($queryHasEc && &proteinHasThisEcNumber($proteinIds->{$query},$viableEc)) {
-		if (! $test || ($test && exists $trainingIds->{$query})) {
-		    $blastEvalues->{$subject}->{$viableEc} = &addArrayElement($blastEvalues->{$subject}->{$viableEc},$exponent);
-		}
-	    }
-	}
-    }
-    $query->finish();
-
-    return ($blastEvalues,$blastPerEc);
-}
-
-sub calculateBlastStatsPerEc {
-    my ($orderedEcs,$blastPerEc,$statsFh) = @_;
-
-    my $blastStatsPerEc;
-    foreach my $ec (@{$orderedEcs}) {
-	my $noValues;
-	$noValues = 1 if (! exists $blastPerEc->{$ec});   # this EC does not have any blast partners
-	$blastStatsPerEc->{$ec}->{numValues} = $noValues ? 0 : scalar @{$blastPerEc->{$ec}};
-	$blastStatsPerEc->{$ec}->{min} = $noValues ? 0 : sprintf('%.1f',min($blastPerEc->{$ec}));
-	$blastStatsPerEc->{$ec}->{max} = $noValues ? 0 : sprintf('%.1f',max($blastPerEc->{$ec}));
-	$blastStatsPerEc->{$ec}->{median} = $noValues ? 0 : sprintf('%.1f',median($blastPerEc->{$ec}));
-	my ($mean,$sd) = meanSd($blastPerEc->{$ec}) if (! $noValues);
-	$blastStatsPerEc->{$ec}->{mean} = $noValues ? 0 : sprintf('%.1f',$mean);
-	$blastStatsPerEc->{$ec}->{sd} = $noValues ? 0 : sprintf('%.1f',$sd);
-    }
-    
-    &printBlastStatsPerEc($blastStatsPerEc,$statsFh) if ($statsFh);
-    
-    return $blastStatsPerEc;
-}
-
-sub printBlastStatsPerEc {
-    my ($blastStatsPerEc,$statsFh) = @_;
-    print $statsFh "\nBLAST_STATISTICS\n";
-    print $statsFh "ec_number\tnum_values\tminimum\tmaximum\tmedian\tmean\tstd_dev\n";
-    foreach my $ec (keys %{$blastStatsPerEc}) {
-	print $statsFh "$ec";
-	print $statsFh "\t$blastStatsPerEc->{$ec}->{numValues}";
-	print $statsFh "\t$blastStatsPerEc->{$ec}->{min}";
-	print $statsFh "\t$blastStatsPerEc->{$ec}->{max}";
-	print $statsFh "\t$blastStatsPerEc->{$ec}->{median}";
-	print $statsFh "\t$blastStatsPerEc->{$ec}->{mean}";
-	print $statsFh "\t$blastStatsPerEc->{$ec}->{sd}";
-	print $statsFh "\n";
-    }
-    print $statsFh "\n";
-}
-
-
-sub calculateBlastStatsPerProtein {
-    my ($orderedEcs,$blastEvalues,$statsFh) = @_;
-    
-    my $blastStatsPerProtein;
-    foreach my $id (keys %{$blastEvalues}) {
-	foreach my $viableEc ( @{$orderedEcs} ) {
-	    my $noValues;
-	    $noValues = 1 if (! exists $blastEvalues->{$id}->{$viableEc});   # this id does not have blast partner containing this EC number
-	    $blastStatsPerProtein->{$id}->{$viableEc}->{numValues} = $noValues ? 0 : scalar @{$blastEvalues->{$id}->{$viableEc}};
-	    $blastStatsPerProtein->{$id}->{$viableEc}->{min} = $noValues ? 0 : sprintf('%.1f',min($blastEvalues->{$id}->{$viableEc}));
-	    $blastStatsPerProtein->{$id}->{$viableEc}->{max} = $noValues ? 0 : sprintf('%.1f',max($blastEvalues->{$id}->{$viableEc}));
-	    $blastStatsPerProtein->{$id}->{$viableEc}->{median} = $noValues ? 0 : sprintf('%.1f',median($blastEvalues->{$id}->{$viableEc}));
-	    my ($mean,$sd) = meanSd($blastEvalues->{$id}->{$viableEc}) if (! $noValues);
-	    $blastStatsPerProtein->{$id}->{$viableEc}->{mean} = $noValues ? 0 : sprintf('%.1f',$mean);
-	    $blastStatsPerProtein->{$id}->{$viableEc}->{sd} = $noValues ? 0 : sprintf('%.1f',$sd);
-	}
+        # First protein with this EC, and it has a significant blast value to the centroid
+        elsif (!$ecBestEvalue{$proteinToEc{$protein}} && $proteinToEValue{$protein}) {
+            $ecBestEvalue{$proteinToEc{$protein}} = $proteinToEValue{$protein};
+        }
+        # First protein with this EC, and it does not have a significant blast value to the centroid
+        else {
+            $ecBestEvalue{$proteinToEc{$protein}} = 5;
+        }
     }
 
-    &printBlastStatsPerProtein($orderedEcs,$blastStatsPerProtein,$statsFh) if ($statsFh);
-    
-    return $blastStatsPerProtein;
-}
-
-sub printBlastStatsPerProtein {
-    my ($orderedEcs,$blastStatsPerProtein,$statsFh) = @_;
-    print $statsFh "GENE\t";
-    foreach my $ec (@{$orderedEcs}) {
-	print $statsFh "$ec\t\t\t\t\t\t";
-    }
-    print $statsFh "\n";
-    foreach my $ec (@{$orderedEcs}) {
-	print $statsFh "\tnumber_values\tminimum\tmaximum\tmedian\tmean\tstd_dev";
-    }
-    print $statsFh "\n";
-    foreach my $id (keys %{$blastStatsPerProtein}) { 
-	print $statsFh "$id";
-	foreach my $viableEc ( @{$orderedEcs} ) {
-	    print  $statsFh "\t$blastStatsPerProtein->{$id}->{$viableEc}->{numValues}";
-	    print  $statsFh "\t$blastStatsPerProtein->{$id}->{$viableEc}->{min}";
-	    print  $statsFh "\t$blastStatsPerProtein->{$id}->{$viableEc}->{max}";
-	    print  $statsFh "\t$blastStatsPerProtein->{$id}->{$viableEc}->{median}";
-	    print  $statsFh "\t$blastStatsPerProtein->{$id}->{$viableEc}->{mean}";
-	    print  $statsFh "\t$blastStatsPerProtein->{$id}->{$viableEc}->{sd}";
-	}
-	print $statsFh "\n";
-    }
-    print $statsFh "\n";
+    return (\%ecBestEvalue,\%proteinToEvalue,\%proteinToEc);
 }
 
 sub proteinDoesNotExist {
@@ -898,30 +833,57 @@ sub lengthScore {
 }
 
 sub blastScore {
-    my ($id,$ec,$blastStatsPerEc,$blastStatsPerProtein) = @_;
+    my ($id,$ec,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = @_;
 
-    return 0 if (! exists $blastStatsPerProtein->{$id}->{$ec});   #this protein does not BLAST to any protein with an EC number
-
-    my $idBlast = $blastStatsPerProtein->{$id}->{$ec}->{median};
-    my $ecBlast =  $blastStatsPerEc->{$ec}->{median};
-    $ecBlast = -181 if ($ecBlast == 0);  # this happens when protein with EC does not have blast partners
-    my $tenPercentOfMedian = abs(0.1 * $ecBlast);
-
-    if ($idBlast <= ($ecBlast+$tenPercentOfMedian) ) {
+    # This protein was already assigned this EC
+    if ($proteinToEc{$id} eq $ec) {
 	return 4;
-    } elsif ($idBlast <= ($ecBlast+2*$tenPercentOfMedian) ) {
-	return 3;
-   } elsif ($idBlast <= ($ecBlast+3*$tenPercentOfMedian) ) {
-	return 2;
-    } elsif ($idBlast <= $blastStatsPerEc->{$ec}->{max} ) {
-	return 1;
-    } else {
+    }
+    # This protein has no significant hit to the best representative
+    elsif (!$blastStatsPerProtein{$id}) {
 	return 0;
+    }
+    # This protein did not have a good hit to the best rep
+    elsif ($blastStatsPerProtein{$id} < 10) {
+	return 0;
+    }
+    # If the protein to centroid blast was > 100
+    elsif ($blastStatsPerProtein{$protein} > 100) {
+        # And the best blast to the centroid for all proteins with this EC was > 100
+	if ($blastStatsPerEc{$ec} > 100) {
+            # This protein EC combo scores a 3
+	     return 3;
+	    }
+        # If the best blast to the centroid for all proteins with this EC was > 50
+	elsif ($blastStatsPerEc{$ec} > 50) {
+            # This protein EC combo scores a 2
+	    return 2;
+	}
+        # If the best blast to the centroid for all proteins with this EC was >= 10
+	elsif ($blastStatsPerEc{$ec} >= 10) {
+            # This protein EC combo scores a 1
+	    return 1;
+	}
+    }
+    # Same process for this but this protein EC combo can only score a max of a 2
+    elsif ($blastStatsPerProtein{$protein} > 50) {
+	if ($blastStatsPerEc{$ec} > 50) {
+	    return 2;
+	}
+	elsif ($blastStatsPerEc{$ec} >= 10) {
+	    return 1;
+	}
+    }
+    # Same process for this but this protein EC combo can only score a max of a 1
+    elsif ($blastStatsPerProtein{$protein} >= 10) {
+	if ($blastStatsPerEc{$ec} >= 10) {
+	    return 1;
+	}
     }
 }
 
 sub getProteinScores {
-    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$organisms,$fHs) = @_;
+    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs) = @_;
 
     my $scores;
     foreach my $id (keys %{$proteinIds}) {
@@ -930,7 +892,7 @@ sub getProteinScores {
 	    $scores->{$id}->{$ec}->{numProteinsWithEc} = $viableEcNumbers->{$ec}->{numProteins};
 	    $scores->{$id}->{$ec}->{numGeneraWithEc} = $viableEcNumbers->{$ec}->{numGenera};
 	    $scores->{$id}->{$ec}->{lengthScore} = &lengthScore($id,$ec,$proteinIds,$lengthStatsPerEc);
-	    $scores->{$id}->{$ec}->{blastScore} = &blastScore($id,$ec,$blastStatsPerEc,$blastStatsPerProtein);
+	    $scores->{$id}->{$ec}->{blastScore} = &blastScore($protein,$ec,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc);
 	    $scores->{$id}->{$ec}->{domainScore} = &domainScore($id,$ec,$domainStatsPerEc,$domainPerProtein);
 	    $scores->{$id}->{$ec}->{numTotalProteins} = $numTotalProteins;
 	    $scores->{$id}->{$ec}->{numTotalGenera} = $numTotalGenera;
@@ -1467,44 +1429,29 @@ sub getGroupsFromDatabase {
 
 sub domainsSql {
     my ($group) = @_;
-    return "SELECT full_id,accession FROM ApidbTuning.ProteinGroupDomainAssignment
-            WHERE group_name = '$group' ORDER BY full_id,start_min";
+    return "SELECT full_id, accession 
+            FROM webready.ProteinDomainAssignment                                                                                                                               
+            WHERE group_name = '$groupId'";
 }
 
 sub ecsSql {
     my ($group) = @_;
-    return "SELECT pg.full_id,ec.ec_number
-            FROM SRes.EnzymeClass ec, DoTS.AASequenceEnzymeClass aaec,
-                 apidbTuning.ProteinGroup pg
-            WHERE ec.enzyme_class_id = aaec.enzyme_class_id AND aaec.aa_sequence_id = pg.aa_sequence_id
-                  AND evidence_code NOT LIKE 'OrthoMCL%' AND pg.group_name='$group'";
+    return  "SELECT pda.full_id,ec.ec_number 
+             FROM SRes.EnzymeClass ec, DoTS.AASequenceEnzymeClass aaec, webready.ProteinDomainAssignment pda 
+             WHERE ec.enzyme_class_id = aaec.enzyme_class_id 
+             AND aaec.aa_sequence_id = pda.aa_sequence_id
+             AND pda.group_name = '$groupId'"
 }
 
 sub proteinsSql {
     my ($group) = @_;
     return "SELECT full_id,product,length,core_peripheral,group_name,organism_name                                     
-            FROM ApidbTuning.ProteinGroup WHERE group_name='$group'";
+            FROM webready.ProteinSequenceGroup WHERE group_name='$group'";
 }
 
 sub groupsSql {
     my ($minNumProteinsWithEc,$maxNumProteinsWithEc) = @_;
-    my $maxClause = "";
-    if ($maxNumProteinsWithEc) {
-	$maxClause = "AND num_proteins <= $maxNumProteinsWithEc";
-    }
-    return "SELECT group_name
-            FROM (SELECT group_name,count(ec_numbers) as num_proteins                         
-                  FROM ApidbTuning.ProteinGroup pg
-                  WHERE ec_numbers IS NOT NULL AND group_name IS NOT NULL
-                  GROUP BY group_name)
-            WHERE num_proteins >= $minNumProteinsWithEc $maxClause";
-}
-
-sub blastSql {
-    my ($group) = @_;
-    return "SELECT ogbv.qseq, ogbv.sseq, ogbv.evalue
-            FROM apidb.orthoGroupBlastValue ogbv 
-            WHERE ogbv.group_id = '$group'";
+    return "SELECT DISTINCT(group_name) FROM webready.proteinsequencegroup";
 }
 
 sub orthoOrganismSql {
