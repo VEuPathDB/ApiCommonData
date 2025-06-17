@@ -9,6 +9,7 @@ use DBI;
 
 my $outputDir = $ARGV[0];
 my $organismDir = $ARGV[1];
+my $outputFile = $ARGV[2];
 
 # example command line:  orthomclEcPrediction.pl /home/markhick/EC
 # good groups to study: OG6_100435, OG6_101725
@@ -56,7 +57,7 @@ foreach my $group (keys %{$groups}) {
 
     close $statsFh if ($statsFh);
 
-    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs,$dbh);
+    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$outputFile,$dbh);
 
      &testScores($scores,$proteinIds,$testIds,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh,$logFh) if ($test);
 }
@@ -917,7 +918,7 @@ sub blastScore {
 }
 
 sub getProteinScores {
-    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs,$dbh) = @_;
+    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$outputFile,$dbh) = @_;
 
     my $scores;
     foreach my $id (keys %{$proteinIds}) {
@@ -933,8 +934,8 @@ sub getProteinScores {
 	    delete $scores->{$id}->{$ec} unless (&meetsScoreThreshold($scores->{$id}->{$ec}));
 	}
     }
-    &deletePartialEcWithWorseScore($scores);
-    &printEcScores($scores,$organisms,$fHs,$dbh) if (! $test);
+    #&deletePartialEcWithWorseScore($scores);
+    &printEcScores($scores,$organisms,$outputFile,$dbh) if (!$test);
     return $scores;
 }
 
@@ -990,7 +991,7 @@ sub scoreToNumber {
 }
 
 sub printEcScores {
-    my ($scores,$organisms,$fHs,$dbh) = @_;
+    my ($scores,$organisms,$outputFile,$dbh) = @_;
     foreach my $id (keys %{$scores}) {
 	my $editedId = $id;
 	my $abbrev;
@@ -1003,18 +1004,13 @@ sub printEcScores {
 	    $abbrev = "rirr";
 	    $editedId =~ s/^rhiz/rirr/;
 	}
-	my @fhsToPrint;
-	next if (exists $organisms->{$abbrev} && $organisms->{$abbrev} eq "none");
-	if (! exists $organisms->{$abbrev} || ! exists $fHs->{$organisms->{$abbrev}}) {
-	    @fhsToPrint = map { $fHs->{$_}->{fileHandle} } keys %{$fHs};
-	} else {
-	    push @fhsToPrint, $fHs->{$organisms->{$abbrev}}->{fileHandle};
-	}
+      	open(OUT,">>",$outputFile) || die "Cannot open file '$outputFile' for appending";
 	foreach my $ec (keys %{$scores->{$id}}) {
 	    my $string = &scoresToString($scores->{$id}->{$ec});
 	    my $text = "$editedId\t$ec\t$string\n";
-	    print $_ $text foreach (@fhsToPrint);
+	    print OUT $text;
 	}
+        close OUT;
     }
 }
 
