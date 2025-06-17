@@ -42,13 +42,21 @@ foreach my $group (keys %{$groups}) {
     next if ($test && ($trainingIds eq "" || $testIds eq ""));
 
     my $viableEcNumbers = &getViableEcNumbers($proteinIds,$test,$trainingIds,$minNumGeneraForViableEc,$minNumProteinsForViableEc,$statsFh);
-    
+  
     my ($domainStatsPerEc,$domainPerProtein) = &ecDomainStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
     my $lengthStatsPerEc = &ecLengthStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
     my ($blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = &ecBlastStats($dbh,$group);
+
+    #if ($viableEcNumbers) {
+    #    print "Viable ECs are\n";
+    #    print Dumper $viableEcNumbers;
+    #    print "Blast stats to ec\n";
+    #    print Dumper $blastStatsPerEc;
+    #}
+
     close $statsFh if ($statsFh);
 
-    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs);
+    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs,$dbh);
 
      &testScores($scores,$proteinIds,$testIds,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh,$logFh) if ($test);
 }
@@ -290,6 +298,21 @@ sub abs_log10 {
     return int(abs(log($num) / log(10)) + 0.5);
 }
 
+sub getAbbrev {
+    my ($dbh,$Id) = @_;
+    my $sql = "SELECT taxon_abbreviation FROM webready.proteinsequencegroup WHERE full_id = '$Id'";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+
+    my $abbrev;
+    while(my $taxon_abbrev = $sh->fetchrow_array()) {
+        $abbrev = $taxon_abbrev
+    }
+    $sh->finish();
+
+    return $abbrev;
+}
+
 sub getProteinToEValue {
     my ($dbh,$groupId) = @_;
     my $sql = "SELECT qseq, evalue FROM apidb.orthogroupblastvalue WHERE group_id = '$groupId'";
@@ -332,10 +355,10 @@ sub ecBlastStats {
     my ($dbh,$group) = @_;
 
     # Get all proteins from that group with an EC assignment
-    my %proteinToEc = %{ &getProteinToEC($dbh,$groupId) };
+    my %proteinToEc = %{ &getProteinToEC($dbh,$group) };
 
     # Get all proteins that have a significant hit to the group centroid. Note, this is stored as the absolute log of the evalue.
-    my %proteinToEValue = %{ &getProteinToEValue($dbh,$groupId) };
+    my %proteinToEValue = %{ &getProteinToEValue($dbh,$group) };
 
     my %ecBestEvalue;
 
@@ -362,7 +385,7 @@ sub ecBlastStats {
         }
     }
 
-    return (\%ecBestEvalue,\%proteinToEvalue,\%proteinToEc);
+    return (\%ecBestEvalue,\%proteinToEValue,\%proteinToEc);
 }
 
 sub proteinDoesNotExist {
@@ -405,8 +428,8 @@ sub getViableEcNumbers {
     my ($proteinIds,$test,$trainingIds,$minNumGenera,$minNumProteins,$statsFh) = @_;
 
     my $actualEcNumbers = &getUniqueEcNumbersFromProteins($proteinIds,$test,$trainingIds);
-    my $allEcNumbers = &addPartialEcNumbers($actualEcNumbers);
-    my $ecNumbersWithCounts = &getNumProteinsGeneraForEachEc($proteinIds,$test,$trainingIds,$allEcNumbers);
+    #my $allEcNumbers = &addPartialEcNumbers($actualEcNumbers);
+    my $ecNumbersWithCounts = &getNumProteinsGeneraForEachEc($proteinIds,$test,$trainingIds,$actualEcNumbers);
     &deletePartialEcNumbers($ecNumbersWithCounts);
     &deleteEcNumbersBelowMin($ecNumbersWithCounts,$minNumProteins,$minNumGenera);
     &printViableEcNumbers($ecNumbersWithCounts,$statsFh) if ($statsFh);
@@ -834,56 +857,67 @@ sub lengthScore {
 
 sub blastScore {
     my ($id,$ec,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = @_;
-
+    #print "EC is $ec ID is $id\n";
     # This protein was already assigned this EC
-    if ($proteinToEc{$id} eq $ec) {
-	return 4;
+    if ($proteinToEc->{$id}) {
+        if ($proteinToEc->{$id} eq $ec) {
+            return 4;
+        }
     }
     # This protein has no significant hit to the best representative
-    elsif (!$blastStatsPerProtein{$id}) {
+    elsif (!$blastStatsPerProtein->{$id}) {
 	return 0;
     }
     # This protein did not have a good hit to the best rep
-    elsif ($blastStatsPerProtein{$id} < 10) {
+    elsif ($blastStatsPerProtein->{$id} < 10) {
 	return 0;
     }
     # If the protein to centroid blast was > 100
-    elsif ($blastStatsPerProtein{$protein} > 100) {
+    elsif ($blastStatsPerProtein->{$id} > 100) {
+	if (!$blastStatsPerEc->{$ec}) {
+            return 0;
+        }
         # And the best blast to the centroid for all proteins with this EC was > 100
-	if ($blastStatsPerEc{$ec} > 100) {
+	elsif ($blastStatsPerEc->{$ec} > 100) {
             # This protein EC combo scores a 3
 	     return 3;
 	    }
         # If the best blast to the centroid for all proteins with this EC was > 50
-	elsif ($blastStatsPerEc{$ec} > 50) {
+	elsif ($blastStatsPerEc->{$ec} > 50) {
             # This protein EC combo scores a 2
 	    return 2;
 	}
         # If the best blast to the centroid for all proteins with this EC was >= 10
-	elsif ($blastStatsPerEc{$ec} >= 10) {
+	elsif ($blastStatsPerEc->{$ec} >= 10) {
             # This protein EC combo scores a 1
 	    return 1;
 	}
     }
     # Same process for this but this protein EC combo can only score a max of a 2
-    elsif ($blastStatsPerProtein{$protein} > 50) {
-	if ($blastStatsPerEc{$ec} > 50) {
+    elsif ($blastStatsPerProtein->{$id} > 50) {
+	if (!$blastStatsPerEc->{$ec}) {
+            return 0;
+        }
+	elsif ($blastStatsPerEc->{$ec} > 50) {
 	    return 2;
 	}
-	elsif ($blastStatsPerEc{$ec} >= 10) {
+	elsif ($blastStatsPerEc->{$ec} >= 10) {
 	    return 1;
 	}
     }
     # Same process for this but this protein EC combo can only score a max of a 1
-    elsif ($blastStatsPerProtein{$protein} >= 10) {
-	if ($blastStatsPerEc{$ec} >= 10) {
+    elsif ($blastStatsPerProtein->{$id} >= 10) {
+	if (!$blastStatsPerEc->{$ec}) {
+            return 0;
+        }
+	if ($blastStatsPerEc->{$ec} >= 10) {
 	    return 1;
 	}
     }
 }
 
 sub getProteinScores {
-    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs) = @_;
+    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$fHs,$dbh) = @_;
 
     my $scores;
     foreach my $id (keys %{$proteinIds}) {
@@ -892,7 +926,7 @@ sub getProteinScores {
 	    $scores->{$id}->{$ec}->{numProteinsWithEc} = $viableEcNumbers->{$ec}->{numProteins};
 	    $scores->{$id}->{$ec}->{numGeneraWithEc} = $viableEcNumbers->{$ec}->{numGenera};
 	    $scores->{$id}->{$ec}->{lengthScore} = &lengthScore($id,$ec,$proteinIds,$lengthStatsPerEc);
-	    $scores->{$id}->{$ec}->{blastScore} = &blastScore($protein,$ec,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc);
+	    $scores->{$id}->{$ec}->{blastScore} = &blastScore($id,$ec,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc);
 	    $scores->{$id}->{$ec}->{domainScore} = &domainScore($id,$ec,$domainStatsPerEc,$domainPerProtein);
 	    $scores->{$id}->{$ec}->{numTotalProteins} = $numTotalProteins;
 	    $scores->{$id}->{$ec}->{numTotalGenera} = $numTotalGenera;
@@ -900,7 +934,7 @@ sub getProteinScores {
 	}
     }
     &deletePartialEcWithWorseScore($scores);
-    &printEcScores($scores,$organisms,$fHs) if (! $test);
+    &printEcScores($scores,$organisms,$fHs,$dbh) if (! $test);
     return $scores;
 }
 
@@ -956,14 +990,14 @@ sub scoreToNumber {
 }
 
 sub printEcScores {
-    my ($scores,$organisms,$fHs) = @_;
+    my ($scores,$organisms,$fHs,$dbh) = @_;
     foreach my $id (keys %{$scores}) {
 	my $editedId = $id;
 	my $abbrev;
 	if ($id =~ /^([a-z]{4})\|/) {
 	    $abbrev = $1;
 	} else {
-	    die "Could not find organism abbrev for this id: '$id'"
+            $abbrev = &getAbbrev($dbh,$id);
 	}
 	if ($abbrev eq "rhiz") { # this is temporary, because rhiz on orthomcl equals rirr on fungidb
 	    $abbrev = "rirr";
@@ -1431,7 +1465,7 @@ sub domainsSql {
     my ($group) = @_;
     return "SELECT full_id, accession 
             FROM webready.ProteinDomainAssignment                                                                                                                               
-            WHERE group_name = '$groupId'";
+            WHERE group_name = '$group'";
 }
 
 sub ecsSql {
@@ -1440,7 +1474,7 @@ sub ecsSql {
              FROM SRes.EnzymeClass ec, DoTS.AASequenceEnzymeClass aaec, webready.ProteinDomainAssignment pda 
              WHERE ec.enzyme_class_id = aaec.enzyme_class_id 
              AND aaec.aa_sequence_id = pda.aa_sequence_id
-             AND pda.group_name = '$groupId'"
+             AND pda.group_name = '$group'"
 }
 
 sub proteinsSql {
@@ -1462,7 +1496,7 @@ sub orthoOrganismSql {
                  (SELECT orthomcl_clade_id,three_letter_abbrev
                   FROM apidb.orthomclClade
                   WHERE core_peripheral='Z') p
-            WHERE o.parent_id = p.orthomcl_taxon_id
+            WHERE o.parent_id = p.orthomcl_clade_id
                   AND o.core_peripheral IN ('C','P') $whereClause";
 }
 
