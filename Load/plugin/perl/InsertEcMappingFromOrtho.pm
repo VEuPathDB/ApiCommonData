@@ -108,13 +108,10 @@ sub run {
 
     my $mappingFile = $self->getArg('ECMappingFile');
     my $evidCode = $self->getArg('evidenceCode');
-    my $sql = $self->getArg('aaSeqLocusTagMappingSql');  
     $self->getAlgInvocation()->setMaximumNumberOfObjects(100000);
 
     my $queryHandle = $self->getQueryHandle();
-    my $sth = $queryHandle->prepare($sql);
 
-    my $abbrevs = &getOrthoAbbrevs($queryHandle);
     my %ecNumbers;
     my %aaSeqIds;
 
@@ -125,20 +122,22 @@ sub run {
 	next if (scalar @row != 9);
 	my ($id,$ec,$numProteinsWithEc,$numTotalProteins,$numGeneraWithEc,$numTotalGenera,$lengthScore,$blastScore,$domainScore) = @row; 
 
-	my ($abbrev,$locusTag) = split('\|',$id);
-	next if (! exists $abbrevs->{$abbrev});
-
 	my $enzymeClass = $self->getEnzymeClass($ec, \%ecNumbers);
-        next unless ($enzymeClass);
+        if (!$enzymeClass) {
+            print "This EC does not exist\n";
+            next;
+        }
 
-        my $aaSeqIds = $self->getAASeqIds($locusTag, \%aaSeqIds, $sth);
-        next unless ($aaSeqIds);
+        my $aaSeqId = $self->getAASeqId($id, $queryHandle);
+        if (!$aaSeqId) {
+            print "This aaSeqId does not exist\n";
+            next;
+        }
 
-	$self->log("Processing Pfid: $locusTag, ECNumber: $ec");
+	$self->log("Processing Pfid: $id, ECNumber: $ec");
 	
-        foreach my $aaSeqId(@$aaSeqIds) {
-	    my $newAASeqEnzClass =  GUS::Model::DoTS::AASequenceEnzymeClass->new({
-		'aa_sequence_id' => $aaSeqId,
+        my $newAASeqEnzClass =  GUS::Model::DoTS::AASequenceEnzymeClass->new({
+                'aa_sequence_id' => $aaSeqId,
 		'enzyme_class_id' => $enzymeClass,
 		'evidence_code' => $evidCode,
 		'num_protein_with_ec' => $numProteinsWithEc,
@@ -148,31 +147,15 @@ sub run {
 		'length_score' => $lengthScore,
 		'blast_score' => $blastScore,
 		'domain_score' => $domainScore
-                                                                               });
-            if (! $newAASeqEnzClass->retrieveFromDB()) {
-		$newAASeqEnzClass->submit();
-		$self->log("  submitted enzyme $enzymeClass, seq $aaSeqId");
-            }
-	    $self->undefPointerCache();
+        });
+        if (! $newAASeqEnzClass->retrieveFromDB()) {
+	      $newAASeqEnzClass->submit();
+	      $self->log("  submitted enzyme $enzymeClass, seq $aaSeqId");
         }
+	$self->undefPointerCache();
     }
-
     return "Finished processing EC Mapping file\n";
 }
-
-sub getOrthoAbbrevs {
-    my ($queryHandle) = @_;
-    my %abbrevs;
-    my $sql = "SELECT orthomcl_abbrev FROM apidb.organism";
-    my $sth = $queryHandle->prepare($sql);
-    $sth->execute();
-    while (my $abbrev = $sth->fetchrow_array()) {
-	$abbrevs{$abbrev} = 1;
-    }
-    $sth->finish();
-    return \%abbrevs;
-}
-
 
 ###### FETCH THE EC ID FOR A GIVEN EC NUMBER ######
 sub getEnzymeClass {
@@ -188,26 +171,17 @@ sub getEnzymeClass {
 }
 
 ###### FETCH THE AA SEQUNCE ID FOR A GIVEN ALIAS ######
-sub getAASeqIds {
-    my ($self, $locusTag, $aaSeqIdsHash, $sth) = @_;
-    if (! exists $aaSeqIdsHash->{$locusTag}){
-	$sth->execute($locusTag);
-	while (my $aaSequenceId = $sth->fetchrow_array()) {
-	    $aaSeqIdsHash->{$locusTag} = &addArrayElement($aaSeqIdsHash->{$locusTag}, $aaSequenceId);
-	}
-	$sth->finish();
+sub getAASeqId {
+    my ($self, $id, $dbh) = @_;
+    my $sql = "SELECT aa_sequence_id from dots.externalaasequence where id = '$id'";
+    my $sth = $queryHandle->prepare($sql);
+    $sth->execute();
+    my $aaSeqId;
+    while (my $aaSequenceId = $sth->fetchrow_array()) {
+        $aaSeqId = $aaSequenceId;
     }
-    return $aaSeqIdsHash->{$locusTag};
-}
-
-sub addArrayElement {
-    my ($arrayRef,$element) = @_;
-    if (defined $arrayRef) {
-	push @{$arrayRef}, $element;
-    } else {
-	$arrayRef = [$element];
-    }
-    return $arrayRef;
+    $sth->finish();
+    return $aaSeqId;
 }
 
 sub undoTables {
