@@ -1500,7 +1500,7 @@ sub orthoOrganismSql {
 sub getDbHandle {
 
   #my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-  my $gusConfigFile = @_;
+  my ($gusConfigFile) = @_;
   my @properties = ();
   my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 
