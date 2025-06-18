@@ -10,6 +10,7 @@ use DBI;
 my $outputDir = $ARGV[0];
 my $organismDir = $ARGV[1];
 my $outputFile = $ARGV[2];
+my $gusConfigFile = $ARGV[3];
 
 # example command line:  orthomclEcPrediction.pl /home/markhick/EC
 # good groups to study: OG6_100435, OG6_101725
@@ -28,7 +29,7 @@ my $fractionOfGroups = 1;      # if not testing, then set to 1
 
 my ($testFraction,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh) = &setUpTest($outputDir) if ($test);
 
-my ($logFh,$netGroupsRef,$dbh,$groups) = &setUpPrediction($outputDir,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile);
+my ($logFh,$netGroupsRef,$dbh,$groups) = &setUpPrediction($outputDir,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile, $gusConfigFile);
 
 my ($organisms,$fHs) = &getOrganismsProjectsFileHandles($organismDir,$outputDir,$dbh,$excludeOld,$logFh);
 
@@ -148,8 +149,8 @@ sub addOrganismsFromOrtho {
 }
 
 sub setUpPrediction {
-    my ($outputDirectory,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile) = @_;
-    my $dbh = &getDbHandle();
+    my ($outputDirectory,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile, $gusConfigFile) = @_;
+    my $dbh = &getDbHandle($gusConfigFile);
     my $groups = &getGroupsFromDatabase($minNumProteinsWithEc,$maxNumProteinsWithEc,$dbh);
         #$groups->{"OG6_500798"}=1;
 
@@ -1498,7 +1499,8 @@ sub orthoOrganismSql {
 
 sub getDbHandle {
 
-  my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+  #my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+  my $gusConfigFile = @_;
   my @properties = ();
   my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 
