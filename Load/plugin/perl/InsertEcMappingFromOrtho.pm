@@ -173,8 +173,8 @@ sub getEnzymeClass {
 ###### FETCH THE AA SEQUNCE ID FOR A GIVEN ALIAS ######
 sub getAASeqId {
     my ($self, $id, $dbh) = @_;
-    my $sql = "SELECT aa_sequence_id from dots.externalaasequence where id = '$id'";
-    my $sth = $queryHandle->prepare($sql);
+    my $sql = "SELECT aa_sequence_id from dots.externalaasequence where source_id = '$id'";
+    my $sth = $dbh->prepare($sql);
     $sth->execute();
     my $aaSeqId;
     while (my $aaSequenceId = $sth->fetchrow_array()) {
