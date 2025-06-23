@@ -35,7 +35,7 @@ process runPlugins {
   path gusConfigFile
   
   script:
-  def pairName = pair_dir.baseName
+  def pairName = pair_dir.name
   def databaseName = pairName + "_Mercator_synteny"
   def databaseVersion = "dontcare"
   """
