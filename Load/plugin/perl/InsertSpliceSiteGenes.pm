@@ -486,10 +486,10 @@ sub makeSpliceSiteCollections {
 , ssf.protocol_app_node_id
 , ssf.is_unique 
 from apidb.splicesitefeature ssf 
- , study.studylink sl
- , study.study s
+ , study.nodenodeset sl
+ , study.nodeset s
 where s.external_database_release_id = $extDbRlsId
-and s.study_id = sl.study_id
+and s.node_set_id = sl.node_set_id
 and sl.protocol_app_node_id = ssf.protocol_app_node_id");
 
   $spliceSiteFeatureSh->execute();
