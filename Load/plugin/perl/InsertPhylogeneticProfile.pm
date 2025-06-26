@@ -1,24 +1,4 @@
 package ApiCommonData::Load::Plugin::InsertPhylogeneticProfile;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -30,8 +10,6 @@ use FileHandle;
 
 use GUS::Model::ApiDB::PhylogeneticProfile;
 
-
-
 my $argsDeclaration =
   [
 
@@ -42,20 +20,6 @@ my $argsDeclaration =
 	    format         => 'OG2_1009: osa|ENS1222992 pfa|PF11_0844...',
             constraintFunc => undef,
             isList         => 0, }),
-
-  stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi).  If you provide this list then do not provide a projectName argument.',
-	      name  => 'taxaToLoad',
-	      isList    => 1,
-	      reqd  => 0,
-	      constraintFunc => undef,
-	    }),
-
-  stringArg({ descr => 'Use projectName to discover the set of orthomclAbbrevs to load from the ApiDB.Organism table (ie, those that are in this project).  If you provide this value then do not provide the taxaToLoad argument.',
-	      name  => 'projectName',
-	      isList    => 0,
-	      reqd  => 0,
-	      constraintFunc => undef,
-	    }),
 
   ];
 
@@ -117,21 +81,21 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $taxaToLoad = $self->getArg('taxaToLoad');
-  my $projectName = $self->getArg('projectName');
-  $self->error("Provide only one or the other of these two arguments: --taxaToLoad and --projectName") if ($taxaToLoad && $projectName);
+  my @taxaToLoad;
+  my %taxaAndProject;
+  my @projectList;
 
-  if ($projectName) {
-      my $sql = "select orthomcl_abbrev from ApiDB.Organism
-                 where project_name = '$projectName'";
-      my $sth = $self->prepareAndExecute($sql);
-      while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
-	  push(@$taxaToLoad, $orthomclAbbrev);
-      }
+  my $sql = "select orthomcl_abbrev, project_name from ApiDB.Organism";
+  my $sth = $self->prepareAndExecute($sql);
+  while (my ($orthomclAbbrev,$project) = $sth->fetchrow_array()) {
+    push(@taxaToLoad, $orthomclAbbrev);
+    push(@projectList, $project);
+    $taxaAndProject{$orthomclAbbrev} = $project;
   }
 
+
   # put our taxa into a hash
-  my %ourTaxa = map {$_ => 1} @$taxaToLoad;
+  my %ourTaxa = map {$_ => 1} @taxaToLoad;
 
   # first pass: go through file, collecting:
   #  - all taxa in file
@@ -140,7 +104,6 @@ sub run {
   my ($counter, $geneProfiles, $allTaxa);
   while (my $line = <FILE>) {
     chomp($line);
-
     my ($groupId, $membersString) = split(/\:\s/, $line);
     my @members = split(/\s+/, $membersString);
     my $taxaInThisGroup = {};
