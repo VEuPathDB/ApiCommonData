@@ -65,20 +65,19 @@ select ssg.source_id, sum(ssf.count_per_million)
 from apidb.${table} ssg
  , APIDB.splicesitefeature ssf
  , study.protocolappnode pan
- , study.studylink sl
- , study.study s
+ , study.nodenodeset sl
+ , study.nodeset s
  , sres.externaldatabaserelease r
  , SRES.externaldatabase d
 where ssg.splice_site_feature_id = ssf.splice_site_feature_id
 and ssf.protocol_app_node_id = pan.protocol_app_node_id
 and pan.protocol_app_node_id = sl.protocol_app_node_id
-and sl.study_id = s.study_id
+and sl.node_set_id = s.node_set_id
 and s.external_database_release_id = r.external_database_release_id
 and r.external_database_id = d.external_database_id
 and ssf.is_unique = 1
 and pan.name = ?
 and d.name || '|' || r.version = ?
-and investigation_id is not null
 group by ssg.source_id
 ";
 
