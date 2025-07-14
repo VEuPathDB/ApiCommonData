@@ -186,6 +186,7 @@ sub undoPreprocess {
 
   my $startTimeAll = time;
   #this runs the sql
+  #ATTENTION - this will always run in commit mode
   $self->processPsqlFile($fileName, $tableName, $schema, $orgAbbrev, 'standard', $taxonId, $projectId, 1, $dbh);
 
 #TODO: I don't want to do anything with the index for TranscriptPathways, but is there a use case for this?
