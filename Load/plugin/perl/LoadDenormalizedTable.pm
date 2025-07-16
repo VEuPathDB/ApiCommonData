@@ -2,9 +2,9 @@ package ApiCommonData::Load::Plugin::LoadDenormalizedTable;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use base qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::CreateDenormalizedTable);
 
-# this subclass of CreateDenormalized table overrides the Undo method
-# the Undo method runs a psql file rather than dropping tables
-# the psql file for the undo should be located with the psql for loading and named Drop_TableName.psql
+# this subclass of CreateDenormalized table overrides the undoPreprocess method
+# the overridden method runs a psql file rather than dropping tables
+# the psql file for the undo should be located with the psql for loading and named Undo_TableName.psql
 # initial use is for TranscriptPathway, which requires us to empty but not drop the table on undo
 
 use strict;
@@ -68,7 +68,7 @@ For organism-specific cases, the plugin runs in one of two modes:
 
 If any table we try to create already exists, we will get a database error.
 
-This subclass runs an SQL on undo rather than dropping a table. The SQL to be run on undo must be named Drop_MY_DENORM_TABLE.psql
+This subclass runs an SQL on undo rather than dropping a table. The SQL to be run on undo must be named Undo_MY_DENORM_TABLE.psql
 PLUGIN_NOTES
 
 my $documentation = { purpose=>$purpose,
@@ -145,16 +145,9 @@ sub new {
 
     $self->{_undo_tables} = [];
 
-  # I don't think we need to do anything different here
-  #my $self = $class->SUPER::new();
-
   return $self;
 }
 
-#sub run {
-#    my ($self) = @_;
-#    $self->SUPER::run();
-#}
 
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
@@ -189,10 +182,6 @@ sub undoPreprocess {
   #ATTENTION - this will always run in commit mode
   $self->processPsqlFile($fileName, $tableName, $schema, $orgAbbrev, 'standard', $taxonId, $projectId, 1, $dbh);
 
-#TODO: I don't want to do anything with the index for TranscriptPathways, but is there a use case for this?
-#  if ($mode ne 'child' && -e "$psqlDirPath/${tableName}_ix.psql") {
-#    $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
-#  }
   my $t = time - $startTimeAll;
   $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
 
