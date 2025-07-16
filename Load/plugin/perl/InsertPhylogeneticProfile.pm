@@ -14,10 +14,10 @@ my $argsDeclaration =
   [
 
    fileArg({name           => 'groupsFile',
-            descr          => 'ortholog groups file as found on OrthoMCL-DB download site',
+            descr          => 'ortholog groups file as produced by orthofinder',
             reqd           => 1,
             mustExist      => 1,
-	    format         => 'OG2_1009: osa|ENS1222992 pfa|PF11_0844...',
+	    format         => 'OG7_0001009: osa|ENS1222992 pfa|PF11_0844...',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -81,83 +81,60 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my @taxaToLoad;
-  my %taxaAndProject;
-  my @projectList;
+  my %allTaxa;
 
-  my $sql = "select orthomcl_abbrev, project_name from ApiDB.Organism";
+  my $sql = "select orthomcl_abbrev from ApiDB.Organism";
   my $sth = $self->prepareAndExecute($sql);
-  while (my ($orthomclAbbrev,$project) = $sth->fetchrow_array()) {
-    push(@taxaToLoad, $orthomclAbbrev);
-    push(@projectList, $project);
-    $taxaAndProject{$orthomclAbbrev} = $project;
+
+  while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
+      $allTaxa{$orthomclAbbrev} = 1;
   }
 
+  my @allTaxaSorted = sort(keys(%allTaxa));
 
-  # put our taxa into a hash
-  my %ourTaxa = map {$_ => 1} @taxaToLoad;
-
-  # first pass: go through file, collecting:
-  #  - all taxa in file
-  #  - all taxa associated with each one of our genes
   open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
-  my ($counter, $geneProfiles, $allTaxa);
+
+  my ($counter);
   while (my $line = <FILE>) {
     chomp($line);
     my ($groupId, $membersString) = split(/\:\s/, $line);
-    my @members = split(/\s+/, $membersString);
-    my $taxaInThisGroup = {};
+    my @members = split(/\s/, $membersString);
+
+    my %taxaInThisGroup;
+    my @sourceIdsInThisGroup;
+
     foreach my $member (@members) {
-      # pfa|PF11_0987
+      # pfal|PF11_0987
       my ($taxonCode, $sourceId) = split(/\|/, $member);
-
-      if ($sourceId =~ /\//){#tbr|Tb927.8.1510/Tb08.29O9.160
-	   my @temp = split(/\//,$sourceId);
-	   $sourceId = $temp[0];
-       }
-
-      $taxaInThisGroup->{$taxonCode} = 1;
-      $allTaxa->{$taxonCode} = 1;
-      $geneProfiles->{$sourceId} = $taxaInThisGroup if $ourTaxa{$taxonCode};
-    }
-    $counter++;
-    if ($counter % 10000 == 0) {
-      $self->log("Processed $counter lines from groupsFile");
+      $taxaInThisGroup{$taxonCode} = 1;
+      push(@sourceIdsInThisGroup,$sourceId);
     }
 
-  }
-
-  # second pass: format string needed for database, and insert
-  my @allTaxaSorted = sort(keys(%$allTaxa));
-  my $count;
-  foreach my $sourceId (keys(%$geneProfiles)) {
     my @fullProfile;
+
     foreach my $taxaCode (@allTaxaSorted) {
-      my $yesNo = $geneProfiles->{$sourceId}->{$taxaCode}? 'Y' : 'N';
+      my $yesNo = $taxaInThisGroup{$taxaCode} ? 'Y' : 'N';
       push(@fullProfile, "$taxaCode:$yesNo");
     }
-    my $profileString = join(':', @fullProfile);
-    my $profile = GUS::Model::ApiDB::PhylogeneticProfile->
-      new({source_id => $sourceId,
-	   profile_string => $profileString
-	  });
-    $profile->submit();
 
-    $count++;
-    if ($count % 1000 == 0) {
-      $self->log("Inserted $count Entries into PhylogeneticProfile");
-      $self->undefPointerCache();
+    my $profileString = join(':', @fullProfile);
+
+    foreach my $id (@sourceIdsInThisGroup) {
+        my $profile = GUS::Model::ApiDB::PhylogeneticProfile->new({source_id => $id,profile_string => $profileString});
+        $profile->submit();
+
+        $counter++;
+        if ($counter % 10000 == 0) {
+            $self->log("Processed $counter lines from groupsFile");
+            $self->undefPointerCache();
+        }
     }
   }
-
-  return("Loaded $count ApiDB::PhylogeneticProfile entries");
 }
 
 sub undoTables {
   my ($self) = @_;
-
-  return ('ApiDB.PhylogeneticProfile',
-	 );
+  return ('ApiDB.PhylogeneticProfile');
 }
 
 1;
