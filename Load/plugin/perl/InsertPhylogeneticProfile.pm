@@ -101,13 +101,11 @@ sub run {
     my @members = split(/\s/, $membersString);
 
     my %taxaInThisGroup;
-    my @sourceIdsInThisGroup;
 
     foreach my $member (@members) {
       # pfal|PF11_0987
       my ($taxonCode, $sourceId) = split(/\|/, $member);
       $taxaInThisGroup{$taxonCode} = 1;
-      push(@sourceIdsInThisGroup,$sourceId);
     }
 
     my @fullProfile;
@@ -119,16 +117,15 @@ sub run {
 
     my $profileString = join(':', @fullProfile);
 
-    foreach my $id (@sourceIdsInThisGroup) {
-        my $profile = GUS::Model::ApiDB::PhylogeneticProfile->new({source_id => $id,profile_string => $profileString});
-        $profile->submit();
+    my $profile = GUS::Model::ApiDB::PhylogeneticProfile->new({source_id => $groupId, profile_string => $profileString});
+    $profile->submit();
 
-        $counter++;
-        if ($counter % 10000 == 0) {
-            $self->log("Processed $counter lines from groupsFile");
-            $self->undefPointerCache();
-        }
+    $counter++;
+    if ($counter % 10000 == 0) {
+      $self->log("Processed $counter lines from groupsFile");
+      $self->undefPointerCache();
     }
+
   }
 }
 
