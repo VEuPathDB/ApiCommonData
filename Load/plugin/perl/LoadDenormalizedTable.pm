@@ -1,18 +1,25 @@
-package ApiCommonData::Load::Plugin::CreateDenormalizedTable;
-@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
+package ApiCommonData::Load::Plugin::LoadDenormalizedTable;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use base qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::CreateDenormalizedTable);
+
+# this subclass of CreateDenormalized table overrides the undoPreprocess method
+# the overridden method runs a psql file rather than dropping tables
+# the psql file for the undo should be located with the psql for loading and named Undo_TableName.psql
+# initial use is for TranscriptPathway, which requires us to empty but not drop the table on undo
 
 use strict;
+use warnings;
 use File::Basename;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::InstantiatePsql;
 use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Create denormalized tables.
+Create denormalized tables, run psql on undo.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Create denormalized tables.
+Create denormalized tables, run psql on undo.
 PLUGIN_PURPOSE
 
 my $tablesAffected = [];
@@ -61,8 +68,7 @@ For organism-specific cases, the plugin runs in one of two modes:
 
 If any table we try to create already exists, we will get a database error.
 
-The undo logic is custom.  It acquires the plugin arg values, and from those infers SCHEMA, ORG_ABBREV and MY_DENORM_TABLE.  
-It drops the denormalized table.
+This subclass runs an SQL on undo rather than dropping a table. The SQL to be run on undo must be named Undo_MY_DENORM_TABLE.psql
 PLUGIN_NOTES
 
 my $documentation = { purpose=>$purpose,
@@ -128,80 +134,20 @@ my $argsDeclaration =
 
 sub new {
   my ($class) = @_;
-  $class = ref $class || $class;
+  my $self = bless ({}, $class);
 
-  my $self = bless({}, $class);
+  $self->initialize({   requiredDbVersion => 4.0,
+                        cvsRevision => '$Revision$',
+                        name => ref($self),
+                        argsDeclaration => $argsDeclaration,
+                        documentation => $documentation
+                    });
 
-  $self->initialize({ requiredDbVersion => 4.0,
-                      cvsRevision       => '$Revision$',
-                      name              => ref($self),
-                      argsDeclaration   => $argsDeclaration,
-                      documentation     => $documentation
-                   });
+    $self->{_undo_tables} = [];
 
-  $self->{_undo_tables} = [];
   return $self;
 }
 
-sub run {
-  my ($self) = @_;
-
-  my $psqlDirPath = $self->getArg('psqlDirPath');
-  my $tableName = $self->getArg($TABLE_NAME_ARG);
-  my $schema = $self->getArg($SCHEMA_ARG);
-  my $projectId = $self->getArg('projectId');
-  my $organismAbbrev = $self->getArg($ORG_ARG);
-  my $mode = $self->getArg('mode');
-  my $taxonId = $self->getArg('taxonId');
-
-  my $dbh = $self->getQueryHandle();
-  $dbh->{RaiseError} = 1;
-  $dbh->{AutoCommit} = 1;
-  my $commitMode = $self->getArg('commit');
-
-  $dbh->do("set role gus_w");
-
-  my $fileName = "$psqlDirPath/$tableName.psql";
-  -e $fileName or $self->error("psqlFile $fileName does not exist");
-
-  if ($mode eq 'child') {
-    $self->error("organismAbbrev and taxonId are required if mode is 'child'") unless $organismAbbrev && $taxonId;
-  } else {
-    $self->error("organismAbbrev must be null if mode is 'standard' or 'parent") if $organismAbbrev;
-  }
-
-  my $startTimeAll = time;
-  $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh);
-  if ($mode ne 'child' && -e "$psqlDirPath/${tableName}_ix.psql") {
-    $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
-  }
-  my $t = time - $startTimeAll;
-  $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
-}
-
-sub processPsqlFile {
-  my ($self, $psqlFilePath, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh) = @_;
-
-  $self->log("Processing file $psqlFilePath");
-  open my $fh, '<', $psqlFilePath or $self->error("error opening $psqlFilePath: $!");
-  my $sqls = do { local $/; <$fh> };
-
-  my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId);
-
-  my @sqlList = split(/;\n\s*/, $newSqls);
-  foreach my $sql (@sqlList) {
-    my $startTime = time;
-
-    my $sql = ApiCommonData::Load::InstantiatePsql::substituteDelims($sql);
-
-    $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$sql\n\n");
-    if ($commitMode) {
-      $dbh->do($sql);
-    }
-    my $t = time - $startTime;
-    $self->log("INDVIDUAL SQL TIME (sec): $t");
-  }
-}
 
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
@@ -210,28 +156,37 @@ sub undoPreprocess {
 
   $self->log("UNDOing alg invocation id: $rowAlgInvocationList->[0]");
 
+  # we will be running psql here, so we need anything that could be substituted in the SQL
   my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
   my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
+  my $projectIds = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'projectId');
+  my $taxonIds = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, ,'taxonId');
+  my $psqlDirPaths = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'psqlDirPath');
 
   my $tableName = $tableNames->[0];
   my $schema = $schemas->[0];
   my $orgAbbrev = $orgAbbrevs->[0];
+  my $projectId = $projectIds->[0];
+  my $taxonId = $taxonIds->[0];
+  my $psqlDirPath = $psqlDirPaths->[0];
 
-  my $sql = "drop table if exists $schema.${tableName}_temporary";
-  $dbh->do($sql) || $self->error("Failed executing $sql");
-  $self->log("Dropped $schema.$tableName");
-  my $dropTableName = $orgAbbrev? "$schema.$tableName\_$orgAbbrev" : "$schema.$tableName";
-  my $sql = "drop table if exists $dropTableName";
-  $dbh->do($sql) || $self->error("Failed executing $sql");
-  $self->log("Dropped $schema.$tableName");
+  $dbh->do("set role gus_w");
 
-}
+  # get the undo sql by inference from the original file.
+  my $fileName = "${psqlDirPath}/Undo_${tableName}.psql";
+  -e $fileName or $self->error("psqlFile $fileName does not exist");
 
-sub undoTables {
-  my ($self) = @_;
+  my $startTimeAll = time;
+  #this runs the sql
+  #ATTENTION - this will always run in commit mode
+  $self->processPsqlFile($fileName, $tableName, $schema, $orgAbbrev, 'standard', $taxonId, $projectId, 1, $dbh);
 
-  return @{ $self->{_undo_tables} }
+  my $t = time - $startTimeAll;
+  $self->log("TOTAL SQL TIME (sec) for table $tableName: $t");
+
+  $self->log("Undone $tableName by running $fileName");
+
 }
 
 1;
