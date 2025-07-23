@@ -199,6 +199,7 @@ sub loadLongReadCount {
 	 	$row_counts->submit();
 		$self->undefPointerCache();
 		}
+	close $count;
 	
 }	
 sub undoTables {
