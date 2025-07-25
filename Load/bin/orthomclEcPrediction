@@ -8,12 +8,8 @@ use CBIL::Util::PropertySet;
 use DBI;
 
 my $outputDir = $ARGV[0];
-my $organismDir = $ARGV[1];
-my $outputFile = $ARGV[2];
-my $gusConfigFile = $ARGV[3];
-
-# example command line:  orthomclEcPrediction.pl /home/markhick/EC
-# good groups to study: OG6_100435, OG6_101725
+my $outputFile = $ARGV[1];
+my $gusConfigFile = $ARGV[2];
 
 my $minNumProteinsWithEc = 1;    # if not testing, then set to 1
 my $maxNumProteinsWithEc = 0;    # if not testing, then set to 0
@@ -31,8 +27,6 @@ my ($testFraction,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMo
 
 my ($logFh,$netGroupsRef,$dbh,$groups) = &setUpPrediction($outputDir,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile, $gusConfigFile);
 
-my ($organisms,$fHs) = &getOrganismsProjectsFileHandles($organismDir,$outputDir,$dbh,$excludeOld,$logFh);
-
 foreach my $group (keys %{$groups}) {
     next if (&nextGroup($fractionOfGroups,$netGroupsRef,$logFh));
 
@@ -49,110 +43,23 @@ foreach my $group (keys %{$groups}) {
     my $lengthStatsPerEc = &ecLengthStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
     my ($blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = &ecBlastStats($dbh,$group);
 
-    #if ($viableEcNumbers) {
-    #    print "Viable ECs are\n";
-    #    print Dumper $viableEcNumbers;
-    #    print "Blast stats to ec\n";
-    #    print Dumper $blastStatsPerEc;
-    #}
-
     close $statsFh if ($statsFh);
 
-    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$outputFile,$dbh);
+    my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$outputFile,$dbh);
 
      &testScores($scores,$proteinIds,$testIds,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh,$logFh) if ($test);
 }
 
 &printTest($totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh) if ($test);
 
-&endPrediction($dbh,$logFh,$fHs);
-
 exit;
 
 ################################  SUBROUTINES  ########################################
-
-sub getOrganismsProjectsFileHandles {
-    my ($organismDir,$outputDir,$dbh,$excludeOld,$logFh) = @_;
-    my $organisms = &getOrganisms($organismDir,$logFh);
-    &addOrganismsFromOrtho($organisms,$dbh,$excludeOld,$logFh);
-    my $fHs = &getFileHandles($organisms,$outputDir,$logFh);
-    return ($organisms,$fHs);
-}
-
-sub getFileHandles {
-    my ($organisms,$outputDir,$logFh) = @_;
-    my $fHs;
-    foreach my $abbrev (keys %{$organisms}) {
-	if (! exists $organisms->{$abbrev}) {
-	    print {$logFh ? $logFh : *STDERR } "Cannot find a project for '$abbrev'. To be safe, I will put this organism into all projects.\n";
-	    next;
-	}
-	my $project = $organisms->{$abbrev};
-	next if ($project eq "none" || exists $fHs->{$project});
-	my $filePath = $outputDir;
-	$filePath =~ s/PROJECT/$project/;
-	&makeDir($filePath);
-	print {$logFh ? $logFh : *STDERR } "Created directory $filePath\n";
-	$filePath .= "/ec.txt";
-	open(my $fh,">",$filePath) || die "Cannot open file '$filePath' for writing";
-	print {$logFh ? $logFh : *STDERR } "Opened '$filePath' for writing\n";
-	$fHs->{$project}->{fileHandle} = $fh;
-	$filePath =~ s/ec\.txt$/completed/;
-	$fHs->{$project}->{completed} = $filePath;
-    }
-    return $fHs;
-}
-
-sub getOrganisms {
-    my ($organismDir,$logFh) = @_;
-    my $organisms;
-    my @files = glob("$organismDir/*_organisms.txt");
-    foreach my $file (@files) {
-	my $project;
-	if ($file =~ /\/([A-Za-z]+)_organisms\.txt/) {
-	    $project = $1;
-	} else {
-	    die "Did not find project name in file '$file'\n";
-	}
-	open(IN,$file) || die "Can't open file '$file'\n";
-	while (my $line = <IN>) {
-	    chomp $line;
-	    $line =~ s/<i>//g;
-	    $line =~ s/<\/i>//g;
-	    next if ($line =~ /^Organism/);
-	    next unless ($line =~ /^[A-Za-z]/);
-	    my @fields = split("\t",$line);
-	    $organisms->{$fields[2]} = $project;
-	    print {$logFh ? $logFh : *STDERR } "Abbrev '$fields[2]'  Project '$project'\n";
-	}
-	close IN;	
-    }
-    return $organisms;
-}
-
-sub addOrganismsFromOrtho {
-    my ($organisms,$dbh,$excludeOld,$logFh) = @_;
-    my $cladeToProject = &getCladeToProject();
-    my $query = $dbh->prepare(&orthoOrganismSql($excludeOld));
-    $query->execute();
-    while (my($abbrev,$clade) = $query->fetchrow_array()) {
-	$abbrev = "rirr" if ($abbrev eq "rhiz");   # this is temporary, because rhiz on orthomcl equals rirr on fungidb 
-	next if (exists $organisms->{$abbrev});   # already have this
-	if (! exists $cladeToProject->{$clade}) {
-	    print {$logFh ? $logFh : *STDERR } "Abbrev '$abbrev'  Project 'unknown'\n";
-	    next if (! exists $cladeToProject->{$clade});  # can't find a project for this one
-	}
-	$organisms->{$abbrev} = $cladeToProject->{$clade};
-	print {$logFh ? $logFh : *STDERR } "Abbrev '$abbrev'  Project '$cladeToProject->{$clade}'\n";
-    }
-    $query->finish();
-}
 
 sub setUpPrediction {
     my ($outputDirectory,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile, $gusConfigFile) = @_;
     my $dbh = &getDbHandle($gusConfigFile);
     my $groups = &getGroupsFromDatabase($minNumProteinsWithEc,$maxNumProteinsWithEc,$dbh);
-        #$groups->{"OG6_500798"}=1;
 
     my $logFh;
     my $numGroups = keys %{$groups};
@@ -173,20 +80,6 @@ sub nextGroup {
     print {$logFh ? $logFh : *STDERR } "Approx number groups remaining: ${$netGroupsRef}\n";
     ${$netGroupsRef}--;
     return 0;
-}
-
-sub endPrediction {
-    my ($dbh,$logFh,$fHs) = @_;
-    $dbh->disconnect();
-    foreach my $project (keys %{$fHs}) {
-	close $fHs->{$project}->{fileHandle};
-	my $completedFile = $fHs->{$project}->{completed};
-	open(FH,">",$completedFile) || die "Cannot open file '$completedFile' for writing";
-	close FH;
-	print {$logFh ? $logFh : *STDERR } "Completed $project. Created file '$completedFile'\n";
-    }
-    print {$logFh ? $logFh : *STDERR } "End time: ".localtime()."\n";
-    close $logFh if ($logFh);
 }
 
 sub setUpTest {
@@ -919,7 +812,7 @@ sub blastScore {
 }
 
 sub getProteinScores {
-    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$organisms,$outputFile,$dbh) = @_;
+    my ($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$outputFile,$dbh) = @_;
 
     my $scores;
     foreach my $id (keys %{$proteinIds}) {
@@ -935,8 +828,7 @@ sub getProteinScores {
 	    delete $scores->{$id}->{$ec} unless (&meetsScoreThreshold($scores->{$id}->{$ec}));
 	}
     }
-    #&deletePartialEcWithWorseScore($scores);
-    &printEcScores($scores,$organisms,$outputFile,$dbh) if (!$test);
+    &printEcScores($scores,$outputFile,$dbh) if (!$test);
     return $scores;
 }
 
@@ -992,7 +884,7 @@ sub scoreToNumber {
 }
 
 sub printEcScores {
-    my ($scores,$organisms,$outputFile,$dbh) = @_;
+    my ($scores,$outputFile,$dbh) = @_;
     foreach my $id (keys %{$scores}) {
 	my $editedId = $id;
 	my $abbrev;
