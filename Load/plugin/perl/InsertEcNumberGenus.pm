@@ -1,24 +1,4 @@
 package ApiCommonData::Load::Plugin::InsertEcNumberGenus;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -26,17 +6,13 @@ package ApiCommonData::Load::Plugin::InsertEcNumberGenus;
 use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::EcNumberGenus;
+use GUS::Model::DoTS::AASequenceEnzymeClass;
+use GUS::Model::SRes::TaxonName;
+use GUS::Model::SRes::EnzymeClass;
+use GUS::Model::DoTS::AASequence;
 
 my $argsDeclaration =
   [
-
-   fileArg({name           => 'ecNumberGenusFile',
-            descr          => 'file with EC Number and Genus info',
-            reqd           => 1,
-            mustExist      => 1,
-	    format         => '',
-            constraintFunc => undef,
-            isList         => 0, }),
 
   ];
 
@@ -57,6 +33,10 @@ ApiDB::EcNumberGenus
 TABLES_AFFECTED
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
+sres.taxonname
+sres.enzymeclass
+dots.aasequenceenzymeclass
+dots.aasequence
 TABLES_DEPENDED_ON
 
 my $howToRestart = <<RESTART;
@@ -95,28 +75,31 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  open(FILE, $self->getArg('ecNumberGenusFile')) || die "Could Not open ecNumberGenusFile for reading: $!\n";
+  my $dbh = $self->getDbHandle();
 
+  my $sql = <<EOF;
+SELECT DISTINCT tn.name, ec.ec_number 
+FROM sres.taxonname tn, dots.aasequenceenzymeclass aaec, dots.aasequence aas, sres.enzymeclass ec
+WHERE aaec.aa_sequence_id = aas.aa_sequence_id
+AND aas.taxon_id = tn.taxon_id
+AND aaec.enzyme_class_id = ec.enzyme_class_id
+EOF
+
+  my $stmt = $dbh->prepareAndExecute($sql);
   my $count;
-
-  while(<FILE>) {
-      chomp;
-      next unless $_;
-
-      my ($ecNumber, $genus) = split(/\t/, $_);
-
-      my $ecgenus= GUS::Model::ApiDB::EcNumberGenus->
-	       new({EC_NUMBER => $ecNumber,
-		    genus => $genus
-		   });
+  while ( my ($name, $ecNumber) = $stmt->fetchrow_array() ) {
+      my ($genus) = split(/\s+/, $name);    
+      my $ecgenus= GUS::Model::ApiDB::EcNumberGenus-> new({EC_NUMBER => $ecNumber,
+		                                           genus => $genus
+		                                         });
       $ecgenus->submit();
 
-	  $count++;
-	  if ($count % 1000 == 0) {
-	      $self->log("Inserted $count Entries into EcNumberGenus");
-	      $self->undefPointerCache();
-	  }
-  }
+      $count++;
+      if ($count % 1000 == 0) {
+          $self->log("Inserted $count Entries into EcNumberGenus");
+          $self->undefPointerCache();
+      }
+  } 
   return("Loaded $count ApiDB::EcNumberGenus");
 }
 

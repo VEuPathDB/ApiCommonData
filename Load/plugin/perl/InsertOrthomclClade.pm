@@ -34,19 +34,19 @@ use Data::Dumper;
 
 my $argsDeclaration =
 [
-    fileArg({name           => 'cladeFile',
+ fileArg({name           => 'cladeFile',
             descr          => 'a file containing the clade tree',
             reqd           => 1,
             mustExist      => 1,
-	    format         => 'see Notes',
+	      format         => 'see Notes',
             constraintFunc => undef,
             isList         => 0, }),
 
-    fileArg({name           => 'speciesFile',
-            descr          => 'a file containing the species',
+    fileArg({name           => 'taxonToCladeFile',
+            descr          => 'a file containing the taxon to clade assignments',
             reqd           => 1,
             mustExist      => 1,
-	    format         => 'see Notes',
+    format         => 'see Notes',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -63,12 +63,9 @@ PURPOSE_BRIEF
 my $notes = <<NOTES;
 Both input files are both constructed manually as part of the Orthomcl-DB genome acquistion phase.
 
-The speciesFile is a columnar file with these columns:
+The taxonToCladeFile is a columnar file with these columns:
   - four_letter_abbrev
-  - organism name
-#  - ncbi_tax_id  (this used to be required but no longer as of 11/16/2020
   - clade_four_letter_abbrev  # an index into the cladeFile
-  - C or P (core or peripheral species)
 
 The cladesFile is a depth first serialization of the clade tree.  Each clade has a four letter abbreviation, a display name, and a depth indicated by pipe characters
 
@@ -109,17 +106,17 @@ my $documentation = { purpose          => $purpose,
 # ----------------------------------------------------------------------
 
 sub new {
-  my ($class) = @_;
-  my $self = {};
-  bless($self,$class);
+    my ($class) = @_;
+    my $self = {};
+    bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 4.0,
+    $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
-                      documentation     => $documentation});
+			documentation     => $documentation});
 
-  return $self;
+    return $self;
 }
 
 # ======================================================================
@@ -128,13 +125,13 @@ sub run {
     my ($self) = @_;
 
     my $cladeFile = $self->getArgs()->{cladeFile};
-    my $speciesFile = $self->getArgs()->{speciesFile};
+    my $taxonToCladeFile = $self->getArgs()->{taxonToCladeFile};
 
     # make taxon tree with clades only
     my $taxonTree = $self->parseCladeFile($cladeFile);
 
     # add species to it
-    $self->parseSpeciesFile($speciesFile);
+    $self->parseTaxonToCladeFile($taxonToCladeFile);
 
     $self->printCladeList(); # for debugging
  
@@ -148,8 +145,8 @@ sub parseCladeFile {
     open(FILE, $cladeFile) || $self->userError("can't open clade file '$cladeFile'");
 
     while(<FILE>) {
-      chomp;
-      push(@{$self->{cladeLines}}, $_);
+	chomp;
+	push(@{$self->{cladeLines}}, $_);
     }
     $self->{cladeLinesCursor} = 0;
     $self->{nextLeafIndex} = 1;
@@ -160,94 +157,126 @@ sub parseCladeFile {
 }
 
 sub makeTree {
-  my ($self, $parentClade) = @_;
-  push(@{$self->{cladeList}}, $parentClade);
+    my ($self, $parentClade) = @_;
+    push(@{$self->{cladeList}}, $parentClade);
 
   # assume the parent is a leaf clade
-  my $parentIsLeaf = 1;
+    my $parentIsLeaf = 1;
 
-  while (my $clade = $self->parseCladeLine()) {
+    while (my $clade = $self->parseCladeLine()) {
 
       # done with parent's children
-      if ($clade->{level} <= $parentClade->{level}) {
-	  $self->{cladeLinesCursor}--;
-	  last;
-      } 
+	if ($clade->{level} <= $parentClade->{level}) {
+	    $self->{cladeLinesCursor}--;
+	    last;
+	} 
 
       # handle a child
-      $clade->setParent($parentClade);
-      $self->{newCladeCount}++;
-      $parentIsLeaf = 0;
-      $self->makeTree($clade);
-      if ($clade->getDepthFirstIndex()-1 < $parentClade->getDepthFirstIndex()) {
-	  $parentClade->setDepthFirstIndex($clade->getDepthFirstIndex()-1);
-	  $parentClade->setSpeciesOrder($parentClade->getDepthFirstIndex());
-      }
-      if ($clade->getSiblingDepthFirstIndex() > $parentClade->getSiblingDepthFirstIndex()) {
-	  $parentClade->setSiblingDepthFirstIndex($clade->getSiblingDepthFirstIndex());
-      }
-  }
-  if ($parentIsLeaf) {
-      $self->{nextLeafIndex} += $self->{newCladeCount};
-      $self->{newCladeCount} = 0;
-      $parentClade->setDepthFirstIndex($self->{nextLeafIndex});
-      $parentClade->setSpeciesOrder($parentClade->getDepthFirstIndex());
-      $parentClade->setSiblingDepthFirstIndex($self->{nextLeafIndex} + 1);
-  } 
+	$clade->setParent($parentClade);
+	$self->{newCladeCount}++;
+	$parentIsLeaf = 0;
+	$self->makeTree($clade);
+	if ($clade->getDepthFirstIndex()-1 < $parentClade->getDepthFirstIndex()) {
+	    $parentClade->setDepthFirstIndex($clade->getDepthFirstIndex()-1);
+	    $parentClade->setSpeciesOrder($parentClade->getDepthFirstIndex());
+	}
+	if ($clade->getSiblingDepthFirstIndex() > $parentClade->getSiblingDepthFirstIndex()) {
+	    $parentClade->setSiblingDepthFirstIndex($clade->getSiblingDepthFirstIndex());
+	}
+    }
+    if ($parentIsLeaf) {
+	$self->{nextLeafIndex} += $self->{newCladeCount};
+	$self->{newCladeCount} = 0;
+	$parentClade->setDepthFirstIndex($self->{nextLeafIndex});
+	$parentClade->setSpeciesOrder($parentClade->getDepthFirstIndex());
+	$parentClade->setSiblingDepthFirstIndex($self->{nextLeafIndex} + 1);
+    } 
 }
 
 sub parseCladeLine {
     my ($self) = @_;
 
     my $clade = GUS::Model::ApiDB::OrthomclClade->
-      new({depth_first_index => 999999,
-	   sibling_depth_first_index => -99999});
+	new({depth_first_index => 999999,
+	     sibling_depth_first_index => -99999});
     my $level;
     my $line = $self->{cladeLines}->[$self->{cladeLinesCursor}++];
     return undef unless $line;
     # handle a clade, which looks like the following:
     # |  |  PRO Protobacteria
     if ($line =~ /^([\|\s\s]*)(ALL|[A-Z]{4}) ([\S|\s]+)/) {
-      my $pipes = $1;
-      my $cladeAbbrev = $2;
-      my $cladeNames = $3;
-      my @nameArr = split(/\:/,$cladeNames);
-      my $cladeName = $nameArr[0];
-      my $commonName = $nameArr[1];
-      $clade->{level} = length($pipes)/3; #count of pipe chars
-      $clade->setThreeLetterAbbrev($cladeAbbrev);
-      $clade->setName($cladeName);
-      $clade->setCommonName($commonName) if $commonName;
-      $clade->setIsSpecies(0);
-      $clade->setTaxonId(undef);
-      $clade->setCorePeripheral('Z');
-      $self->{clades}->{$clade->getThreeLetterAbbrev()} = $clade;
+	my $pipes = $1;
+	my $cladeAbbrev = $2;
+	my $cladeNames = $3;
+	my @nameArr = split(/\:/,$cladeNames);
+	my $cladeName = $nameArr[0];
+	my $commonName = $nameArr[1];
+	$clade->{level} = length($pipes)/3; #count of pipe chars
+	$clade->setThreeLetterAbbrev($cladeAbbrev);
+	$clade->setName($cladeName);
+	$clade->setCommonName($commonName) if $commonName;
+	$clade->setIsSpecies(0);
+	$clade->setTaxonId(undef);
+	$clade->setCorePeripheral('Z');
+	$self->{clades}->{$clade->getThreeLetterAbbrev()} = $clade;
     } else {
-      $self->userError("invalid line in clade file: '$line'");
+	$self->userError("invalid line in clade file: '$line'");
     }
 
     return $clade;
 }
 
-# pfal    Plasmodium falciparum 3D7    APIC     C
-sub parseSpeciesFile {
-    my ($self, $speciesFile) = @_;
+# pfal    APIC
+sub parseTaxonToCladeFile {
+    my ($self, $taxonToCladeFile) = @_;
 
-    open(FILE, $speciesFile) || $self->userError("can't open species file '$speciesFile'");
+    my %abbrevToCoreOrPeripheral;
+    my $sql = "SELECT orthomcl_abbrev, core_peripheral FROM apidb.organism";
+    my $dbh = $self->getQueryHandle();
+    my $abbrevToCPQuery = $dbh->prepare($sql);
+    $abbrevToCPQuery->execute();
+
+    while (my ($abbrev , $corePeripheral)= $abbrevToCPQuery->fetchrow_array()) {
+        if ($corePeripheral eq "core") {
+            $abbrevToCoreOrPeripheral{$abbrev} = 'C';
+        }
+        else {
+            $abbrevToCoreOrPeripheral{$abbrev} = 'P';
+        }
+    }
+
+    my %abbrevToName;
+    my $sql = "SELECT o.orthomcl_abbrev, tn.name FROM apidb.organism o, sres.taxonname tn where o.taxon_id = tn.taxon_id";
+    my $dbh = $self->getQueryHandle();
+    my $abbrevToNameQuery = $dbh->prepare($sql);
+    $abbrevToNameQuery->execute();
+
+    while (my ($abbrev , $name)= $abbrevToNameQuery->fetchrow_array()) {
+        $abbrevToName{$abbrev} = $name;
+    }
+
+    open(FILE, $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile'");
 
     my $speciesOrder = 1;
     my $speciesAbbrevs = {};
+    my %seenAbbrevs;
     while(<FILE>) {
 	my $line = $_;
 	chomp($line);
 	my @columns = split("\t",$line);
 	my $numColumns = scalar @columns;
-	$self->userError("There should be 4 columns:\n$line\n") if ($numColumns != 4);
-	my ($speciesAbbrev,$name,$cladeAbbrev,$corePeripheral) = @columns;
+	$self->userError("There should be 2 columns:\n$line\n") if ($numColumns != 2);
+	my ($speciesAbbrev,$cladeAbbrev) = @columns;
+        $seenAbbrevs{$speciesAbbrev} = 1;
 	$self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
 	$speciesAbbrevs->{$speciesAbbrev} = 1;
 	$self->userError("species abbreviation '$speciesAbbrev' must have 4 letters") if length($speciesAbbrev) != 4;
-	$self->userError("The fourth column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
+
+	$self->userError("species abbreviation '$speciesAbbrev' is not in apidb.organism") if !$abbrevToCoreOrPeripheral{$speciesAbbrev};
+        my $corePeripheral = $abbrevToCoreOrPeripheral{$speciesAbbrev};
+
+	$self->userError("species abbreviation '$speciesAbbrev' has no name in sres.taxonname") if !$abbrevToName{$speciesAbbrev};
+        my $name = $abbrevToName{$speciesAbbrev};
 
 	my $clade = $self->{clades}->{$cladeAbbrev};
 	$clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
@@ -260,25 +289,32 @@ sub parseSpeciesFile {
 	$species->setDepthFirstIndex($clade->getDepthFirstIndex());
 	$species->setCorePeripheral($corePeripheral);
     }
+
+    foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
+        if ($seenAbbrevs{$abbrev} != 1) {
+            $self->userError("species abbreviation '$speciesAbbrev' has no line in the taxonToCladeFile");
+        }
+    }
+
 }
 
 sub printCladeList {
-  my ($self) = @_;
-  my $pipes = '|  |  |  |  |  |  |  |  |  |  |  |  |  |  ';
+    my ($self) = @_;
+    my $pipes = '|  |  |  |  |  |  |  |  |  |  |  |  |  |  ';
 
-  foreach my $clade (@{$self->{cladeList}}) {
-    my $indent = substr($pipes,0,$clade->{level}*3);
+    foreach my $clade (@{$self->{cladeList}}) {
+	my $indent = substr($pipes,0,$clade->{level}*3);
     print STDERR join(" ", ($indent.$clade->getThreeLetterAbbrev(), 
-		     $clade->getDepthFirstIndex(),
-		     $clade->getSiblingDepthFirstIndex()), "\n");
-  }
+			         $clade->getDepthFirstIndex(),
+			    $clade->getSiblingDepthFirstIndex()), "\n");
+    }
 }
 
 sub undoTables {
-  my ($self) = @_;
+    my ($self) = @_;
 
   return ('ApiDB.OrthomclClade',
-	 );
+      );
 }
 
 

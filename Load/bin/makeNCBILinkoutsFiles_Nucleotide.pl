@@ -11,12 +11,13 @@ use IO::File;
 use HTML::Entities;
 use XML::LibXML;
 
-my ($output, $gusConfigFile, $debug, $verbose, $tuningTablePrefix, $downloadsite);
+my ($output, $gusConfigFile, $debug, $verbose, $tuningTablePrefix, $downloadsite, $organismAbbrev);
 
 &GetOptions("output=s" => \$output,
             "verbose!" => \$verbose,
             "tuningTablePrefix=s" => \$tuningTablePrefix,
             "gusConfigFile=s" => \$gusConfigFile,
+            "organismAbbrev=s" => \$organismAbbrev,
             "downloadsite=s" => \$downloadsite,
 	   );
 
@@ -144,6 +145,7 @@ unlink($output . '.bak');
 
 sub getNucleotideQuery {
     my $prefix = shift;
-    my $sql = "select SOURCE_ID from ApidbTuning.${prefix}genomicseqattributes where is_top_level =1 ORDER by SOURCE_ID";
+#    my $sql = "select SOURCE_ID from ApidbTuning.${prefix}genomicseqattributes where is_top_level =1 ORDER by SOURCE_ID";
+    my $sql = "select SOURCE_ID from webready.genomicseqattributes where is_top_level =1 and org_abbrev like '$organismAbbrev' ORDER by SOURCE_ID";
     return $sql;
 }

@@ -1018,7 +1018,6 @@ sub getRowIdFieldForTableIdField {
     'GUS::Model::DoTS::IndexWordSimLink'      => {'similarity_table_id' => 'best_similarity_id'},
     'GUS::Model::DoTS::BestSimilarityPair'    => {'paired_source_table_id' => 'paired_sequence_id', 'source_table_id' => 'sequence_id' },
     'GUS::Model::DoTS::Complementation'       => { 'table_id' => 'entry_id'},
-    'GUS::Model::DoTS::SequenceSequenceGroup' => { 'source_table_id' => 'sequence_id'},
     'GUS::Model::Model::NetworkRelEvidence'   => { 'fact_table_id' => 'fact_row_id' },
     'GUS::Model::DoTS::MergeSplit'            => { 'table_id' => 'old_id' },
     'GUS::Model::DoTS::ProjectLink'           => { 'table_id' => 'id'}
