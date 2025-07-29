@@ -121,7 +121,7 @@ sub run {
     $profile->submit();
 
     $counter++;
-    if ($counter % 10000 == 0) {
+    if ($counter % 5000 == 0) {
       $self->log("Processed $counter lines from groupsFile");
       $self->undefPointerCache();
     }
