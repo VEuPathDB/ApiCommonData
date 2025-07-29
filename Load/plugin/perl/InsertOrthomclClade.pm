@@ -292,7 +292,7 @@ sub parseTaxonToCladeFile {
 
     foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
         if ($seenAbbrevs{$abbrev} != 1) {
-            $self->userError("species abbreviation '$speciesAbbrev' has no line in the taxonToCladeFile");
+            $self->userError("species abbreviation '$abbrev' has no line in the taxonToCladeFile");
         }
     }
 
