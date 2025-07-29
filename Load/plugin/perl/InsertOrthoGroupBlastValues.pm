@@ -6,8 +6,8 @@ use GUS::PluginMgr::Plugin;
 
 use ApiCommonData::Load::Psql;
 use ApiCommonData::Load::Fifo;
-use GUS::Model::ApiDB::OrthoGroupBlastValue;
-use GUS::Model::ApiDB::OrthoGroupBlastValue_Table;
+use GUS::Model::ApiDB::OrthologGroupBlastValue;
+use GUS::Model::ApiDB::OrthologGroupBlastValue_Table;
 
 use POSIX qw(strftime);
 
@@ -44,14 +44,14 @@ my $argsDeclaration =
   ];
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Create entries for OrthoGroupBlastValue
+Create entries for OrthologGroupBlastValue
 PURPOSEBRIEF
     
 my $purpose = <<PLUGIN_PURPOSE;
-Create entries for OrthoGroupBlastValue
+Create entries for OrthologGroupBlastValue
 PLUGIN_PURPOSE
 
-my $tablesAffected = "ApiDB.OrthoGroupBlastValue";
+my $tablesAffected = "ApiDB.OrthologGroupBlastValue";
 
 my $tablesDependedOn = [];
 
@@ -120,8 +120,8 @@ sub run {
   my $outputBlastValuesDatFile = $self->getArg('outputBlastValuesDatFile');
 
   $Fifo = ApiCommonData::Load::Fifo->new($outputBlastValuesDatFile);
-  my $blastValuesTable = GUS::Model::ApiDB::OrthoGroupBlastValue_Table->new();
-  my $blastValuesPsqlObj = $self->makePsqlObj('ApiDB.OrthoGroupBlastValue', $outputBlastValuesDatFile, $blastValuesTable->getAttributeList());
+  my $blastValuesTable = GUS::Model::ApiDB::OrthologGroupBlastValue_Table->new();
+  my $blastValuesPsqlObj = $self->makePsqlObj('ApiDB.OrthologGroupBlastValue', $outputBlastValuesDatFile, $blastValuesTable->getAttributeList());
   my $blastValuesPsqlProcessString = $blastValuesPsqlObj->getCommandLine();
   my $blastValuesPsqlPid = $Fifo->attachReader($blastValuesPsqlProcessString);
 
@@ -144,7 +144,7 @@ sub run {
   my $modification_date = $self->getModificationDate();
 
   my $dbh = $self->getQueryHandle();
-  my $sql = "SELECT MAX(ortholog_blast_value_id) from apidb.orthogroupblastvalue";
+  my $sql = "SELECT MAX(ortholog_blast_value_id) from apidb.orthologgroupblastvalue";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   # Set to 0 if there are no rows in this table
@@ -241,7 +241,7 @@ sub setPsqlHostname {
 sub makeBlastValues {
   my ($self,$primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date) = @_;
 
-  my $orthoGroupBlastValue = GUS::Model::ApiDB::OrthoGroupBlastValue->new({ ortholog_blast_value_id => $primaryKeyInt,
+  my $orthoGroupBlastValue = GUS::Model::ApiDB::OrthologGroupBlastValue->new({ ortholog_blast_value_id => $primaryKeyInt,
                                                                             group_id => $group_id,
                                                                             qseq => $qseq,
                                                                             sseq => $sseq,
@@ -291,7 +291,7 @@ sub makePsqlObj {
 }
 
 sub undoTables {
-    return ("ApiDB.OrthoGroupBlastValue");
+    return ("ApiDB.OrthologGroupBlastValue");
 }
 
 1;
