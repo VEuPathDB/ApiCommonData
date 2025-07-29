@@ -52,6 +52,8 @@ foreach my $group (keys %{$groups}) {
 
 &printTest($totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh) if ($test);
 
+$dbh->disconnect();
+
 exit;
 
 ################################  SUBROUTINES  ########################################
@@ -1345,7 +1347,6 @@ sub getGroupsFromDatabase {
 
     $query->execute();
     while (my($group) = $query->fetchrow_array()) {
-	
         $groups{$group} = 1;
     }
     $query->finish();
