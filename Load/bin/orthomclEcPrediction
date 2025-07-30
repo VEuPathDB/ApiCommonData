@@ -212,7 +212,7 @@ sub getAbbrev {
 
 sub getProteinToEValue {
     my ($dbh,$groupId) = @_;
-    my $sql = "SELECT qseq, evalue FROM apidb.orthogroupblastvalue WHERE group_id = '$groupId'";
+    my $sql = "SELECT qseq, evalue FROM apidb.orthologgroupblastvalue WHERE group_id = '$groupId'";
     my $sh = $dbh->prepare($sql);
     $sh->execute();
 
