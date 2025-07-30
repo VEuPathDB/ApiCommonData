@@ -77,8 +77,6 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    my $dataDir = $self->getArg('dataDir');
-
     my $speciesFromOrtho = $self->getSpeciesFromOrtho();
     my $speciesFromOrtho = $self->cleanUpData($speciesFromOrtho);
 
