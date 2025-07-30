@@ -131,7 +131,8 @@ sub run {
     my $taxonTree = $self->parseCladeFile($cladeFile);
 
     # add species to it
-    $self->parseTaxonToCladeFile($taxonToCladeFile);
+    my $taxonToClade = $self->parseTaxonToCladeFile($taxonToCladeFile);
+    my $taxonToClade->submit();
 
     $self->printCladeList(); # for debugging
  
