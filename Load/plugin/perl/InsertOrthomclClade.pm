@@ -132,7 +132,6 @@ sub run {
 
     # add species to it
     my $taxonToClade = $self->parseTaxonToCladeFile($taxonToCladeFile);
-    my $taxonToClade->submit();
 
     $self->printCladeList(); # for debugging
  
@@ -289,6 +288,7 @@ sub parseTaxonToCladeFile {
 	$species->setName($name);
 	$species->setDepthFirstIndex($clade->getDepthFirstIndex());
 	$species->setCorePeripheral($corePeripheral);
+        $species->submit();
     }
 
     foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
