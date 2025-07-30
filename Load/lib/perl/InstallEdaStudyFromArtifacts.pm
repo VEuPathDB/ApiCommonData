@@ -80,6 +80,9 @@ sub setDbh { $_[0]->{_DBH} = $_[1] }
 sub hasUserDatasetId { defined $_[0]->{USER_DATASET_ID} ? 1 : 0 }
 sub isDryRun {defined $_[0]->{DRYRUN} ? 1 : 0 }
 
+sub skipPreexistingTables { defined $_[0]->{SKIP_PREEXISTING_TABLES} ? 1 : 0 }
+
+
 sub getConfigsArrayFromInstallJsonFile {
     my ($self, $installJsonFile) = @_;
 
@@ -211,7 +214,7 @@ sub installData {
     foreach my $config (@$configsArray) {
         next unless $config->{type} eq 'table';
         if ($config->{is_preexisting_table}) {
-          $self->loadTable($config) unless($self->hasUserDatasetId());
+          $self->loadTable($config) unless($self->skipPreexistingTables());
         } else {
             $self->createTable($config);
             $self->bulkLoadTable($config);
