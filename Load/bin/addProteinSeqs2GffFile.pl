@@ -47,6 +47,11 @@ while (<IN>) {
 }
 close IN;
 
+## remove stop codon if exist
+foreach my $k (sort keys %proteins) {
+  $proteins{$k} =~ s/\*$//;
+}
+
 open (INN, $inputGffFile) || die "can not open inputGffFile to read\n";
 while (<INN>) {
   chomp;
