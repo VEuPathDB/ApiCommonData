@@ -256,7 +256,7 @@ sub parseTaxonToCladeFile {
         $abbrevToName{$abbrev} = $name;
     }
 
-    open(FILE, $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile'");
+    open(FILE, '<', $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile' for reading");
 
     my $speciesOrder = 1;
     my $speciesAbbrevs = {};
