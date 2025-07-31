@@ -349,6 +349,15 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
+  <feature name="lncRNA" so="lncRNA">
+    <qualifier name="ID"             column="source_id"/>
+    <qualifier name="Parent" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+  </feature>
+
   <feature name="snoRNA" so="snoRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
     <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
@@ -968,6 +977,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="description" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
@@ -978,6 +988,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="type" ignore="true"/>
@@ -1043,6 +1054,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ebi_biotype"         ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
@@ -1056,6 +1068,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
@@ -1075,6 +1088,15 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="partial"      handler="api"    method="setPartial"/>
   </feature>
  
+  <feature name="lncRNA_gene" so="lncRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+  </feature>
+ 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
@@ -1086,6 +1108,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="extra_copy_number"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
@@ -1094,6 +1117,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="low_identity" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
