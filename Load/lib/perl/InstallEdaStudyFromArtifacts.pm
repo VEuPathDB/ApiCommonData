@@ -211,7 +211,7 @@ sub installData {
     foreach my $config (@$configsArray) {
         next unless $config->{type} eq 'table';
         if ($config->{is_preexisting_table}) {
-            $self->loadTable($config)
+          $self->loadTable($config) unless($self->hasUserDatasetId());
         } else {
             $self->createTable($config);
             $self->bulkLoadTable($config);
