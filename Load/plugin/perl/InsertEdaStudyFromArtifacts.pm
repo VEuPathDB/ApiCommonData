@@ -88,8 +88,12 @@ sub run {
   my $outputDir = $self->getArg("outputDirectory");
   my $gusConfigFile = $self->getArg("gusConfigFile");
 
+  if(-e $outputDir) {
+    $self->userError("Output Directory already Exists");
+  }
+
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
-  my $installer = $self->makeInstaller($inputDir, $outputDir, $gusConfigFile);
+  my $installer = $self->makeInstaller($inputDir, $outputDir, $gusConfigFile, $extDbRlsSpec);
 
   my $installJsonFile = $installer->getInstallJsonFile($inputDir);
   my $configsArray = $installer->getConfigsArrayFromInstallJsonFile($installJsonFile); 
@@ -110,10 +114,6 @@ sub run {
 
   $entityTypeGraph->setParent($study);
   $entityTypeGraph->submit();
-
-  print $entityTypeGraph->toString(); 
-  
-
 
   if($self->getArg('commit')) {
     # now install the artifacts
@@ -160,11 +160,13 @@ sub preexistingTable {
 
 
 sub makeInstaller {
-    my ($plugin, $inputDir, $outputDir, $gusConfigFile) = @_;
+    my ($plugin, $inputDir, $outputDir, $gusConfigFile, $extDbRlsSpec) = @_;
 
     my $edaSchema = "EDA";
 
     die "gus.confg $gusConfigFile does not exist" unless -e $gusConfigFile;
+
+    my ($extDbName, $extDbVersion) = split(/\|/, $extDbRlsSpec);
 
     my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
     my ($host, $port, $dbname);
@@ -213,63 +215,60 @@ sub makeInstaller {
                         'DATA_FILES' => $outputDir,
                         'INPUT_DIR' => $inputDir,
                         'SKIP_PREEXISTING_TABLES' => 1, # we are loading these rows here not in the VDI artifact loader
+                        'EXTERNAL_DATABASE_NAME' => $extDbName, # This is needed for Undo only
         );
 
     return ApiCommonData::Load::InstallEdaStudyFromArtifacts->new(\%requiredVars);
 }
 
+sub undoTables {
+  # all undo stuff done in the undoPreprocess method
+  return ();
+}
 
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
-  $self->SUPER::undoPreprocess($dbh, $rowAlgInvocationList);
 
-  my ($inputDir) = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'inputDir');
-  my ($outputDir) = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'outputDir');
-  my ($gusConfigFile) = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'gusConfigFile');
+  my $gusConfigFile = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'gusConfigFile');
+  my $extDbRlsSpec = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'extDbRlsSpec');
 
-  my ($extDbRlsSpec) = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'extDbRlsSpec');
-
-  unless(-e $inputDir && -e $outputDir && -e $gusConfigFile) {
-    $self->error("Required algorithm param missing OR does not exist inputDir=$inputDir, outputDir=$outputDir, gusConfigFile=$gusConfigFile");
+  unless(-e $gusConfigFile && $extDbRlsSpec) {
+    $self->error("Required algorithm param missing OR does not exist gusConfigFile=$gusConfigFile, extDbRlsSpec=$extDbRlsSpec");
   }
 
-  my $installer = $self->makeInstaller($inputDir, $outputDir, $gusConfigFile);
-  $installer->uninstallData();
-
-  my $query = "select d.external_database_id, r.external_database_release_id, s.study_id, etg.entity_type_graph_id
-from sres.externaldatabase d 
-  inner join sres.externaldatabaserelease r on d.external_database_id = r.external_database_id 
-  inner join eda.study s on s.external_database_release_id = r.external_database_release_id
-  inner join eda.entitytypegraph etg on etg.study_id = s.study_id
-where 
-d.name || '|' || r.version = '$extDbRlsSpec'
-";
-  my $sh = $dbh->prepare($query);
-
-  my @studyIds;
-  my @extDbIds;
-
-  $sh->execute();
-  while(my ($externalDatabaseId, $externalDatabaseReleaseId, $studyId, $entityTypeGraphId) = $sh->fetchrow_array()) {
-    push @studyIds, $studyId;
-    push @extDbIds, $externalDatabaseId;
-  }
-  $sh->finish();
-
-  my $studyIdsString = join(",", @studyIds);
-  my $extDbIdsString = join(",", @extDbIds);
-
-  $dbh->do("DELETE FROM EDA.ENTITYTYPEGRAPH WHERE study_id in ($studyIdsString)");
-  $dbh->do("DELETE FROM EDA.STUDY WHERE study_id in ($studyIdsString)");
-
-  $dbh->do("DELETE FROM SRES.EXTERNALDATABASERELEASE WHERE external_database_id in ($extDbIdsString)");
-  $dbh->do("DELETE FROM SRES.EXTERNALDATABASE WHERE external_database_id in ($extDbIdsString)");
-
-
-
+  my $installer = $self->makeInstaller("NA", "NA", $gusConfigFile, $extDbRlsSpec);
+  $installer->uninstallDataFromExternalDatabase();
 }
 
 
+sub getAlgorithmParam {
+  my ($self, $dbh, $rowAlgInvocationList, $paramKey) = @_;
+  my $pluginName = ref($self);
+  my %paramValues;
+  foreach my $rowAlgInvId (@$rowAlgInvocationList){
+    my $sql  = "SELECT p.STRING_VALUE
+      FROM core.ALGORITHMPARAMKEY k
+      LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
+      LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
+      WHERE a.EXECUTABLE = ? 
+      AND p.ROW_ALG_INVOCATION_ID = ?
+      AND k.ALGORITHM_PARAM_KEY = ?";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute($pluginName,$rowAlgInvId, $paramKey);
+    while(my ($name) = $sh->fetchrow_array){
+      $paramValues{ $name } = 1;
+    }
+    $sh->finish();
+  }
+
+  my @values = keys %paramValues;
+
+  if(scalar keys %paramValues != 1) {
+    $self->error("Odd looking param values for $paramKey:  \n" . Dumper(\%paramValues));    
+  }
+
+  return $values[0];
+}
 
 
 
