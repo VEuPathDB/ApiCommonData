@@ -1,11 +1,4 @@
 -- delete guest-user accounts that have been been inactive for 48 hours
-prompt user_roles
-delete from userlogins3.user_roles
-where user_id in (select user_id
-                  from userlogins3.users
-                  where is_guest = 1
-                    and last_active < trunc(sysdate) - 2);
-
 prompt strategies
 delete from userlogins3.strategies
 where user_id in (select s.display_id
