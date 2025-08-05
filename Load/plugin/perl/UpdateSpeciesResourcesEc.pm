@@ -14,13 +14,6 @@ use Data::Dumper;
 my $argsDeclaration =
 [
 
- stringArg({ descr => 'directory that contains the files downloaded from Veupath sites',
-	          name  => 'dataDir',
-	          isList    => 0,
-	          reqd  => 1,
-	          constraintFunc => undef,
-	   }),
-
 ];
 
 
@@ -84,23 +77,11 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    my $dataDir = $self->getArg('dataDir');
-
     my $speciesFromOrtho = $self->getSpeciesFromOrtho();
-    #my $speciesFromOrtho = $self->updateUniprotData($speciesFromOrtho,$dataDir);
-    #my $speciesFromOrtho = $self->updateVeupathData($speciesFromOrtho,$dataDir);
     my $speciesFromOrtho = $self->cleanUpData($speciesFromOrtho);
 
     my $numRows = $self->loadOrthoResource($speciesFromOrtho);
     $self->log("Finished adding to ApiDB.OrthomclResource. Loaded $numRows rows.\n");
-
-    #$numRows = $self->updateOrthoTaxon($speciesFromOrtho);
-    #$self->log("Finished updating ApiDB.OrthomclTaxon. Updated $numRows rows.\n");
-
-    my $ecFileForOrtho = "ecFromVeupath.txt";
-    my $ecFileforGenomicSites = "ec_organism.txt";
-    my $numEcFiles = $self->formatEcFile($dataDir,$speciesFromOrtho,$ecFileForOrtho,$ecFileforGenomicSites);
-    $self->log("Used $numEcFiles EC files obtained from Veupath to make $dataDir/$ecFileForOrtho and $dataDir/$ecFileforGenomicSites\n");
 }
 
 sub getSpeciesFromOrtho {
@@ -168,72 +149,6 @@ SQL
     return $species;
 }
 
-sub updateUniprotData {
-    my ($self,$species,$dataDir) = @_;
-
-    my $file = "$dataDir/UniprotProteomes";
-    open(IN,$file) || die "Can't open file '$file'\n";
-    my $uniprot;
-    while (my $line = <IN>) {
-	next unless ($line =~ /^UP/);
-	chomp $line;
-	my @fields = split("\t",$line);
-	$uniprot->{$fields[1]}->{proteomeId} = $fields[0];
-	$uniprot->{$fields[1]}->{name} = $fields[7];
-    }
-    close IN;
-
-    foreach my $abbrev (keys %{$species}) {
-	next unless (lc($species->{$abbrev}->{url}) =~ /uniprot/);
-	$species->{$abbrev}->{resource}="Uniprot";
-	my $proteomeId = "";
-	$proteomeId = $uniprot->{$species->{$abbrev}->{ncbiTaxId}}->{proteomeId} if (exists $uniprot->{$species->{$abbrev}->{ncbiTaxId}}->{proteomeId});
-	my $url = "https://www.uniprot.org/proteomes/".$proteomeId;
-	$species->{$abbrev}->{url} = $url;
-	$species->{$abbrev}->{name} = $uniprot->{$species->{$abbrev}->{ncbiTaxId}}->{name} if (exists $uniprot->{$species->{$abbrev}->{ncbiTaxId}}->{name});
-    }
-
-    return $species;
-}
-
-sub updateVeupathData {
-    my ($self,$species,$dataDir) = @_;
-
-    my @files = glob("$dataDir/*_organisms.txt");
-
-    my $veupath;
-    foreach my $file (@files) {
-	open(IN,$file) || die "Can't open file '$file'\n";
-	my $resource;
-	if ($file =~ /\/([A-Za-z]+)_organisms\.txt/) {
-	    $resource = $1;
-	} else {
-	    die "Did not find project name in file name: $file\n";
-	}
-	while (my $line = <IN>) {
-	    chomp $line;
-	    $line =~ s/<i>//g;
-	    $line =~ s/<\/i>//g;
-	    next if ($line =~ /^Organism/);
-	    next unless ($line =~ /^[A-Za-z]/);
-	    my @fields = split("\t",$line);
-	    my $abbrev = $fields[2];
-	    $abbrev = "rhiz" if ($abbrev eq "rirr"); # this is temporary, because rhiz on orthomcl equals rirr on fungidb  
-	    $veupath->{$abbrev}->{name} = $fields[0];
-	    $veupath->{$abbrev}->{filename} = $fields[1];
-	    $veupath->{$abbrev}->{resource} = $resource;
-	}
-	close IN;	
-    }
-
-    foreach my $abbrev (keys %{$species}) {
-	next unless (exists $veupath->{$abbrev});
-	$species->{$abbrev}->{resource} = $veupath->{$abbrev}->{resource};
-	$species->{$abbrev}->{name} = $veupath->{$abbrev}->{name};
-	$species->{$abbrev}->{url} = getVeupathUrl($species->{$abbrev}->{resource},$veupath->{$abbrev}->{filename});
-    }
-    return $species;
-}
 
 sub getVeupathUrl {
     my ($resource,$filename) = @_;
@@ -343,123 +258,6 @@ sub loadOrthoResource {
     
     return $numRows;
 }
-
-
-sub updateOrthoTaxon {
-    my ($self,$species) = @_;
-    
-    my $numRows=0;
-    foreach my $abbrev (keys %{$species}) {
-	my $taxon = GUS::Model::ApiDB::OrthomclTaxon->
-	    new({'orthomcl_taxon_id' => $species->{$abbrev}->{orthomclId}
-		});
-
-	$taxon->retrieveFromDB();
-
-	if ($taxon->get('name') ne $species->{$abbrev}->{name}) {
-	    $taxon->set('name', $species->{$abbrev}->{name});
-	}
-	$numRows += $taxon->submit();
-	$self->undefPointerCache();
-    }
-
-    return $numRows;
-}
-
-
-sub formatEcFile {
-    my ($self,$dataDir,$species,$ecFileForOrtho,$ecFileforGenomicSites) = @_;
-
-    my @files = glob("$dataDir/*_ec.txt");
-    my $numEcFiles= scalar @files;
-
-    my $currentEc = $self->getCurrentEcNumbers();
-    my $ecForGenomic;
-
-    open(ORTHO,">","$dataDir/$ecFileForOrtho") || die "Can't open file '$dataDir/$ecFileForOrtho' for writing\n";
-
-    foreach my $file (@files) {
-	open(IN,$file) || die "Can't open file '$file'\n";
-
-	my $abbrev="";
-	if ($file =~ /\/([A-Za-z]+)_ec\.txt/) {
-	    $abbrev = $1;
-	    $abbrev = "rhiz" if ($abbrev eq "rirr"); # this is temporary, because rhiz on orthomcl equals rirr on fungidb
-	} else {
-	    die "Did not find orthomcl abbrev in file name: $file\n";
-	}
-	my $organismName = $species->{$abbrev}->{name};
-        $organismName =~ s/^\s+//;
-	my @words = split(/\s/,$organismName);
-	my $genus = "";
-	$genus = $words[0];
-	die "There is no genus for this organism: '$file' '$abbrev' '$species->{$abbrev}->{name}'" if ($genus eq "");
-
-	my $header = <IN>;
-	while (my $line = <IN>) {
-	    chomp $line;
-	    my @row = split("\t",$line);
-	    my ($gene,$tx,$ec,$ecDerived) = ($row[0],$row[1],$row[2],$row[3]);
-
-	    my @multipleEcs = split(/;/,$ec);
-	    foreach my $ecStr (@multipleEcs) {
-		if ($ecStr =~ /^([0-9\-\.]+)/) {
-		    my $singleEc = $1;
-		    $ecForGenomic->{$genus}->{$singleEc} = 1;
-		    my $tempString = "$abbrev|$gene|$singleEc";
-		    next if (exists $currentEc->{$tempString});
-		    $currentEc->{$tempString} = 1;
-		    print ORTHO "$abbrev|$gene\t$singleEc\n";
-		}
-	    }
-
-	    @multipleEcs = split(/;/,$ecDerived);
-	    foreach my $ecStr (@multipleEcs) {
-		if ($ecStr =~ /^([0-9\-\.]+)/) {
-		    my $singleEc = $1;
-		    $ecForGenomic->{$genus}->{$singleEc} = 1;
-		}
-	    }
-	    
-	}
-	close IN;
-    }
-    close ORTHO;
-
-    open(GEN,">","$dataDir/$ecFileforGenomicSites") || die "Can't open file '$dataDir/$ecFileforGenomicSites' for writing\n";
-    foreach my $genus (keys %{$ecForGenomic}) {
-	foreach my $ec (keys %{$ecForGenomic->{$genus}}) {
-	    print GEN "$ec\t$genus\n";
-	}
-    }   
-    close GEN;
-
-    return $numEcFiles;
-}
-
-sub getCurrentEcNumbers {
-    my ($self) = @_;
-
-    my %ec;
-
-    my $sql = <<SQL;
-SELECT eas.secondary_identifier,ec.ec_number
-FROM SRes.EnzymeClass ec,
-     DoTS.AASequenceEnzymeClass aaec,
-     dots.ExternalAASequence eas
-WHERE ec.enzyme_class_id = aaec.enzyme_class_id
-      AND aaec.aa_sequence_id = eas.aa_sequence_id
-SQL
-
-    my $dbh = $self->getQueryHandle();
-    my $sth = $dbh->prepareAndExecute($sql);
-    while (my @row = $sth->fetchrow_array()) {
-	my $tempString = $row[0]."|".$row[1];
-	$ec{$tempString} = 1;
-    }
-    return \%ec;
-}
-
 
 sub undoTables {
     my ($self) = @_;
