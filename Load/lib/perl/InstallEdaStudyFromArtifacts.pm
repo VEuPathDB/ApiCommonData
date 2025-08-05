@@ -196,8 +196,8 @@ sub getQueryForTableOrViewNames {
   my ($self, $tablesOrViews, $schema) = @_;
 
   return "select t.table_name
-from eda.study s 
-join eda.entitytypegraph etg 
+from ${schema}.study s 
+join ${schema}.entitytypegraph etg 
   on s.study_id = etg.study_id
 join information_schema.${tablesOrViews} t 
   on lower(t.table_name) like '%' || lower(s.internal_abbrev) || '_' || lower(etg.internal_abbrev)  
