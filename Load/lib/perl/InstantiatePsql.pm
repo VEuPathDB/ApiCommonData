@@ -6,49 +6,48 @@ use strict;
 sub instantiateSql {
     my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
 
-  # Quote organismAbbrev if it contains special characters (e.g., hyphen)
-    my $quotedOrgAbbrev = quote_if_needed($organismAbbrev);
+    # Escape quotes and convert to lowercase for PostgreSQL-safe quoted identifiers
+    $schema         =~ s/"/""/g;
+    $schema         = lc($schema);
+
+    $tableName      =~ s/"/""/g;
+    $tableName      = lc($tableName);
+
+    $organismAbbrev =~ s/"/""/g;
+    $organismAbbrev = lc($organismAbbrev);
 
     if ($mode eq 'parent') {
-	$sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE $schema.${tableName}_temporary AS /g;
+        $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE "$schema"."${tableName}_temporary" AS /g;
 
-    my $s = qq{
+        my $s = qq{
 
-create table $schema.$tableName (like $schema.${tableName}_temporary including all)
+create table "$schema"."$tableName" (like "$schema"."${tableName}_temporary" including all)
 partition by list (org_abbrev);
 
-drop table $schema.${tableName}_temporary;
+drop table "$schema"."${tableName}_temporary";
 };
-    $sql =~ s/\:DECLARE_PARTITION/$s/g;
+        $sql =~ s/\:DECLARE_PARTITION/$s/g;
 
     } elsif ($mode eq 'child') {
 
-	my $childTable = "${tableName}_$quotedOrgAbbrev";
+        my $s = qq{
 
-	my $s = qq{
-
-create table :SCHEMA.$childTable
-partition of :SCHEMA.$tableName
+create table ":SCHEMA"."${tableName}_$organismAbbrev"
+partition of ":SCHEMA"."$tableName"
 for values in (':ORG_ABBREV');
 
-insert into :SCHEMA.$childTable
+insert into ":SCHEMA"."${tableName}_$organismAbbrev"
 };
-    $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
-    $sql =~ s/\:DECLARE_PARTITION//g;
-  }
+        $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
+        $sql =~ s/\:DECLARE_PARTITION//g;
+    }
 
-  $sql =~ s/\:TAXON_ID/$taxonId/g;
-  $sql =~ s/\:PROJECT_ID/$projectId/g;
-  $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
-  $sql =~ s/\:SCHEMA/$schema/g;
+    $sql =~ s/\:TAXON_ID/$taxonId/g;
+    $sql =~ s/\:PROJECT_ID/$projectId/g;
+    $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
+    $sql =~ s/\:SCHEMA/$schema/g;
 
-  return $sql;
-}
-
-# Quote organismAbbrev only if it contains non-alphanumeric or underscore
-sub quote_if_needed {
-    my ($name) = @_;
-    return $name =~ /[^a-zA-Z0-9_]/ ? qq{"$name"} : $name;
+    return $sql;
 }
 
 # use this for PLPGSQL (e.g., loops)

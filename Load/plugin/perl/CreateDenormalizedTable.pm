@@ -214,21 +214,25 @@ sub undoPreprocess {
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
   my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
-  my $tableName = $tableNames->[0];
-  my $schema = $schemas->[0];
-  my $orgAbbrev = $orgAbbrevs->[0];
+  # Normalize and quote all components
+  my $schema     = lc($schemas->[0]);
+  my $tableName  = lc($tableNames->[0]);
+  my $orgAbbrev  = defined $orgAbbrevs->[0] ? lc($orgAbbrevs->[0]) : undef;
 
-  my $quotedTempTable = "$schema.${tableName}_temporary";
+  # Escape internal double quotes, if any (PostgreSQL uses "" to escape quotes in identifiers)
+  $schema     =~ s/"/""/g;
+  $tableName  =~ s/"/""/g;
+  $orgAbbrev  =~ s/"/""/g if defined $orgAbbrev;
+
+  # Quoted temporary table name
+  my $quotedTempTable = qq{"$schema"."${tableName}_temporary"};
   my $sql = "drop table if exists $quotedTempTable";
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $quotedTempTable");
 
-  # Quote the organismAbbrev only if it contains non-alphanumeric characters
-  my $quotedOrgAbbrev = $orgAbbrev =~ /[^a-zA-Z0-9_]/ ? qq{"$orgAbbrev"} : $orgAbbrev;
-
-  # Build the full table name, quoting only the organismAbbrev if necessary
-  my $fullTableName = $orgAbbrev ? "${tableName}_$quotedOrgAbbrev" : $tableName;
-  my $quotedFullTable = "$schema.$fullTableName";
+  # Full table name with optional organismAbbrev
+  my $fullTableName = $orgAbbrev ? "${tableName}_$orgAbbrev" : $tableName;
+  my $quotedFullTable = qq{"$schema"."$fullTableName"};
 
   $sql = "drop table if exists $quotedFullTable";
   $dbh->do($sql) || $self->error("Failed executing $sql");
