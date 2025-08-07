@@ -155,6 +155,12 @@ where d.name = ?";
     $sh_study->finish();
 
     my @uniqueStudyIds = keys(%studyIds);
+
+    if(scalar(@uniqueStudyIds) == 0) {
+      print STDERR "No studyId found for externaldatabasename $externalDatabaseName... nothing to do\n";
+      return;
+    }
+
     unless(scalar(@uniqueStudyIds) == 1) {
       die "Must be one study id for externaldatabasereleaseid=$externalDatabaseReleaseId";
     }
