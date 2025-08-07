@@ -218,13 +218,21 @@ sub undoPreprocess {
   my $schema = $schemas->[0];
   my $orgAbbrev = $orgAbbrevs->[0];
 
-  my $sql = "drop table if exists $schema.${tableName}_temporary";
+  my $quotedTempTable = "$schema.${tableName}_temporary";
+  my $sql = "drop table if exists $quotedTempTable";
   $dbh->do($sql) || $self->error("Failed executing $sql");
-  $self->log("Dropped $schema.$tableName");
-  my $dropTableName = $orgAbbrev? "$schema.$tableName\_$orgAbbrev" : "$schema.$tableName";
-  my $sql = "drop table if exists $dropTableName";
+  $self->log("Dropped $quotedTempTable");
+
+  # Quote the organismAbbrev only if it contains non-alphanumeric characters
+  my $quotedOrgAbbrev = $orgAbbrev =~ /[^a-zA-Z0-9_]/ ? qq{"$orgAbbrev"} : $orgAbbrev;
+
+  # Build the full table name, quoting only the organismAbbrev if necessary
+  my $fullTableName = $orgAbbrev ? "${tableName}_$quotedOrgAbbrev" : $tableName;
+  my $quotedFullTable = "$schema.$fullTableName";
+
+  $sql = "drop table if exists $quotedFullTable";
   $dbh->do($sql) || $self->error("Failed executing $sql");
-  $self->log("Dropped $schema.$tableName");
+  $self->log("Dropped $quotedFullTable");
 
 }
 
