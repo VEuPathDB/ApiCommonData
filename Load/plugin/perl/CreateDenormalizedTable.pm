@@ -219,22 +219,23 @@ sub undoPreprocess {
   my $tableName  = lc($tableNames->[0]);
   my $orgAbbrev  = defined $orgAbbrevs->[0] ? lc($orgAbbrevs->[0]) : undef;
 
-  # Escape internal double quotes, if any (PostgreSQL uses "" to escape quotes in identifiers)
-  $schema     =~ s/"/""/g;
-  $tableName  =~ s/"/""/g;
+  # Escape double quotes and lowercase
+  $schema     = lc($schema);     $schema     =~ s/"/""/g;
+  $tableName  = lc($tableName);  $tableName  =~ s/"/""/g;
+  $orgAbbrev  = lc($orgAbbrev) if defined $orgAbbrev;
   $orgAbbrev  =~ s/"/""/g if defined $orgAbbrev;
 
-  # Quoted temporary table name
-  my $quotedTempTable = qq{"$schema"."${tableName}_temporary"};
-  my $sql = "drop table if exists $quotedTempTable";
+  # Temporary table
+  my $tempTableName = "${tableName}_temporary";
+  my $quotedTempTable = qq{"$schema"."$tempTableName"};
+  my $sql = qq{drop table if exists "$schema"."$tempTableName"};
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $quotedTempTable");
 
-  # Full table name with optional organismAbbrev
+  # Full table
   my $fullTableName = $orgAbbrev ? "${tableName}_$orgAbbrev" : $tableName;
   my $quotedFullTable = qq{"$schema"."$fullTableName"};
-
-  $sql = "drop table if exists $quotedFullTable";
+  $sql = qq{drop table if exists "$schema"."$fullTableName"};
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $quotedFullTable");
 
