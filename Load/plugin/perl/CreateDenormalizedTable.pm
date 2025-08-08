@@ -228,14 +228,14 @@ sub undoPreprocess {
   # Temporary table
   my $tempTableName = "${tableName}_temporary";
   my $quotedTempTable = qq{"$schema"."$tempTableName"};
-  my $sql = qq{drop table if exists "$schema"."$tempTableName"};
+  my $sql = qq{drop table if exists $quotedTempTable};
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $quotedTempTable");
 
   # Full table
   my $fullTableName = $orgAbbrev ? "${tableName}_$orgAbbrev" : $tableName;
   my $quotedFullTable = qq{"$schema"."$fullTableName"};
-  $sql = qq{drop table if exists "$schema"."$fullTableName"};
+  $sql = qq{drop table if exists $quotedFullTable};
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $quotedFullTable");
 
