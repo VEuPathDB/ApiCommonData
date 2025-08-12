@@ -33,7 +33,7 @@ drop table "$schema"."${tableName}_temporary";
 
 create table ":SCHEMA"."${tableName}_${organismAbbrev}"
 partition of ":SCHEMA"."$tableName"
-for values in (:ORG_ABBREV);
+for values in (':ORG_ABBREV');
 
 insert into ":SCHEMA"."${tableName}_${organismAbbrev}"
 };
