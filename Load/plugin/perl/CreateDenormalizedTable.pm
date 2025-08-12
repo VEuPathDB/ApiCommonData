@@ -214,29 +214,20 @@ sub undoPreprocess {
     my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
     my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
-    # Normalize and quote all components
-    my $schema     = $schemas->[0];
-    my $tableName  = $tableNames->[0];
-    my $orgAbbrev  = defined $orgAbbrevs->[0] ? $orgAbbrevs->[0] : undef;
+    my $tableName = $tableNames->[0];
+    my $schema = $schemas->[0];
+    my $orgAbbrev = $orgAbbrevs->[0];
 
-    # Escape double quotes
-    $schema     = $schema =~ s/"/""/g;
-    $tableName  = $tableName =~ s/"/""/g;
     $orgAbbrev  =~ s/"/""/g if defined $orgAbbrev;
 
-    # Temporary table
-    my $tempTableName = "${tableName}_temporary";
-    my $quotedTempTable = qq{"$schema"."$tempTableName"};
-    my $sql = qq{drop table if exists $quotedTempTable};
+    my $sql = "drop table if exists $schema.${tableName}_temporary";
     $dbh->do($sql) || $self->error("Failed executing $sql");
-    $self->log("Dropped $quotedTempTable");
+    $self->log("Dropped $schema.$tableName");
 
-    # Full table
-    my $fullTableName = $orgAbbrev ? "${tableName}_$orgAbbrev" : $tableName;
-    my $quotedFullTable = qq{"$schema"."$fullTableName"};
-    $sql = qq{drop table if exists $quotedFullTable};
+    my $dropTableName = $orgAbbrev ? "${schema}.\"${tableName}_${orgAbbrev}\"" : "$schema.$tableName";
+    my $sql = "drop table if exists $dropTableName";
     $dbh->do($sql) || $self->error("Failed executing $sql");
-    $self->log("Dropped $quotedFullTable");
+    $self->log("Dropped $dropTableName");
 
 }
 
