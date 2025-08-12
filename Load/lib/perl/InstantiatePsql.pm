@@ -15,7 +15,7 @@ sub instantiateSql {
     $refOrgAbb =~ s/\-/\_/g;
 
     my $org_abbrev_literal = $organismAbbrev;
-    $org_abbrev_litteral =~ s/'/''/g;              # escape single quotes for SQL
+    $org_abbrev_literal =~ s/'/''/g;              # escape single quotes for SQL
    
     if ($mode eq 'parent') {
         my $s = qq{
