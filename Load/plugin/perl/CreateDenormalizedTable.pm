@@ -217,12 +217,12 @@ sub undoPreprocess {
   # Normalize and quote all components
   my $schema     = lc($schemas->[0]);
   my $tableName  = lc($tableNames->[0]);
-  my $orgAbbrev  = defined $orgAbbrevs->[0] ? lc($orgAbbrevs->[0]) : undef;
+  my $orgAbbrev  = defined $orgAbbrevs->[0] ? $orgAbbrevs->[0] : undef;
 
   # Escape double quotes and lowercase
   $schema     = lc($schema);     $schema     =~ s/"/""/g;
   $tableName  = lc($tableName);  $tableName  =~ s/"/""/g;
-  $orgAbbrev  = lc($orgAbbrev) if defined $orgAbbrev;
+  $orgAbbrev  = $orgAbbrev if defined $orgAbbrev;
   $orgAbbrev  =~ s/"/""/g if defined $orgAbbrev;
 
   # Temporary table

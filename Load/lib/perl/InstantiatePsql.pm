@@ -7,18 +7,17 @@ sub instantiateSql {
     my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
 
     # Escape quotes and convert to lowercase for PostgreSQL-safe quoted identifiers
-    $schema         =~ s/"/""/g;
-    $schema         = lc($schema);
+    $schema    =~ s/"/""/g;
+    $schema    = lc($schema);
 
-    $tableName      =~ s/"/""/g;
-    $tableName      = lc($tableName);
+    $tableName =~ s/"/""/g;
+    $tableName = lc($tableName);
 
-    $organismAbbrev =~ s/"/""/g;
-    $organismAbbrev = lc($organismAbbrev);
+    # For organismAbbrev, we now treat it as a SQL string literal
+    $organismAbbrev =~ s/'/''/g;               # escape single quotes for SQL
+    my $org_abbrev_literal = "'$organismAbbrev'";  # wrap in single quotes
 
     if ($mode eq 'parent') {
-        $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE "$schema"."${tableName}_temporary" AS /g;
-
         my $s = qq{
 
 create table "$schema"."$tableName" (like "$schema"."${tableName}_temporary" including all)
@@ -26,15 +25,15 @@ partition by list (org_abbrev);
 
 drop table "$schema"."${tableName}_temporary";
 };
+        $sql =~ s/\:CREATE_AND_POPULATE/CREATE TABLE "$schema"."${tableName}_temporary" AS /g;
         $sql =~ s/\:DECLARE_PARTITION/$s/g;
 
     } elsif ($mode eq 'child') {
-
         my $s = qq{
 
 create table ":SCHEMA"."${tableName}_$organismAbbrev"
 partition of ":SCHEMA"."$tableName"
-for values in (':ORG_ABBREV');
+for values in (:ORG_ABBREV);
 
 insert into ":SCHEMA"."${tableName}_$organismAbbrev"
 };
@@ -44,7 +43,7 @@ insert into ":SCHEMA"."${tableName}_$organismAbbrev"
 
     $sql =~ s/\:TAXON_ID/$taxonId/g;
     $sql =~ s/\:PROJECT_ID/$projectId/g;
-    $sql =~ s/\:ORG_ABBREV/$organismAbbrev/g;
+    $sql =~ s/\:ORG_ABBREV/$org_abbrev_literal/g;  # use literal here
     $sql =~ s/\:SCHEMA/$schema/g;
 
     return $sql;
