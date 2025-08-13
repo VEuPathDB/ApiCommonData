@@ -13,11 +13,11 @@ sub instantiateSql {
     if ($mode eq 'parent') {
         my $s = qq{
 
+ALTER TABLE ${schema}.${tableName}_temporary
+ALTER COLUMN org_abbrev TYPE varchar(32);
+
 create table $schema.$tableName (like $schema.${tableName}_temporary including all)
 partition by list (org_abbrev);
-
-ALTER TABLE $schema.$tableName
-ALTER COLUMN org_abbrev TYPE varchar(32);
 
 drop table $schema.${tableName}_temporary;
 };
