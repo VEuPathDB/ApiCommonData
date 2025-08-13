@@ -27,6 +27,9 @@ drop table $schema.${tableName}_temporary;
     } elsif ($mode eq 'child') {
         my $s = qq{
 
+ALTER TABLE $schema.$tableName
+ALTER COLUMN org_abbrev TYPE varchar(32);
+
 create table :SCHEMA."${tableName}_${organismAbbrev}"
 partition of :SCHEMA.$tableName
 for values in (':ORG_ABBREV');
