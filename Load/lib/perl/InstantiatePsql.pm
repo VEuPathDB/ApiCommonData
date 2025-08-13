@@ -17,7 +17,7 @@ create table $schema.$tableName (like $schema.${tableName}_temporary including a
 partition by list (org_abbrev);
 
 ALTER TABLE $schema.$tableName
-ALTER COLUMN org_abbrev TYPE varchar(64);
+ALTER COLUMN org_abbrev TYPE varchar(32);
 
 drop table $schema.${tableName}_temporary;
 };
