@@ -7,8 +7,8 @@ sub instantiateSql {
     my ($sql, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId) = @_;
 
     my $refOrgAbb = $organismAbbrev;
-    $refOrgAbb =~ s/\./\_/g;
-    $refOrgAbb =~ s/\-/\_/g;
+    $refOrgAbb =~ s/\.//g;
+    $refOrgAbb =~ s/\-//g;
 
     if ($mode eq 'parent') {
         my $s = qq{
@@ -27,11 +27,11 @@ drop table $schema.${tableName}_temporary;
     } elsif ($mode eq 'child') {
         my $s = qq{
 
-create table :SCHEMA."${tableName}_${organismAbbrev}"
+create table :SCHEMA.${tableName}_${refOrgAbb}
 partition of :SCHEMA.$tableName
 for values in (':ORG_ABBREV');
 
-insert into :SCHEMA."${tableName}_${organismAbbrev}"
+insert into :SCHEMA.${tableName}_${refOrgAbb}
 };
         $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
         $sql =~ s/\:DECLARE_PARTITION//g;
