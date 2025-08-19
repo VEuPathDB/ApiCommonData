@@ -219,6 +219,29 @@ sub undoPreprocess {
   my $sql = "drop table if exists $schema.${tableName}_temporary";
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $schema.$tableName");
+
+  # for children
+  # detach the child partition from the parent first, to avoid exclusive locks on parent. Then drop the detached table
+  # note the CONCURRENTLY keyword. Without it, pg will do an exclusive lock on the parent as well.
+  if ($orgAbbrev) {
+    # confirm it is attached
+    my $sql = "SELECT EXISTS (
+select 1 from pg_class t, pg_namespace n
+where t.relnamespace = n.oid
+        AND n.nspname = '$schema'
+        AND t.relispartition = true
+        AND t.relname = '${tableName}_$orgAbbrev'
+)";
+
+    my $stmt = $dbh->prepareAndExecute($sql);
+    my ($isAttached) = $stmt->fetchrow_array();
+
+    if ($isAttached eq 't') {
+      $sql = "ALTER TABLE $schema.$tableName DETACH PARTITION $schema.${tableName}_$orgAbbrev CONCURRENTLY";
+      $dbh->do($sql) || $self->error("Failed executing $sql");
+    }
+  }
+
   my $dropTableName = $orgAbbrev? "$schema.$tableName\_$orgAbbrev" : "$schema.$tableName";
   my $sql = "drop table if exists $dropTableName";
   $dbh->do($sql) || $self->error("Failed executing $sql");
