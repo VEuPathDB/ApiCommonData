@@ -171,6 +171,7 @@ sub run {
   }
 
   my $startTimeAll = time;
+
   $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh);
   if ($mode ne 'child' && -e "$psqlDirPath/${tableName}_ix.psql") {
     $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
@@ -191,7 +192,7 @@ sub processPsqlFile {
   my @sqlList = split(/;\n\s*/, $newSqls);
   foreach my $sql (@sqlList) {
     my $startTime = time;
-
+    my $sql = ApiCommonData::Load::InstantiatePsql::substituteDelims($sql);
     $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$sql\n\n");
     if ($commitMode) {
       $dbh->do($sql);
