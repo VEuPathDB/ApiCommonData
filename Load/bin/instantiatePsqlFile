@@ -20,7 +20,7 @@ my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $table
 
 my @sqlList = split(/;\n\s*/, $newSqls);
 foreach my $sql (@sqlList) {
-  print STDOUT $sql;
+  print STDOUT "$sql;\n";
 }
 
 my $ixFile = "$dirPath/${tableName}_ix.psql";
@@ -30,10 +30,11 @@ exit unless -e $ixFile;
 open my $fh, '<', $ixFile or die "error opening $ixFile: $!";
 my $sqls = do { local $/; <$fh> };
 
-my @sqlList = split(/;\n\s*/, $sqls);
+my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $tableName, $schema, $orgAbbrev, $mode, $taxonId, $projectId);
+
+my @sqlList = split(/;\n\s*/, $newSqls);
 foreach my $sql (@sqlList) {
-  my $newSql = ApiCommonData::Load::InstantiatePsql::instantiateSql($sql, $tableName, $schema, $orgAbbrev, $mode, $taxonId, $projectId);
-  print STDOUT $newSql;
+  print STDOUT "$sql;\n";
 }
 
 sub usage {
