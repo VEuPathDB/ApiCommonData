@@ -192,8 +192,6 @@ sub processPsqlFile {
   foreach my $sql (@sqlList) {
     my $startTime = time;
 
-    my $sql = ApiCommonData::Load::InstantiatePsql::substituteDelims($sql);
-
     $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$sql\n\n");
     if ($commitMode) {
       $dbh->do($sql);

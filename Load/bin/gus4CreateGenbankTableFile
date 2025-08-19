@@ -91,7 +91,7 @@ foreach my $i (0..$#functAnnots) {
     $transECRef = getTransECs ($dbh, $extDbRlsId);
   } elsif ($functAnnots[$i] =~ /go/i) {
     $functAnnot{'GO'} =1;
-    $transGORef = getTransGOs ($dbh, $extDbRlsId);
+    $transGORef = getTransGOs ($dbh, $organismAbbrev, $extDbRlsId);
   } elsif ($functAnnots[$i] =~ /note/i) {
     $functAnnot{'note'} =1;
     $transNoteRef = getTransNotes ($dbh, $extDbRlsId);
@@ -417,7 +417,7 @@ and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
 }
 
 sub getTransGOs {
-  my ($dbhSub, $extDbRlsId) = @_;
+  my ($dbhSub, $orgAbbrev, $extDbRlsId) = @_;
   my %transGOSub;
 
   ## use apidbtuning.GoTermSummary table to get GO info
@@ -426,7 +426,8 @@ select TRANSCRIPT_SOURCE_ID, GO_ID, GO_TERM_NAME, EVIDENCE_CODE, REFERENCE,
 decode(ontology, 'Biological Process', 'GO_process',
                  'Molecular Function', 'GO_function',
                  'Cellular Component', 'GO_component', ontology) 
-from apidbtuning.GoTermSummary
+from webready.GoTermSummary
+where org_abbrev = '$orgAbbrev'
 ";
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
   foreach my $i (0..$#$sqlRefSub) {
