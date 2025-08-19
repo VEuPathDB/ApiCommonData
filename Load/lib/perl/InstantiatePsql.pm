@@ -38,5 +38,4 @@ insert into :SCHEMA.${tableName}_$organismAbbrev
   return $sql;
 }
 
-
 1;

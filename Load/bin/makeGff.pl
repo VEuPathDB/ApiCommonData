@@ -14,12 +14,12 @@ use Bio::Tools::GFF;
 
 # Possible TODO is to add the fasta sequence for transcript, cds, protein (wdkReportMaker includes options for these BUT we are not planning on using the wdkReportMaker for GUS4)
 
-my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $tuningTablePrefix, $skipExtraAnnotation);
+my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $organismAbbrev, $skipExtraAnnotation);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
             'extDbRlsId=s' => \$extDbRlsId,
             'outputFile=s' => \$outputFile,
-            'tuningTablePrefix=s' => \$tuningTablePrefix,
+            'organismAbbrev=s' => \$organismAbbrev,
             'skipExtraAnnotation!' => \$skipExtraAnnotation,
     );
 
@@ -55,6 +55,7 @@ unless($skipExtraAnnotation) {
                     and r.external_database_release_id = ?
                     and r.external_database_id = d.external_database_id
                     and r.version = t.external_db_version
+                    and t.org_abbrev = '$organismAbbrev'
                     and d.name = t.external_db_name";
   my $sh = $dbh->prepare($sql);
   $sh->execute($extDbRlsId);
