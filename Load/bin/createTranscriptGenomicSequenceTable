@@ -91,9 +91,9 @@ sub populateChildTable {
   my ($dbh, $schema, $projectId, $orgAbbrev) = @_;
 
   my $insertSql = "INSERT INTO $schema.$TABLENAME
-    (gene_source_id, source_id, project_id,
+    (org_abbrev, gene_source_id, source_id, project_id,
      genomic_sequence, genomic_sequence_length)
- VALUES (?,?,?,?,?)";
+ VALUES ($orgAbbrev,?,?,?,?,?)";
   my $insertSh = $dbh->prepare($insertSql);
 
   my $sql = "SELECT ga.source_id AS gene_source_id

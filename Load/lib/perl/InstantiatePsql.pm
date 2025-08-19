@@ -43,11 +43,4 @@ insert into :SCHEMA.${tableName}_${refOrgAbb}
     return $sql;
 }
 
-# use this for PLPGSQL (e.g., loops)
-sub substituteDelims {
-    my ($sql) = @_;
-    $sql =~ s/\:PLPGSQL_DELIM/;/g;
-    return $sql;
-}
-
 1;
