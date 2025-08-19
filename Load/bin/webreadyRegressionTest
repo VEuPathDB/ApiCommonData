@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+my $dbh = $db->getQueryHandle();
+
+while(<STDIN>) {
+  chomp;
+  s/\.psql//;
+  my $table = $_;
+  my $qHandle = $dbh->prepareAndExecute("select count(*) from webready.$table");
+  my ($wrCount) = $qHandle->fetchrow_array();
+  $qHandle = $dbh->prepareAndExecute("select count(*) from apidbtuning.$table");
+  my ($ttCount) = $qHandle->fetchrow_array();
+
+  if ($wrCount == $ttCount) {
+    print "$table - same $wrCount $ttCount\n";
+  } else {
+    print "$table wr: $wrCount tt: $ttCount\n";
+  }
+}
