@@ -59,7 +59,7 @@ my $geneNameRef = getGeneNamesForOrganism ($dbh, $extDbRlsId);
 my $productRef = getProductNamesForOrganism ($dbh, $extDbRlsId);
 my $synonymRef = getSynonymsForOrganism ($dbh, $organismAbbrev);
 
-my $goRef = getGoInfoFromDbs ($dbh, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $synonymRef, $transcriptTypeRef, $date, $organismAbbrev);
+my $goRef = getGoInfoFromDbs ($dbh, $organismAbbrev, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $synonymRef, $transcriptTypeRef, $date, $tuningTablePrefix);
 
 printGoInfo ($fhl, $goRef) if (scalar (@$goRef) > 0);
 
@@ -71,7 +71,8 @@ $dbh->disconnect();
 
 #################
 sub getGoInfoFromDbs {
-  my ($dbhSub, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date, $organismAbbrev) = @_;
+  my ($dbhSub, $orgAbbrev, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date, $tuningTablePrefix) = @_;
+
   my @goInfos;
 
   ## use webready.GoTermSummary table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
@@ -83,7 +84,7 @@ select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, IS_NOT, GO_ID, REFERENCE, EVIDENCE_
     WHEN ontology = 'Cellular Component' THEN 'C'
   END
 from webready.GeneGoTerms
-where org_abbrev = '$organismAbbrev'
+where org_abbrev = '$orgAbbrev'
 ";
 
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
