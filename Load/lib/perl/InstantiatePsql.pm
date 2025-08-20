@@ -17,7 +17,7 @@ sub instantiateSql {
 create table $schema.$tableName (like $schema.${tableName}_temporary including all)
 partition by list (org_abbrev);
 
-ALTER TABLE $schema.$tableName ALTER COLUMN org_Abbrev SET NOT NULL;
+ALTER TABLE $schema.$tableName ALTER COLUMN org_abbrev SET NOT NULL;
 
 drop table $schema.${tableName}_temporary;
 };
@@ -25,13 +25,13 @@ drop table $schema.${tableName}_temporary;
         $sql =~ s/\:DECLARE_PARTITION/$s/g;
 
     } elsif ($mode eq 'child') {
-        my $s = qq{
 
     # create the child partition as a standalone (detached) table
     # and create a check constraint ensuring all rows satisfy the partition key constraint. otherwise pg will do a full scan during attach partition.
+        my $s = qq{
 CREATE TABLE $schema.${tableName}_$cleanOrganismAbbrev (LIKE $schema.$tableName INCLUDING ALL EXCLUDING INDEXES);
 
-ALTER TABLE $schema.${tableName}_$cleanOrganismAbbrev ADD CONSTRAINT $cleanOrganismAbbrev CHECK ( orgAbbrev = '$organismAbbrev' );
+ALTER TABLE $schema.${tableName}_$cleanOrganismAbbrev ADD CONSTRAINT $cleanOrganismAbbrev CHECK ( org_abbrev = '$organismAbbrev' );
 
 insert into $schema.${tableName}_$cleanOrganismAbbrev
 };
