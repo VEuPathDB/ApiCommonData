@@ -171,6 +171,7 @@ sub run {
   }
 
   my $startTimeAll = time;
+
   $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh);
   if ($mode ne 'child' && -e "$psqlDirPath/${tableName}_ix.psql") {
     $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
@@ -191,7 +192,7 @@ sub processPsqlFile {
   my @sqlList = split(/;\n\s*/, $newSqls);
   foreach my $sql (@sqlList) {
     my $startTime = time;
-
+    my $sql = ApiCommonData::Load::InstantiatePsql::substituteDelims($sql);
     $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$sql\n\n");
     if ($commitMode) {
       $dbh->do($sql);
@@ -202,27 +203,31 @@ sub processPsqlFile {
 }
 
 sub undoPreprocess {
-  my($self, $dbh, $rowAlgInvocationList) = @_;
+    my($self, $dbh, $rowAlgInvocationList) = @_;
 
-  $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
+    $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
 
-  $self->log("UNDOing alg invocation id: $rowAlgInvocationList->[0]");
+    $self->log("UNDOing alg invocation id: $rowAlgInvocationList->[0]");
 
-  my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
-  my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
-  my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
+    my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
+    my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
+    my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
-  my $tableName = $tableNames->[0];
-  my $schema = $schemas->[0];
-  my $orgAbbrev = $orgAbbrevs->[0];
+    my $tableName = $tableNames->[0];
+    my $schema = $schemas->[0];
+    my $orgAbbrev = $orgAbbrevs->[0];
 
-  my $sql = "drop table if exists $schema.${tableName}_temporary";
-  $dbh->do($sql) || $self->error("Failed executing $sql");
-  $self->log("Dropped $schema.$tableName");
-  my $dropTableName = $orgAbbrev? "$schema.$tableName\_$orgAbbrev" : "$schema.$tableName";
-  my $sql = "drop table if exists $dropTableName";
-  $dbh->do($sql) || $self->error("Failed executing $sql");
-  $self->log("Dropped $schema.$tableName");
+    $orgAbbrev  =~ s/\.//g if defined $orgAbbrev;
+    $orgAbbrev  =~ s/\-//g if defined $orgAbbrev;
+
+    my $sql = "drop table if exists $schema.${tableName}_temporary";
+    $dbh->do($sql) || $self->error("Failed executing $sql");
+    $self->log("Dropped $schema.$tableName");
+
+    my $dropTableName = $orgAbbrev ? "${schema}.${tableName}_${orgAbbrev}" : "$schema.$tableName";
+    my $sql = "drop table if exists $dropTableName";
+    $dbh->do($sql) || $self->error("Failed executing $sql");
+    $self->log("Dropped $dropTableName");
 
 }
 
