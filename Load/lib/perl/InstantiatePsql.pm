@@ -41,6 +41,8 @@ insert into $schema.${tableName}_$cleanOrganismAbbrev
     $s = "
 ALTER TABLE $schema.$tableName ATTACH PARTITION $schema.${tableName}_$cleanOrganismAbbrev FOR VALUES in ('$organismAbbrev');
 
+ANALYZE VERBOSE $schema.${tableName}_$cleanOrganismAbbrev;
+
 ALTER TABLE $schema.${tableName}_$cleanOrganismAbbrev DROP CONSTRAINT $cleanOrganismAbbrev;
 
 ";
