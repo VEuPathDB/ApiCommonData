@@ -236,7 +236,7 @@ where t.relnamespace = n.oid
     my $stmt = $dbh->prepareAndExecute($sql);
     my ($isAttached) = $stmt->fetchrow_array();
 
-    if ($isAttached eq 't') {
+    if ($isAttached) {
       $sql = "ALTER TABLE $schema.$tableName DETACH PARTITION $schema.${tableName}_$orgAbbrev CONCURRENTLY";
       $dbh->do($sql) || $self->error("Failed executing $sql");
     }
