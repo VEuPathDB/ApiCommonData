@@ -45,7 +45,7 @@ ALTER TABLE $schema.${tableName}_$cleanOrganismAbbrev DROP CONSTRAINT $cleanOrga
 
 ";
 
-    $sql =~ s/\:DECLARE_PARTITION//g;
+    $sql =~ s/\:DECLARE_PARTITION/$s/g;
   }
 
   $sql =~ s/\:TAXON_ID/$taxonId/g;
