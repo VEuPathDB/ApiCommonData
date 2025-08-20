@@ -11,15 +11,13 @@ sub instantiateSql {
     $cleanOrganismAbbrev =~ s/\-//g;
 
     # nullable partition key column may cause performance issues during attach partition command, so we add a NOT NULL constraint. 
-    my $s = "
-;
     if ($mode eq 'parent') {
         my $s = qq{
 
 create table $schema.$tableName (like $schema.${tableName}_temporary including all)
 partition by list (org_abbrev);
 
-ALTER TABLE $schema.$tableName ALTER COLUMN orgAbbrev SET NOT NULL;
+ALTER TABLE $schema.$tableName ALTER COLUMN org_Abbrev SET NOT NULL;
 
 drop table $schema.${tableName}_temporary;
 };
@@ -31,13 +29,12 @@ drop table $schema.${tableName}_temporary;
 
     # create the child partition as a standalone (detached) table
     # and create a check constraint ensuring all rows satisfy the partition key constraint. otherwise pg will do a full scan during attach partition.
-    my $s = "
 CREATE TABLE $schema.${tableName}_$cleanOrganismAbbrev (LIKE $schema.$tableName INCLUDING ALL EXCLUDING INDEXES);
 
 ALTER TABLE $schema.${tableName}_$cleanOrganismAbbrev ADD CONSTRAINT $cleanOrganismAbbrev CHECK ( orgAbbrev = '$organismAbbrev' );
 
 insert into $schema.${tableName}_$cleanOrganismAbbrev
-";
+};
     $sql =~ s/\:CREATE_AND_POPULATE/$s/g;
 
     # Attach the partitioned child table to the parent and drop the now redundant check constraint on the child table.
