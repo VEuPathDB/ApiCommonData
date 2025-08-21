@@ -140,12 +140,12 @@ FROM (SELECT dataset_presenter_id,
            WHERE dh.dataset_presenter_id = pres.dataset_presenter_id
                  AND pres.name LIKE '%_primary_genome_RSRC')
        GROUP BY dataset_presenter_id) v,
-       apidbtuning.datasetnametaxon dnt,
+       apidbtuning.datasetdatasource dd,
        apidb.organism o,
        apidbTuning.DatasetProperty prop
-WHERE o.taxon_id = dnt.taxon_id
-      AND dnt.dataset_presenter_id = v.dataset_presenter_id
-      AND dnt.dataset_presenter_id = prop.dataset_presenter_id
+WHERE o.taxon_id = dd.taxon_id
+      AND dd.dataset_presenter_id = v.dataset_presenter_id
+      AND dd.dataset_presenter_id = prop.dataset_presenter_id
       AND prop.property = 'genomeVersion'";
 
     my $sth = $dbh->prepare($sql);
