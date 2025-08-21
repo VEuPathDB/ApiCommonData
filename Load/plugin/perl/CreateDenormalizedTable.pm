@@ -203,31 +203,54 @@ sub processPsqlFile {
 }
 
 sub undoPreprocess {
-    my($self, $dbh, $rowAlgInvocationList) = @_;
+  my($self, $dbh, $rowAlgInvocationList) = @_;
 
-    $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
+  $self->error("Expected a single rowAlgInvocationId") if scalar(@$rowAlgInvocationList) != 1;
 
-    $self->log("UNDOing alg invocation id: $rowAlgInvocationList->[0]");
+  $self->log("UNDOing alg invocation id: $rowAlgInvocationList->[0]");
 
-    my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
-    my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
-    my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
+  my $tableNames = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $TABLE_NAME_ARG);
+  my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $SCHEMA_ARG);
+  my $orgAbbrevs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, $ORG_ARG);
 
-    my $tableName = $tableNames->[0];
-    my $schema = $schemas->[0];
-    my $orgAbbrev = $orgAbbrevs->[0];
+  my $tableName = $tableNames->[0];
+  my $schema = $schemas->[0];
+  my $orgAbbrev = $orgAbbrevs->[0];
 
-    $orgAbbrev  =~ s/\.//g if defined $orgAbbrev;
-    $orgAbbrev  =~ s/\-//g if defined $orgAbbrev;
+  my $sql = "drop table if exists $schema.${tableName}_temporary";
+  $dbh->do($sql) || $self->error("Failed executing $sql");
+  $self->log("Dropped $schema.$tableName");
 
-    my $sql = "drop table if exists $schema.${tableName}_temporary";
-    $dbh->do($sql) || $self->error("Failed executing $sql");
-    $self->log("Dropped $schema.$tableName");
+  # clean orgAbbrev, to be compatible with postgres syntax
+  $orgAbbrev  =~ s/\.//g if defined $orgAbbrev;
+  $orgAbbrev  =~ s/\-//g if defined $orgAbbrev;
 
-    my $dropTableName = $orgAbbrev ? "${schema}.${tableName}_${orgAbbrev}" : "$schema.$tableName";
-    my $sql = "drop table if exists $dropTableName";
-    $dbh->do($sql) || $self->error("Failed executing $sql");
-    $self->log("Dropped $dropTableName");
+  # for children
+  # detach the child partition from the parent first, to avoid exclusive locks on parent. Then drop the detached table
+  # note the CONCURRENTLY keyword. Without it, pg will do an exclusive lock on the parent as well.
+  if ($orgAbbrev) {
+    # confirm it is attached
+    my $sql = "SELECT EXISTS (
+select 1 from pg_class t, pg_namespace n
+where t.relnamespace = n.oid
+        AND n.nspname = '$schema'
+        AND t.relispartition = true
+        AND t.relname = '${tableName}_$orgAbbrev'
+)";
+
+    my $stmt = $dbh->prepareAndExecute($sql);
+    my ($isAttached) = $stmt->fetchrow_array();
+
+    if ($isAttached) {
+      $sql = "ALTER TABLE $schema.$tableName DETACH PARTITION $schema.${tableName}_$orgAbbrev CONCURRENTLY";
+      $dbh->do($sql) || $self->error("Failed executing $sql");
+    }
+  }
+
+  my $dropTableName = $orgAbbrev? "$schema.$tableName\_$orgAbbrev" : "$schema.$tableName";
+  my $sql = "drop table if exists $dropTableName";
+  $dbh->do($sql) || $self->error("Failed executing $sql");
+  $self->log("Dropped $schema.$tableName");
 
 }
 
