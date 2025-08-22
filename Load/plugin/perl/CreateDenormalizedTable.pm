@@ -171,6 +171,7 @@ sub run {
   }
 
   my $startTimeAll = time;
+
   $self->processPsqlFile($fileName, $tableName, $schema, $organismAbbrev, $mode, $taxonId, $projectId, $commitMode, $dbh);
   if ($mode ne 'child' && -e "$psqlDirPath/${tableName}_ix.psql") {
     $self->processPsqlFile("$psqlDirPath/${tableName}_ix.psql", 'dontcare', $schema, $organismAbbrev, 'dontcare', 'dontcare', 'dontcare', $commitMode, $dbh);
@@ -191,7 +192,7 @@ sub processPsqlFile {
   my @sqlList = split(/;\n\s*/, $newSqls);
   foreach my $sql (@sqlList) {
     my $startTime = time;
-
+    my $sql = ApiCommonData::Load::InstantiatePsql::substituteDelims($sql);
     $self->log(( $commitMode? "FOR REAL" : "TEST ONLY" ). " - SQL: \n$sql\n\n");
     if ($commitMode) {
       $dbh->do($sql);
@@ -219,6 +220,33 @@ sub undoPreprocess {
   my $sql = "drop table if exists $schema.${tableName}_temporary";
   $dbh->do($sql) || $self->error("Failed executing $sql");
   $self->log("Dropped $schema.$tableName");
+
+  # clean orgAbbrev, to be compatible with postgres syntax
+  $orgAbbrev  =~ s/\.//g if defined $orgAbbrev;
+  $orgAbbrev  =~ s/\-//g if defined $orgAbbrev;
+
+  # for children
+  # detach the child partition from the parent first, to avoid exclusive locks on parent. Then drop the detached table
+  # note the CONCURRENTLY keyword. Without it, pg will do an exclusive lock on the parent as well.
+  if ($orgAbbrev) {
+    # confirm it is attached
+    my $sql = "SELECT EXISTS (
+select 1 from pg_class t, pg_namespace n
+where t.relnamespace = n.oid
+        AND n.nspname = '$schema'
+        AND t.relispartition = true
+        AND t.relname = '${tableName}_$orgAbbrev'
+)";
+
+    my $stmt = $dbh->prepareAndExecute($sql);
+    my ($isAttached) = $stmt->fetchrow_array();
+
+    if ($isAttached) {
+      $sql = "ALTER TABLE $schema.$tableName DETACH PARTITION $schema.${tableName}_$orgAbbrev CONCURRENTLY";
+      $dbh->do($sql) || $self->error("Failed executing $sql");
+    }
+  }
+
   my $dropTableName = $orgAbbrev? "$schema.$tableName\_$orgAbbrev" : "$schema.$tableName";
   my $sql = "drop table if exists $dropTableName";
   $dbh->do($sql) || $self->error("Failed executing $sql");
