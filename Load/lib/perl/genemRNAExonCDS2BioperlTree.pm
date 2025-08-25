@@ -88,7 +88,7 @@ sub preprocess {
 	      $bioperlSeq->add_SeqFeature($gene); 
 	    }  ## end of $type eq tRNA or rRNA
 
-	    if ($type eq 'gene') {
+	    if ($type eq 'gene' || $type eq 'ncRNA_gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
 
