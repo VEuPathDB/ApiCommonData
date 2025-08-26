@@ -223,7 +223,7 @@ sub getGeneFeatureFromTuningTable {
   my ($ncbiTaxonId, $dbh) = @_;
   my %genes;
 
-  my $sql = "select DISTINCT GENE_TYPE, count(*) from APIDBTUNING.GENEATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId group by GENE_TYPE";
+  my $sql = "select DISTINCT GENE_TYPE, count(*) from webready.GeneAttributes where NCBI_TAX_ID=$ncbiTaxonId group by GENE_TYPE";
   my $stmt = $dbh->prepareAndExecute($sql);
   while ( my ($type, $count) = $stmt->fetchrow_array()) {
     $type =~ s/\s+encoding//;

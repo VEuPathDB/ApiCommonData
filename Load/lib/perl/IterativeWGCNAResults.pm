@@ -72,8 +72,8 @@ sub munge {
 	my $preprocessedFile = "Preprocessed_" . $inputFile;
 	my $sql = "SELECT ga.source_id,
 							ta.length
-						FROM apidbtuning.geneAttributes ga,
-							apidbtuning.transcriptAttributes ta
+						FROM webready.GeneAttributes ga,
+							webready.TranscriptAttributes ta
 						WHERE ga.organism = '$organism'
 						AND ga.gene_type != 'pseudogene'
 						AND ga.gene_id = ta.gene_id";

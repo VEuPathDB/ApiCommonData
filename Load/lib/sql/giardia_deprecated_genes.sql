@@ -159,14 +159,14 @@ and percentage > 25);
 /* now remove the ones that overlap with tRNA or rRNA */
 delete from DeprecatedGenes where source_id in (
 select og.right_id
-from overlapping_genes og, ApidbTuning.GeneAttributes ga
+from overlapping_genes og, webready.GeneAttributes ga
 where og.left_id = ga.source_id
 and ga.so_term_name in ('tRNA_encoding','rRNA_encoding')
 and og.spec_orientation != 'subsumed');
 
 delete from DeprecatedGenes where source_id in (
 select og.left_id
-from overlapping_genes og, ApidbTuning.GeneAttributes ga
+from overlapping_genes og, webready.GeneAttributes ga
 where og.right_id = ga.source_id
 and ga.so_term_name in ('tRNA_encoding','rRNA_encoding')
 and og.spec_orientation != 'subsumed');

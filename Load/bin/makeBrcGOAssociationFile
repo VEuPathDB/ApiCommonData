@@ -65,7 +65,7 @@ sub makeGOAssociation {
    SELECT '$Prefix'||chr(9)||'$Prefix:'||gs.source_id||chr(9)||gs.GO_id||chr(9)||chr(9)||
           DECODE(gs.evidence_code, 'IGI','EXP','TAS','LIT','NAS','LIT','ND','LIT','IEP','EXP','IMP','EXP','IC','LIT','RCA','IEA','IDA','EXP','NR','LIT',gs.evidence_code)||
           chr(9)||chr(9)||gs.ontology||chr(9)||chr(9) as summary
-     FROM ApidbTuning.GoTermSummary gs, dots.genefeature gf, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+     FROM webready.GoTermSummary gs, dots.genefeature gf, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
     WHERE ed.name='$extDbName'
       AND edr.version='$extDbRlsVer'
       AND ed.external_database_id = edr.external_database_id

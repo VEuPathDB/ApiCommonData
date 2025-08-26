@@ -9,7 +9,7 @@ is
 begin
       select distinct sa.project_id 
       into project
-      from ApidbTuning.GenomicSeqAttributes sa
+      from webready.GenomicSeqAttributes sa
       where SUBSTR(sa.organism,1,(INSTR(sa.organism,' ',1,1)-1)) = SUBSTR(orgParam,1,(INSTR(orgParam||' ',' ',1,1)-1));
     return project;
 

@@ -378,7 +378,7 @@ select p.agp_piece_id as feature_id,
       'Length=' || (p.end_max - p.start_min + 1) || '$dlm' ||
       'Type=scaffold' ||'$dlm' ||
       'Note=' || p.piece_id atts
-from apidbtuning.genomicseqattributes gsa, apidb.agpPiece p
+from webready.GenomicSeqAttributes gsa, apidb.agpPiece p
 where gsa.source_id = p.source_id
 and not p.piece_id is null
 and gsa.na_sequence_id = $srcfeature_id
@@ -394,7 +394,7 @@ SELECT sg.na_feature_id as feature_id,
        'Type=sgap' as atts
 FROM   DoTS.ScaffoldGapFeature sg,
        DoTS.NaLocation fl,
-       ApidbTuning.GenomicSeqAttributes gsa
+       webready.GenomicSeqAttributes gsa
 WHERE  fl.na_feature_id = sg.na_feature_id
    AND gsa.na_sequence_id = sg.na_sequence_id
    AND gsa.na_sequence_id = $srcfeature_id
@@ -431,7 +431,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
                          else 'Weak Evidence'
                        end as evidence,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand
-                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                   and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
@@ -473,7 +473,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
       --               gij.is_reversed,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                         null as tstarts, null as blocksizes, null as atts, null as frame
-                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                   and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -498,7 +498,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
       --               annotated_intron,
                        to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
                        to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                   and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -527,7 +527,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
 --                gij.is_reversed,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                   null as tstarts, null as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
@@ -536,7 +536,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
                 AND (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
                 AND gij.intron_feature_id not in (
                 select gij.intron_feature_id
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -561,7 +561,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
                      decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                      to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
                      to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
@@ -570,7 +570,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
                 AND (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
                 AND gij.intron_feature_id not in (
                 select gij.intron_feature_id
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -600,7 +600,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
 --                gij.is_reversed,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                   null as tstarts, null as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id= $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -621,7 +621,7 @@ WHERE  fl.na_feature_id = sg.na_feature_id
 --                     ANNOTATED_INTRON,
                      to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
                      to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id= $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2

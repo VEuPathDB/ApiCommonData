@@ -87,7 +87,7 @@ Apollo adds this code:
                          else 'Weak Evidence'
                        end as evidence,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand
-                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                   and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
@@ -128,7 +128,7 @@ Apollo adds this code:
       --               gij.is_reversed,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                         null as tstarts, null as blocksizes, null as atts, null as frame
-                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                   and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -153,7 +153,7 @@ Apollo adds this code:
       --               annotated_intron,
                        to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
                        to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from apidbTuning.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, apidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                   and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -181,7 +181,7 @@ Apollo adds this code:
 --                gij.is_reversed,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                   null as tstarts, null as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
@@ -190,7 +190,7 @@ Apollo adds this code:
                 AND (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
                 AND gij.intron_feature_id not in (
                 select gij.intron_feature_id
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -215,7 +215,7 @@ Apollo adds this code:
                      decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                      to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
                      to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
@@ -224,7 +224,7 @@ Apollo adds this code:
                 AND (gij.contained = 0 or gij.percent_max >= stats.min_annot_percent_max)
                 AND gij.intron_feature_id not in (
                 select gij.intron_feature_id
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id = $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -254,7 +254,7 @@ Apollo adds this code:
 --                gij.is_reversed,
                        decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
                   null as tstarts, null as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id= $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
@@ -275,7 +275,7 @@ Apollo adds this code:
 --                     ANNOTATED_INTRON,
                      to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
                      to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from ApidbTuning.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
+                from webready.GeneIntronJunction gij, ApidbTuning.GeneIntJuncStats stats
                 where gij.na_sequence_id= $srcfeature_id
                 and gij.na_sequence_id = stats.na_sequence_id
                 AND gij.segment_end - gij.segment_start <= stats.max_intron_length * 2

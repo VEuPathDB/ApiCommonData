@@ -49,7 +49,7 @@ sub preprocessFile {
 
     my $dbh = DBI->connect($dbConnection, $dbLogin, $dbPassword) or die "Unable to connect: DBI->errstr\n";
     my $stmt = $dbh->prepare("SELECT source_id
-                              FROM ApidbTuning.geneAttributes ga
+                              FROM webready.GeneAttributes ga
                               where organism = '$organism' AND gene_type = 'protein coding gene'");
     $stmt->execute();
 

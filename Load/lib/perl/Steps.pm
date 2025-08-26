@@ -1646,7 +1646,7 @@ sub makeTranscriptDownloadFileTransformed {
             snas.length
             as defline,
             snas.sequence
-           FROM ApidbTuning.GeneAttributes gf,
+           FROM webready.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
@@ -2072,7 +2072,7 @@ sub makeDerivedCdsDownloadFileTransformed {
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
            FROM ApidbTuning.FeatureLocation fl,
-                ApidbTuning.GeneAttributes gf,
+                webready.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
@@ -2315,7 +2315,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
             as defline,
             taas.sequence
            FROM ApidbTuning.FeatureLocation fl,
-                ApidbTuning.GeneAttributes gf,
+                webready.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
                 dots.translatedaafeature taaf,

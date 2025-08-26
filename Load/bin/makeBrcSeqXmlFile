@@ -106,7 +106,7 @@ sub makeSeqXml {
 
 my $sql = "
   SELECT sa.source_id
-    FROM ApidbTuning.GenomicSeqAttributes sa
+    FROM webready.GenomicSeqAttributes sa
    WHERE sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
      AND sa.is_top_level = 1
 ORDER By sa.source_id
