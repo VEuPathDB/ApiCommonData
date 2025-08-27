@@ -16,7 +16,7 @@ my ($gusConfigFile, $orgAbbrev, $projectId, $schema, $mode);
 	    "projectName=s" => \$projectId,
 	    "organismAbbrev=s" => \$orgAbbrev,
 	    "schema=s" => \$schema,
-            "mode=s" => \$mode);  # parent or child
+            "mode=s" => \$mode);  # load or delete
 
 my $TABLENAME = "TranscriptGenomicSequence";
 
@@ -31,61 +31,15 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-my $createSqlSelect = "
-        select '$orgAbbrev' as org_abbrev, '$projectId' as project_id, current_timestamp as modification_date,
-               gf.source_id as gene_source_id, t.source_id,
-               nas.sequence as genomic_sequence,
-               length(nas.sequence) as genomic_sequence_length
-        from dots.NaSequence nas, dots.GeneFeature gf, dots.Transcript t
-        where 1 = 0
-";
-
-if ($mode eq 'parent') {
-  createParentTable($dbh, $createSqlSelect, $schema, $projectId, $orgAbbrev);
-} else {
-  createChildTable($dbh, $createSqlSelect, $schema, $projectId, $orgAbbrev);
+if ($mode eq 'load') {
   populateChildTable($dbh, $schema, $projectId, $orgAbbrev);
-}
+} elsif ($mode eq 'load') {
+  deleteRows($dbh, $schema, $projectId, $orgAbbrev);
+} else { die "Invalid mode: $mode"; }
 
 $dbh->disconnect();
 
 #################################################################################################
-
-sub createParentTable {
-  my ($dbh, $createSelectSql, $schema, $projectId, $orgAbbrev) = @_;
-
- $dbh->do("drop table if exists $schema.tgs_temporary");
-
-  my $createTmpSql = "
-create table $schema.tgs_temporary as
-$createSqlSelect
-";
-  print STDERR "$createTmpSql\n";
-  $dbh->do($createTmpSql);
-
-  my $createSql = "
-create table $schema.$TABLENAME (like $schema.tgs_temporary including all)
-partition by list(org_abbrev)";
-
-  $dbh->do($createSql);
-
-  $dbh->do("drop table $schema.tgs_temporary");
-
-  $dbh->do("create unique index txgseq_idx on $schema.$TABLENAME (org_abbrev, source_id, gene_source_id, project_id)");
-  $dbh->commit();
-}
-
-sub createChildTable {
-  my ($dbh, $createSelectSql, $schema, $projectId, $orgAbbrev) = @_;
-
-  my $sql = "
-create table $schema.${TABLENAME}_$orgAbbrev
-partition of $schema.${TABLENAME}
-for values in ('$orgAbbrev')
-";
-
-  $dbh->do($sql);
-}
 
 sub populateChildTable {
   my ($dbh, $schema, $projectId, $orgAbbrev) = @_;
@@ -143,6 +97,19 @@ ORDER BY gss.source_id";
 
   $dbh->commit();
 }
+
+sub deleteRows {
+  my ($dbh, $schema, $orgAbbrev) = @_;
+
+  my $sql = "delete from ${schema}.TranscriptGenomicSequence where org_abbrev = ?";
+  my $sh = $dbh->prepare($sql);
+  my $rows = $sh->execute($orgAbbrev);
+
+  print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence\n";
+  $dbh->commit();
+}
+
+
 
 
 1;
