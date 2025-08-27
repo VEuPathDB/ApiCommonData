@@ -14,7 +14,7 @@ use Getopt::Long;
 my ($gusConfigFile, $orgAbbrev, $projectId, $schema, $mode);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "projectName=s" => \$projectId,
-	    "organismAbbrev=s" => \$orgAbbrev,
+	    "orgAbbrev=s" => \$orgAbbrev,
 	    "schema=s" => \$schema,
             "mode=s" => \$mode);  # load or delete
 
@@ -33,7 +33,7 @@ $dbh->{AutoCommit} = 0;
 
 if ($mode eq 'load') {
   populateChildTable($dbh, $schema, $projectId, $orgAbbrev);
-} elsif ($mode eq 'load') {
+} elsif ($mode eq 'delete') {
   deleteRows($dbh, $schema, $projectId, $orgAbbrev);
 } else { die "Invalid mode: $mode"; }
 
