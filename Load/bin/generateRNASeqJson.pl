@@ -24,16 +24,15 @@ while(<DATA>) {
 }
 
 my $sql =<<EOL;
-SELECT distinct r.name, y.property, y.value 
-FROM apidbtuning.DATASETPRESENTER r, apidbtuning.DATASETPROPERTY y
-WHERE r.DATASET_PRESENTER_ID = y.DATASET_PRESENTER_ID
- AND lower(r.name) like '%rnaseq%'
+SELECT distinct y.datasource_name, y.property, y.value 
+FROM apidbtuning.DATASETPROPERTY y
+ AND lower(y.datasource_name) like '%rnaseq%'
  AND (y.property='buildNumberIntroduced' or 
       y.property='hasPairedEnds' or 
       y.property='isStrandSpecific' or 
       y.property='projectName' or
       y.property='version')
-order by r.name, y.property
+order by y.datasource_name, y.property
 EOL
 
 my $sth = $dbh->prepare($sql);
