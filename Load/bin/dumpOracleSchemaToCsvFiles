@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use DBI;
+
+# Discover the tables in the provided target_schema.  Dump each table to a tablename.csv file, including a header with column names.
+# Use backtick as field delimiter.  Escape backticks in the data.
+
+# Check command-line arguments
+if (@ARGV != 3) {
+    die "Usage: $0 <dbinstance> <user> <target_schema>\n";
+  }
+
+my ($instance, $dbuser, $target_schema) = @ARGV;
+my $dbpass = $ENV{ORACLE_PASS}; # Oracle password from environment variable
+
+# Build DSN
+my $dsn = "dbi:Oracle:$instance";
+
+# Connect to Oracle
+my $dbh = DBI->connect($dsn, $dbuser, $dbpass, {
+    RaiseError => 1,
+    AutoCommit => 0,
+    LongReadLen => 50000000
+                                               }) or die $DBI::errstr;
+
+# Get table names
+my $table_sth = $dbh->prepare("
+    SELECT table_name FROM all_tables WHERE owner = UPPER(?) ORDER BY table_name
+");
+$table_sth->execute($target_schema);
+
+while (my ($table_name) = $table_sth->fetchrow_array) {
+  next if $table_name eq 'DATASETS';
+    print "Exporting table: $table_name\n";
+
+    my $sql = "SELECT * FROM $target_schema.$table_name";
+    my $data_sth = $dbh->prepare($sql);
+    $data_sth->execute();
+
+    # Column names
+    my @columns = @{$data_sth->{NAME}};
+
+    # Open file
+    open my $fh, '>', "$table_name.csv" or die "Cannot open $table_name.csv: $!";
+
+    # Print header
+    print $fh join(",", map { "`$_`" } @columns), "\n";
+
+    # Print rows
+    while (my $row = $data_sth->fetchrow_arrayref) {
+        my @escaped = map {
+            defined $_ ? "`" . escape($_) . "`" : '``'
+          } @$row;
+        print $fh join(",", @escaped), "\n";
+      }
+
+    close $fh;
+    $data_sth->finish;
+  }
+
+$table_sth->finish;
+$dbh->disconnect;
+
+print "All tables exported successfully.\n";
+
+# Escape backticks and commas (basic)
+sub escape {
+    my $val = shift;
+    $val =~ s/`/``/g;        # Escape backticks
+    $val =~ s/\r?\n/ /g;     # Remove newlines
+    return $val;
+}
