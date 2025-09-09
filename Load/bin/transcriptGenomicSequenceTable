@@ -44,6 +44,23 @@ $dbh->disconnect();
 sub populateChildTable {
   my ($dbh, $schema, $projectId, $orgAbbrev) = @_;
 
+  my $genomicSequenceSql = "select s.source_id, s.sequence from $schema.genomicsequencesequence s where s.org_abbrev = '$orgAbbrev'";
+
+  my $sh = $dbh->prepare($genomicSequenceSql)
+    or die "Can't prepare SQL statement: " . $dbh->errstr();
+  $sh->execute();
+
+  while(my ($sourceId, $sequence) = $sh->fetchrow_array()) {
+    &insertTranscriptSequences($dbh, $schema, $projectId, $orgAbbrev, $sourceId, $sequence);
+  }
+  $sh->finish();
+
+  $dbh->disconnect();
+}
+  
+sub insertTranscriptSequences {
+  my ($dbh, $schema, $projectId, $orgAbbrev, $sequenceSourceId, $sequence) = @_;
+
   my $insertSql = "INSERT INTO $schema.$TABLENAME
     (org_abbrev, gene_source_id, source_id, project_id,
      genomic_sequence, genomic_sequence_length)
@@ -56,27 +73,21 @@ sub populateChildTable {
      , tl.start_min
      , tl.end_max
      , tl.is_reversed
-     , gss.source_id
-     , gss.sequence
 FROM apidb.transcriptlocation tl
    , $schema.geneattributes ga
    , dots.transcript t
-   , $schema.genomicsequencesequence gss
 WHERE t.na_feature_id  = tl.na_feature_id
 AND t.parent_id = ga.na_feature_id
-AND tl.sequence_source_id = gss.source_id
+AND tl.sequence_source_id = '$sequenceSourceId'
 AND ga.org_abbrev = '$orgAbbrev'
-AND gss.org_abbrev = '$orgAbbrev'
-ORDER BY gss.source_id";
-
-  print STDERR "$sql\n";
+";
 
   my $sh = $dbh->prepare($sql)
     or die "Can't prepare SQL statement: " . $dbh->errstr();
   $sh->execute();
 
-  my ($prevSequenceSourceId, $sequence, $count);
-  while (my ($geneSourceId, $projectId, $sourceId, $start, $end, $isReversed, $sequenceSourceId, $sequence) = $sh->fetchrow_array()) {
+  my ($count);
+  while (my ($geneSourceId, $projectId, $sourceId, $start, $end, $isReversed) = $sh->fetchrow_array()) {
 
     my $substrStart = $start - 1;
     my $substrLength = $end - $start + 1;
@@ -89,12 +100,13 @@ ORDER BY gss.source_id";
 
     $insertSh->execute($geneSourceId, $sourceId, $projectId, $transcriptGenomicSequence, $substrLength);
 
-    if ($count++ % 200000 == 0) {
+    if ($count++ % 1000 == 0) {
       print STDERR "Commit point; count = $count\n";
       $dbh->commit();
     }
   }
 
+  $sh->finish();
   $dbh->commit();
 }
 
