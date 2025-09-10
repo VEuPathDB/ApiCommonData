@@ -34,7 +34,7 @@ $dbh->{AutoCommit} = 0;
 if ($mode eq 'load') {
   populateChildTable($dbh, $schema, $projectId, $orgAbbrev);
 } elsif ($mode eq 'delete') {
-  deleteRows($dbh, $schema, $projectId, $orgAbbrev);
+  deleteRows($dbh, $schema, $orgAbbrev);
 } else { die "Invalid mode: $mode"; }
 
 $dbh->disconnect();
@@ -113,9 +113,7 @@ AND ga.org_abbrev = '$orgAbbrev'
 sub deleteRows {
   my ($dbh, $schema, $orgAbbrev) = @_;
 
-  my $sql = "delete from ${schema}.TranscriptGenomicSequence where org_abbrev = ?";
-  my $sh = $dbh->prepare($sql);
-  my $rows = $sh->execute($orgAbbrev);
+  my $rows = $dbh->do("delete from ${schema}.TranscriptGenomicSequence where org_abbrev = '$orgAbbrev'");
 
   print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence\n";
   $dbh->commit();
