@@ -78,12 +78,12 @@ while (<INN>) {
 #    if ($items[8] =~ /Parent \"(\S+?)\"/) {  ## for these protein sequences named by gene ID
       $items[8] .= "transl_table \"$translTable\"\;" if ($translTable);
       $items[8] .= "transl_table \"$translTables{$1}\"\;" if ($translTables{$1});
-      $items[8] .= "translation \"$proteins{$1}\"\;";
+      $items[8] .= "translation \"$proteins{$1}\"\;" if ($proteins{$1});
     } elsif ($items[8] =~ /ID=(\S+?);/) {
 #    if ($items[8] =~ /Parent=(\S+?);/) {  ## for these protein sequences named by gene ID
       $items[8] .= "\;transl_table=$translTable" if ($translTable);
       $items[8] .= "\;transl_table=$translTables{$1}" if ($translTables{$1});
-      $items[8] .= "\;translation=$proteins{$1}";
+      $items[8] .= "\;translation=$proteins{$1}" if ($proteins{$1});
     }
   }
 
