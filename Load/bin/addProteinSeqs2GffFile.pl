@@ -4,13 +4,15 @@ use strict;
 use Getopt::Long;
 
 
-my ($verbose, $help, $inputGffFile, $outputGffFile, $proteinFile, $idSuffix, $translTable);
+my ($verbose, $help, $inputGffFile, $outputGffFile, $proteinFile, $idSuffix, $idPrefix, $translTable, $ifRemove);
 
 &GetOptions('help|h' => \$help,
             'inputGffFile=s' => \$inputGffFile,
             'proteinFile=s' => \$proteinFile,
             'idSuffix=s' => \$idSuffix,
+            'idPrefix=s' => \$idPrefix,
             'translTable=s' => \$translTable,
+            'ifRemove=s' => \$ifRemove,
            );
 
 &usage() if($help);
@@ -32,9 +34,15 @@ while (<IN>) {
     ## need to replace protein ID with transcript ID
     $seqId =~ s/\-P(\w)$/\-R$1/;
 
-    if ($idSuffix) {
-      $seqId .= $idSuffix;
+    if ($ifRemove =~ /^T/i) {
+      $seqId =~ s/$idSuffix// if ($idSuffix);
+      $seqId =~ s/$idPrefix// if ($idPrefix);
+
+    } else {
+      $seqId .= $idSuffix if ($idSuffix);
+      $seqId = $idPrefix . $seqId if ($idPrefix);
     }
+#    print STDERR "\$seqId = $seqId, ";
 
     ## some protein sequence files have translated table info at the defline
     if ($_ =~ /translated using codon table (\d+)/) {
@@ -42,6 +50,8 @@ while (<IN>) {
       #print STDERR "\$translTable = $translTable\n";
     }
   } else {
+    $_ =~ s/^\s+//;
+    $_ =~ s/\s+$//;
     $proteins{$seqId} .= $_;
   }
 }
@@ -55,6 +65,11 @@ foreach my $k (sort keys %proteins) {
 open (INN, $inputGffFile) || die "can not open inputGffFile to read\n";
 while (<INN>) {
   chomp;
+  if ($_ =~ /^\#/) {
+    print "$_\n";
+    next;
+  }
+
   my @items = split (/\t/, $_);
   #$items[2] = "gene" if ($items[2] eq "CDS");  ## only need with special case
   #$items[8] =~ s/cds_//;  ## only need with special case
@@ -64,6 +79,11 @@ while (<INN>) {
       $items[8] .= "transl_table \"$translTable\"\;" if ($translTable);
       $items[8] .= "transl_table \"$translTables{$1}\"\;" if ($translTables{$1});
       $items[8] .= "translation \"$proteins{$1}\"\;";
+    } elsif ($items[8] =~ /ID=(\S+?);/) {
+#    if ($items[8] =~ /Parent=(\S+?);/) {  ## for these protein sequences named by gene ID
+      $items[8] .= "\;transl_table=$translTable" if ($translTable);
+      $items[8] .= "\;transl_table=$translTables{$1}" if ($translTables{$1});
+      $items[8] .= "\;translation=$proteins{$1}";
     }
   }
 
@@ -86,7 +106,10 @@ where
   --inputGffFile: required, the input gff file name
   --proteinFile: required, the protein file name
   --idSuffix: transcript Ids in the gff file have a id Suffix compare to the gene Ids in the protein file
+  --idPrefix: transcript Ids in the gff file have a id Prefix compare to the gene Ids in the protein file
   --translTable: the translation table for sepecial organism
+  --ifRemove: required, compare the transcript IDs in the GFF file with those in the protein file,
+              if the IDs in the protein file contain a prefix or suffix not present in the GFF, set ifRemove = True, otherwise set ifRemove = false
 
 ";
 }
