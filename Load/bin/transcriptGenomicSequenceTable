@@ -72,22 +72,22 @@ ORDER BY tl.sequence_source_id
   my $seq_sh = $dbh->prepare($genomicSequenceSql) or die "Can't prepare SQL statement: " . $dbh->errstr();
   $seq_sh->execute();
 
-  my $trans_sh = $dbh->prepare($sql) or die "Can't prepare SQL statement: " . $dbh->errstr();
-  $sh->execute();
+  my $trans_sh = $dbh->prepare($transSql) or die "Can't prepare SQL statement: " . $dbh->errstr();
+  $trans_sh->execute();
 
   my ($seqSourceId, $geneSourceId, $sourceId, $start, $end, $isReversed) = $trans_sh->fetchrow_array();
 
   my $count;
-  while(my ($sourceId, $sequence) = $seq_sh->fetchrow_array()) {
+  while(my ($seqSourceId_outer, $sequence) = $seq_sh->fetchrow_array()) {
     do {
       if ($count && $count % 1000 == 0) {
 	print STDERR "Commit point; count = $count\n";
 	$dbh->commit();
       }
       &insertTranscriptSequence($dbh, $insertSh, $sequence, $geneSourceId, $sourceId, $start, $end, $isReversed);
-      count++;
-      ($seqSourceId, $geneSourceId, $projectId, $sourceId, $start, $end, $isReversed) = $sh->fetchrow_array();
-    } while ($seqSourceId eq $sourceId);
+      $count++;
+      ($seqSourceId, $geneSourceId, $sourceId, $start, $end, $isReversed) = $trans_sh->fetchrow_array();
+    } while ($seqSourceId eq $seqSourceId_outer);
   }
   $seq_sh->finish();
   $trans_sh->finish();
