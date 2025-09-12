@@ -130,7 +130,8 @@ sub formatInputAndLoad {
 
           unless ($aaSequenceId) {
             my $before = $seq;
-            $seq =~ s/_/:/;
+            $seq =~ s/_mRNA/:mRNA/;
+            $seq =~ s/_RNA/:RNA/;
             if ($sequenceIds{$seq}) {
               $aaSequenceId = $sequenceIds{$seq};
             }
