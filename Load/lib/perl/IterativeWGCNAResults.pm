@@ -70,22 +70,23 @@ sub munge {
 
 	print "Using the first strand and excluding pseudogenes\n";
 	my $preprocessedFile = "Preprocessed_" . $inputFile;
-	my $sql = "SELECT ga.source_id,
-							ta.length
-						FROM apidbtuning.geneAttributes ga,
-							apidbtuning.transcriptAttributes ta
-						WHERE ga.organism = '$organism'
-						AND ga.gene_type != 'pseudogene'
-						AND ga.gene_id = ta.gene_id";
+	my $sql = "select gf.source_id
+from dots.genefeature gf 
+inner join sres.ontologyterm ot on ot.ontology_term_id = gf.sequence_ontology_id
+    inner join dots.nasequence s on gf.na_sequence_id = s.na_sequence_id
+    inner join sres.taxonname tn on s.taxon_id = tn.taxon_id
+where ot.name != 'pseudogene'
+ and tn.name = '$organism'
+ and tn.name_class = 'scientific name'";
+
 	my $stmt = $dbh->prepare($sql);
 	$stmt->execute();
 
 	# Create gene hash
 	my %genesHash;
-	my %geneLengthsHash;
-	while(my ($genes, $transcript_length) = $stmt->fetchrow_array() ) {
+
+	while(my ($genes) = $stmt->fetchrow_array() ) {
 		$genesHash{$genes} = 1;
-		$geneLengthsHash{$genes} = $transcript_length;
 	}
 		
 	$stmt->finish();
