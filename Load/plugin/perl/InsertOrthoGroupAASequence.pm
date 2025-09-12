@@ -86,16 +86,8 @@ sub run {
     my $orthologFile = $self->getArg('orthoFile');
 
     my %sequenceIdHash;
-    my $sql = "SELECT aa_sequence_id, secondary_identifier FROM dots.externalaasequence";
-    my $dbh = $self->getQueryHandle();
-    my $externalAASequenceQuery = $dbh->prepare($sql);
-    $externalAASequenceQuery->execute();
 
-    while (my ($aaSeqId , $seqId)= $externalAASequenceQuery->fetchrow_array()) {
-        $sequenceIdHash{$seqId} = $aaSeqId;
-    }
-
-    $sql = "SELECT aa_sequence_id, source_id FROM dots.aasequence";
+    my $sql = "SELECT aa_sequence_id, source_id FROM dots.aasequence";
     my $aaSequenceQuery = $dbh->prepare($sql);
     $aaSequenceQuery->execute();
 
@@ -103,20 +95,21 @@ sub run {
         $sequenceIdHash{$seqId} = $aaSeqId;
     }
 
-    my $formattedFile = $self->formatInput($orthologFile, %sequenceIdHash);
+    my $rowsInserted = $self->formatInputAndLoad($orthologFile, %sequenceIdHash);
 
-    $self->loadGroupSequence($formattedFile);
+    return("Inserted $rowsInserted rows into ApiDB::OrthologGroupAASequence");
 }
 
 # ---------------------- Subroutines ----------------------
 
-sub formatInput {
+sub formatInputAndLoad {
     my ($self, $inputFile, %sequenceIds) = @_;
 
-    my $outputFile = "$inputFile\_formatted.txt";
-
     open(IN, $inputFile) or die "Cannot open input file $inputFile for reading. Please check and try again\n$!\n\n";
-    open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing. Please check and try again\n$!\n\n";
+
+    my $count;
+
+    $self->getDb()->manageTransaction(0, 'begin');
 
     while (<IN>) {
         my $line = $_;
@@ -126,50 +119,44 @@ sub formatInput {
         my $seqs = $groupAndSeqs[1];
         my @groupSeqs = split(/\s/,$seqs);
 
-        my $numOfSeqs = @groupSeqs;
+        my $numOfSeqs = scalar @groupSeqs;
  
         if ($numOfSeqs == 0) {
             die "No Sequences assigned to group $groupId";
         }
-
+        
         foreach my $seq (@groupSeqs) {
+          my $aaSequenceId = $sequenceIds{$seq};;
+
+          unless ($aaSequenceId) {
+            my $before = $seq;
+            $seq =~ s/_/:/;
             if ($sequenceIds{$seq}) {
-                print OUT "$groupId,$sequenceIds{$seq}\n";
+              $aaSequenceId = $sequenceIds{$seq};
             }
             else {
-                $self->log("$seq before change");
-                $seq =~ s/_/:/;
-                $self->log("$seq after change");
-                if ($sequenceIds{$seq}) {
-                    print OUT "$groupId,$sequenceIds{$seq}\n";
-                }
-                else {
-                    die "No aasequenceId for sequence $seq\n";
-		}
+              die "No aasequenceId for sequence $before (changed to $seq)\n";
             }
-        }    
-        
+          }
+
+          my $row = GUS::Model::ApiDB::OrthologGroupAASequence->new({group_id => $groupId, aa_sequence_id => $aaSequenceId});
+          $row->submit(undef, 1);
+          $row->undefPointerCache();
+          
+          if($count++; % 1000 == 0) {
+            $self->getDb()->manageTransaction(0, 'commit');
+
+            $self->getDb()->manageTransaction(0, 'begin');
+          }
+        }
     }
+
+    $self->getDb()->manageTransaction(0, 'commit');
+
     close(IN);
     close(OUT);
 
-    return $outputFile;
-}
-
-sub loadGroupSequence {
-  my ($self, $inputFile) = @_;
-  my $count = 0;
-  open(my $data, '<', $inputFile) || die "Could not open file $inputFile: $!";
-  while (my $line = <$data>) {
-      chomp $line;
-      $count += 1;
-      my ($group_id, $seqId) = split(/,/, $line);
-      my $row = GUS::Model::ApiDB::OrthologGroupAASequence->new({group_id => $group_id,aa_sequence_id => $seqId});
-      $row->submit();
-      $row->undefPointerCache();
-      $self->log("Inserted $count rows into ApiDb::OrthologGroupAASequence") if ($count % 1000 == 0);
-  }  
-  $self->log("Successfully Inserted $count rows into ApiDb::OrthologGroupAASequence");
+    return $count;
 }
 
 # ----------------------------------------------------------------------
