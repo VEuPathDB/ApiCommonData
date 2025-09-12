@@ -54,7 +54,7 @@ sub munge {
 	my $quantificationType = $self->getQuantificationType();
 	my $strand = "firststrand"; # Only doing first strand analyses.
 	my $profileSetName = $self->getprofileSetName();
-	my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+	my $gusconfig = GUS::Supported::GusConfig->new($self->getGusConfigFile());
 	my $dsn = $gusconfig->getDbiDsn();
 	my $login = $gusconfig->getDatabaseLogin();
 	my $password = $gusconfig->getDatabasePassword();
