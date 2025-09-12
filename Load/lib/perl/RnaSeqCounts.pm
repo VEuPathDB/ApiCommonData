@@ -205,29 +205,28 @@ sub createEDACountsFile {
     my $edaFile = "$mainDirectory/analysis_output/countsForEda_$strand.txt";
     open (EDA, ">$edaFile") or die "Cannot  open $edaFile for writing\n$!\n";
 
+
+    my $wgcnaInFile = "$mainDirectory/analysis_output/wgcnaInput_$strand.txt";
+    open (WGCNAIN, ">$wgcnaInFile") or die "Cannot  open $wgcnaInFile for writing\n$!\n";
+
     my $countHash = $self->{dataHash}->{counts};
+    my $tpmHash = $self->{dataHash}->{TPM};
 
     # in this context, a "sample" is an individual replicate
     my $samples = $self->getHeaders();
 
-    print EDA "\t";
-    print EDA join("\t", @$samples), "\n";
+    print EDA "\t" . join("\t", @$samples) . "\n";
+    print WGCNAIN "\t" . join("\t", @$samples) . "\n";
  
     foreach my $gene (keys(%$countHash)) {
-        print EDA "$gene\t";
-        my $i = 0;
-        foreach my $sample (@$samples) {
-            my $value = $countHash->{$gene}->{$sample};
-            $i ++;
-            print EDA "$value";
-            if ($i < scalar @$samples) {
-                print EDA "\t";
-            } else {
-                print EDA "\n";
-            }
-        }
+        my @countValues = map { $countHash->{$gene}->{$_} } @$samples;
+        print EDA "$gene\t" . join("\t", @countValues) . "\n";
+
+        my @tpmValues = map { $tpmHash->{$gene}->{$_} } @$samples;
+        print WGCNAIN "$gene\t" . join("\t", @tpmValues) . "\n";
     }
-    close EDA
+    close EDA;
+    close WGCNAIN;
 }
 
 sub munge {
