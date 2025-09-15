@@ -189,7 +189,7 @@ sub addUrlAndResource {
 
     foreach my $abbrev (keys %{$species}) {
         my $project = $species->{$abbrev}->{project};
-        my $fileName = $species->{$abbrev}->{fileName};
+        my $fileName = $species->{$abbrev}->{filename};
         my $url = $self->getUrl($project,$fileName);
         $species->{$abbrev}->{url} = $url;
         $species->{$abbrev}->{resource} = $project;
