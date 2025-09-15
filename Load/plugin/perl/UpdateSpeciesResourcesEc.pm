@@ -151,7 +151,7 @@ SQL
 
 
 sub getUrl {
-    my ($project,$filename) = @_;
+    my ($self,$project,$filename) = @_;
     my $url = "https://";
 
     my %projects = (
@@ -176,10 +176,10 @@ sub getUrl {
             $url .= 'www.uniprot.org/uniprot/EXTERNAL_ID_HERE';
         }
         else {
-	    $url .= $projects{lc($project)}."/app/downloads/Current_Release/$filename/fasta/data/";
+	    $url .= $projects{lc($project)}."/app/downloads/Current_Release/${filename}/fasta/data/";
         }
     } else {
-        die "No project for filename $filename\n");
+        $self->error("No project for filename $filename\n");
     }
     return $url;
 }
@@ -189,7 +189,8 @@ sub addUrlAndResource {
 
     foreach my $abbrev (keys %{$species}) {
         my $project = $species->{$abbrev}->{project};
-        my $url = &getUrl($project,$species->{$abbrev}->{fileName});
+        my $fileName = $species->{$abbrev}->{fileName};
+        my $url = $self->getUrl($project,$fileName);
         $species->{$abbrev}->{url} = $url;
         $species->{$abbrev}->{resource} = $project;
     }
