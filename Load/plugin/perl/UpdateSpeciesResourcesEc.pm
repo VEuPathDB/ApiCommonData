@@ -125,7 +125,14 @@ SQL
 	my $currentFullAbbrev = shift @array;
         my @abbrevs = keys %$species;
         foreach my $abbrev (@abbrevs) {
-            if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
+            # Example causing issue (abbrev has underscore as part of name
+            # ncerPA08_1199_primary_genome_RSRC | 2015-05-05 |
+            # orthomcl_abbrev |    abbrev     | taxon_id |              name                
+            #-----------------+---------------+----------+---------------------------------
+            # ncep            | ncerPA08_1199 |  2658573 | Nosema ceranae strain PA08_1199
+	    my @abbrevArray = split(/_/, $species->{$abbrev}->{abbrev});
+	    my $abbrevBeforeUnderscore = shift @abbrevArray;
+            if ($abbrevBeforeUnderscore eq $currentFullAbbrev) {
             	$species->{$abbrev}->{version} = $row[1];
         	$species->{$abbrev}->{url} = $row[2];
             }
@@ -137,7 +144,7 @@ SQL
 	    $self->error("Abbreviation '$abbrev' does not have version in ExtDb or ExtDbRls tables.\n");
 	}
 	if (! exists $species->{$abbrev}->{url} ) {
-	    $self->error("Abbreviation '$abbrev' does not have url in ExtDb or ExtDbRls tables.\n");
+	    #$self->error("Abbreviation '$abbrev' does not have url in ExtDb or ExtDbRls tables.\n");
 	}
 
     }
