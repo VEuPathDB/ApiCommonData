@@ -159,7 +159,7 @@ where ot.name != 'pseudogene'
         my $command = "singularity run -H $mainDirectory docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDirFullPath  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 	
-	system($command) == 0 or die "Error running singularity command:  $cmd";
+	system($command) == 0 or die "Error running singularity command:  $command";
 	
 	#-------------- parse Module Membership -----#
 	my $outputDirModuleMembership = "FirstStrandMMResultsForLoading";
