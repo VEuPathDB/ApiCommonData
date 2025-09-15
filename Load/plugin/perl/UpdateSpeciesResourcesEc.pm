@@ -124,28 +124,23 @@ SQL
 	my @array = split(/_/, $row[0]);
 	my $currentFullAbbrev = shift @array;
         my @abbrevs = keys %$species;
-        my $orthomclAbbrev;
         foreach my $abbrev (@abbrevs) {
             if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
-                $orthomclAbbrev = $abbrev;
+            	$species->{$abbrev}->{version} = $row[1];
+        	$species->{$abbrev}->{url} = $row[2];
             }
         }
-	$species->{$orthomclAbbrev}->{version} = $row[1];
-	$species->{$orthomclAbbrev}->{url} = $row[2];
     }
     
     foreach my $abbrev (keys %{$species}) {
 	if (! exists $species->{$abbrev}->{version} ) {
-            # Temporarily blocking this out until next run so I can resolve this issue
-	    #$self->error("Abbreviation '$abbrev' does not have version in ExtDb or ExtDbRls tables.\n");
+	    $self->error("Abbreviation '$abbrev' does not have version in ExtDb or ExtDbRls tables.\n");
 	}
 	if (! exists $species->{$abbrev}->{url} ) {
-            # Temporarily blocking this out until next run so I can resolve this issue
-	    #$self->error("Abbreviation '$abbrev' does not have url in ExtDb or ExtDbRls tables.\n");
+	    $self->error("Abbreviation '$abbrev' does not have url in ExtDb or ExtDbRls tables.\n");
 	}
 
     }
-
     return $species;
 }
 
