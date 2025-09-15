@@ -179,7 +179,7 @@ sub getUrl {
 	    $url .= $projects{lc($project)}."/app/downloads/Current_Release/$filename/fasta/data/";
         }
     } else {
-        $self->error("No project for filename $filename\n");
+        die "No project for filename $filename\n");
     }
     return $url;
 }
@@ -189,7 +189,7 @@ sub addUrlAndResource {
 
     foreach my $abbrev (keys %{$species}) {
         my $project = $species->{$abbrev}->{project};
-        my $url = &getUrl($project,$species->{$abbrev}->{fileName};
+        my $url = &getUrl($project,$species->{$abbrev}->{fileName});
         $species->{$abbrev}->{url} = $url;
         $species->{$abbrev}->{resource} = $project;
     }
