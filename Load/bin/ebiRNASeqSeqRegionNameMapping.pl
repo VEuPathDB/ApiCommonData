@@ -31,21 +31,21 @@ foreach my $bed (glob "$samplesDirectory/*/*.bed") {
 
   move($bed, $oldBed);
 
-  open(OLD, $oldBed) or die "Cannot open file $oldBed for reading: $!";
-  open(BED, ">$bed") or die "Cannot open file $bed for writing: $!";
+  open(my $oldFh, $oldBed) or die "Cannot open file $oldBed for reading: $!";
+  open(my $bedFh, ">$bed") or die "Cannot open file $bed for writing: $!";
 
-  while(<OLD>) {
+  while(<$oldFh>) {
     chomp;
     my @a = split(/\t/, $_);
     if($map->{$a[0]}) {
       $a[0] = $map->{$a[0]};
     }
 
-    print BED join("\t", @a) . "\n";
+    print $bedFh join("\t", @a) . "\n";
   }
 
-  close BED;
-  close OLD;
+  close $bedFh;
+  close $oldFh;
 
 }
 
@@ -54,24 +54,24 @@ foreach my $junction (glob "$samplesDirectory/*/junctions.tab") {
 
   move($junction, $oldJunction);
 
-  open(OLD, $oldJunction) or die "Cannot open file $oldJunction for reading: $!";
-  open(JXN, ">$junction") or die "Cannot open file $junction for writing: $!";
+  open(my $oldFh, $oldJunction) or die "Cannot open file $oldJunction for reading: $!";
+  open(my $jxnFh, ">$junction") or die "Cannot open file $junction for writing: $!";
 
-  my $header = <OLD>;
-  print JXN $header;
+  my $header = <$oldFh>;
+  print $jxnFh $header;
 
-  while(<OLD>) {
+  while(<$oldFh>) {
     chomp;
     my @a = split(':', $_);
     if($map->{$a[0]}) {
       $a[0] = $map->{$a[0]};
     }
 
-    print JXN join(":", @a) . "\n";
+    print $jxnFh join(":", @a) . "\n";
   }
 
-  close JXN;
-  close OLD;
+  close $jxnFh;
+  close $oldFh;
 }
 
 
