@@ -54,13 +54,13 @@ foreach my $junction (glob "$samplesDirectory/*/junctions.tab") {
 
   move($junction, $oldJunction);
 
-  open(my $oldFh, $oldJunction) or die "Cannot open file $oldJunction for reading: $!";
+  open(my $oldJuncFh, $oldJunction) or die "Cannot open file $oldJunction for reading: $!";
   open(my $jxnFh, ">$junction") or die "Cannot open file $junction for writing: $!";
 
-  my $header = <$oldFh>;
+  my $header = <$oldJuncFh>;
   print $jxnFh $header;
 
-  while(<$oldFh>) {
+  while(<$oldJuncFh>) {
     chomp;
     my @a = split(':', $_);
     if($map->{$a[0]}) {
@@ -71,7 +71,7 @@ foreach my $junction (glob "$samplesDirectory/*/junctions.tab") {
   }
 
   close $jxnFh;
-  close $oldFh;
+  close $oldJuncFh;
 }
 
 
