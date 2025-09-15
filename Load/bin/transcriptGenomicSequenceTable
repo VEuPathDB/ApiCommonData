@@ -44,31 +44,12 @@ $dbh->disconnect();
 sub populateChildTable {
   my ($dbh, $schema, $projectId, $orgAbbrev) = @_;
 
-  my $genomicSequenceSql = "select s.source_id, s.sequence from $schema.genomicsequencesequence s where s.org_abbrev = '$orgAbbrev'";
+  my $genomicSequenceSql = "select s.source_id, s.sequence
+      from $schema.genomicsequencesequence s
+      where s.org_abbrev = '$orgAbbrev'
+      order by source_id";
 
-  my $sh = $dbh->prepare($genomicSequenceSql)
-    or die "Can't prepare SQL statement: " . $dbh->errstr();
-  $sh->execute();
-
-  while(my ($sourceId, $sequence) = $sh->fetchrow_array()) {
-    &insertTranscriptSequences($dbh, $schema, $projectId, $orgAbbrev, $sourceId, $sequence);
-  }
-  $sh->finish();
-
-  $dbh->disconnect();
-}
-  
-sub insertTranscriptSequences {
-  my ($dbh, $schema, $projectId, $orgAbbrev, $sequenceSourceId, $sequence) = @_;
-
-  my $insertSql = "INSERT INTO $schema.$TABLENAME
-    (org_abbrev, gene_source_id, source_id, project_id,
-     genomic_sequence, genomic_sequence_length)
- VALUES ('$orgAbbrev',?,?,?,?,?)";
-  my $insertSh = $dbh->prepare($insertSql);
-
-  my $sql = "SELECT ga.source_id AS gene_source_id
-     , ga.project_id AS project_id
+  my $transSql = "SELECT tl.sequence_source_id, ga.source_id AS gene_source_id
      , t.source_id
      , tl.start_min
      , tl.end_max
@@ -78,36 +59,69 @@ FROM apidb.transcriptlocation tl
    , dots.transcript t
 WHERE t.na_feature_id  = tl.na_feature_id
 AND t.parent_id = ga.na_feature_id
-AND tl.sequence_source_id = '$sequenceSourceId'
 AND ga.org_abbrev = '$orgAbbrev'
+ORDER BY tl.sequence_source_id
 ";
 
-  my $sh = $dbh->prepare($sql)
-    or die "Can't prepare SQL statement: " . $dbh->errstr();
-  $sh->execute();
+  my $insertSql = "INSERT INTO $schema.$TABLENAME
+    (org_abbrev, gene_source_id, source_id, project_id,
+     genomic_sequence, genomic_sequence_length)
+ VALUES ('$orgAbbrev',?,?,?,?,?)";
+  my $insertSh = $dbh->prepare($insertSql);
 
-  my ($count);
-  while (my ($geneSourceId, $projectId, $sourceId, $start, $end, $isReversed) = $sh->fetchrow_array()) {
+  my $seq_sh = $dbh->prepare($genomicSequenceSql) or die "Can't prepare SQL statement: " . $dbh->errstr();
+  $seq_sh->execute();
 
-    my $substrStart = $start - 1;
-    my $substrLength = $end - $start + 1;
+  my $trans_sh = $dbh->prepare($transSql) or die "Can't prepare SQL statement: " . $dbh->errstr();
+  $trans_sh->execute();
 
-    my $transcriptGenomicSequence = substr($sequence, $substrStart, $substrLength);
+  # get first trans
+  # while true
+  #    while seq_id !=
+  #    while seq_id =
+  my ($seqSourceId, $sequence);
+  my $count;
 
-    if ($isReversed) {
-      $transcriptGenomicSequence = CBIL::Bio::SequenceUtils::reverseComplementSequence($transcriptGenomicSequence);
+  my ($transSeqSourceId, $geneSourceId, $sourceId, $start, $end, $isReversed) = $trans_sh->fetchrow_array();
+  while (1) {
+    while (1) {
+      ($seqSourceId, $sequence) = $seq_sh->fetchrow_array();
+      last if ($seqSourceId eq $transSeqSourceId);
     }
-
-    $insertSh->execute($geneSourceId, $sourceId, $projectId, $transcriptGenomicSequence, $substrLength);
-
-    if ($count++ % 1000 == 0) {
-      print STDERR "Commit point; count = $count\n";
-      $dbh->commit();
+    while ($transSeqSourceId && $seqSourceId eq $transSeqSourceId) {
+      if ($count && $count % 1000 == 0) {
+        print STDERR "Commit point; count = $count\n";
+        $dbh->commit();
+      }
+      &insertTranscriptSequence($dbh, $insertSh, $sequence, $geneSourceId, $sourceId, $start, $end, $isReversed);
+      $count++;
+      ($transSeqSourceId, $geneSourceId, $sourceId, $start, $end, $isReversed) = $trans_sh->fetchrow_array()
     }
+    last if !$seqSourceId;
+  }
+ 
+  $seq_sh->finish();
+  $trans_sh->finish();
+
+  print STDERR "Commit point; count = $count\n";
+  $dbh->commit();
+
+  $dbh->disconnect();
+}
+
+sub insertTranscriptSequence {
+  my ($dbh, $insertSh, $sequence, $geneSourceId, $sourceId, $start, $end, $isReversed) = @_;
+
+  my $substrStart = $start - 1;
+  my $substrLength = $end - $start + 1;
+
+  my $transcriptGenomicSequence = substr($sequence, $substrStart, $substrLength);
+
+  if ($isReversed) {
+    $transcriptGenomicSequence = CBIL::Bio::SequenceUtils::reverseComplementSequence($transcriptGenomicSequence);
   }
 
-  $sh->finish();
-  $dbh->commit();
+  $insertSh->execute($geneSourceId, $sourceId, $projectId, $transcriptGenomicSequence, $substrLength);
 }
 
 sub deleteRows {
