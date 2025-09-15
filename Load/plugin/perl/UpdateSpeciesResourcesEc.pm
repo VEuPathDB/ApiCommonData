@@ -78,7 +78,7 @@ sub run {
     my ($self) = @_;
 
     my $speciesFromOrtho = $self->getSpeciesFromOrtho();
-    my $speciesFromOrtho = $self->cleanUpData($speciesFromOrtho);
+    my $speciesFromOrtho = $self->addUrlAndResource($speciesFromOrtho);
 
     my $numRows = $self->loadOrthoResource($speciesFromOrtho);
     $self->log("Finished adding to ApiDB.OrthomclResource. Loaded $numRows rows.\n");
@@ -88,7 +88,7 @@ sub getSpeciesFromOrtho {
     my ($self) = @_;
 
     my $sql = <<SQL;
-SELECT og.orthomcl_abbrev, og.abbrev, og.taxon_id, tn.name
+SELECT og.orthomcl_abbrev, og.abbrev, og.taxon_id, tn.name, og.project_name, og.genome_source, og.name_for_filenames
 FROM apidb.organism og, sres.taxonname tn
 WHERE og.core_peripheral IN ('core','peripheral')
 AND og.taxon_id = tn.taxon_id
@@ -104,6 +104,9 @@ SQL
 	$species->{$row[0]}->{abbrev} = $row[1];
 	$species->{$row[0]}->{orthomclId} = $row[2];
 	$species->{$row[0]}->{name} = $row[3];
+	$species->{$row[0]}->{project} = $row[4];
+	$species->{$row[0]}->{genome_source} = $row[5];
+	$species->{$row[0]}->{filename} = $row[6];
     }
 
     $sql = <<SQL;
@@ -134,7 +137,6 @@ SQL
 	    my $abbrevBeforeUnderscore = shift @abbrevArray;
             if ($abbrevBeforeUnderscore eq $currentFullAbbrev) {
             	$species->{$abbrev}->{version} = $row[1];
-        	$species->{$abbrev}->{url} = $row[2];
             }
         }
     }
@@ -143,17 +145,13 @@ SQL
 	if (! exists $species->{$abbrev}->{version} ) {
 	    $self->error("Abbreviation '$abbrev' does not have version in ExtDb or ExtDbRls tables.\n");
 	}
-	if (! exists $species->{$abbrev}->{url} ) {
-	    #$self->error("Abbreviation '$abbrev' does not have url in ExtDb or ExtDbRls tables.\n");
-	}
-
     }
     return $species;
 }
 
 
-sub getVeupathUrl {
-    my ($resource,$filename) = @_;
+sub getUrl {
+    my ($project,$filename) = @_;
     my $url = "https://";
 
     my %projects = (
@@ -169,57 +167,31 @@ sub getVeupathUrl {
 	tritrypdb => "tritrypdb.org/tritrypdb",
 	hostdb => "hostdb.org/hostdb",
 	schistodb => "schistodb.net/schisto",
-	vectorbase => "vectorbase.org/vectorbase"
+	vectorbase => "vectorbase.org/vectorbase",
+	orthomcl => "vectorbase.org/vectorbase"
      );
     
-    if ( exists $projects{lc($resource)} ) {
-	$url .= $projects{lc($resource)}."/app/downloads/Current_Release/$filename/fasta/data/";
+    if ( exists $projects{lc($project)} ) {
+        if ($project eq 'OrthoMCL') {
+            $url .= 'www.uniprot.org/uniprot/EXTERNAL_ID_HERE';
+        }
+        else {
+	    $url .= $projects{lc($project)}."/app/downloads/Current_Release/$filename/fasta/data/";
+        }
     } else {
-	$url = "";
+        $self->error("No project for filename $filename\n");
     }
-    
     return $url;
 }
 
-sub cleanUpData {
+sub addUrlAndResource {
     my ($self,$species) = @_;
 
     foreach my $abbrev (keys %{$species}) {
-	if ( ! exists $species->{$abbrev}->{resource} ) {
-	    my $abbrevWithoutOld = $abbrev;
-	    $abbrevWithoutOld =~ s/-old//;
-	    if ( exists $species->{$abbrevWithoutOld}->{resource} ) {
-		$species->{$abbrev}->{resource} = $species->{$abbrevWithoutOld}->{resource};
-		my $url = $species->{$abbrevWithoutOld}->{url};
-		if ($url =~ /^(.+\/app\/downloads\/)/) {
-		    $species->{$abbrev}->{url} = $1;
-		}
-		if ($species->{$abbrev}->{name} =~ /.+ (\(old build.+\))$/) {
-		    $species->{$abbrev}->{name} = $species->{$abbrevWithoutOld}->{name}." ".$1;
-		}
-	    } elsif (exists $species->{$abbrev}->{url}) {
-		if ( $species->{$abbrev}->{url} =~ /.+\.([A-Za-z]+)\.(org|net)/ ) {
-		    my $resource = $1;
-		    $resource = "VectorBase" if (lc($resource) eq "vectorbase");
-		    $species->{$abbrev}->{resource} = $resource;
-		    my $url = getVeupathUrl($resource);
-		    if ($url ne "") {  #this a veupath url
-			if ( $url =~ /^(.+\/app\/downloads\/)/ ) {
-			    $species->{$abbrev}->{url} = $1;
-			}
-		    }
-		} else {
-		    $species->{$abbrev}->{resource} = "See URL";
-		}
-	    } else {
-		$species->{$abbrev}->{resource} = "unknown";
-		$species->{$abbrev}->{url} = "unknown";
-	    }
-	} else {
-	    if ( ! exists $species->{$abbrev}->{url} ) {
-		$species->{$abbrev}->{url} = "See Resource";
-	    }
-	}
+        my $project = $species->{$abbrev}->{project};
+        my $url = &getUrl($project,$species->{$abbrev}->{fileName};
+        $species->{$abbrev}->{url} = $url;
+        $species->{$abbrev}->{resource} = $project;
     }
     return $species;
 }
