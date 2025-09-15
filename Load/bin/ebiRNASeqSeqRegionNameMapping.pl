@@ -31,7 +31,7 @@ foreach my $bed (glob "$samplesDirectory/*/*.bed") {
 
   move($bed, $oldBed);
 
-  open(my $oldFh, $oldBed) or die "Cannot open file $oldBed for reading: $!";
+  open(my $oldFh, '<', $oldBed) or die "Cannot open file $oldBed for reading: $!";
   open(my $bedFh, ">$bed") or die "Cannot open file $bed for writing: $!";
 
   while(<$oldFh>) {
@@ -54,7 +54,7 @@ foreach my $junction (glob "$samplesDirectory/*/junctions.tab") {
 
   move($junction, $oldJunction);
 
-  open(my $oldJuncFh, $oldJunction) or die "Cannot open file $oldJunction for reading: $!";
+  open(my $oldJuncFh, '<',  $oldJunction) or die "Cannot open file $oldJunction for reading: $!";
   open(my $jxnFh, ">$junction") or die "Cannot open file $junction for writing: $!";
 
   my $header = <$oldJuncFh>;
