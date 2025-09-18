@@ -97,7 +97,7 @@ sub run {
         $sequenceIdHash{$seqId} = $aaSeqId;
     }
 
-    my $rowsInserted = $self->formatInputAndLoad($self,$orthologFile, %sequenceIdHash);
+    my $rowsInserted = $self->formatInputAndLoad($orthologFile, %sequenceIdHash);
 
     return("Inserted $rowsInserted rows into ApiDB::OrthologGroupAASequence");
 }
