@@ -87,6 +87,8 @@ sub run {
 
     my %sequenceIdHash;
 
+    my $dbh = $self->getQueryHandle();
+
     my $sql = "SELECT aa_sequence_id, source_id FROM dots.aasequence";
     my $aaSequenceQuery = $dbh->prepare($sql);
     $aaSequenceQuery->execute();
@@ -95,7 +97,7 @@ sub run {
         $sequenceIdHash{$seqId} = $aaSeqId;
     }
 
-    my $rowsInserted = $self->formatInputAndLoad($orthologFile, %sequenceIdHash);
+    my $rowsInserted = $self->formatInputAndLoad($self,$orthologFile, %sequenceIdHash);
 
     return("Inserted $rowsInserted rows into ApiDB::OrthologGroupAASequence");
 }
@@ -107,7 +109,7 @@ sub formatInputAndLoad {
 
     open(IN, $inputFile) or die "Cannot open input file $inputFile for reading. Please check and try again\n$!\n\n";
 
-    my $count;
+    my $count == 0;
 
     $self->getDb()->manageTransaction(0, 'begin');
 
@@ -126,7 +128,7 @@ sub formatInputAndLoad {
         }
         
         foreach my $seq (@groupSeqs) {
-          my $aaSequenceId = $sequenceIds{$seq};;
+          my $aaSequenceId = $sequenceIds{$seq};
 
           unless ($aaSequenceId) {
             my $before = $seq;
@@ -144,9 +146,8 @@ sub formatInputAndLoad {
           $row->submit(undef, 1);
           $row->undefPointerCache();
           
-          if($count++; % 1000 == 0) {
+          if((++$count % 1000) == 0) {
             $self->getDb()->manageTransaction(0, 'commit');
-
             $self->getDb()->manageTransaction(0, 'begin');
           }
         }
