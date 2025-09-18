@@ -21,19 +21,21 @@ my ($help, $owlFile);
 my $dbFile = "$owlFile.sqlite";
 my $md5File = "$owlFile.md5";
 
-my $name = basename ($dbFile);
-
+# create dbfile atomically
+# otherwise another process might start reading from an incomplete file
+my ($fh, $tempFilePath) = tempfile( "tmpfileXXXXX", DIR => dirname($dbfile));
 my $model = RDF::Trine::Model->new(
   RDF::Trine::Store::DBI->new(
     $name,
-    "dbi:SQLite:dbname=$dbFile",
+    "dbi:SQLite:dbname=$tempFilePath",
     '',  # no username
     '',  # no password
   ),
 );
-
 my $parser = RDF::Trine::Parser->new('rdfxml');
 $parser->parse_file_into_model(undef, $owlFile, $model);
+close($fh);
+move("$tempFilePath", "$dbfile");
 
 print STDERR $model->size . " RDF statements parsed\n";
 
