@@ -146,7 +146,7 @@ sub formatInputAndLoad {
           $row->submit(undef, 1);
           $row->undefPointerCache();
           
-          if(($count++ % 1000) == 0) {
+          if((++$count % 1000) == 0) {
             $self->getDb()->manageTransaction(0, 'commit');
             $self->getDb()->manageTransaction(0, 'begin');
           }
