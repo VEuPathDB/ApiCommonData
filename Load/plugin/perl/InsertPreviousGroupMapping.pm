@@ -73,7 +73,7 @@ sub run {
 		$row->submit(undef, 1);
 		$row->undefPointerCache();
 
-		if($rowCount++; % 1000 == 0) {
+		if(++$rowCount % 1000 == 0) {
 		    $self->getDb()->manageTransaction(0, 'commit');
 		    $self->getDb()->manageTransaction(0, 'begin');
 		}
