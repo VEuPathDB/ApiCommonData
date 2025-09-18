@@ -97,7 +97,7 @@ sub run {
         $sequenceIdHash{$seqId} = $aaSeqId;
     }
 
-    my $rowsInserted = $self->formatInputAndLoad($orthologFile, %sequenceIdHash);
+    my $rowsInserted = $self->formatInputAndLoad($self,$orthologFile, %sequenceIdHash);
 
     return("Inserted $rowsInserted rows into ApiDB::OrthologGroupAASequence");
 }
@@ -128,7 +128,7 @@ sub formatInputAndLoad {
         }
         
         foreach my $seq (@groupSeqs) {
-          my $aaSequenceId = $sequenceIds{$seq};;
+          my $aaSequenceId = $sequenceIds{$seq};
 
           unless ($aaSequenceId) {
             my $before = $seq;
