@@ -5,8 +5,7 @@ use strict;
 
 use GUS::Model::EDA::Study;
 use GUS::Model::EDA::EntityTypeGraph;
-
-use ApiCommonData::Load::InstallEdaStudyFromArtifacts;
+use GUS::Model::EDA::StudyExternalDatabaseRelease;
 
 use Data::Dumper;
 
@@ -49,7 +48,7 @@ my $argsDeclaration =
             descr          => 'External Database Spec for this study',
             reqd           => 1,
             constraintFunc => undef,
-            isList         => 0, }),
+            isList         => 1, }),
 
   ];
 
@@ -92,7 +91,7 @@ sub run {
     $self->userError("Output Directory already Exists");
   }
 
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+  #my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
   my $installer = $self->makeInstaller($inputDir, $outputDir, $gusConfigFile, $extDbRlsSpec);
 
   my $installJsonFile = $installer->getInstallJsonFile($inputDir);
@@ -100,8 +99,6 @@ sub run {
 
   my ($studyConfig) = grep { $_->{type} eq 'table' && $_->{name} eq 'study' } @$configsArray;
   my $studyHash = $self->preexistingTable($studyConfig, 'study.cache');
-
-  $studyHash->{'external_database_release_id'} = $extDbRlsId;
 
   my $study = GUS::Model::EDA::Study->new($studyHash);
 
@@ -111,6 +108,12 @@ sub run {
   my $entityTypeGraphHash = $self->preexistingTable($entityTypeGraphConfig, 'entitytypegraph.cache');  
   my $entityTypeGraph = GUS::Model::EDA::EntityTypeGraph->new($entityTypeGraphHash);
 
+  foreach my $spec ($extDbRlsSpec) {
+    my $extDbRlsId = $self->getExtDbRlsId($spec);
+
+    my $studyExtDbRls = EDA::StudyExternalDatabaseRelease->new({external_database_release_id => $extDbRlsId});
+    $studyExtDbRls->setParent($study);
+  }
 
   $entityTypeGraph->setParent($study);
   $entityTypeGraph->submit();
