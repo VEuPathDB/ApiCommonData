@@ -5,7 +5,9 @@ use Digest::MD5;
 use Getopt::Long;
 use RDF::Trine;
 use File::Basename qw/basename dirname/;
-
+use File::Temp qw/tempfile/;
+use File::Copy qw/move/;
+use RDF::Trine::Store::DBI;
 
 my ($help, $owlFile);
 
@@ -20,22 +22,30 @@ my ($help, $owlFile);
 
 my $dbFile = "$owlFile.sqlite";
 my $md5File = "$owlFile.md5";
+my $name = basename ($owlFile);
 
-my $name = basename ($dbFile);
+# create dbfile atomically
+# otherwise another process might start reading from an incomplete file
+my ($fh, $tempFilePath) = tempfile( "tmpfileXXXXX", DIR => dirname($dbFile));
+$fh->autoflush;
+
+my $dbh = DBI->connect("dbi:SQLite:dbname=$tempFilePath","","");
+$dbh->{AutoCommit} = 1;
 
 my $model = RDF::Trine::Model->new(
   RDF::Trine::Store::DBI->new(
     $name,
-    "dbi:SQLite:dbname=$dbFile",
-    '',  # no username
-    '',  # no password
+    $dbh
   ),
 );
-
 my $parser = RDF::Trine::Parser->new('rdfxml');
 $parser->parse_file_into_model(undef, $owlFile, $model);
-
 print STDERR $model->size . " RDF statements parsed\n";
+
+move("$tempFilePath", "$dbFile");
+
+$dbh->disconnect();
+close($fh);
 
 my $ctx = Digest::MD5->new;
 open(my $fh, $owlFile);
