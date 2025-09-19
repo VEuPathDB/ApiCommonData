@@ -22,7 +22,7 @@ my ($help, $owlFile);
 
 my $dbFile = "$owlFile.sqlite";
 my $md5File = "$owlFile.md5";
-my $name = basename ($dbFile);
+my $name = basename ($owlFile);
 
 # create dbfile atomically
 # otherwise another process might start reading from an incomplete file
