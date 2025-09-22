@@ -97,7 +97,7 @@ sub run {
         $sequenceIdHash{$seqId} = $aaSeqId;
     }
 
-    my $rowsInserted = $self->formatInputAndLoad($orthologFile, %sequenceIdHash);
+    my $rowsInserted = $self->formatInputAndLoad($orthologFile, \%sequenceIdHash);
 
     return("Inserted $rowsInserted rows into ApiDB::OrthologGroupAASequence");
 }
@@ -105,7 +105,8 @@ sub run {
 # ---------------------- Subroutines ----------------------
 
 sub formatInputAndLoad {
-    my ($self, $inputFile, %sequenceIds) = @_;
+    my ($self, $inputFile, $sequenceIdsRef) = @_;
+    my %sequenceIds = %{$sequenceIdsRef};
 
     open(IN, $inputFile) or die "Cannot open input file $inputFile for reading. Please check and try again\n$!\n\n";
 
@@ -134,6 +135,7 @@ sub formatInputAndLoad {
             my $before = $seq;
             $seq =~ s/_mRNA/:mRNA/;
             $seq =~ s/_RNA/:RNA/;
+            $seq =~ s/_pseudogenic_transcript/:pseudogenic_transcript/;
             if ($sequenceIds{$seq}) {
               $aaSequenceId = $sequenceIds{$seq};
             }
