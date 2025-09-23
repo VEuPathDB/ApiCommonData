@@ -287,7 +287,7 @@ sub parseTaxonToCladeFile {
 
 sub unpackAndCheckTaxonToCladeFile {
     my ($self,$taxonToCladeFile,$abbrevToNameRef,$abbrevToCoreOrPeripheralRef) = @_;
-    open(FILE, '<', $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile' for reading");
+    open(IN, '<', $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile' for reading");
 
     my %abbrevToName = %{$abbrevToNameRef};
     my %abbrevToCoreOrPeripheral = %{$abbrevToCoreOrPeripheralRef};
@@ -296,7 +296,7 @@ sub unpackAndCheckTaxonToCladeFile {
     my %seenAbbrevs;
     my %checkedTaxonToClade;
     my $error = 0;
-    while(<FILE>) {
+    while(<IN>) {
 	my $line = $_;
 	chomp($line);
 
@@ -347,7 +347,7 @@ sub unpackAndCheckTaxonToCladeFile {
         }
     }
 
-    close FILE;
+    close IN;
 
     # Checking for missing lines in taxonToCladeFile
     foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
