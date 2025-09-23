@@ -153,6 +153,9 @@ sub parseCladeFile {
 
     my $clade = $self->parseCladeLine();
     $self->makeTree($clade);
+
+    close FILE;
+
     return $clade;
 }
 
@@ -343,6 +346,8 @@ sub unpackAndCheckTaxonToCladeFile {
             $error = 1;
         }
     }
+
+    close FILE;
 
     # Checking for missing lines in taxonToCladeFile
     foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
