@@ -9,6 +9,8 @@ use JSON qw( decode_json );
 use File::Copy;
 use ApiCommonData::Load::Psql;
 
+use Data::Dumper;
+
 my $SQLLDR_STREAM_SIZE = 512000;
 my $SQLLDR_ROWS = 5000;
 my $SQLLDR_BINDSIZE = 2048000;
@@ -83,7 +85,7 @@ sub isDryRun {defined $_[0]->{DRYRUN} ? 1 : 0 }
 # these 2 are needed for installing and uninstalling internal datasets
 # because we are running batches in nextflow, we do not keep the original install.json
 sub skipPreexistingTables { defined $_[0]->{SKIP_PREEXISTING_TABLES} ? 1 : 0 }
-sub getExternalDatabaseName { $_[0]->{EXTERNAL_DATABASE_NAME} }
+sub getExternalDatabaseRlsSpecs { $_[0]->{EXTERNAL_DATABASE_RLS_SPECS} || [] }
 
 
 sub getConfigsArrayFromInstallJsonFile {
@@ -114,42 +116,49 @@ sub getInstallJsonFile {
 sub uninstallDataFromExternalDatabase {
     my ($self) = @_;
 
-
-
     my $dbh = $self->getDbh();
     my $schema = $self->getDbSchema();
 
-    my $externalDatabaseName = $self->getExternalDatabaseName();
+    my $externalDatabaseRlsSpecs = $self->getExternalDatabaseRlsSpecs();
 
-    print STDERR "Uninstall Study with extDbName=$externalDatabaseName\n";
+    my @extDbRlsIds;
 
     my $externalDatabaseReleaseIdQuery = "select r.external_database_release_id
 from sres.externaldatabase d 
 join sres.externaldatabaserelease r
   on d.external_database_id = r.external_database_id
-where d.name = ?";
+where d.name = ?
+ and r.version like ?";
 
     my $sh_db = $dbh->prepare($externalDatabaseReleaseIdQuery);
-    $sh_db->execute($externalDatabaseName);
 
-    my %extDbRlsIds;
-    while(my ($extDbRlsId) = $sh_db->fetchrow_array()) {
-      $extDbRlsIds{$extDbRlsId} = 1;
-    }
-    $sh_db->finish();
-    my @uniqueExtDbRlsIds = keys(%extDbRlsIds);
-    unless(scalar(@uniqueExtDbRlsIds) == 1) {
-      die "Must be one externaldatabaserelease for $externalDatabaseName";
-    }
-    my $externalDatabaseReleaseId = $uniqueExtDbRlsIds[0];
+    foreach my $spec (@$externalDatabaseRlsSpecs) {
+      my ($extDbName, $extDbVer) = split(/\|/, $spec);
 
-    my $studyIdQuery = "select s.study_id from eda.study s where s.external_database_release_id = ?";
+      print STDERR "EXTDBNAME=$extDbName\n";
+      print STDERR "EXTDBVER=$extDbVer\n";
+
+      $sh_db->execute($extDbName, $extDbVer);
+
+      while(my ($extDbRlsId) = $sh_db->fetchrow_array()) {
+        push @extDbRlsIds, $extDbRlsId; 
+      }
+      $sh_db->finish();
+    }
+
+    my $placeholders = join(",", map { "?" } @extDbRlsIds);
+    my $studyIdQuery = "select s.study_id 
+from eda.study s inner join eda.studyexternaldatabaserelease ser 
+ on s.study_id = ser.study_id
+where ser.external_database_release_id in ($placeholders)";
 
     my $sh_study = $dbh->prepare($studyIdQuery);
-    $sh_study->execute($externalDatabaseReleaseId);
+    $sh_study->execute(@extDbRlsIds);
 
     my %studyIds;
     while(my ($studyId) = $sh_study->fetchrow_array()) {
+      print STDERR "STUDY_ID=$studyId\n";
+
       $studyIds{$studyId} = 1;
     }
     $sh_study->finish();
@@ -157,19 +166,19 @@ where d.name = ?";
     my @uniqueStudyIds = keys(%studyIds);
 
     if(scalar(@uniqueStudyIds) == 0) {
-      print STDERR "No studyId found for externaldatabasename $externalDatabaseName... nothing to do\n";
+      print STDERR "No studyId found for externaldatabasename ... nothing to do\n";
       return;
     }
 
     unless(scalar(@uniqueStudyIds) == 1) {
-      die "Must be one study id for externaldatabasereleaseid=$externalDatabaseReleaseId";
+      die "Must be one study id for externaldatabasereleaseid";
     }
 
     my $studyId = $uniqueStudyIds[0];
 
     my $viewsQuery = $self->getQueryForTableOrViewNames("views", $schema);
     my $sh_view = $dbh->prepare($viewsQuery);
-    $sh_view->execute($externalDatabaseReleaseId);
+    $sh_view->execute($studyId);
     while(my ($viewName) = $sh_view->fetchrow_array()) {
         $self->dropTableOrView('view', "${schema}.${viewName}");
     }
@@ -177,7 +186,7 @@ where d.name = ?";
 
     my $tablesQuery = $self->getQueryForTableOrViewNames("tables", $schema);
     my $sh_table = $dbh->prepare($tablesQuery);
-    $sh_table->execute($externalDatabaseReleaseId);
+    $sh_table->execute($studyId);
     my $tableCount;
 
     while(my ($tableName) = $sh_table->fetchrow_array()) {
@@ -186,16 +195,19 @@ where d.name = ?";
     }
     $sh_table->finish();
 
-    die "No artifact tables found for externaldatabase=$externalDatabaseName" unless($tableCount);
+    print STDERR "No artifact tables found. " unless($tableCount);
 
     my $delEntityTypeGraph = " delete from $schema.entitytypegraph where study_id = $studyId";
     print STDERR "RUNNING SQL: $delEntityTypeGraph\n\n";
     $dbh->do($delEntityTypeGraph) || die "Failed running sql: $delEntityTypeGraph\n" unless $self->isDryRun();
 
+    my $delStudyExternalDatabaseRelease = " delete from $schema.studyexternaldatabaserelease where study_id = $studyId";
+    print STDERR "RUNNING SQL: $delStudyExternalDatabaseRelease\n\n";
+    $dbh->do($delStudyExternalDatabaseRelease) || die "Failed running sql: $delEntityTypeGraph\n" unless $self->isDryRun();
+
     my $delStudy = "delete from $schema.study where study_id = $studyId";
     print STDERR "RUNNING SQL: $delStudy\n\n";
     $dbh->do($delStudy) || die "Failed running sql: $delStudy\n" unless $self->isDryRun();
-
 }
 
 sub getQueryForTableOrViewNames {
@@ -207,7 +219,7 @@ join ${schema}.entitytypegraph etg
   on s.study_id = etg.study_id
 join information_schema.${tablesOrViews} t 
   on lower(t.table_name) like '%' || lower(s.internal_abbrev) || '_' || lower(etg.internal_abbrev)  
-where s.external_database_release_id = ?
+where s.study_id = ?
 and lower(t.table_schema) = lower('$schema') ";
 }
 

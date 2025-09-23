@@ -83,6 +83,7 @@ sub run {
   my ($self) = @_;
 
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+
   my $inputDir = $self->getArg("inputDirectory");
   my $outputDir = $self->getArg("outputDirectory");
   my $gusConfigFile = $self->getArg("gusConfigFile");
@@ -98,31 +99,37 @@ sub run {
   my $configsArray = $installer->getConfigsArrayFromInstallJsonFile($installJsonFile); 
 
   my ($studyConfig) = grep { $_->{type} eq 'table' && $_->{name} eq 'study' } @$configsArray;
-  my $studyHash = $self->preexistingTable($studyConfig, 'study.cache');
+  my $studyArray = $self->preexistingTable($studyConfig, 'study.cache');
+  if(scalar @$studyArray != 1) {
+    $self->error("study.cache must contain one row of data");
+  }
 
-  my $study = GUS::Model::EDA::Study->new($studyHash);
+  my $study = GUS::Model::EDA::Study->new($studyArray->[0]);
 
   my ($entityTypeGraphConfig) = grep { $_->{type} eq 'table' && $_->{name} eq 'entitytypegraph' } @$configsArray;
+  my $entityTypeGraphArray = $self->preexistingTable($entityTypeGraphConfig, 'entitytypegraph.cache');  
 
+  foreach my $entityTypeGraphHash (@$entityTypeGraphArray) {
+    my $entityTypeGraph = GUS::Model::EDA::EntityTypeGraph->new($entityTypeGraphHash);
+    $entityTypeGraph->setParent($study);
+  }
 
-  my $entityTypeGraphHash = $self->preexistingTable($entityTypeGraphConfig, 'entitytypegraph.cache');  
-  my $entityTypeGraph = GUS::Model::EDA::EntityTypeGraph->new($entityTypeGraphHash);
-
-  foreach my $spec ($extDbRlsSpec) {
+  foreach my $spec (@{$extDbRlsSpec}) {
     my $extDbRlsId = $self->getExtDbRlsId($spec);
 
-    my $studyExtDbRls = EDA::StudyExternalDatabaseRelease->new({external_database_release_id => $extDbRlsId});
+    my $studyExtDbRls = GUS::Model::EDA::StudyExternalDatabaseRelease->new({external_database_release_id => $extDbRlsId});
     $studyExtDbRls->setParent($study);
   }
 
-  $entityTypeGraph->setParent($study);
-  $entityTypeGraph->submit();
+  $study->submit();
 
   if($self->getArg('commit')) {
     # now install the artifacts
     $installer->installData();
   }
-  return("Loaded an EDA Study for external_database_release_id = $extDbRlsId");
+
+
+  return("Loaded an EDA Study for ");
 }
 
 sub preexistingTable {
@@ -132,29 +139,23 @@ sub preexistingTable {
 
   open(FILE, $cacheFileFullPath) or $self->error("Could not open file $cacheFileFullPath for reading: $!");
   
-  my @data = ();
-
-  my $count;
+  my $rv = [];
   while(<FILE>) {
     chomp;
     my @line = split(/\t/, $_);
-    @data = @line;
-    $count++;
+
+    my $row = {};
+    foreach my $field (@{$config->{fields}}) {
+      next if($field->{macro}); 
+
+      my $key = $field->{name};
+      my $index = $field->{cacheFileIndex};
+      my $value = $line[$index];
+
+      $row->{$key} = $value;
+    }
+    push @$rv, $row;
   }
-
-  $self->userError("cache file $cacheFile must contain exactly one row") if($count != 1);
-
-  my $rv = {};
-
-  foreach my $field (@{$config->{fields}}) {
-    next if($field->{macro}); 
-
-    my $key = $field->{name};
-    my $index = $field->{cacheFileIndex};
-    my $value = $data[$index];
-    $rv->{$key} = $value;
-  }
-  
   
   close FILE;
   return $rv;
@@ -168,8 +169,6 @@ sub makeInstaller {
     my $edaSchema = "EDA";
 
     die "gus.confg $gusConfigFile does not exist" unless -e $gusConfigFile;
-
-    my ($extDbName, $extDbVersion) = split(/\|/, $extDbRlsSpec);
 
     my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
     my ($host, $port, $dbname);
@@ -218,7 +217,7 @@ sub makeInstaller {
                         'DATA_FILES' => $outputDir,
                         'INPUT_DIR' => $inputDir,
                         'SKIP_PREEXISTING_TABLES' => 1, # we are loading these rows here not in the VDI artifact loader
-                        'EXTERNAL_DATABASE_NAME' => $extDbName, # This is needed for Undo only
+                        'EXTERNAL_DATABASE_RLS_SPECS' => $extDbRlsSpec, # This is needed for Undo only
         );
 
     return ApiCommonData::Load::InstallEdaStudyFromArtifacts->new(\%requiredVars);
@@ -232,10 +231,12 @@ sub undoTables {
 sub undoPreprocess {
   my($self, $dbh, $rowAlgInvocationList) = @_;
 
-  my $gusConfigFile = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'gusConfigFile');
+  my $gusConfigFile = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'gusConfigFile')->[0];
+
+
   my $extDbRlsSpec = $self->getAlgorithmParam($dbh,$rowAlgInvocationList,'extDbRlsSpec');
 
-  unless(-e $gusConfigFile && $extDbRlsSpec) {
+  unless(-e $gusConfigFile && scalar @$extDbRlsSpec > 0) {
     $self->error("Required algorithm param missing OR does not exist gusConfigFile=$gusConfigFile, extDbRlsSpec=$extDbRlsSpec");
   }
 
@@ -266,11 +267,7 @@ sub getAlgorithmParam {
 
   my @values = keys %paramValues;
 
-  if(scalar keys %paramValues != 1) {
-    $self->error("Odd looking param values for $paramKey:  \n" . Dumper(\%paramValues));    
-  }
-
-  return $values[0];
+  return \@values;
 }
 
 
