@@ -363,7 +363,7 @@ sub unpackAndCheckTaxonToCladeFile {
 	die;
     }
 
-    return \%checkedTaxonToClade;
+    return %checkedTaxonToClade;
 
 }
 
