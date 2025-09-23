@@ -273,6 +273,7 @@ sub parseTaxonToCladeFile {
     foreach my $speciesAbbrev (keys %taxonToClade) {
         my $cladeAbbrev = $taxonToClade{$speciesAbbrev};
 	my $clade = $self->{clades}->{$cladeAbbrev};
+        $self->log("Species abbrev is $speciesAbbrev. Clade Abbrev is $cladeAbbrev.";
 	my $species = GUS::Model::ApiDB::OrthomclClade->new();
 	$species->setThreeLetterAbbrev($speciesAbbrev);
 	$species->setParent($clade);
