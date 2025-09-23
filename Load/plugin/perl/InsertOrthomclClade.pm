@@ -231,7 +231,7 @@ sub parseTaxonToCladeFile {
     my ($self, $taxonToCladeFile) = @_;
 
     my %abbrevToCoreOrPeripheral;
-    my $sql = "SELECT orthomcl_abbrev, core_peripheral FROM apidb.organism";
+    my $sql = "SELECT orthomcl_abbrev, core_peripheral FROM apidb.organism WHERE is_annotated_genome = 1";
     my $dbh = $self->getQueryHandle();
     my $abbrevToCPQuery = $dbh->prepare($sql);
     $abbrevToCPQuery->execute();
@@ -246,8 +246,7 @@ sub parseTaxonToCladeFile {
     }
 
     my %abbrevToName;
-    my $sql = "SELECT o.orthomcl_abbrev, tn.name FROM apidb.organism o, sres.taxonname tn where o.taxon_id = tn.taxon_id";
-    my $dbh = $self->getQueryHandle();
+    my $sql = "SELECT o.orthomcl_abbrev, tn.name FROM apidb.organism o, sres.taxonname tn WHERE o.taxon_id = tn.taxon_id AND o.is_annotated_genome = 1";
     my $abbrevToNameQuery = $dbh->prepare($sql);
     $abbrevToNameQuery->execute();
 
@@ -255,47 +254,101 @@ sub parseTaxonToCladeFile {
         $abbrevToName{$abbrev} = $name;
     }
 
-    open(FILE, '<', $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile' for reading");
+    my %taxonToClade = $self->unpackAndCheckTaxonToCladeFile($taxonToCladeFile,\%abbrevToName,\%abbrevToCoreOrPeripheral);
 
     my $speciesOrder = 1;
-    my $speciesAbbrevs = {};
-    my %seenAbbrevs;
-    while(<FILE>) {
-	my $line = $_;
-	chomp($line);
-	my @columns = split("\t",$line);
-	my $numColumns = scalar @columns;
-	$self->userError("There should be 2 columns:\n$line\n") if ($numColumns != 2);
-	my ($speciesAbbrev,$cladeAbbrev) = @columns;
-        $seenAbbrevs{$speciesAbbrev} = 1;
-	$self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
-	$speciesAbbrevs->{$speciesAbbrev} = 1;
-	$self->userError("species abbreviation '$speciesAbbrev' must have 4 letters") if length($speciesAbbrev) != 4;
 
-	$self->userError("species abbreviation '$speciesAbbrev' is not in apidb.organism") if !$abbrevToCoreOrPeripheral{$speciesAbbrev};
-        my $corePeripheral = $abbrevToCoreOrPeripheral{$speciesAbbrev};
-
-	$self->userError("species abbreviation '$speciesAbbrev' has no name in sres.taxonname") if !$abbrevToName{$speciesAbbrev};
-        my $name = $abbrevToName{$speciesAbbrev};
-
+    foreach my $speciesAbbrev (keys %taxonToClade) {
+        my $cladeAbbrev = $taxonToClade{$speciesAbbrev};
 	my $clade = $self->{clades}->{$cladeAbbrev};
-	$clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
 	my $species = GUS::Model::ApiDB::OrthomclClade->new();
 	$species->setThreeLetterAbbrev($speciesAbbrev);
 	$species->setParent($clade);
 	$species->setIsSpecies(1);
 	$species->setSpeciesOrder($speciesOrder++);
-	$species->setName($name);
+	$species->setName($abbrevToName{$speciesAbbrev});
 	$species->setDepthFirstIndex($clade->getDepthFirstIndex());
-	$species->setCorePeripheral($corePeripheral);
+	$species->setCorePeripheral($abbrevToCoreOrPeripheral{$speciesAbbrev});
         $species->submit();
     }
+}
 
-    foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
-        if ($seenAbbrevs{$abbrev} != 1) {
-            $self->userError("species abbreviation '$abbrev' has no line in the taxonToCladeFile");
+sub unpackAndCheckTaxonToCladeFile {
+    my ($self,$taxonToCladeFile,$abbrevToNameRef,$abbrevToCoreOrPeripheralRef) = @_;
+    open(FILE, '<', $taxonToCladeFile) || $self->userError("can't open taxon to clade file '$taxonToCladeFile' for reading");
+
+    my %abbrevToName = %{$abbrevToNameRef};
+    my %abbrevToCoreOrPeripheral = %{$abbrevToCoreOrPeripheralRef};
+
+    my $speciesAbbrevs = {};
+    my %seenAbbrevs;
+    my %checkedTaxonToClade;
+    my $error = 0;
+    while(<FILE>) {
+	my $line = $_;
+	chomp($line);
+
+        # Checking that there are two columns
+	my @columns = split("\t",$line);
+	my $numColumns = scalar @columns;
+        if ($numColumns != 2) {
+            $self->log("There should be 2 columns:\n$line\n");
+	    $error = 1;
+        }
+
+	my ($speciesAbbrev,$cladeAbbrev) = @columns;
+        $checkedTaxonToClade{$speciesAbbrev} = $cladeAbbrev;
+
+        # Checking for duplicate species abbrevs
+        $seenAbbrevs{$speciesAbbrev} = 1;
+	if ($speciesAbbrevs->{$speciesAbbrev}) {
+	    $self->log("duplicate species abbrev '$speciesAbbrev'");
+	    $error = 1;
+	}
+
+        # Checking for correctly formatted species abbrev
+	$speciesAbbrevs->{$speciesAbbrev} = 1;
+        if (length($speciesAbbrev) != 4) {
+            $self->log("species abbreviation '$speciesAbbrev' must have 4 letters");
+            $error = 1;
+        }
+
+        # Making sure abbrev is in apidb organism
+        if (!$abbrevToCoreOrPeripheral{$speciesAbbrev}) {
+	    $self->log("species abbreviation '$speciesAbbrev' is not in apidb.organism");
+            $error = 1;
+        }
+
+        my $corePeripheral = $abbrevToCoreOrPeripheral{$speciesAbbrev};
+
+        # Checking abbrev has name is sres.taxonname
+        if (!$abbrevToName{$speciesAbbrev}) {
+	    $self->log("species abbreviation '$speciesAbbrev' has no name in sres.taxonname");
+            $error = 1;
+        }
+
+        # Checking abbrev has an associated clade
+	my $clade = $self->{clades}->{$cladeAbbrev};
+        if (!$self->{clades}->{$cladeAbbrev}) {
+	    $self->log("Can't find clade with clade '$cladeAbbrev' for species '$speciesAbbrev'");
+            $error = 1;
         }
     }
+
+    # Checking for missing lines in taxonToCladeFile
+    foreach my $abbrev (keys %abbrevToCoreOrPeripheral) {
+        if ($seenAbbrevs{$abbrev} != 1) {
+            $self->log("species abbreviation '$abbrev' has no line in the taxonToCladeFile");
+            $error = 1;
+        }
+    }
+
+    if ($error == 1) {
+	$self->error("Please resolve the above issues and then retry this plugin\n");
+	die;
+    }
+
+    return \%checkedTaxonToClade;
 
 }
 
