@@ -231,7 +231,11 @@ sub parseTaxonToCladeFile {
     my ($self, $taxonToCladeFile) = @_;
 
     my %abbrevToCoreOrPeripheral;
-    my $sql = "SELECT orthomcl_abbrev, core_peripheral FROM apidb.organism WHERE is_annotated_genome = 1";
+
+    my $sql = "SELECT orthomcl_abbrev, core_peripheral
+               FROM apidb.organism
+               WHERE is_annotated_genome = 1
+               OR (is_annotated_genome = 0 AND project_name = 'OrthoMCL')";
     my $dbh = $self->getQueryHandle();
     my $abbrevToCPQuery = $dbh->prepare($sql);
     $abbrevToCPQuery->execute();
@@ -246,7 +250,12 @@ sub parseTaxonToCladeFile {
     }
 
     my %abbrevToName;
-    my $sql = "SELECT o.orthomcl_abbrev, tn.name FROM apidb.organism o, sres.taxonname tn WHERE o.taxon_id = tn.taxon_id AND o.is_annotated_genome = 1";
+    my $sql = "SELECT o.orthomcl_abbrev, tn.name
+               FROM apidb.organism o
+               JOIN sres.taxonname tn ON o.taxon_id = tn.taxon_id
+               WHERE 
+                    o.is_annotated_genome = 1
+                    OR (o.is_annotated_genome = 0 AND o.project_name = 'OrthoMCL')";
     my $abbrevToNameQuery = $dbh->prepare($sql);
     $abbrevToNameQuery->execute();
 
