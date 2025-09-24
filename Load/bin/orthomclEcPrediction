@@ -28,23 +28,27 @@ my ($testFraction,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMo
 my ($logFh,$netGroupsRef,$dbh,$groups) = &setUpPrediction($outputDir,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile, $gusConfigFile);
 
 foreach my $group (keys %{$groups}) {
-    next if (&nextGroup($fractionOfGroups,$netGroupsRef,$logFh));
+    next if (&nextGroup($fractionOfGroups,$netGroupsRef,$logFh,$group));
 
     my ($statsFh,$proteinFile) = &makeGroupDirAndFiles($outputDir,$group,$createStatsFile,$createProteinFile);
+    print $logFh "Getting protein info for group ${group}\n";
     my ($proteinIds,$numTotalProteins,$numTotalGenera) = &getProteinInfo($group,$excludeOld,$dbh,$proteinFile);
 
     my ($trainingIds,$testIds);
     ($trainingIds,$testIds) = &getTrainingAndTestIds($proteinIds,$testFraction) if ($test);
     next if ($test && ($trainingIds eq "" || $testIds eq ""));
 
+    print $logFh "Getting viable ecs for group ${group}\n";
     my $viableEcNumbers = &getViableEcNumbers($proteinIds,$test,$trainingIds,$minNumGeneraForViableEc,$minNumProteinsForViableEc,$statsFh);
   
     my ($domainStatsPerEc,$domainPerProtein) = &ecDomainStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
+    print $logFh "Getting ec length stats for group ${group}\n";
     my $lengthStatsPerEc = &ecLengthStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
     my ($blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = &ecBlastStats($dbh,$group);
 
     close $statsFh if ($statsFh);
 
+    print $logFh "Getting protein scores for group ${group}\n";
     my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$outputFile,$dbh);
 
      &testScores($scores,$proteinIds,$testIds,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh,$logFh) if ($test);
@@ -77,9 +81,9 @@ sub setUpPrediction {
 }
 
 sub nextGroup {
-    my ($fractionOfGroups,$netGroupsRef,$logFh) = @_;
+    my ($fractionOfGroups,$netGroupsRef,$logFh,$group) = @_;
     return 1 if (rand(1) >= $fractionOfGroups);
-    print {$logFh ? $logFh : *STDERR } "Approx number groups remaining: ${$netGroupsRef}\n";
+    print {$logFh ? $logFh : *STDERR } "Approx number groups remaining: ${$netGroupsRef}. Processing Group: ${group}\n";
     ${$netGroupsRef}--;
     return 0;
 }
