@@ -31,24 +31,24 @@ foreach my $group (keys %{$groups}) {
     next if (&nextGroup($fractionOfGroups,$netGroupsRef,$logFh,$group));
 
     my ($statsFh,$proteinFile) = &makeGroupDirAndFiles($outputDir,$group,$createStatsFile,$createProteinFile);
-    print $logFh "Getting protein info for group ${group}\n";
+    print {$logFh ? $logFh : *STDERR } "Getting protein info for group ${group}\n";
     my ($proteinIds,$numTotalProteins,$numTotalGenera) = &getProteinInfo($group,$excludeOld,$dbh,$proteinFile);
 
     my ($trainingIds,$testIds);
     ($trainingIds,$testIds) = &getTrainingAndTestIds($proteinIds,$testFraction) if ($test);
     next if ($test && ($trainingIds eq "" || $testIds eq ""));
 
-    print $logFh "Getting viable ecs for group ${group}\n";
+    print {$logFh ? $logFh : *STDERR } "Getting viable ecs for group ${group}\n";
     my $viableEcNumbers = &getViableEcNumbers($proteinIds,$test,$trainingIds,$minNumGeneraForViableEc,$minNumProteinsForViableEc,$statsFh);
   
     my ($domainStatsPerEc,$domainPerProtein) = &ecDomainStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
-    print $logFh "Getting ec length stats for group ${group}\n";
+    print {$logFh ? $logFh : *STDERR } "Getting ec length stats for group ${group}\n";
     my $lengthStatsPerEc = &ecLengthStats($proteinIds,$test,$trainingIds,$viableEcNumbers,$statsFh);
     my ($blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = &ecBlastStats($dbh,$group);
 
     close $statsFh if ($statsFh);
 
-    print $logFh "Getting protein scores for group ${group}\n";
+    print {$logFh ? $logFh : *STDERR } "Getting protein scores for group ${group}\n";
     my $scores =  &getProteinScores($proteinIds,$numTotalProteins,$numTotalGenera,$test,$testIds,$viableEcNumbers,$domainStatsPerEc,$domainPerProtein,$lengthStatsPerEc,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc,$outputFile,$dbh);
 
      &testScores($scores,$proteinIds,$testIds,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMorePrecise,$numProteinsExtraEcRef,$numExtraEcRef,$numTotalProteinsRef,$testFh,$logFh) if ($test);
