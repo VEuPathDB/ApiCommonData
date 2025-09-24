@@ -891,7 +891,7 @@ sub scoreToNumber {
 
 sub printEcScores {
     my ($scores,$outputFile,$dbh) = @_;
-    open(OUT,">",$outputFile) || die "Cannot open file '$outputFile' for writing";
+    open(OUT,">>",$outputFile) || die "Cannot open file '$outputFile' for writing";
     close OUT;
     foreach my $id (keys %{$scores}) {
 	my $editedId = $id;
