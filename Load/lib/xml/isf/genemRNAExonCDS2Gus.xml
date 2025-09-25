@@ -87,13 +87,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
-    <qualifier name="pseudo"       ignore="true"/>
     <qualifier name="pseudogene"       ignore="true"/>
-    <qualifier name="isPseudo"       ignore="true"/>
-    <qualifier name="Partial"      ignore="true"/>
-    <qualifier name="partial"      ignore="true"/>
     <qualifier name="transl_table" ignore="true"/>
     <qualifier name="valid_ORFs" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"     handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="mRNA" so="mRNA">
@@ -611,6 +611,49 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="name" ignore="true"/>
+    <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="proteinId" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="start_range" ignore="true"/>
+    <qualifier name="Target" ignore="true"/>
+    <qualifier name="tag" ignore="true"/>
+    <qualifier name="track" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcriptId" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="WebId" ignore="true"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="primary_transcript" so="transcript">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Aliases" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="date" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>

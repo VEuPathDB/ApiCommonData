@@ -229,6 +229,7 @@ sub traverseSeqFeatures {
              'telomerase_RNA',
              'V_gene_segment',
              'C_gene_segment',
+             'primary_transcript',
              )
         ) {
 
@@ -419,7 +420,7 @@ sub traverseSeqFeatures {
 
 	    $gene->add_SeqFeature($transcript);
 
-	}
+       }
     }
     push(@genes, $gene) if ($gene);
     return (\@genes ,\@UTRs);
