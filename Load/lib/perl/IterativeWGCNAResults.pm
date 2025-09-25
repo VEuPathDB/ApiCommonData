@@ -54,7 +54,7 @@ sub munge {
 	my $quantificationType = $self->getQuantificationType();
 	my $strand = "firststrand"; # Only doing first strand analyses.
 	my $profileSetName = $self->getprofileSetName();
-	my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+	my $gusconfig = GUS::Supported::GusConfig->new($self->getGusConfigFile());
 	my $dsn = $gusconfig->getDbiDsn();
 	my $login = $gusconfig->getDatabaseLogin();
 	my $password = $gusconfig->getDatabasePassword();
@@ -70,22 +70,23 @@ sub munge {
 
 	print "Using the first strand and excluding pseudogenes\n";
 	my $preprocessedFile = "Preprocessed_" . $inputFile;
-	my $sql = "SELECT ga.source_id,
-							ta.length
-						FROM apidbtuning.geneAttributes ga,
-							apidbtuning.transcriptAttributes ta
-						WHERE ga.organism = '$organism'
-						AND ga.gene_type != 'pseudogene'
-						AND ga.gene_id = ta.gene_id";
+	my $sql = "select gf.source_id
+from dots.genefeature gf 
+inner join sres.ontologyterm ot on ot.ontology_term_id = gf.sequence_ontology_id
+    inner join dots.nasequence s on gf.na_sequence_id = s.na_sequence_id
+    inner join sres.taxonname tn on s.taxon_id = tn.taxon_id
+where ot.name != 'pseudogene'
+ and tn.name = '$organism'
+ and tn.name_class = 'scientific name'";
+
 	my $stmt = $dbh->prepare($sql);
 	$stmt->execute();
 
 	# Create gene hash
 	my %genesHash;
-	my %geneLengthsHash;
-	while(my ($genes, $transcript_length) = $stmt->fetchrow_array() ) {
+
+	while(my ($genes) = $stmt->fetchrow_array() ) {
 		$genesHash{$genes} = 1;
-		$geneLengthsHash{$genes} = $transcript_length;
 	}
 		
 	$stmt->finish();
@@ -158,7 +159,7 @@ sub munge {
         my $command = "singularity run -H $mainDirectory docker://veupathdb/iterativewgcna -i $inputFileForWGCNA  -o  $outputDirFullPath  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 	
-	my $results  =  system($command);
+	system($command) == 0 or die "Error running singularity command:  $command";
 	
 	#-------------- parse Module Membership -----#
 	my $outputDirModuleMembership = "FirstStrandMMResultsForLoading";

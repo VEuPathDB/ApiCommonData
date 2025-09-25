@@ -1,3 +1,4 @@
+set role COMM_WDK_W;  -- TODO: remove GRANTs to COMM_WDK_W
 
 CREATE SCHEMA IF NOT EXISTS usercomments;
 GRANT USAGE ON SCHEMA usercomments TO COMM_WDK_W;

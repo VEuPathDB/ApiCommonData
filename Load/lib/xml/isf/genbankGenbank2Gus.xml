@@ -131,6 +131,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="citation"	    		ignore="true"/>
     <qualifier name="codon_start"			ignore="true"/>
     <qualifier name="EC_number"			ignore="true"/>
+    <qualifier name="exception"			ignore="true"/>
     <qualifier name="function"			ignore="true"/>
     <qualifier name="GO_component"			ignore="true"/>
     <qualifier name="GO_function"			ignore="true"/>
@@ -309,6 +310,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="inference" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="trans_splicing" ignore="true"/>
     <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
@@ -570,7 +572,9 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="tRNA_gene" so="tRNA_encoding">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="exception"				ignore="true"/>
     <qualifier name="gene"				ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="note"				ignore="true"/>
     <qualifier name="selenocysteine"       ignore="true"/>
@@ -588,6 +592,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="inference"			ignore="true"/>
     <qualifier name="note"			ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="old_locus_tag"			ignore="true"/>
   </feature>
 
@@ -597,6 +602,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
@@ -605,6 +611,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
   </feature>
 
   <feature name="ncRNA_gene" so="ncRNA">
@@ -613,7 +620,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
     <qualifier name="product"           ignore="true"/>
+    <qualifier name="pseudo"           ignore="true"/>
   </feature>
 
   <feature name="tmRNA_gene" so="tmRNA">
@@ -622,6 +631,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="product"           ignore="true"/>
   </feature>
 
@@ -630,6 +640,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="old_locus_tag"			ignore="true"/>
     <qualifier name="product"           ignore="true"/>
   </feature>
@@ -639,6 +650,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="old_locus_tag"			ignore="true"/>
     <qualifier name="product"           ignore="true"/>
   </feature>
@@ -649,6 +661,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
   </feature>
 
   <feature name="antisense_RNA_gene" so="antisense_RNA_encoding">
@@ -657,6 +670,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
   </feature>
 
   <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
@@ -664,6 +678,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"          ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"           ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="product"           ignore="true"/>
   </feature>
 
@@ -672,6 +687,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"          ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="product"           ignore="true"/>
   </feature>
 
@@ -680,6 +696,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"          ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="product"           ignore="true"/>
   </feature>
 
@@ -688,8 +705,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="gene"			ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="old_locus_tag"			ignore="true"/>
     <qualifier name="product"           ignore="true"/>
+    <qualifier name="pseudo"           ignore="true"/>
   </feature>
 
   <feature name="telomerase_RNA_gene" so="telomerase_RNA_encoding">
@@ -701,6 +720,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym"				ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="ncRNA_class" ignore="true"/>
     <qualifier name="note" ignore="true"/>
@@ -770,6 +790,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="collected_by"    ignore="true"/>
     <qualifier name="collection_date" ignore="true"/>
     <qualifier name="culture_collection" ignore="true"/>
+    <qualifier name="ecotype" ignore="true"/>
     <qualifier name="environmental_sample" ignore="true"/>
     <qualifier name="isolation_source" ignore="true"/>
     <qualifier name="map" ignore="true"/>
