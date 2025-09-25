@@ -78,7 +78,7 @@ sub run {
     my ($self) = @_;
 
     my $speciesFromOrtho = $self->getSpeciesFromOrtho();
-    my $speciesFromOrtho = $self->addUrlAndResource($speciesFromOrtho);
+    my $speciesFromOrtho = $self->cleanUpData($speciesFromOrtho);
 
     my $numRows = $self->loadOrthoResource($speciesFromOrtho);
     $self->log("Finished adding to ApiDB.OrthomclResource. Loaded $numRows rows.\n");
@@ -88,7 +88,7 @@ sub getSpeciesFromOrtho {
     my ($self) = @_;
 
     my $sql = <<SQL;
-SELECT og.orthomcl_abbrev, og.abbrev, og.taxon_id, tn.name, og.project_name, og.genome_source, og.name_for_filenames
+SELECT og.orthomcl_abbrev, og.abbrev, og.taxon_id, tn.name
 FROM apidb.organism og, sres.taxonname tn
 WHERE og.core_peripheral IN ('core','peripheral')
 AND og.taxon_id = tn.taxon_id
@@ -104,9 +104,6 @@ SQL
 	$species->{$row[0]}->{abbrev} = $row[1];
 	$species->{$row[0]}->{orthomclId} = $row[2];
 	$species->{$row[0]}->{name} = $row[3];
-	$species->{$row[0]}->{project} = $row[4];
-	$species->{$row[0]}->{genome_source} = $row[5];
-	$species->{$row[0]}->{filename} = $row[6];
     }
 
     $sql = <<SQL;
@@ -128,15 +125,9 @@ SQL
 	my $currentFullAbbrev = shift @array;
         my @abbrevs = keys %$species;
         foreach my $abbrev (@abbrevs) {
-            # Example causing issue (abbrev has underscore as part of name
-            # ncerPA08_1199_primary_genome_RSRC | 2015-05-05 |
-            # orthomcl_abbrev |    abbrev     | taxon_id |              name                
-            #-----------------+---------------+----------+---------------------------------
-            # ncep            | ncerPA08_1199 |  2658573 | Nosema ceranae strain PA08_1199
-	    my @abbrevArray = split(/_/, $species->{$abbrev}->{abbrev});
-	    my $abbrevBeforeUnderscore = shift @abbrevArray;
-            if ($abbrevBeforeUnderscore eq $currentFullAbbrev) {
+            if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
             	$species->{$abbrev}->{version} = $row[1];
+        	$species->{$abbrev}->{url} = $row[2];
             }
         }
     }
@@ -145,13 +136,17 @@ SQL
 	if (! exists $species->{$abbrev}->{version} ) {
 	    $self->error("Abbreviation '$abbrev' does not have version in ExtDb or ExtDbRls tables.\n");
 	}
+	if (! exists $species->{$abbrev}->{url} ) {
+	    $self->error("Abbreviation '$abbrev' does not have url in ExtDb or ExtDbRls tables.\n");
+	}
+
     }
     return $species;
 }
 
 
-sub getUrl {
-    my ($self,$project,$filename) = @_;
+sub getVeupathUrl {
+    my ($resource,$filename) = @_;
     my $url = "https://";
 
     my %projects = (
@@ -167,32 +162,57 @@ sub getUrl {
 	tritrypdb => "tritrypdb.org/tritrypdb",
 	hostdb => "hostdb.org/hostdb",
 	schistodb => "schistodb.net/schisto",
-	vectorbase => "vectorbase.org/vectorbase",
-	orthomcl => "vectorbase.org/vectorbase"
+	vectorbase => "vectorbase.org/vectorbase"
      );
     
-    if ( exists $projects{lc($project)} ) {
-        if ($project eq 'OrthoMCL') {
-            $url .= 'www.uniprot.org/uniprot/EXTERNAL_ID_HERE';
-        }
-        else {
-	    $url .= $projects{lc($project)}."/app/downloads/Current_Release/${filename}/fasta/data/";
-        }
+    if ( exists $projects{lc($resource)} ) {
+	$url .= $projects{lc($resource)}."/app/downloads/Current_Release/$filename/fasta/data/";
     } else {
-        $self->error("No project for filename $filename\n");
+	$url = "";
     }
+    
     return $url;
 }
 
-sub addUrlAndResource {
+sub cleanUpData {
     my ($self,$species) = @_;
 
     foreach my $abbrev (keys %{$species}) {
-        my $project = $species->{$abbrev}->{project};
-        my $fileName = $species->{$abbrev}->{filename};
-        my $url = $self->getUrl($project,$fileName);
-        $species->{$abbrev}->{url} = $url;
-        $species->{$abbrev}->{resource} = $project;
+	if ( ! exists $species->{$abbrev}->{resource} ) {
+	    my $abbrevWithoutOld = $abbrev;
+	    $abbrevWithoutOld =~ s/-old//;
+	    if ( exists $species->{$abbrevWithoutOld}->{resource} ) {
+		$species->{$abbrev}->{resource} = $species->{$abbrevWithoutOld}->{resource};
+		my $url = $species->{$abbrevWithoutOld}->{url};
+		if ($url =~ /^(.+\/app\/downloads\/)/) {
+		    $species->{$abbrev}->{url} = $1;
+		}
+		if ($species->{$abbrev}->{name} =~ /.+ (\(old build.+\))$/) {
+		    $species->{$abbrev}->{name} = $species->{$abbrevWithoutOld}->{name}." ".$1;
+		}
+	    } elsif (exists $species->{$abbrev}->{url}) {
+		if ( $species->{$abbrev}->{url} =~ /.+\.([A-Za-z]+)\.(org|net)/ ) {
+		    my $resource = $1;
+		    $resource = "VectorBase" if (lc($resource) eq "vectorbase");
+		    $species->{$abbrev}->{resource} = $resource;
+		    my $url = getVeupathUrl($resource);
+		    if ($url ne "") {  #this a veupath url
+			if ( $url =~ /^(.+\/app\/downloads\/)/ ) {
+			    $species->{$abbrev}->{url} = $1;
+			}
+		    }
+		} else {
+		    $species->{$abbrev}->{resource} = "See URL";
+		}
+	    } else {
+		$species->{$abbrev}->{resource} = "unknown";
+		$species->{$abbrev}->{url} = "unknown";
+	    }
+	} else {
+	    if ( ! exists $species->{$abbrev}->{url} ) {
+		$species->{$abbrev}->{url} = "See Resource";
+	    }
+	}
     }
     return $species;
 }
@@ -213,6 +233,7 @@ sub loadOrthoResource {
 
     my $numRows=0;
     foreach my $abbrev (keys %{$species}) {
+	$abbrev = "rhiz" if ($abbrev eq "rirr"); # this is temporary, because rhiz on orthomcl equals rirr on fungidb
 	my $id = $species->{$abbrev}->{orthomclId};
 	if (! $id) {
 	    die "organism does not have an orthomcl_taxon_id:\nabbrev '$abbrev'\n";
