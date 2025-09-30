@@ -6,6 +6,8 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::AlphaFold;
+use GUS::Model::ApiDB::AlphaFold_Table;
+
 use Data::Dumper;
 use File::Temp qw/ tempfile /;
 
@@ -212,7 +214,7 @@ sub filterInputAndLoad {
     my ($self, $inputFile, $uniprotIds, $fh, $extDbRlsId, $psqlObj) = @_;
 
     my $fields = $psqlObj->getFields();
-    my $dbiDb == $self->getDb();
+    my $dbiDb = $self->getDb();
     
     my $primaryKeyValue = $self->initPrimaryKey();
     my $rowGroupId = $dbiDb->getDefaultGroupId();
