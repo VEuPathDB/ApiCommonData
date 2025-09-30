@@ -212,6 +212,7 @@ sub filterInputAndLoad {
     my ($self, $inputFile, $uniprotIds, $fh, $extDbRlsId, $psqlObj) = @_;
 
     my $fields = $psqlObj->getFields();
+    my $dbiDb == $self->getDb();
     
     my $primaryKeyValue = $self->initPrimaryKey();
     my $rowGroupId = $dbiDb->getDefaultGroupId();
