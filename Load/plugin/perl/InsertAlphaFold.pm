@@ -163,7 +163,7 @@ sub makePsqlObj {
     _login => $self->getDb->getLogin(),
     _password => $self->getDb->getPassword(),
     _database => $db,
-    _hostName=> $hostname,
+    _hostName=> $hostName,
     _quiet => 0,
   });
 
