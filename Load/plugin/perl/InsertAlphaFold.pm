@@ -269,6 +269,7 @@ sub filterInputAndLoad {
 
             print $fh join(",", @values) . "\n";
             $count++;
+            $primaryKeyValue++;
         }
     }
     close(IN);
