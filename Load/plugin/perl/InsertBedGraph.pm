@@ -3,6 +3,7 @@ package ApiCommonData::Load::Plugin::InsertBedGraph;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use GUS::Model::ApiDB::GenomeBedGraph;
+use GUS::Model::ApiDB::ProteinBedGraph;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
@@ -19,7 +20,7 @@ my $argsDeclaration =
             isList         => 0, }),
 
    stringArg({name           => 'algorithm',
-            descr          => 'NCBI Taxon Id of Organism',
+            descr          => 'which software generated the alignments',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
@@ -29,7 +30,15 @@ my $argsDeclaration =
                  constraintFunc => undef,
                  reqd => 1,
                  isList => 0,
-               })
+               }),
+
+   booleanArg({name => 'isProteinAlignments',
+	      descr => 'true if the sequence source_id in the bedgraph file is for proteins',
+	      reqd => 1,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
   ];
 
 my $documentation = { purpose          => "",
@@ -87,14 +96,28 @@ sub run {
 	chomp $line;
 	my ($sourceId, $start, $end, $value) = split(/\t/, $line);
 
-	my $row = GUS::Model::ApiDB::GenomeBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
-							     START_LOCATION => $start,
-							     END_LOCATION => $end,
-						             VALUE => $value,
-                                                             ALGORITHM => $algorithm,
-                                                             EXTERNAL_DB_RELEASE_ID => $dbRlsId
-						   });
-	$row->submit();
+  my $row;
+
+  if($self->isProteinAlignments()) {
+   $row = GUS::Model::ApiDB::ProteinBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
+                                                    START_LOCATION => $start,
+                                                    END_LOCATION => $end,
+                                                    VALUE => $value,
+                                                    ALGORITHM => $algorithm,
+                                                    EXTERNAL_DB_RELEASE_ID => $dbRlsId
+               });
+  }
+  else {
+   $row = GUS::Model::ApiDB::GenomeBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
+                                                    START_LOCATION => $start,
+                                                    END_LOCATION => $end,
+                                                    VALUE => $value,
+                                                    ALGORITHM => $algorithm,
+                                                    EXTERNAL_DB_RELEASE_ID => $dbRlsId
+               });
+  }
+
+  $row->submit();
 	$self->undefPointerCache();
     }
 
