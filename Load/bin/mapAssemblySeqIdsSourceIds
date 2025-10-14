@@ -159,12 +159,11 @@ while (my $line = <IN>) {
         $sourceId = $1;  # e.g., BU575304
     }
 
-    if (defined $sourceId && exists $mapHash{$sourceId}) {
-        my $newId = $mapHash{$sourceId};
+    if (defined $sourceId) {
 
         for (my $i = 0; $i < @temps; $i++) {
             if ($i == 9) {
-                push(@new, $newId);  # Replace 10th column with mapped ID
+                push(@new, $sourceId);
             } else {
                 push(@new, $temps[$i]);
             }
