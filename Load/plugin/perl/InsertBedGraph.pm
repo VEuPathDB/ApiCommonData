@@ -98,7 +98,7 @@ sub run {
 
   my $row;
 
-  if($self->getArg('isProteinAlignments') {
+  if($self->getArg('isProteinAlignments')) {
    $row = GUS::Model::ApiDB::ProteinBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
                                                     START_LOCATION => $start,
                                                     END_LOCATION => $end,
