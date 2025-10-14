@@ -87,48 +87,45 @@ sub run {
   }
 
 
-
-
-
-
     while (my $line = <$fh>) {
 	my $rowCount++;
 	chomp $line;
 	my ($sourceId, $start, $end, $value) = split(/\t/, $line);
 
-  my $row;
+        my $row;
 
-  if($self->getArg('isProteinAlignments')) {
-   $row = GUS::Model::ApiDB::ProteinBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
-                                                    START_LOCATION => $start,
-                                                    END_LOCATION => $end,
-                                                    VALUE => $value,
-                                                    ALGORITHM => $algorithm,
-                                                    EXTERNAL_DB_RELEASE_ID => $dbRlsId
-               });
-  }
-  else {
-   $row = GUS::Model::ApiDB::GenomeBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
-                                                    START_LOCATION => $start,
-                                                    END_LOCATION => $end,
-                                                    VALUE => $value,
-                                                    ALGORITHM => $algorithm,
-                                                    EXTERNAL_DB_RELEASE_ID => $dbRlsId
-               });
-  }
+	if($self->getArg('isProteinAlignments')) {
+	    $row = GUS::Model::ApiDB::ProteinBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
+							    START_LOCATION => $start,
+							    END_LOCATION => $end,
+							    VALUE => $value,
+							    ALGORITHM => $algorithm,
+							    EXTERNAL_DB_RELEASE_ID => $dbRlsId
+							   });
+	}
+	else {
+	    $row = GUS::Model::ApiDB::GenomeBedGraph->new({SEQUENCE_SOURCE_ID => $sourceId,
+							   START_LOCATION => $start,
+							   END_LOCATION => $end,
+							   VALUE => $value,
+							   ALGORITHM => $algorithm,
+							   EXTERNAL_DB_RELEASE_ID => $dbRlsId
+							  });
+	}
 
-  $row->submit();
+	$row->submit();
 	$self->undefPointerCache();
     }
 
-  print "$rowCount rows added.\n";
-  close($fh);
+    print "$rowCount rows added.\n";
+    close($fh);
 }
 
 sub undoTables {
     my ($self) = @_;
 
-  return ('ApiDB.GenomeBedGraph'
+  return ('ApiDB.GenomeBedGraph',
+          'ApiDB.ProteinBedGraph'
       );
 }
 
