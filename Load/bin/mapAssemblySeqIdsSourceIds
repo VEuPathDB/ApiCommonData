@@ -144,38 +144,37 @@ close OUT;
 
     #oh wait for blat I need a map of assembly to assembly
 open IN, "$blatFile" or die "can't open $blatFile for reading\n";
-open OUT, ">$mappedBlatFile" or die "cant open $mappedBlatFile for writting\n";
+open OUT, ">$mappedBlatFile" or die "can't open $mappedBlatFile for writing\n";
+
 while (my $line = <IN>) {
     chomp $line;
     my @temps = split '\t', $line;
     my @new;
+
     my $assemblySeq = $temps[9];
     my $sourceId;
-    if ($assemblySeq=~ /^assemblySeqIds\|(.+)\|(.+)/) {
- 
-  # fixed on 03/14/2018 H.W.
-	#my $assemblySeq = $1;
-	$assemblySeq = $1;
-#	$sourceId = $2;
+
+    # Extract the last part after the last '|'
+    if ($assemblySeq =~ /^assemblySeqIds\|[^|]*\|([^|]+)$/) {
+        $sourceId = $1;  # e.g., BU575304
     }
-    if (exists $mapHash{$assemblySeq}) {
-	my $newId = $mapHash{$assemblySeq};
-#   if (exists $sourceIdHash{$sourceId}) {
-#	my $newId = $sourceIdHash{$sourceId};
-	for (my $i=0; $i <= @temps; $i++) {
-	    if ($i == 9) {
-		push (@new, $newId);
-	    }
-	    else{
-		push (@new, $temps[$i]);
-	    }
-	}
-	print OUT join("\t",@new),"\n";
-    }
-    else {
-	print "WARNING BLAT FILE DOES NOT HAVE A MATCH IN MAP TABLE FOR ASSEMBLYSEQ $assemblySeq in $blatFile\n";
+
+    if (defined $sourceId && exists $mapHash{$sourceId}) {
+        my $newId = $mapHash{$sourceId};
+
+        for (my $i = 0; $i < @temps; $i++) {
+            if ($i == 9) {
+                push(@new, $newId);  # Replace 10th column with mapped ID
+            } else {
+                push(@new, $temps[$i]);
+            }
+        }
+        print OUT join("\t", @new), "\n";
+    } else {
+        print "WARNING: No match in map table for sequence ID $assemblySeq in $blatFile\n";
     }
 }
+
 
 #print "$mappedQueryFile,$mappedBlatFile";
 
