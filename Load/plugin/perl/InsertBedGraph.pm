@@ -34,7 +34,7 @@ my $argsDeclaration =
 
    booleanArg({name => 'isProteinAlignments',
 	      descr => 'true if the sequence source_id in the bedgraph file is for proteins',
-	      reqd => 1,
+	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
