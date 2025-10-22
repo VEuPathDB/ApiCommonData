@@ -1,4 +1,4 @@
-package ApiCommonData::Load::AnalysisConfigXmlParser;
+package ApiCommonData::Load::AnalysisConfigParser;
 
 use strict;
 
