@@ -246,9 +246,14 @@ sub run {
       $self->error("hasTemporaryNcbiTaxonId is false but the provided ncbi taxon ID looks like a temporary one.  (It must be greater than 9000000000 to be a temp ID)");
   }
 
+
+  my $sanitizedAbbrev = $abbrev;
+  $sanitizedAbbrev =~ s/[.-]//g;
+  
   my $organism =  GUS::Model::ApiDB::Organism->new({'taxon_id' => $taxon_id,
 						    'project_name' => $projectName,
 						    'abbrev' => $abbrev,
+						    'sanitized_abbrev' => $sanitizedAbbrev,
 						    'public_abbrev' => $abbrevPublic,
 						    'name_for_filenames' => $nameForFilenames,
 						    'genome_source' => $genomeSource,
