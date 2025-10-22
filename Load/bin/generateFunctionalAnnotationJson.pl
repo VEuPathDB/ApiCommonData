@@ -219,7 +219,7 @@ sub getProductNameFromTuningTable {
 
   ## only grep the preferred product name
   my $sql = "select source_id as transcript_source_id, transcript_product
-             from webready.transcriptAttributes
+             from webready.TranscriptAttributes_p
              where external_db_rls_id=$extDbRlsId
              and org_abbrev = '$organismAbbrev'";
 

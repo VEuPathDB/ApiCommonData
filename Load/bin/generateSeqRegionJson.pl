@@ -55,7 +55,7 @@ open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write
 print STDERR "\$extDbRlsId = $extDbRlsId\n";
 
 my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
-               from webready.genomicseqattributes
+               from webready.GenomicSeqAttributes_p
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
                and org_abbrev = '$organismAbbrev'
                and is_top_level = 1";

@@ -71,7 +71,7 @@ sub getGoInfoFromDbs {
   my ($dbhSub, $orgAbbrev, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date, $tuningTablePrefix) = @_;
   my @goInfos;
 
-  ## use webready.GoTermSummary table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
+  ## use webready.GoTermSummary_p table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
   my $sqlSub = "
 select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, IS_NOT, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, EVIDENCE_CODE_PARAMETER, 
   CASE
@@ -79,7 +79,7 @@ select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, IS_NOT, GO_ID, REFERENCE, EVIDENCE_
     WHEN ontology = 'Molecular Function' THEN 'F'
     WHEN ontology = 'Cellular Component' THEN 'C'
   END
-from webready.GeneGoTerms
+from webready.GeneGoTerms_p
 where org_abbrev = '$orgAbbrev'
 ";
 
