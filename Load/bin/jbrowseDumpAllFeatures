@@ -401,7 +401,7 @@ sub makeSql {
 
   $sql =~ s/\$org_abbrev/${org_abbrev}/g;
   $sql =~ s/\$taxon_id/${taxon_id}/g;
-  $sql =~ s/\$external_database_release_id/$external_database_release_id/g;
+  $sql =~ s/\$organism_external_database_release_id/$external_database_release_id/g;
 
   foreach my $key (keys %$queryParams) {
     my $value = $queryParams->{$key};
