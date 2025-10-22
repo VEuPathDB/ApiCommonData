@@ -49,12 +49,10 @@ my $xml = XMLin($gbrowseXmlFile, ForceArray => ['trackConfigurations', 'properti
 
 my @tracks = keys %{$xml->{track}};
 
-my $organisms = &getOrganismInfo($dbh);
+my $organisms = &getOrganismInfo($dbh, $orgFilter);
 
 print "starting dump at " . `date` . "\n";
 foreach my $o (@$organisms) {
-  next if($orgFilter && $o->{abbrev} ne $orgFilter);
-
   my ($sequenceCount, $printedSequenceCount, $wroteProteinLengths);
   my $genomicSequences = &getGenomicSequences($dbh, $o);
   my $proteinSequences = &getProteinSequences($dbh, $o);
@@ -259,7 +257,7 @@ sub makeQueryParams {
 }
 
 sub getOrganismInfo {
-  my ($dbh) = @_;
+  my ($dbh, $orgFilter) = @_;
 
   my $sql = "select o.project_name
      , o.abbrev
@@ -274,6 +272,10 @@ where ds.name like '%primary_genome%'
 and ds.taxon_id = o.taxon_id
 and ds.name = d.name
 and d.external_database_id = r.external_database_id";
+
+  if($orgFilter) {
+    $sql =. " and o.abbrev = '$orgFilter'";
+  }
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
