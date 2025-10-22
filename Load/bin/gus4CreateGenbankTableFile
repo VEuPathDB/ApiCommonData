@@ -420,7 +420,7 @@ sub getTransGOs {
   my ($dbhSub, $orgAbbrev, $extDbRlsId) = @_;
   my %transGOSub;
 
-  ## use webready.GoTermSummary table to get GO info
+  ## use webready.GoTermSummary_p table to get GO info
   my $sqlSub = "
 select TRANSCRIPT_SOURCE_ID, GO_ID, GO_TERM_NAME, EVIDENCE_CODE, REFERENCE,
 decode(ontology, 'Biological Process', 'GO_process',

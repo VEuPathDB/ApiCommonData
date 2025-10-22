@@ -116,7 +116,7 @@ while(my ($site, $db) = each %dbs) {
   $sth->execute if $commit;
   $sth->finish; 
 
-  $sql = "select distinct '#org='||o.name_for_filenames||'|'||ga.organism from webready.GeneAttributes ga, APIDB.organism o where o.taxon_id = ga.taxon_id and o.is_annotated_genome=1 order by 1";
+  $sql = "select distinct '#org='||o.name_for_filenames||'|'||ga.organism from webready.GeneAttributes_p ga, APIDB.organism o where o.taxon_id = ga.taxon_id and o.is_annotated_genome=1 order by 1";
   $sth = $dbh->prepare($sql);
   $sth->execute;
 
