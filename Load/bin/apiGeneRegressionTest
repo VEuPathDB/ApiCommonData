@@ -60,7 +60,7 @@ compareSourceIds($oldGeneCount, $newGeneCount);
 foreach my $column (getAttrCols()) {
   my $sql = "
 select old.source_id, old.$column as old$column, new.$column as new$column
-from ApidbTuning.GeneAttributes old, ApidbTuning.GeneAttributes\@$dblinkName new
+from webready.GeneAttributes old, webready.GeneAttributes\@$dblinkName new
 where old.source_id = new.source_id
 and old.$column != new.$column
 and old.species = '$species'";
@@ -82,12 +82,12 @@ sub getGeneCount {
   my ($dblinkName) = @_;
 
   my $dbl = $dblinkName? "\@$dblinkName" : "";
-  my $sql = "select count(*) from ApidbTuning.GeneAttributes$dbl where species = '$species'";
+  my $sql = "select count(*) from webready.GeneAttributes$dbl where species = '$species'";
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
   my ($geneCnt) = $stmt->fetchrow_array();
 
-  die "Invalid species name '$species' (no genes found in ApidbTuning.GeneAttributes$dbl)\n" unless $geneCnt;
+  die "Invalid species name '$species' (no genes found in webready.GeneAttributes$dbl)\n" unless $geneCnt;
   return $geneCnt;
 }
 
@@ -98,7 +98,7 @@ sub compareSourceIds {
 
   my $sql = 
 "select count(*)
- from ApidbTuning.GeneAttributes old, ApidbTuning.GeneAttributes\@$dblinkName new
+ from webready.GeneAttributes old, webready.GeneAttributes\@$dblinkName new
  where old.species = '$species'
  and new.source_id = old.source_id";
   my $stmt = $dbh->prepare($sql);
@@ -239,7 +239,7 @@ Usage:  apiGeneRegressionTest species dblinkName
 
 Example:  apiGeneRegressionTest 'Plasmodium vivax' plasrbld
 
-Compares the ApidbTuning.GeneAttributes table in an old and new database for the specified species.
+Compares the webready.GeneAttributes table in an old and new database for the specified species.
 
 The 'old' database is specified by connect info in \$GUS_HOME/config/gus.config.
 

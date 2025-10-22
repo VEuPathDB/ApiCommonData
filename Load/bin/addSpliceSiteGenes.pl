@@ -50,17 +50,17 @@ my $tempTableCreateH = $dbh->prepare(<<SQL);
   --CASE A:  1st gene on forward strand
    SELECT ga.na_sequence_id , ga.source_id, 0 as alpha, ga.coding_start as beta, ga.end_max as gamma,
     CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
-   FROM apidbTuning.geneAttributes ga,
-  (select min(coding_start) as coding_start_min, na_sequence_id from apidbTuning.geneAttributes
+   FROM webready.GeneAttributes ga,
+  (select min(coding_start) as coding_start_min, na_sequence_id from webready.GeneAttributes
    where gene_type='protein coding'
    group by na_sequence_id)  sub,
   (select min(nxt.coding_start) as delta, ga.source_id
-   from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes nxt
+   from webready.GeneAttributes ga, webready.GeneAttributes nxt
    where ga.na_sequence_id = nxt.na_sequence_id
    and nxt.gene_type='protein coding'
    and nxt.coding_start > ga.coding_start  group by ga.source_id) sub3,
   (select min(nxt.coding_end) as delta, ga.source_id
-   from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes nxt
+   from webready.GeneAttributes ga, webready.GeneAttributes nxt
    where ga.na_sequence_id = nxt.na_sequence_id
    and nxt.gene_type='protein coding' 
    and nxt.coding_end > ga.coding_end group by ga.source_id) sub4
@@ -74,24 +74,24 @@ UNION
   CASE WHEN (sub1.alpha > sub2.alpha) THEN sub1.alpha ELSE sub2.alpha END AS alpha,
   ga.coding_start as beta, ga.end_max as gamma,
   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
- FROM apidbTuning.geneAttributes ga, 
+ FROM webready.GeneAttributes ga, 
    (select max(prev.coding_end) as alpha, ga.source_id
-    from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes prev
+    from webready.GeneAttributes ga, webready.GeneAttributes prev
     where ga.na_sequence_id = prev.na_sequence_id
     and prev.gene_type='protein coding'
     and prev.coding_end < ga.coding_start  group by ga.source_id) sub1,
    (select max(prev.coding_start) as alpha, ga.source_id
-    from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes prev
+    from webready.GeneAttributes ga, webready.GeneAttributes prev
     where ga.na_sequence_id = prev.na_sequence_id
     and prev.gene_type='protein coding'
     and prev.coding_start < ga.coding_start group by ga.source_id) sub2,
    (select min(nxt.coding_start) as delta, ga.source_id
-    from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes nxt
+    from webready.GeneAttributes ga, webready.GeneAttributes nxt
     where ga.na_sequence_id = nxt.na_sequence_id
     and nxt.gene_type='protein coding'
     and nxt.coding_start > ga.coding_start  group by ga.source_id) sub3,
    (select min(nxt.coding_end) as delta, ga.source_id
-    from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes nxt
+    from webready.GeneAttributes ga, webready.GeneAttributes nxt
     where ga.na_sequence_id = nxt.na_sequence_id
     and nxt.gene_type='protein coding'
     and nxt.coding_end > ga.coding_end group by ga.source_id) sub4
@@ -102,17 +102,17 @@ UNION
 --CASE C:  last gene on reverse strand
  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta, sa.length as gamma,
   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
- FROM apidbTuning.geneAttributes ga, ApidbTuning.GenomicSeqAttributes sa,
-    (select max(end_max) as max_end_max, na_sequence_id from apidbTuning.geneAttributes
+ FROM webready.GeneAttributes ga, webready.GenomicSeqAttributes sa,
+    (select max(end_max) as max_end_max, na_sequence_id from webready.GeneAttributes
      where gene_type='protein coding'
      group by na_sequence_id)  sub,
     (select max(nxt.coding_start) as delta, ga.source_id
-     from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes  nxt
+     from webready.GeneAttributes ga, webready.GeneAttributes  nxt
      where ga.na_sequence_id = nxt.na_sequence_id
      and nxt.gene_type='protein coding'
      and nxt.coding_start < ga.coding_end  group by ga.source_id) sub3,
     (select max(nxt.coding_end) as delta, ga.source_id
-     from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes  nxt
+     from webready.GeneAttributes ga, webready.GeneAttributes  nxt
      where ga.na_sequence_id = nxt.na_sequence_id
      and nxt.gene_type='protein coding'
      and nxt.coding_end < ga.coding_start group by ga.source_id) sub4
@@ -125,24 +125,24 @@ UNION
  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta,
   CASE WHEN (sub1.gamma < sub2.gamma) THEN sub1.gamma ELSE sub2.gamma END AS gamma,
   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
- FROM apidbTuning.geneAttributes ga,
+ FROM webready.GeneAttributes ga,
     (select min(prev.coding_end) as gamma, ga.source_id
-     from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes  prev
+     from webready.GeneAttributes ga, webready.GeneAttributes  prev
      where ga.na_sequence_id = prev.na_sequence_id
      and prev.gene_type='protein coding'
      and prev.coding_end > ga.coding_end  group by ga.source_id) sub1,
     (select min(prev.coding_start) as gamma, ga.source_id
-     from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes  prev
+     from webready.GeneAttributes ga, webready.GeneAttributes  prev
      where ga.na_sequence_id = prev.na_sequence_id
      and prev.gene_type='protein coding'
      and prev.coding_start > ga.coding_start group by ga.source_id) sub2,
     (select max(nxt.coding_start) as delta, ga.source_id
-     from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes  nxt
+     from webready.GeneAttributes ga, webready.GeneAttributes  nxt
      where ga.na_sequence_id = nxt.na_sequence_id
      and nxt.gene_type='protein coding'
      and nxt.coding_start < ga.coding_end  group by ga.source_id) sub3,
     (select max(nxt.coding_end) as delta, ga.source_id
-     from apidbTuning.geneAttributes ga, apidbTuning.geneAttributes nxt
+     from webready.GeneAttributes ga, webready.GeneAttributes nxt
      where ga.na_sequence_id = nxt.na_sequence_id
      and nxt.gene_type='protein coding'
      and nxt.coding_end < ga.coding_start group by ga.source_id) sub4

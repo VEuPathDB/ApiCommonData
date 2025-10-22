@@ -48,7 +48,7 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle(0);
 
-my  $sql="select 'SN:'||sa.source_id||chr(9)||'LN:'||sa.length from ApidbTuning.GenomicSeqAttributes sa where sa.NCBI_TAX_ID = $ncbiTaxonId and is_top_level = 1";
+my  $sql="select 'SN:'||sa.source_id||chr(9)||'LN:'||sa.length from webready.GenomicSeqAttributes sa where sa.NCBI_TAX_ID = $ncbiTaxonId and is_top_level = 1";
 
 print STDERR "SQL: $sql\n";
 

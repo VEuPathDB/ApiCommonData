@@ -72,7 +72,7 @@ CASE WHEN coding_start is not null THEN coding_start ELSE CASE WHEN strand = 'fo
 CASE WHEN coding_end is not null THEN coding_end ELSE CASE WHEN strand = 'forward' THEN end_max ELSE start_min END END as coding_end,
 decode(strand,'forward','+','reverse','-') as strand,
 CASE WHEN coding_start is not null THEN 'yes' ELSE 'no' END as protein_coding
-from ApidbTuning.GeneAttributes
+from webready.GeneAttributes
 where organism = '$organism'
 and product not like '\%unlikely\%'
 order by na_sequence_id,strand,coding_start";

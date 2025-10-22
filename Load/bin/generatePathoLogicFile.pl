@@ -60,7 +60,7 @@ foreach(@chrs) {
 
 sub printFasta {
   my ($dbh, $chr, $path)  = @_;
-  my $sql = "select sequence from ApidbTuning.GenomicSequenceSequence where source_id = '$chr'"; 
+  my $sql = "select sequence from webready.GenomicSequenceSequence where source_id = '$chr'"; 
   my $sth = $dbh->prepareAndExecute($sql);
   while(my ($seq) = $sth->fetchrow_array) {
     $seq =~ s/(.{1,60})/$1\n/g;
@@ -75,7 +75,7 @@ sub printFasta {
 sub printGeneticElement {
   my ($dbh, $organism, $path) = @_;
 
-  my $sql = "select distinct ga.CHROMOSOME, ga.SEQUENCE_ID from ApidbTuning.GeneAttributes ga where ga.organism = '$organism' and ga.chromosome is not null order by ga.chromosome";
+  my $sql = "select distinct ga.CHROMOSOME, ga.SEQUENCE_ID from webready.GeneAttributes ga where ga.organism = '$organism' and ga.chromosome is not null order by ga.chromosome";
 
   my $sth = $dbh->prepareAndExecute($sql);
 
@@ -114,7 +114,7 @@ SELECT ga.source_id ,
        ga.gene_type,
        ga.ec_numbers,
        ga.name
-FROM   ApidbTuning.GeneAttributes ga, 
+FROM   webready.GeneAttributes ga, 
        apidb.FeatureLocation fl
 WHERE  fl.na_feature_id = ga.na_feature_id
    AND ga.sequence_id = '$chr'
@@ -156,7 +156,7 @@ EOL
     $pf .= "PRODUCT-TYPE\t$product_type\n";
     $pf .= "EC\t$ec_number\n" if $ec_number;
 
-    my $sqlGO = "SELECT distinct gts.go_id, gts.go_term_name, gts.evidence_code FROM ApidbTuning.GoTermSummary gts where gts.source_id = '$id' ORDER BY gts.go_id";
+    my $sqlGO = "SELECT distinct gts.go_id, gts.go_term_name, gts.evidence_code FROM webready.GoTermSummary gts where gts.source_id = '$id' ORDER BY gts.go_id";
 
     my $sthGO = $dbh->prepareAndExecute($sqlGO);
     while(my ($goid, $go_term, $evidence) = $sthGO->fetchrow_array){

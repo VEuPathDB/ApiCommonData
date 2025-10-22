@@ -245,7 +245,7 @@ sub getOrgForEst {
   q{with estOrgs as (
    select distinct ea.organism,
           regexp_replace(ea.organism, '(\S)\S+\s* ', '\1') as briefname
-   from apidbtuning.estattributes ea)
+   from webready.EstAttributes ea)
   select distinct  fa.organism, eo.organism
   from apidb.fileAttributes fa, estOrgs eo
   where fa.organism = eo.briefname};
