@@ -127,7 +127,7 @@ sub insertTranscriptSequence {
 sub deleteRows {
   my ($dbh, $schema, $orgAbbrev) = @_;
 
-  my $rows = $dbh->do("delete from ${schema}.TranscriptGenomicSequence where org_abbrev = '$orgAbbrev'");
+  my $rows = $dbh->do("delete from ${schema}.TranscriptGenomicSequence_p where org_abbrev = '$orgAbbrev'");
 
   print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence\n";
   $dbh->commit();
