@@ -45,7 +45,7 @@ sub populateChildTable {
   my ($dbh, $schema, $projectId, $orgAbbrev) = @_;
 
   my $genomicSequenceSql = "select s.source_id, s.sequence
-      from $schema.genomicsequencesequence s
+      from $schema.genomicsequencesequence_p s
       where s.org_abbrev = '$orgAbbrev'
       order by source_id";
 
@@ -55,7 +55,7 @@ sub populateChildTable {
      , tl.end_max
      , tl.is_reversed
 FROM apidb.transcriptlocation tl
-   , $schema.geneattributes ga
+   , $schema.geneattributes_p ga
    , dots.transcript t
 WHERE t.na_feature_id  = tl.na_feature_id
 AND t.parent_id = ga.na_feature_id
