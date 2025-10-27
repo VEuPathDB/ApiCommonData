@@ -191,7 +191,7 @@ sub getSequenceSummary {
   my ($ncbiTaxonId, $dbh) = @_;
 
   my %seqSum;
-  my $sql = "select DISTINCT SEQUENCE_ONTOLOGY_ID, count(*)  from webready.GENOMICSEQATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId and IS_TOP_LEVEL=1
+  my $sql = "select DISTINCT SEQUENCE_ONTOLOGY_ID, count(*)  from webready.GenomicSeqAttributes_p where NCBI_TAX_ID=$ncbiTaxonId and IS_TOP_LEVEL=1
              group by SEQUENCE_ONTOLOGY_ID";
 
   my $stmt = $dbh->prepareAndExecute($sql);
@@ -223,7 +223,7 @@ sub getGeneFeatureFromTuningTable {
   my ($ncbiTaxonId, $dbh) = @_;
   my %genes;
 
-  my $sql = "select DISTINCT GENE_TYPE, count(*) from APIDBTUNING.GENEATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId group by GENE_TYPE";
+  my $sql = "select DISTINCT GENE_TYPE, count(*) from webready.GeneAttributes_p where NCBI_TAX_ID=$ncbiTaxonId group by GENE_TYPE";
   my $stmt = $dbh->prepareAndExecute($sql);
   while ( my ($type, $count) = $stmt->fetchrow_array()) {
     $type =~ s/\s+encoding//;

@@ -225,6 +225,8 @@ sub run {
   my $projectName = $self->getArg('projectName');
   my $corePeripheral = $self->getArg('corePeripheral');
 
+  (my $sanitized_abbrev = $abbrev) =~ s/[\.\-]//g;
+
   # validate full name against ncbi taxon id
   my $sql = "select t.taxon_id, t.ncbi_tax_id 
              from sres.taxonname tn, sres.taxon t
@@ -250,6 +252,7 @@ sub run {
 						    'project_name' => $projectName,
 						    'abbrev' => $abbrev,
 						    'public_abbrev' => $abbrevPublic,
+                                                    'sanitized_abbrev' => $sanitized_abbrev,
 						    'name_for_filenames' => $nameForFilenames,
 						    'genome_source' => $genomeSource,
 						    'orthomcl_abbrev' => $abbrevOrthomcl,

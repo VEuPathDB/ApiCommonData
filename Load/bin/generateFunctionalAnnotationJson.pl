@@ -182,7 +182,7 @@ sub getProductNameFromGene {
     if ($product) {
       $products{$gSourceId} = $product;
     } else {
-      #die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ...\n    It depends on APIDBTUNING.GENEATTRIBUTES and APIDBTUNING.TRANSCRIPTATTRIBUTES, which are not working on isfTest database yet.\n";
+      #die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ...\n    It depends on webready.GeneAttributes_p and webready.TranscriptAttributes_p, which are not working on isfTest database yet.\n";
       $product = applyTranscriptProductToGene ($gSourceId);
       $products{$gSourceId} = $product if ($product);
     }
@@ -196,9 +196,9 @@ sub getProductNameFromGene {
 sub applyTranscriptProductToGene {
   my ($gId) = @_;
 
-  # since APIDBTUNING.GENEATTRIBUTES and APIDBTUNING.TRANSCRIPTATTRIBUTES are not working in isfTest instance yet, query dots tables instead. and only grep IS_PREFERRED=1
+  # since webready.GeneAttributes_p and webready.TranscriptAttributes_p are not working in isfTest instance yet, query dots tables instead. and only grep IS_PREFERRED=1
   my $sqla = "select tp.PRODUCT from dots.genefeature g, DOTS.TRANSCRIPT t, APIDB.TRANSCRIPTPRODUCT tp where g.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=tp.NA_FEATURE_ID and tp.IS_PREFERRED=1 and g.SOURCE_ID = '$gId'";
-  #my $sqla = "select TRANSCRIPT_PRODUCT from APIDBTUNING.transcriptattributes where GENE_SOURCE_ID = '$gId'";
+  #my $sqla = "select TRANSCRIPT_PRODUCT from webready.TranscriptAttributes where GENE_SOURCE_ID = '$gId'";
 
   my $stmta = $dbh->prepareAndExecute($sqla);
 
@@ -219,7 +219,7 @@ sub getProductNameFromTuningTable {
 
   ## only grep the preferred product name
   my $sql = "select source_id as transcript_source_id, transcript_product
-             from webready.transcriptAttributes
+             from webready.TranscriptAttributes_p
              where external_db_rls_id=$extDbRlsId
              and org_abbrev = '$organismAbbrev'";
 

@@ -209,7 +209,7 @@ EOF
 sub makeGeneSourceIdMapping {
   my ($sourceId, $dbh) = @_;
 
-  my $sql = "select source_id, na_feature_id from apidbtuning.geneattributes where organism in (select organism from apidbtuning.geneattributes where source_id = '$sourceId')";
+  my $sql = "select source_id, na_feature_id from webready.GeneAttributes_p where organism in (select organism from webready.GeneAttributes_p where source_id = '$sourceId')";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
