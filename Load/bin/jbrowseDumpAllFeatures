@@ -38,11 +38,11 @@ use DBD::Pg;
 use XML::Simple;
 use GUS::Supported::GusConfig;
 
+use Data::Dumper;
 # Constants
 use constant {
   GFF_SORT_KEY => "-k1,1 -k4,4n",
   RELEASE_DIR_NAME => "release-CURRENT",
-  JBROWSE_SUBDIR => "jbrowse",
   GENOMIC_TRACK_TYPE => "genomic",
 };
 
@@ -104,20 +104,15 @@ foreach my $o (@$organisms) {
   my $project = $o->{project_name};
   my $nameForFilenames = $o->{name_for_filenames};
 
-  my $projectDir = "$outputDir/$project";
-  my $releaseDir = "$projectDir/" . RELEASE_DIR_NAME;
-  my $organismDir = "$releaseDir/$nameForFilenames";
-  my $jbrowseDir = "$organismDir/" . JBROWSE_SUBDIR;
+  my $jbrowseDir = $outputDir; 
 
-  mkdir $projectDir or die "Cannot create directory $projectDir: $!" unless (-d $projectDir);
-  mkdir $releaseDir or die "Cannot create directory $releaseDir: $!" unless (-d $releaseDir);
-  mkdir $organismDir or die "Cannot create directory $organismDir: $!" unless (-d $organismDir);
-  mkdir $jbrowseDir or die "Cannot create directory $jbrowseDir: $!" unless (-d $jbrowseDir);
 
   my $trackCount = 0;
   foreach my $trackName (@tracks) {
     next if ($trackName =~ /^\s*#/);
 
+    #next unless $trackName eq 'transposableElements';
+    
     $trackCount++;
     my $startTime = time;
 
@@ -179,6 +174,10 @@ foreach my $o (@$organisms) {
       my $duration = time - $startTime;
       print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
     }
+    else {
+      unlink $fullFileName;
+    }
+    
   }
 
   print "finished $trackCount tracks\n";
