@@ -197,7 +197,7 @@ sub abs_log10 {
 
 sub getAbbrev {
     my ($dbh,$Id) = @_;
-    my $sql = "SELECT taxon_abbreviation FROM webready.ProteinSequenceGroup_p WHERE full_id = '$Id'";
+    my $sql = "SELECT taxon_abbreviation FROM webready.ProteinSequenceGroup WHERE full_id = '$Id'";
     my $sh = $dbh->prepare($sql);
     $sh->execute();
 
@@ -1372,12 +1372,12 @@ sub ecsSql {
 sub proteinsSql {
     my ($group) = @_;
     return "SELECT full_id,product,length,core_peripheral,group_name,organism_name                                     
-            FROM webready.ProteinSequenceGroup_p WHERE group_name='$group'";
+            FROM webready.ProteinSequenceGroup WHERE group_name='$group'";
 }
 
 sub groupsSql {
     my ($minNumProteinsWithEc,$maxNumProteinsWithEc) = @_;
-    return "SELECT DISTINCT(group_name) FROM webready.ProteinSequenceGroup_p";
+    return "SELECT DISTINCT(group_name) FROM webready.ProteinSequenceGroup";
 }
 
 sub orthoOrganismSql {
