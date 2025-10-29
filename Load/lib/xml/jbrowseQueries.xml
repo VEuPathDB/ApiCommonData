@@ -143,7 +143,7 @@ WHERE fl.org_abbrev = '$org_abbrev'
 <!-- FungiDB,UniDB -->
 <!-- One dataset: anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC -->
 <!-- TODO this one needs to be bw ?? -->
-<track name="sibthorp_tss" type="genomic" fileSuffix="gff">
+<track name="sibthorpTSS" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
 SELECT distinct concat(seq.source_id,
@@ -204,7 +204,7 @@ ORDER BY
 
 
 
-  <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
+  <track name="haplotypeBlock" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
   SELECT fl.sequence_source_id
@@ -282,59 +282,47 @@ UNION ALL
   </track>
 
 
-<!-- TODO
+
   <track name="scaffoldGenome" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
-select sgf.na_feature_id as feature_id,
-     'scaffold' type,
-     'genome' source,     
-      'gap' as name,
-      nal.start_min as startm,
-      nal.end_max as end,
-      '0' strand,
-      'Length=' || (nal.end_max-nal.start_min+1) || '$dlm' ||
-      'Type=' ||  'gap'  || '$dlm' ||
-      'Note=' ||  ''  atts
-from DOTS.scaffoldgapfeature sgf, dots.nalocation nal
+select concat(nal.sequence_source_id, '_', nal.start_min, '_', nal.end_max) as feature_id
+     , nal.sequence_source_id
+     , 'gap' feature
+     , 'VEuPathDB' source
+     , nal.start_min as startm
+     , nal.end_max as end
+     , '.' strand
+     , concat('Length=', nal.end_max-nal.start_min+1
+     , '$dlm', 'Type=gap'
+     , '$dlm', 'Note=NA'
+     ) atts
+from DOTS.scaffoldgapfeature sgf, webready.featurelocation_p nal
 where nal.na_feature_id = sgf.na_feature_id
-and sgf.na_sequence_id = $srcfeature_id
+and nal.org_abbrev =  '$org_abbrev'
 UNION ALL
-select p.agp_piece_id as feature_id, 
-     'scaffold' type,
-     'genome' source,
-      p.piece_id name,
-      p.start_min as startm,
-      p.end_max as end,
-      decode(p.is_reversed, '0', '+1', '1', '-1', '0') strand,
-      'Length=' || (p.end_max - p.start_min + 1) || '$dlm' ||
-      'Type=scaffold' ||'$dlm' ||
-      'Note=' || p.piece_id atts
-from webready.genomicseqattributes gsa, apidb.agpPiece p
-where gsa.org_abbrev = $org_abbrev
-and gsa.source_id = p.source_id
+select concat(gsa.source_id, '_', p.start_min, '_', p.end_max) as feature_id
+     , gsa.source_id
+     , 'scaffold' as feature
+     , 'VEuPathDB' source
+     , p.start_min as startm
+     , p.end_max as end
+     ,  case
+         when p.is_reversed = 0 then '+'
+         when p.is_reversed = 1 then '-'
+         else '.' end as strand
+     , concat('Length=', (p.end_max - p.start_min + 1)
+             , '$dlm', 'Type=scaffold'
+             , '$dlm', 'Note=' || p.piece_id
+     ) as atts
+from webready.GenomicSeqAttributes_p gsa, apidb.agpPiece p
+where gsa.source_id = p.source_id
 and not p.piece_id is null
-and gsa.na_sequence_id = $srcfeature_id
-UNION ALL
-SELECT sg.na_feature_id as feature_id,
-       'gap' type,
-       'genome' source,
-       sg.source_id name,
-       fl.start_min as startm,
-       fl.end_max as end,
-       '0' as strand,
-       'Type=sgap' as atts
-FROM   DoTS.ScaffoldGapFeature sg,
-       DoTS.NaLocation fl,
-       Webready.GenomicSeqAttributes gsa
-WHERE  gsa.org_abbrev = $org_abbrev
-   AND fl.na_feature_id = sg.na_feature_id
-   AND gsa.na_sequence_id = sg.na_sequence_id
-   AND gsa.na_sequence_id = $srcfeature_id
+and gsa.org_abbrev =  '$org_abbrev'
      ]]>
    </sql>
   </track>
--->
+
 
 <!-- TODO
   <track name="gsnapUnifiedIntronJunctionNew" type="genomic" fileSuffix="gff">
