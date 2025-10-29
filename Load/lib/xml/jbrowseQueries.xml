@@ -65,103 +65,77 @@ WHERE fl.org_abbrev = '$org_abbrev'
   </track>
 
      <!-- TriTrypDB,FungiDB,UniDB -->
-
-<!-- TODO
-     <track name="domainSpliceSites" type="genomic" fileSuffix="gff">
-
-   <trackConfigurations>
-     <properties>
-       <prop name="edName">ldonBPK282A1_sbri_myler_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">lmajFriedlin_sbri_myler_Spliced_Leader_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">lmajFriedlin_sbri_myler_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Poly A</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">tbruTREU927_Gowthaman_Spliced_Leaders_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">tbruTREU927_George_Cross_Splice_Leader_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">tbruTREU927_Nilsson_Spliced_Leader_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">tbruTREU927_Tschudi_Transcriptome_Spliced_Leaders_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">tbruTREU927_George_Cross_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Poly A</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">tbruTREU927_Tschudi_Transcriptome_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Poly A</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">%</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-     <properties>
-       <prop name="edName">%</prop>
-       <prop name="featType">Poly A</prop>
-       <prop name="minCntPerMill">0</prop>
-     </properties>
-   </trackConfigurations>
-
+     <track name="spliceSites" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
-SELECT distinct ssf.segment_start as  feature_id, 'domain' feature,
-       'VEuPathDB' as source,
-       ssf.segment_start as startm, ssf.segment_start as end,
-       decode (ssf.strand,'+','1','-','0',null) strand,
-       ssf.segment_start || '(' || count(pan.name)  || ')' AS name,
-       'sample_name='
-         || listagg( replace(pan.name, ' [feature_loc] (SpliceSites)') , ',') within group (order by pan.name)
-         || '$dlm' || 'count_per_mill='
-         || listagg(ssf.count_per_million, ',') within group (order by pan.name)
-         || '$dlm' || 'is_unique='
-         || listagg(ssf.is_unique, ',') within group (order by pan.name)
-         || '$dlm' || 'avg_mismatches='
-         || listagg(ssf.avg_mismatches, ',') within group (order by ssf.avg_mismatches)
-         || '$dlm' || 'type='
-         || ssf.type atts
- FROM
-   study.Study i, study.Study s, study.StudyLink sl,
-   study.ProtocolAppNode pan, apidb.SpliceSiteFeature ssf
- WHERE ssf.na_sequence_id = $srcfeature_id
-   AND ssf.type = '$$featType$$'
-   AND pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
-   AND pan.protocol_app_node_id = sl.protocol_app_node_id
-   and sl.study_id = s.study_id
-   and s.name like '%[feature_loc]'
-   and s.investigation_id = i.study_id
-   and i.name like  '$$edName$$'
-   and ssf.count_per_million > $$minCntPerMill$$
-  GROUP BY  ssf.segment_start, ssf.strand, ssf.type
-  order by  ssf.segment_start
+ with singleDatasets as (
+ SELECT seq.source_id as sequence_source_id
+       , ssf.segment_start
+       , ssf.strand
+       , ssf.count_per_million
+       , gtable.gene_source_id
+       , ssf.type
+       , gtable.dist_to_cds
+       , ed.name as dataset
+       , pan.name as sample
+       , pan.protocol_app_node_id
+ FROM study.nodeset s
+        join sres.externaldatabaserelease edr
+          on s.external_database_release_id = edr.external_database_release_id
+        join sres.externaldatabase ed
+          on ed.external_database_id = edr.external_database_id
+        join study.nodenodeset sl
+          on s.node_set_id = sl.node_set_id
+        join study.protocolAppNode pan
+          on sl.protocol_app_node_id = pan.protocol_app_node_id
+        join jbrestel.spliceSiteFeature ssf
+          on pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
+        join webready.SpliceSiteTranscript_p gtable
+          on (ssf.na_sequence_id = gtable.na_sequence_id AND ssf.type = gtable.type AND ssf.strand=gtable.strand and gtable.location=ssf.segment_start)
+        join webready.genomicseqattributes_p seq
+          on ssf.na_sequence_id = seq.na_sequence_id
+ WHERE ssf.type in ('Poly A', 'Splice Site')
+   and s.node_type = 'feature_loc'
+   and ssf.count_per_million > 0
+   and gtable.org_abbrev = '$org_abbrev'
+   and seq.org_abbrev = '$org_abbrev'
+  )
+  select sequence_source_id
+       , sequence_source_id || '_' || dataset || '_' || protocol_app_node_id || '_' || segment_start as feature_id
+       , 'ss_pa_subfeature' as feature
+       , sequence_source_id || '_' || segment_start as parent_id
+       , 'VEuPathDB' as source
+       , segment_start as startm
+       , segment_start as end
+       , strand
+       , concat('total_count_per_million=', count_per_million
+             , '$dlm', 'gene_id=', gene_source_id
+             , '$dlm', 'feature_type=', type
+             , '$dlm', 'utr_length=', dist_to_cds
+             , '$dlm', 'ext_db_name=', dataset
+             , '$dlm', 'sample=', sample
+             ) as atts
+  from singledatasets
+  UNION
+    select sequence_source_id
+       , sequence_source_id || '_' || segment_start as feature_id
+       , 'ss_pa' as feature
+       , '' as parent_id
+       , 'VEuPathDB' as source
+       , segment_start as startm
+       , segment_start as end
+       , strand
+       , concat('total_count_per_million=', sum(count_per_million)
+             , '$dlm', 'gene_id=', gene_source_id
+             , '$dlm', 'feature_type=', type
+             , '$dlm', 'utr_length=', dist_to_cds
+             ) as atts
+  from singledatasets
+  GROUP BY sequence_source_id, segment_start, strand, gene_source_id, dist_to_cds, type
       ]]>
     </sql>
   </track>
--->
+
 
 <!-- FungiDB,UniDB -->
 <!-- TODO
