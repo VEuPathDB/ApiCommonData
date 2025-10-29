@@ -187,48 +187,39 @@ SELECT distinct ssf.segment_start as  feature_id,
      ]]>
    </sql>
   </track>
+-->
+
 
   <track name="featureBindingSite" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
-SELECT
+SELECT fl.sequence_source_id, 
        fl.na_feature_id feature_id,
        'BindingSite' feature,
        'VEuPathDB' source,
-       bs.name name,
        '.' score,
-       fl.na_sequence_id parent_id,
        fl.start_min startm,
        fl.end_max end,
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       case
+         when fl.is_reversed = 0 then '+'
+         when fl.is_reversed = 1 then '-'
+         else '.' end as strand,
        'Name=' || bs.name || '$dlm' ||
-         'Sequence=' ||
-         case when fl.is_reversed =0 then substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)
-           else APIDB.REVERSE_COMPLEMENT_CLOB(substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)) end
-          || '$dlm' ||
-         'Score=' || to_char(exp(bs.primary_score), '9.99EEEE')
+       'Score=' || to_char(exp(bs.primary_score), '9.99EEEE')
          as atts
 FROM
        dots.BindingSiteFeature bs,
-       webready.featurelocation fl,
-       dots.NaSequence s,
-       sres.ExternalDatabase d,
-       sres.ExternalDatabaseRelease rel
+       webready.featurelocation_p fl
 WHERE
-       fl.org_abbrev = $org_abbrev and
-       fl.na_sequence_id = s.na_sequence_id and
+       fl.org_abbrev = '$org_abbrev' and
        bs.na_feature_id = fl.na_feature_id and
-       rel.external_database_release_id = bs.external_database_release_id and
-       d.external_database_id  = rel.external_database_id and
-       d.name like '%_genomeFeature_Llinas_TransFactorBindingSites%' and
-       fl.feature_type = 'BindingSiteFeature' and
-       fl.na_sequence_id = $srcfeature_id
+       fl.feature_type = 'BindingSiteFeature' -- probably redundant
 ORDER BY
        fl.start_min
      ]]>
    </sql>
   </track>
--->
+
 
 <!-- TODO
   <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
@@ -276,26 +267,24 @@ UNION ALL
 -->
 
    <!-- PlasmoDB,UniDB -->
-<!-- TODO
-   <track name="MicrosatelliteSts" type="genomic" fileSuffix="gff">
-
-
+   <track name="microsatelliteSts" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
- select S.na_feature_id as feature_id,
-        'Microsatellite:sts' feature,
+ select l.sequence_source_id,
+        S.na_feature_id as feature_id,
+        'Microsatellite' feature,
         'VEuPathDB' source,
-        s.source_id name,
-        s.na_sequence_id parent_id,
         l.start_min startm,
         l.end_max end,
-        decode (l.is_reversed, 0, '+1', 1, '-1', '.') strand,
+        case
+         when l.is_reversed = 0 then '+'
+         when l.is_reversed = 1 then '-'
+         else '.' end as strand,
                'Name=' || s.name  || '$dlm' || 'SequenceId=' || nas.source_id atts
  from dots.Sts s, sres.OntologyTerm ot,
-      webready.featurelocation l, dots.NaSequence nas
- where l.org_abbrev = $org_abbrev
-   and s.na_sequence_id = $srcfeature_id
-   and s.na_feature_id = l.na_feature_id
+      webready.featurelocation_p l, dots.NaSequence nas
+ where l.org_abbrev = '$org_abbrev'
+    and s.na_feature_id = l.na_feature_id
    and nas.na_sequence_id = s.na_sequence_id
    and s.sequence_ontology_id = ot.ontology_term_id
    and ot.name = 'microsatellite'
@@ -303,7 +292,6 @@ UNION ALL
    </sql>
   </track>
 
--->
     <!-- PlasmoDB,UniDB -->
 <!-- TODO
     <track name="piggyBacTransposableElement" type="genomic" fileSuffix="gff">
