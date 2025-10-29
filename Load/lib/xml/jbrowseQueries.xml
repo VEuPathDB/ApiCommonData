@@ -12,9 +12,10 @@ strand - (required) defined as + (forward) or - (reverse).
 frame - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
 atts - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
 feature_id - (required) Unique ID for the Feature
-parent_id - Unique ID of the parent feature
-tstarts - comma sep list of subfeature starts
-blocksizes - comma sep list of subfeature lengths
+parent_id - optional Unique ID of the parent feature
+tstarts - optional comma sep list of subfeature starts
+blocksizes - optional comma sep list of subfeature lengths
+sequence_source_id - (required)
 -->
 
    <!-- TrichDB,UniDB -->
@@ -140,55 +141,35 @@ WHERE fl.org_abbrev = '$org_abbrev'
 
 
 <!-- FungiDB,UniDB -->
-<!-- TODO
-<track name="domainTssJBrowse" type="genomic" fileSuffix="gff">
-   
-
-   <trackConfigurations>
-     <properties>
-       <prop name="edName">anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="source">sibthorp_splice_sites2</prop>
-       <prop name="minCntPerMill">1</prop>
-       <prop name="strand">+</prop>
-     </properties>
-     <properties>
-       <prop name="edName">anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
-       <prop name="featType">Splice Site</prop>
-       <prop name="source">sibthorp_splice_sites2</prop>
-       <prop name="minCntPerMill">1</prop>
-       <prop name="strand">-</prop>
-     </properties>
-   </trackConfigurations>
-
+<!-- One dataset: anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC -->
+<!-- TODO this one needs to be bw ?? -->
+<track name="sibthorp_tss" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
-SELECT distinct ssf.segment_start as  feature_id,
-       'domain' feature,
-       '$$source$$' as source,
+SELECT distinct concat(seq.source_id,
+       ssf.segment_start as  feature_id,
+       'sibthorp_tss' as feature,
+       'VEuPathDB' as source,
        sum(ssf.count_per_million) as score,
-       concat(ssf.na_sequence_id, ssf.strand) parent_id,
        ssf.segment_start as startm,
        ssf.segment_start as end,
-       decode(ssf.strand, '+',1,'-', -1, '.') as strand
- FROM
-   study.Study i, study.Study s, study.StudyLink sl,
-   study.ProtocolAppNode pan, apidb.SpliceSiteFeature ssf
- WHERE ssf.na_sequence_id =  $srcfeature_id
-   AND ssf.type = '$$featType$$'
-   AND pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
-   AND pan.protocol_app_node_id = sl.protocol_app_node_id
-   and sl.study_id = s.study_id
-   and s.name like '%[feature_loc]'
-   and s.investigation_id = i.study_id
-   and i.name like  '$$edName$$'
-   and ssf.count_per_million > $$minCntPerMill$$
-   and ssf.strand = '$$strand$$'
-  GROUP BY  ssf.segment_start, ssf.strand, ssf.na_sequence_id
+       ssf.strand
+ FROM study.NodeSet s
+      join sres.externaldatabaserelease edr on s.external_database_release_id = edr.external_database_release_id
+      join sres.externaldatabase ed on ed.external_database_id = edr.external_database_id
+      join study.NodeNodeSet sl on s.node_set_id = sl.node_set_id
+      join apidb.SpliceSiteFeature ssf on ssf.protocol_app_node_id = sl.protocol_app_node_id
+      join webready.genomicseqattributes_p seq on seq.na_sequence_id = ssf.na_sequence_id
+ WHERE seq.org_abbrev = 'anidFGSCA4'
+    and ssf.type = 'Splice Site'
+    and s.node_type = 'feature_loc'
+   and ed.name = 'anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC'
+   and ssf.count_per_million > 1
+  GROUP BY  ssf.segment_start, ssf.strand, ssf.na_sequence_id, ssf.strand
      ]]>
    </sql>
   </track>
--->
+
 
 
   <track name="featureBindingSite" type="genomic" fileSuffix="gff">
@@ -300,35 +281,6 @@ UNION ALL
    </sql>
   </track>
 
-    <!-- PlasmoDB,UniDB -->
-<!-- TODO
-    <track name="piggyBacTransposableElement" type="genomic" fileSuffix="gff">
-
-
-   <sql>
-     <![CDATA[
-select blat.blat_alignment_id feature_id,
-       'piggyBac:TransposableElement' feature,
-       'VEuPathDB' source,
-       nas.source_id name,
-       blat.score,
-       blat.target_na_sequence_id parent_id,
-       blat.target_start startm,
-       blat.target_end end,
-       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'dataset_name=' || ed.name atts
-from dots.NaSequence nas, sres.ExternalDatabaseRelease edr,
-     sres.ExternalDatabase ed, dots.BlatAlignment blat
-where blat.query_na_sequence_id = nas.na_sequence_id
-  and edr.external_database_release_id = nas.external_database_release_id
-  and ed.external_database_id = edr.external_database_id
-  and ed.name like '%PiggyBac_Clones%'
-  and blat.target_na_sequence_id = $srcfeature_id
-order by blat.target_start
-     ]]>
-   </sql>
-  </track>
--->
 
 <!-- TODO
   <track name="scaffoldGenome" type="genomic" fileSuffix="gff">
