@@ -160,7 +160,7 @@ SELECT distinct concat(seq.source_id,
       join study.NodeNodeSet sl on s.node_set_id = sl.node_set_id
       join apidb.SpliceSiteFeature ssf on ssf.protocol_app_node_id = sl.protocol_app_node_id
       join webready.genomicseqattributes_p seq on seq.na_sequence_id = ssf.na_sequence_id
- WHERE seq.org_abbrev = 'anidFGSCA4'
+ WHERE seq.org_abbrev = '$org_abbrev'
     and ssf.type = 'Splice Site'
     and s.node_type = 'feature_loc'
    and ed.name = 'anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC'
