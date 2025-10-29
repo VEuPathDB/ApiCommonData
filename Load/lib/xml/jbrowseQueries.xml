@@ -88,13 +88,14 @@ WHERE fl.org_abbrev = '$org_abbrev'
           on s.node_set_id = sl.node_set_id
         join study.protocolAppNode pan
           on sl.protocol_app_node_id = pan.protocol_app_node_id
-        join jbrestel.spliceSiteFeature ssf
+        join apidb.spliceSiteFeature ssf
           on pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
         join webready.SpliceSiteTranscript_p gtable
           on (ssf.na_sequence_id = gtable.na_sequence_id AND ssf.type = gtable.type AND ssf.strand=gtable.strand and gtable.location=ssf.segment_start)
         join webready.genomicseqattributes_p seq
           on ssf.na_sequence_id = seq.na_sequence_id
  WHERE ssf.type in ('Poly A', 'Splice Site')
+   and ed.name not like '%TSS_raw_data%' -- some fungidb data was loaded as tss (see track below)
    and s.node_type = 'feature_loc'
    and ssf.count_per_million > 0
    and gtable.org_abbrev = '$org_abbrev'
