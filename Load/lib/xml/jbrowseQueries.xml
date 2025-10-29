@@ -226,42 +226,49 @@ ORDER BY
   <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
-
-  SELECT concat(cef.na_feature_id || feature_id,
-         'Haplotype block' feature,
-         'VEuPathDB' source,
-         cef.source_id name,
-         cef.na_sequence_id parent_id,
-         '.' score,
-         nl.start_min startm,
-         nl.end_max end,
-         'Boundary=' || 'Liberal'  || '$dlm' ||'Name=' || cef.name  || '$dlm'
-         || 'SequenceId=' || ens.source_id  || '$dlm' || 'start_max='
-         || nl.start_max || '$dlm' ||'end_min=' || nl.end_min || '$dlm'
-         || 'start_min=' || nl.start_min || '$dlm' || 'end_max=' || nl.end_max
-         as atts
-  FROM dots.ChromosomeElementFeature cef, Dots.NaLocation nl, dots.ExternalNASequence ens
-  WHERE cef.na_sequence_id = $srcfeature_id
-    AND cef.na_feature_id = nl.na_feature_id
-    AND ens.na_sequence_id = cef.na_sequence_id
+  SELECT fl.sequence_source_id
+       , concat(cef.na_feature_id::varchar, 'liberal') feature_id
+       , '' as parent_id
+       , 'Haplotype_liberal' feature
+       , 'VEuPathDB' source
+       , '.' score
+       , nl.start_min startm
+       , nl.end_max end
+       , '.' as strand
+       , concat( 'Boundary=Liberal'
+              , '$dlm', 'Name=',  cef.name
+              , '$dlm', 'SequenceId=', fl.sequence_source_id
+              , '$dlm', 'start_max=', nl.start_max
+              , '$dlm', 'end_min=', nl.end_min
+              , '$dlm', 'start_min=', nl.start_min
+              , '$dlm', 'end_max=', nl.end_max
+         ) as atts
+  FROM dots.ChromosomeElementFeature cef
+     , webready.featurelocation_p fl
+     , dots.nalocation nl
+  WHERE  cef.na_feature_id = nl.na_feature_id
+  and nl.na_feature_id = fl.na_feature_id
+  and fl.org_abbrev = '$org_abbrev'
 UNION ALL
-
-  SELECT cef.source_id feature_id,
-        'Haplotype_Inner' feature,
-         'VEuPathDB' source,
-        cef.name name,
-        cef.na_feature_id parent_id,
-        '.' score,
-        nl.start_max startm,
-        nl.end_min end,
-        'Boundary=' || 'Conservative' || '$dlm' || 'Name=' || cef.name
-        || '$dlm' || 'SequenceId=' || ens.source_id
-        as atts
-  FROM dots.ChromosomeElementFeature cef, Dots.NaLocation nl,
-       dots.ExternalNaSequence ens
-  WHERE cef.na_sequence_id = $srcfeature_id
-    AND cef.na_feature_id = nl.na_feature_id
-    AND ens.na_sequence_id = cef.na_sequence_id
+  SELECT fl.sequence_source_id
+       , concat(cef.na_feature_id::varchar, 'conservative') feature_id
+       , concat(cef.na_feature_id::varchar, 'liberal') parent_id
+       , 'Haplotype_conservative' feature
+       , 'VEuPathDB' source
+       , '.' score
+       , nl.start_max as startm
+       , nl.end_min end
+       , '.' as strand
+       , concat( 'Boundary=Conservative'
+              , '$dlm', 'Name=',  cef.name
+              , '$dlm', 'SequenceId=', fl.sequence_source_id
+         ) as atts
+  FROM dots.ChromosomeElementFeature cef
+     , webready.featurelocation_p fl
+     , dots.nalocation nl
+  WHERE  cef.na_feature_id = nl.na_feature_id
+  and nl.na_feature_id = fl.na_feature_id
+  and fl.org_abbrev = '$org_abbrev'
       ]]>
     </sql>
   </track>
