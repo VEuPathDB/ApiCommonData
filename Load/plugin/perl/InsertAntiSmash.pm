@@ -153,8 +153,8 @@ sub checkParentSql {
         )
         SELECT ncbi_tax_id
         FROM taxon_tree
-        WHERE rank IN ('species', 'no rank')
-          AND ncbi_tax_id = $taxonId
+        WHERE rank IN ('species', 'no rank', 'strain')
+        AND ncbi_tax_id = $taxonId
         ORDER BY ncbi_tax_id
     ";
 }
