@@ -70,7 +70,9 @@ if ($ifProteinIdInCds =~ /^T/i) {
   while (<GFF>) {
     my @items = split (/\t/, $_);
     if ($items[2] =~ /cds/i) {
-      if ($items[8] =~ /Parent \"(\S+?)\";.+protein_id \"(\S+?)\";/) {
+      if ($items[8] =~ /Parent \"(\S+?)\";.*protein_id \"(\S+?)\";/) {
+	$t2p{$1} = $2;
+      } elsif ($items[8] =~ /Parent=(\S+?);.*protein_id=(\S+?);/) {
 	$t2p{$1} = $2;
       }
     }
