@@ -10,7 +10,7 @@ use Bio::Tools::GFF;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::antiSmashCluster;
-use GUS::Model::ApiDB::antiSmashFeatures;
+use GUS::Model::ApiDB::antiSmashFeature;
 use GUS::Model::ApiDB::AntismashClusterFeature;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
@@ -28,8 +28,21 @@ sub getArgsDeclaration {
                      mustExist => 1,
                      format=>'Text',
                    }), 
+	   fileArg({ name => 'gusConfigFile',
+                     descr => '',
+                     constraintFunc=> undef,
+                     reqd  => 1,
+                     isList => 0,
+                     mustExist => 1,
+                     format=>'Text',
+                   }), 
         stringArg({name => 'extDbSpec',
                      descr => 'External database from whence this data came|version',
+                     constraintFunc=> undef,
+                     reqd  => 1,
+                     isList => 0,
+        stringArg({name => 'ncbiTaxonId',
+                     descr => 'ncbiTaxonId for this dataset',
                      constraintFunc=> undef,
                      reqd  => 1,
                      isList => 0
@@ -57,11 +70,13 @@ PURPOSEBRIEF
 my $syntax = <<SYNTAX;
 SYNTAX
 
-    my $notes = <<NOTES;
+my $notes = <<NOTES;
 NOTES
 
-    my $tablesAffected = <<AFFECT;
-ApiDB.longreadtranscript
+my $tablesAffected = <<AFFECT;
+ApiDB.antiSmashCluster
+ApiDB.antiSmashFeature
+ApiDB.AntismashClusterFeature
 AFFECT
 
 my $tablesDependedOn = <<TABD;
@@ -94,12 +109,57 @@ sub new {
                        argsDeclaration   => $args,
                        documentation     => $documentation
                       }); 
+
+    my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
+
+    my $gusConfigFile = $self->getArg('gusConfigFile');
+
+    my $gffFile = $self->getArg('gffFile');
+
+    my $dbh = &getDbHandle($gusConfigFile);
+
+    my $foundTaxId = &checkParent($taxonId,$dbh);
+
+    if ($foundTaxId) {
+        &loadClusters($gffFile);
+    }
+
     return $self;
 }
 
+sub checkParent {
+    my ($taxonId,$dbh) = @_;
 
+    my $query = $dbh->prepare(&checkParentSql($taxonId));
 
-sub loadClsuters{
+    $query->execute();
+    my $taxId = $query->fetchrow_array();
+
+    $query->finish();
+    return $taxId;
+}
+
+sub checkParentSql {
+    my ($taxonId) = @_;
+    return "
+        WITH RECURSIVE taxon_tree AS (
+            SELECT t.taxon_id, t.ncbi_tax_id, t.parent_id, t.rank
+            FROM sres.taxon t
+            WHERE t.ncbi_tax_id = 4751
+            UNION ALL
+            SELECT c.taxon_id, c.ncbi_tax_id, c.parent_id, c.rank
+            FROM sres.taxon c
+            JOIN taxon_tree p ON c.parent_id = p.taxon_id
+        )
+        SELECT ncbi_tax_id
+        FROM taxon_tree
+        WHERE rank IN ('species', 'no rank')
+          AND ncbi_tax_id = $taxonId
+        ORDER BY ncbi_tax_id
+    ";
+}
+
+sub loadClusters{
 
     my ($self, $gffFile) = @_; 
     my $extDbSpec = $self->getArg('extDbSpec');
@@ -129,7 +189,6 @@ sub loadClsuters{
             #print($name, "\t",$start, "\t", $end,"\t", $category, "\n");
 	    
 	    my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
-                                                                   #antismash_cluster_id => $,
                                                                    cluster_name => $name
                                                                    cluster_start => $start,
                                                                    cluster_end => $end,
@@ -150,9 +209,7 @@ sub loadClsuters{
 		    
 	    }
             
-	    #print($name, "\t",$gene_kind, "\n");
-	    my $row_features = GUS::Model::ApiDB::antiSmashFeatures->new({
-                                                                 #antismash_feature_id => $,
+	    my $row_features = GUS::Model::ApiDB::antiSmashFeature->new({
                                                                  na_feature_id => $name,
                                                                  antiSmash_annotation => $gene_kind,
                                                                  external_database_release_id => $extDbRlsId});
