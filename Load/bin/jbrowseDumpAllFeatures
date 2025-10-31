@@ -6,19 +6,20 @@ jbrowseDumpAllFeatures - Export genomic features to JBrowse-compatible GFF files
 
 =head1 SYNOPSIS
 
-  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]
+  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seqSizes=s]
 
 =head1 DESCRIPTION
 
-This script exports genomic features from the database to GFF format files suitable for
-use with JBrowse. It processes tracks defined in jbrowseQueries.xml and creates compressed,
-indexed GFF files for each track and organism.
+This script exports genomic features from the database to GFF, BED, or BigWig format files
+suitable for use with JBrowse. It processes tracks defined in jbrowseQueries.xml and creates
+compressed, indexed files for each track and organism.
 
 =head1 OPTIONS
 
   --output_directory         Directory where output files will be created (required)
   --organism_abbrev_filter   Filter to process only specific organism(s)
   --replace_existing         Replace existing output files
+  --seqSizes                 Chromosome sizes file (required for BigWig output)
   --help, -h                 Display this help message
 
 =head1 AUTHOR
@@ -42,21 +43,23 @@ use Data::Dumper;
 # Constants
 use constant {
   GFF_SORT_KEY => "-k1,1 -k4,4n",
+  BED_SORT_KEY => "-k1,1 -k2,2n",
   RELEASE_DIR_NAME => "release-CURRENT",
   
 };
 
-my ($help, $outputDir, $orgFilter, $replaceExisting);
+my ($help, $outputDir, $orgFilter, $replaceExisting, $seqSizes);
 
 &GetOptions(
   'help|h'                     => \$help,
   'output_directory=s'         => \$outputDir,
   'organism_abbrev_filter=s'   => \$orgFilter,
-  'replace_existing'           => \$replaceExisting
+  'replace_existing'           => \$replaceExisting,
+  'seqSizes=s'                 => \$seqSizes
 );
 
 if ($help || !$outputDir) {
-  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]\n";
+  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seqSizes=s]\n";
 }
 
 if (!-d $outputDir) {
@@ -120,8 +123,14 @@ foreach my $o (@$organisms) {
     my $fileSuffix = $xml->{track}->{$trackName}->{fileSuffix};
 
     die "track must provide trackType, fileSuffix, and trackName" unless ($trackType && $fileSuffix && $trackName);
+    die "fileSuffix must be one of 'bed', 'gff', or 'bw'" unless ($fileSuffix =~ /^(bed|gff|bw)$/);
 
-    my $fullFileName = "$jbrowseDir/${trackName}.gff";
+    if ($fileSuffix eq 'bw') {
+      die "seqSizes argument is required when fileSuffix is 'bw'" unless $seqSizes;
+      die "seqSizes file not found: $seqSizes" unless -f $seqSizes;
+    }
+
+    my $fullFileName = "$jbrowseDir/${trackName}.${fileSuffix}";
 
     my $outFh;
 
@@ -141,33 +150,70 @@ foreach my $o (@$organisms) {
       }
     }
 
-    my $sortKey = GFF_SORT_KEY;
+    my $sortKey = ($fileSuffix eq 'gff') ? GFF_SORT_KEY : BED_SORT_KEY;
     open($outFh, "|sort -T $jbrowseDir $sortKey >$fullFileName") or die "Cannot open file $fullFileName for writing: $!";
 
     my $featureCountTotal = 0;
 
     foreach my $qp (@$queryParams) {
       my $featureSql = makeSql($featureSqlRaw, $o, $qp);
-      my $featureCount = addFeatures($dbh, $featureSql, $outFh);
+      my $featureCount = ($fileSuffix eq 'gff')
+        ? addGffFeatures($dbh, $featureSql, $outFh)
+        : addBedFeatures($dbh, $featureSql, $outFh);
       $featureCountTotal += $featureCount;
     }
 
     close $outFh;
 
     if ($featureCountTotal > 0) {
-      my $bgzip_result = system("bgzip $fullFileName");
-      if ($bgzip_result != 0) {
-        warn "Warning: bgzip failed for $fullFileName\n";
-        next;
-      }
+      if ($fileSuffix eq 'bw') {
+        # For BigWig format: create bedGraph (4-column) and convert to BigWig
+        my $tempBedFile = "$jbrowseDir/${trackName}.bed.tmp";
+        my $bedGraphFile = "$jbrowseDir/${trackName}.bedGraph";
+        my $bwFile = "$jbrowseDir/${trackName}.bw";
 
-      my $tabix_result = system("tabix -p gff ${fullFileName}.gz");
-      if ($tabix_result != 0) {
-        warn "Warning: tabix failed for ${fullFileName}.gz\n";
-      }
+        # Rename the sorted bed file to a temp name
+        rename($fullFileName, $tempBedFile) or die "Cannot rename $fullFileName to $tempBedFile: $!";
 
-      my $duration = time - $startTime;
-      print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+        # Cut columns 1,2,3,5 (chrom, start, end, score) to create bedGraph format
+        my $cut_result = system("cut -f1,2,3,5 $tempBedFile > $bedGraphFile");
+        if ($cut_result != 0) {
+          warn "Warning: cut failed for $tempBedFile\n";
+          unlink $tempBedFile;
+          next;
+        }
+
+        # Convert bedGraph to BigWig
+        my $bw_result = system("bedGraphToBigWig $bedGraphFile $seqSizes $bwFile");
+        if ($bw_result != 0) {
+          warn "Warning: bedGraphToBigWig failed for $bedGraphFile\n";
+          unlink $tempBedFile, $bedGraphFile;
+          next;
+        }
+
+        # Clean up intermediate files
+        unlink $tempBedFile, $bedGraphFile;
+
+        my $duration = time - $startTime;
+        print "$duration seconds wrote $featureCountTotal records for track $trackName (BigWig)\n";
+      }
+      else {
+        # For GFF and BED formats: compress and index
+        my $bgzip_result = system("bgzip $fullFileName");
+        if ($bgzip_result != 0) {
+          warn "Warning: bgzip failed for $fullFileName\n";
+          next;
+        }
+
+        my $tabixPreset = ($fileSuffix eq 'gff') ? 'gff' : 'bed';
+        my $tabix_result = system("tabix -p $tabixPreset ${fullFileName}.gz");
+        if ($tabix_result != 0) {
+          warn "Warning: tabix failed for ${fullFileName}.gz\n";
+        }
+
+        my $duration = time - $startTime;
+        print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+      }
     }
     else {
       unlink $fullFileName;
@@ -185,7 +231,7 @@ $dbh->disconnect();
 # Subroutines
 #-------------------------------------------------------------------------------
 
-=head2 addFeatures
+=head2 addGffFeatures
 
 Executes a feature query and writes features to a GFF file handle.
 
@@ -199,7 +245,7 @@ Returns:
 
 =cut
 
-sub addFeatures {
+sub addGffFeatures {
   my ($dbh, $featureSql, $fh) = @_;
 
   my $sh = $dbh->prepare($featureSql);
@@ -249,6 +295,50 @@ sub addFeatures {
         $counter++;
       }
     }
+
+    $featureCount++;
+  }
+  return $featureCount;
+}
+
+=head2 addBedFeatures
+
+Executes a feature query and writes features to a BED file handle.
+
+Arguments:
+  $dbh         - Database handle
+  $featureSql  - SQL query to fetch features
+  $fh          - File handle to write BED output
+
+Returns:
+  Number of features processed
+
+=cut
+
+sub addBedFeatures {
+  my ($dbh, $featureSql, $fh) = @_;
+
+  my $sh = $dbh->prepare($featureSql);
+  $sh->execute();
+
+  my $featureCount = 0;
+
+  # Process each feature from the database query
+  while (my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+    my $name = $hash->{feature_id} || ".";
+    my $score = $hash->{score} || ".";
+    my $strand = $hash->{strand} || ".";
+
+    # BED format: chr, start (0-based), end, name, score, strand
+    # Note: Converting from GFF 1-based to BED 0-based coordinates
+    my $bedStart = $hash->{startm} - 1;
+
+    print $fh join("\t", ($hash->{sequence_source_id},
+                           $bedStart,
+                           $hash->{end},
+                           $name,
+                           $score,
+                           $strand)) . "\n";
 
     $featureCount++;
   }
