@@ -43,7 +43,7 @@ use Data::Dumper;
 use constant {
   GFF_SORT_KEY => "-k1,1 -k4,4n",
   RELEASE_DIR_NAME => "release-CURRENT",
-  GENOMIC_TRACK_TYPE => "genomic",
+  
 };
 
 my ($help, $outputDir, $orgFilter, $replaceExisting);
@@ -120,11 +120,6 @@ foreach my $o (@$organisms) {
     my $fileSuffix = $xml->{track}->{$trackName}->{fileSuffix};
 
     die "track must provide trackType, fileSuffix, and trackName" unless ($trackType && $fileSuffix && $trackName);
-
-    # Only process genomic tracks (protein tracks have been removed)
-    unless ($trackType eq GENOMIC_TRACK_TYPE) {
-      die "Error: Only genomic track type is supported, got: $trackType";
-    }
 
     my $fullFileName = "$jbrowseDir/${trackName}.gff";
 
@@ -343,30 +338,6 @@ and d.external_database_id = r.external_database_id";
   return \@rv;
 }
 
-=head2 getGenomicSequences
-
-Fetches genomic sequence information for an organism (REMOVED - no longer used).
-
-This function has been removed as the refactored version no longer iterates
-over sequences individually.
-
-=cut
-
-sub getGenomicSequences {
-  my ($dbh, $organism) = @_;
-  my $extDbRlsId = $organism->{external_database_release_id};
-
-  my $sql = "select source_id as seqname, na_sequence_id as seqid from dots.externalnasequence where external_database_release_id = ?";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($extDbRlsId);
-
-  my @rv;
-  while (my $hash = $sh->fetchrow_hashref("NAME_lc")) {
-    push @rv, $hash;
-  }
-  $sh->finish();
-  return \@rv;
-}
 
 =head2 makeSql
 

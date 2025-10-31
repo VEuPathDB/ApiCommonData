@@ -18,6 +18,29 @@ blocksizes - optional comma sep list of subfeature lengths
 sequence_source_id - (required)
 -->
 
+
+<track name="unifiedPostTraslationalMod" type="protein" fileSuffix="gff">
+   <sql>
+     <![CDATA[
+select distinct protein_source_id as sequence_source_id
+     , concat(protein_source_id, '_', residue_protein_loc) as feature_id
+     , 'postTranslationalModification' as feature
+     , 'VEuPathDB' as source
+     , p.residue_protein_loc as startm
+     , p.residue_protein_loc as end
+     , '.' as strand
+     , concat('residue=', p.residue
+            , '$dlm', 'modificationType=', p.modification_type
+            ) as atts
+from apidb.ModifiedMassSpecPeptide p
+     join webready.proteinattributes_p pa
+       on pa.source_id = p.protein_source_id
+where pa.org_abbrev = '$org_abbrev'
+     ]]>
+   </sql>
+  </track>
+
+
    <!-- TrichDB,UniDB -->
   <track name="transposableElements" type="genomic" fileSuffix="gff">
    <sql>
@@ -146,8 +169,8 @@ WHERE fl.org_abbrev = '$org_abbrev'
 <track name="sibthorpTSS" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
-SELECT distinct concat(seq.source_id,
-       ssf.segment_start as  feature_id,
+SELECT distinct concat(seq.source_id, '_', ssf.segment_start) as  feature_id,
+        seq.source_id as sequence_source_id,
        'sibthorp_tss' as feature,
        'VEuPathDB' as source,
        sum(ssf.count_per_million) as score,
@@ -160,12 +183,12 @@ SELECT distinct concat(seq.source_id,
       join study.NodeNodeSet sl on s.node_set_id = sl.node_set_id
       join apidb.SpliceSiteFeature ssf on ssf.protocol_app_node_id = sl.protocol_app_node_id
       join webready.genomicseqattributes_p seq on seq.na_sequence_id = ssf.na_sequence_id
- WHERE seq.org_abbrev = '$org_abbrev'
+WHERE seq.org_abbrev = '$org_abbrev'
     and ssf.type = 'Splice Site'
     and s.node_type = 'feature_loc'
    and ed.name = 'anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC'
    and ssf.count_per_million > 1
-  GROUP BY  ssf.segment_start, ssf.strand, ssf.na_sequence_id, ssf.strand
+  GROUP BY  ssf.segment_start, ssf.strand, seq.source_id, ssf.strand
      ]]>
    </sql>
   </track>
@@ -650,52 +673,7 @@ SELECT  msf.aa_feature_id || fl.start_min || fl.end_max as feature_id,
  -->
 
 
-<!-- 
-<track name="unifiedPostTraslationalMod" type="protein" fileSuffix="gff">
-   <sql>
-     <![CDATA[
-se
-with peptides as (
-select ms.sample
-     , ms.sample_display
-     , ms.experiment
-     , ms.PEPTIDE_AA_FEATURE_ID
-     , ms.peptide_sequence
-     , ms.spectrum_count
-     , listagg(ms.residue_location + 1, ',') within group (order by ms.residue_location) as residues
-     , listagg(ms.aa_start_min + 1, ',') within group (order by ms.residue_location) as aa_start_mins
-     , listagg(ms.modification_type, ',') within group (order by ms.residue_location) as modification_type
-FROM  ApiDBTuning.MSModifiedPeptideSummary ms
-group by experiment, sample, sample_display, peptide_aa_feature_id, peptide_sequence, ms.SPECTRUM_COUNT
-)
-select ms.aa_sequence_id  || '_' || ms.residue_location feature_id
-     , 'domain' type
-     , 'UnifiedPostTraslationalMod' source
-     , ms.residue || ' (location ' || ms.residue_location || ')' name
-     , '.' phase
-     , '.' score
-     , null as parent_id
-     ,  ms.residue_location + 1 startm
-     ,  ms.residue_location + 1 end
-     ,  '.' strand
-     , 'Experiments='  || listagg(peptides.experiment, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'MSCounts='     || listagg(peptides.spectrum_count, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'Samples='      || listagg(peptides.sample_display, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'Ontologys='    || listagg(peptides.modification_type, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'PepSeqs='      || listagg(peptides.peptide_sequence, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'PepAAFeatIds=' || listagg(peptides.peptide_aa_feature_id, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'AAStartMins=' || listagg(peptides.aa_start_mins, '|') within group (order by peptides.peptide_aa_feature_id) || '$dlm' ||
-      'ModificationType=' || ms.modification_type || '$dlm' ||
-      'ResidueLocs=' || listagg(peptides.residues, '|') within group (order by peptides.peptide_aa_feature_id) as atts
-from ApiDBTuning.MSModifiedPeptideSummary ms, peptides
-where peptides.PEPTIDE_AA_FEATURE_ID = ms.peptide_aa_feature_id
-    AND ms.aa_sequence_id = $srcfeature_id
-    AND ms.aa_start_min <= $rend
-    AND ms.aa_end_max >= $base_start
-group by ms.residue_location, ms.residue, ms.aa_sequence_id, ms.modification_type
-     ]]>
-   </sql>
-  </track>
- -->
+
+
 
 </tracks>
