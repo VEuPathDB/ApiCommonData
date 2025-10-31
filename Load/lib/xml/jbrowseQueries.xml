@@ -380,7 +380,7 @@ and gsa.org_abbrev =  '$org_abbrev'
                                              then 'Strong Evidence'
                                            else 'Weak Evidence'
                                          end
-                       )
+                       ) as atts
                 from webready.GeneIntronJunction_p gij, webready.genomicseqjunctionstats_p stats
                 where gij.org_abbrev = '$org_abbrev'
                   and gij.na_sequence_id = stats.na_sequence_id
