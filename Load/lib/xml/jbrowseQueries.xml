@@ -346,42 +346,45 @@ and gsa.org_abbrev =  '$org_abbrev'
    </sql>
   </track>
 
-
-<!-- TODO
-  <track name="gsnapUnifiedIntronJunctionNew" type="genomic" fileSuffix="gff">
+  <track name="unifiedIntronJunction" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
-                select gij.intron_feature_id as feature_id,
-                       gij.na_sequence_id as parent_id,
-                       gij.segment_start as startm, gij.segment_end as end,
-                       'VEuPathDB' as source, gij.contained,
-                       gij.matches_gene_strand as matchesgenestrand,
-                       gij.total_unique as score, gij.total_unique as totalscore,
-                       gij.total_isrpm as isrpm, gij.intron_feature_id as name,
-                       gij.percent_max as intronpercent, gij.annotated_intron,
-                       gij.annotated_intron as annotatedintron,
-                       gij.gene_source_id as
- genesourceid, gij.gene_na_feature_id, 
-                       gij.is_reversed, gij.is_reversed as isreversed,
-                       case
-                         when gij.annotated_intron = 'Yes'
-                              or (gij.total_unique
-                                  >= case
-                                       when contained = 1
-                                         then stats.perc01_annot_score
-                                       else 5 * stats.perc01_annot_score
-                                     end
-                                  and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max*/)
-                                 )
-                           then 'Strong Evidence'
-                         else 'Weak Evidence'
-                       end as evidence,
-                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand
-                from webready.GeneIntronJunction gij, webready.genomicseqjunctionstats stats
-                where gij.org_abbrev = $org_abbrev
-                  and gij.na_sequence_id = $srcfeature_id
+                select gij.sequence_source_id, 
+                       gij.intron_feature_id as feature_id,
+                       gij.segment_start as startm,
+                       gij.segment_end as end,
+                        case
+                          when gij.is_reversed = 0 then '+'
+                          when gij.is_reversed = 1 then '-'
+                          else '.' end as strand,
+                       'intronJunction' as feature,
+                       'VEuPathDB' as source,
+                       gij.total_unique as score,
+                       concat('contained=', gij.contained
+                        , '$dlm', 'matchesGeneStrand=', gij.matches_gene_strand
+                        , '$dlm', 'isrpm=', gij.total_isrpm
+                        , '$dlm', 'totalscore=', gij.total_unique
+                        , '$dlm', 'intronpercent=', gij.percent_max
+                        , '$dlm', 'annotatedintron=', gij.annotated_intron
+                        , '$dlm', 'genesourceid=', gij.gene_source_id
+                        , '$dlm', 'evidence=', case
+                                                when gij.annotated_intron = 'Yes'
+                                                  or (gij.total_unique
+                                                    >= case
+                                                         when contained = 1
+                                                           then stats.perc01_annot_score
+                                                         else 5 * stats.perc01_annot_score
+                                                       end
+                                                    and (gij.contained = 0 or gij.percent_max >= 2 /*stats.perc0005_annot_percent_max*/)
+                                                   )
+                                             then 'Strong Evidence'
+                                           else 'Weak Evidence'
+                                         end
+                       )
+                from webready.GeneIntronJunction_p gij, webready.genomicseqjunctionstats_p stats
+                where gij.org_abbrev = '$org_abbrev'
                   and gij.na_sequence_id = stats.na_sequence_id
-                  and stats.org_abbrev = $org_abbrev
+                  and stats.org_abbrev = '$org_abbrev'
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
                   and (gij.annotated_intron = 'Yes'
                        or (gij.total_unique
@@ -398,7 +401,7 @@ and gsa.org_abbrev =  '$org_abbrev'
      ]]>
    </sql>
   </track>
--->
+
 
 
 <!-- TODO
@@ -604,73 +607,6 @@ and gsa.org_abbrev =  '$org_abbrev'
   </track>
               -->
 
-<!-- TODO
-  <track name="unifiedMassSpec" type="genomic" fileSuffix="gff">
-   <sql>
-     <![CDATA[
-select feature_id, type, source, parent_id, min(startm) as startm, max(end) as end, name, atts from (
-select msf.aa_feature_id as feature_id,
-       'domain' type,
-        'UnifiedMassSpecPeptides' source,
-       fl.na_sequence_id as Parent_Id,
-       fl.start_min as startm,
-       fl.end_max as end,
-       sdi.sample||'_'||msf.aa_sequence_id||'_'||aaloc.start_min||'_'||aaloc.end_max  as name,
-       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-       'Count=' || msf.spectrum_count || '$dlm' ||
-       'ExtDbName=' || d.name || '$dlm' ||
-       'Experiment=' || dsp.display_name  || '$dlm' ||
-       'Sample=' || sdi.sample_display_name  || '$dlm' ||
-       'PepSeq=' || dbms_lob.SUBSTR(aaseq.SEQUENCE, aaloc.end_max - aaloc.start_min + 1, aaloc.start_min) || '$dlm' ||
-       'Color=' || sdi.html_Color Atts
-from dots.massspecfeature msf
-   , apidb.FeatureLocation fl
-   , sres.externaldatabase d
-   , sres.externaldatabaserelease r
-   , APIDB.MASSSPECSUMMARY mss
-   , study.protocolappnode pan
-   , apidbtuning.sampledisplayinfo sdi
-   , apidbtuning.datasetdatasource dd
-   , apidbtuning.datasetpresenter dsp
-   , dots.aasequence aaseq
-   , dots.aalocation aaloc
-where msf.na_feature_id = fl.na_feature_id
-and msf.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
-and r.EXTERNAL_DATABASE_ID = d.EXTERNAL_DATABASE_ID
-and fl.na_sequence_id = $srcfeature_id
-and fl.start_min >= $base_start
-and fl.end_max <= $rend
-and msf.MASS_SPEC_SUMMARY_ID = mss.MASS_SPEC_SUMMARY_ID
-and d.name = sdi.DATASET_NAME
-and mss.PROTOCOL_APP_NODE_ID = pan.PROTOCOL_APP_NODE_ID
-and (pan.name in (sdi.sample, sdi.sample || ' (MS Summary)') or sdi.sample is null)
-and d.name = dd.NAME
-and dd.DATASET_PRESENTER_ID = dsp.DATASET_PRESENTER_ID
-and msf.AA_SEQUENCE_ID = aaseq.aa_sequence_id
-and msf.AA_FEATURE_ID = aaloc.aa_feature_id
-)
-group by feature_id, type, source, parent_id, name, atts
-UNION
-SELECT  msf.aa_feature_id || fl.start_min || fl.end_max as feature_id,
-        'Peptide' type,
-        '$source' as source,
-        fl.start_min as startm,
-        fl.end_max as end,
-        msf.aa_feature_id as parent_id,
-        decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
-        'ExtDbName=' || ed.name atts
- FROM dots.MassSpecFeature msf, apidb.FeatureLocation fl,
-       sres.externaldatabaserelease edr, sres.externaldatabase ed
- WHERE msf.na_feature_id = fl.na_feature_id
-  AND  fl.start_min >= $base_start
-  AND  fl.end_max <= $rend
-  AND  fl.na_sequence_id = $srcfeature_id
-  AND  msf.external_database_release_id = edr.external_database_release_id
-  AND  edr.external_database_id = ed.external_database_id
-     ]]>
-   </sql>
-  </track>
- -->
 
 
 
