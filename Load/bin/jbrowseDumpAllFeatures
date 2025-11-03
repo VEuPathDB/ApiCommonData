@@ -6,7 +6,7 @@ jbrowseDumpAllFeatures - Export genomic features to JBrowse-compatible GFF files
 
 =head1 SYNOPSIS
 
-  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seqSizes=s]
+  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seq_sizes=s]
 
 =head1 DESCRIPTION
 
@@ -19,7 +19,7 @@ compressed, indexed files for each track and organism.
   --output_directory         Directory where output files will be created (required)
   --organism_abbrev_filter   Filter to process only specific organism(s)
   --replace_existing         Replace existing output files
-  --seqSizes                 Chromosome sizes file (required for BigWig output)
+  --seq_sizes                 Chromosome sizes file (required for BigWig output)
   --help, -h                 Display this help message
 
 =head1 AUTHOR
@@ -39,6 +39,9 @@ use DBD::Pg;
 use XML::Simple;
 use GUS::Supported::GusConfig;
 
+use File::Basename;
+
+
 use Data::Dumper;
 # Constants
 use constant {
@@ -55,11 +58,11 @@ my ($help, $outputDir, $orgFilter, $replaceExisting, $seqSizes);
   'output_directory=s'         => \$outputDir,
   'organism_abbrev_filter=s'   => \$orgFilter,
   'replace_existing'           => \$replaceExisting,
-  'seqSizes=s'                 => \$seqSizes
+  'seq_sizes=s'                 => \$seqSizes
 );
 
 if ($help || !$outputDir) {
-  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seqSizes=s]\n";
+  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seq_sizes=s]\n";
 }
 
 if (!-d $outputDir) {
@@ -126,11 +129,14 @@ foreach my $o (@$organisms) {
     die "fileSuffix must be one of 'bed', 'gff', or 'bw'" unless ($fileSuffix =~ /^(bed|gff|bw)$/);
 
     if ($fileSuffix eq 'bw') {
-      die "seqSizes argument is required when fileSuffix is 'bw'" unless $seqSizes;
-      die "seqSizes file not found: $seqSizes" unless -f $seqSizes;
+      die "seq_sizes argument is required when fileSuffix is 'bw'" unless $seqSizes;
+      die "seq_sizes file not found: $seqSizes" unless -f $seqSizes;
     }
 
-    my $fullFileName = "$jbrowseDir/${trackName}.${fileSuffix}";
+    # For BigWig output, start with a temp bed file that will be converted later
+    my $fullFileName = ($fileSuffix eq 'bw')
+      ? "$jbrowseDir/${trackName}.temp.bed"
+      : "$jbrowseDir/${trackName}.${fileSuffix}";
 
     my $outFh;
 
@@ -167,35 +173,56 @@ foreach my $o (@$organisms) {
 
     if ($featureCountTotal > 0) {
       if ($fileSuffix eq 'bw') {
-        # For BigWig format: create bedGraph (4-column) and convert to BigWig
-        my $tempBedFile = "$jbrowseDir/${trackName}.bed.tmp";
-        my $bedGraphFile = "$jbrowseDir/${trackName}.bedGraph";
-        my $bwFile = "$jbrowseDir/${trackName}.bw";
+        # For BigWig format: create separate files for forward and reverse strands
+        my $seqSizesDir = dirname($seqSizes);
+        my @strands = (['+', 'fwd'], ['-', 'rev']);
+        my $success = 1;
 
-        # Rename the sorted bed file to a temp name
-        rename($fullFileName, $tempBedFile) or die "Cannot rename $fullFileName to $tempBedFile: $!";
+        foreach my $strandInfo (@strands) {
+          my ($strandChar, $strandName) = @$strandInfo;
+          my $bwFile = "$jbrowseDir/${trackName}_${strandName}.bw";
+          my $bedGraphTmp = "$jbrowseDir/${trackName}_${strandName}.bedGraph.tmp";
+          my $bedGraphFile = "$jbrowseDir/${trackName}_${strandName}.bedGraph";
 
-        # Cut columns 1,2,3,5 (chrom, start, end, score) to create bedGraph format
-        my $cut_result = system("cut -f1,2,3,5 $tempBedFile > $bedGraphFile");
-        if ($cut_result != 0) {
-          warn "Warning: cut failed for $tempBedFile\n";
-          unlink $tempBedFile;
-          next;
+          # Filter by strand and cut columns 1,2,3,5 (chrom, start, end, score) to create bedGraph format
+          # Column 6 in BED format is the strand
+          my $cut_result = system("awk '\$6 == \"$strandChar\"' $fullFileName | cut -f1,2,3,5 > $bedGraphTmp");
+          if ($cut_result != 0) {
+            warn "Warning: filtering/cut failed for $fullFileName (strand $strandChar)\n";
+            $success = 0;
+            last;
+          }
+
+          # Merge overlapping regions using bedtools merge
+          # -c 4 specifies to operate on column 4 (the score)
+          # -o mean calculates the mean of overlapping scores (change to max, sum, etc. as needed)
+          my $merge_result = system("bedtools merge -i $bedGraphTmp -c 4 -o mean > $bedGraphFile");
+          if ($merge_result != 0) {
+            warn "Warning: bedtools merge failed for $bedGraphTmp\n";
+            $success = 0;
+            last;
+          }
+
+          # Convert bedGraph to BigWig
+          my $bw_result = system("bedGraphToBigWig $bedGraphFile $seqSizes $bwFile");
+          #my $bw_result = system("singularity exec --no-mount setgroups -B $jbrowseDir -B $seqSizesDir docker://veupathdb/shortreadaligner:latest bedGraphToBigWig $bedGraphFile $seqSizes $bwFile");
+          if ($bw_result != 0) {
+            warn "Warning: bedGraphToBigWig failed for $bedGraphFile\n";
+            $success = 0;
+            last;
+          }
+
+          # Clean up intermediate files for this strand
+          unlink $bedGraphTmp, $bedGraphFile;
         }
 
-        # Convert bedGraph to BigWig
-        my $bw_result = system("bedGraphToBigWig $bedGraphFile $seqSizes $bwFile");
-        if ($bw_result != 0) {
-          warn "Warning: bedGraphToBigWig failed for $bedGraphFile\n";
-          unlink $tempBedFile, $bedGraphFile;
-          next;
+        # Clean up the original temp bed file
+        unlink $fullFileName;
+
+        if ($success) {
+          my $duration = time - $startTime;
+          print "$duration seconds wrote $featureCountTotal records for track $trackName (BigWig - forward and reverse)\n";
         }
-
-        # Clean up intermediate files
-        unlink $tempBedFile, $bedGraphFile;
-
-        my $duration = time - $startTime;
-        print "$duration seconds wrote $featureCountTotal records for track $trackName (BigWig)\n";
       }
       else {
         # For GFF and BED formats: compress and index
