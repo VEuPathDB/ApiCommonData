@@ -18,7 +18,7 @@ my ($gusConfigFile, $orgAbbrev, $projectId, $schema, $mode);
 	    "schema=s" => \$schema,
             "mode=s" => \$mode);  # load or delete
 
-my $TABLENAME = "TranscriptGenomicSequence";
+my $TABLENAME = "TranscriptGenomicSequence_p";
 
 my @properties = ();
 my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
@@ -129,7 +129,7 @@ sub deleteRows {
 
   my $rows = $dbh->do("delete from ${schema}.TranscriptGenomicSequence_p where org_abbrev = '$orgAbbrev'");
 
-  print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence\n";
+  print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence_p\n";
   $dbh->commit();
 }
 
