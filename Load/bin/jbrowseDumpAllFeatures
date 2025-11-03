@@ -117,7 +117,9 @@ foreach my $o (@$organisms) {
   foreach my $trackName (@tracks) {
     next if ($trackName =~ /^\s*#/);
 
-    #next unless $trackName eq 'transposableElements';
+
+
+    next unless $trackName eq 'apolloJunctionsNovelStrong';
     
     $trackCount++;
     my $startTime = time;
@@ -300,7 +302,7 @@ sub addGffFeatures {
 
     # Handle block-based features (e.g., exons in a transcript)
     if ($hash->{tstarts}) {
-      my @tstarts = map { s/\s+//g; $_ - 1 } split /,/, $hash->{tstarts};
+      my @tstarts = map { s/\s+//g; $_  } split /,/, $hash->{tstarts};
       my @blocksizes = map { s/\s+//g; $_ } split /,/, $hash->{blocksizes};
       my $counter = 0;
 
@@ -311,7 +313,7 @@ sub addGffFeatures {
 
         print $fh join("\t", ($hash->{sequence_source_id},
                                $hash->{source},
-                               "subfeature",
+                               "align",
                                $start,
                                $end,
                                $hash->{score} || ".",

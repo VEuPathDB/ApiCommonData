@@ -381,10 +381,10 @@ and gsa.org_abbrev =  '$org_abbrev'
                                            else 'Weak Evidence'
                                          end
                        ) as atts
-                from webready.GeneIntronJunction_p gij, webready.genomicseqjunctionstats_p stats
+                from jbrestel.GeneIntronJunction_p gij, jbrestel.genomicseqjunctionstats_p stats
                 where gij.org_abbrev = '$org_abbrev'
-                  and gij.na_sequence_id = stats.na_sequence_id
                   and stats.org_abbrev = '$org_abbrev'
+                  and gij.na_sequence_id = stats.na_sequence_id
                   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 4
                   and (gij.annotated_intron = 'Yes'
                        or (gij.total_unique
@@ -404,70 +404,46 @@ and gsa.org_abbrev =  '$org_abbrev'
 
 
 
-<!-- TODO
-  <track name="gsnapUnifiedintronjunctionHCOnly" type="genomic" fileSuffix="gff">
+  <track name="apolloJunctionsNovelStrong" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
-                select gij.intron_feature_id as feature_id,
-                       'gsnap' as feature,
-                       to_char(gij.na_sequence_id) as parent_id,
-                       gij.segment_start as startm,
-                       gij.segment_end as end,
-                       'VEuPathDB' as source,
-                     gij.contained,
-                     gij.matches_gene_strand as matchesgenestrand,
-                       gij.total_unique as score,
-                     gij.total_unique as totalscore,
-                     gij.total_isrpm as isrpm,
-                     'Score='||gij.total_unique||', ISRPM='||gij.total_isrpm as name,
-                     gij.percent_max as intronpercent,
-                     gij.annotated_intron as annotatedintron,
-                     gij.gene_source_id as genesourceid,
-                     gij.gene_na_feature_id, 
-                     gij.is_reversed,
-                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
-                        null as tstarts, null as blocksizes, null as atts, null as frame
-                from webready.GeneIntronJunction gij, webready.genomicseqjunctionstats stats
-                where gij.org_abbrev = $org_abbrev
-                  and gij.na_sequence_id = $srcfeature_id
-                  and gij.na_sequence_id = stats.na_sequence_id
-                  and stats.org_abbrev = $org_abbrev
-                  and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
-                  and gij.annotated_intron = 'No'
-                  and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
-                  and (gij.contained = 0 or gij.percent_max >= 2 
-                      )
-              UNION ALL
-
-                select intron_feature_id as feature_id,
-                       'gsnap' as feature,
-                       intron_feature_id as parent_id,
-                     'gsnap' as type,
-                       segment_start - 10 as startm,
-                       segment_end + 10 as end,
-                       'VEuPathDB' as source,
-                     contained,
-                     matches_gene_strand,
-                     percent_max,
-                       total_unique as score,
-                       decode (to_char(is_reversed), 0, '+1', 1, '-1', '.') strand,
-                     annotated_intron,
-                       to_char(segment_start - 10) || ',' || to_char(segment_end + 1) as tstarts,
-                       to_char(10) || ',' || to_char(10) as blocksizes, null as atts, null as frame
-                from webready.GeneIntronJunction gij, webready.genomicseqjunctionstats stats
-                where gij.org_abbrev = $org_abbrev
-                  and gij.na_sequence_id = $srcfeature_id
-                  and gij.na_sequence_id = stats.na_sequence_id
-                  and stats.org_abbrev = $org_abbrev
-                  and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
-                  and gij.annotated_intron = 'No'
-                  and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
-                  and (gij.contained = 0 or gij.percent_max >= 2 
-                      )
+select gij.sequence_source_id, 
+       intron_feature_id as feature_id,
+       'intron_junction' as feature,
+       'VEuPathDB' as source,
+       segment_start - 10 as startm,
+       segment_end + 10 as end,
+       contained,
+       matches_gene_strand,
+       percent_max,
+       total_unique as score,
+       case
+         when gij.is_reversed = 0 then '+'
+         when gij.is_reversed = 1 then '-'
+       else '.' end as strand,
+       annotated_intron,
+       concat(segment_start - 10, ',',  segment_end + 1 ) as tstarts,
+       '10,10' as blocksizes,
+       concat('contained=', gij.contained
+              , '$dlm', 'matchesGeneStrand=', gij.matches_gene_strand
+              , '$dlm', 'isrpm=', gij.total_isrpm
+              , '$dlm', 'totalscore=', gij.total_unique
+              , '$dlm', 'intronpercent=', gij.percent_max
+              , '$dlm', 'annotatedintron=', gij.annotated_intron
+              , '$dlm', 'genesourceid=', gij.gene_source_id
+       ) as atts
+  from jbrestel.GeneIntronJunction_p gij, jbrestel.genomicseqjunctionstats_p stats
+ where gij.org_abbrev = '$org_abbrev'
+   and stats.org_abbrev = '$org_abbrev'
+   and gij.na_sequence_id = stats.na_sequence_id
+   and gij.segment_end - gij.segment_start <= stats.max_intron_length * 2
+   and gij.annotated_intron = 'No'
+   and gij.total_unique >=  CASE WHEN contained = 1 THEN stats.perc01_annot_score ELSE 5*stats.perc01_annot_score END
+   and (gij.contained = 0 or gij.percent_max >= 2
+   )
      ]]>
    </sql>
   </track>
--->
 
 
 <!-- TODO
