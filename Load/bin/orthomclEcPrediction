@@ -1372,12 +1372,16 @@ sub ecsSql {
 sub proteinsSql {
     my ($group) = @_;
     return "SELECT full_id,product,length,core_peripheral,group_name,organism_name                                     
-            FROM webready.ProteinSequenceGroup WHERE group_name='$group'";
+            FROM webready.ProteinSequence_pGroup WHERE group_name='$group'";
 }
 
 sub groupsSql {
     my ($minNumProteinsWithEc,$maxNumProteinsWithEc) = @_;
+<<<<<<< HEAD
     return "SELECT DISTINCT(group_name) FROM webready.ProteinSequenceGroup";
+=======
+    return "SELECT DISTINCT(group_name) FROM webready.ProteinSequence_pgroup";
+>>>>>>> master
 }
 
 sub orthoOrganismSql {
