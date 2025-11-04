@@ -119,7 +119,7 @@ sub new {
 
     my $dbh = &getDbHandle($gusConfigFile);
 
-    my $foundTaxId = &checkParent($taxonId,$dbh);
+    my $foundTaxId = &checkParent($ncbiTaxonId,$dbh);
 
     if ($foundTaxId) {
         &loadClusters($gffFile);
