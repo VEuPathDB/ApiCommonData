@@ -41,6 +41,7 @@ sub getArgsDeclaration {
                      constraintFunc=> undef,
                      reqd  => 1,
                      isList => 0,
+                 }),
         stringArg({name => 'ncbiTaxonId',
                      descr => 'ncbiTaxonId for this dataset',
                      constraintFunc=> undef,
@@ -184,17 +185,16 @@ sub loadClusters{
         my $end = $feature->end();
         if ($primaryTag  eq 'protocluster') {
             my ($category) = $feature->get_tag_values('category');
-            #print($name, "\t",$start, "\t", $end,"\t", $category, "\n");
 	    
 	    my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
-                                                                   cluster_name => $name
+                                                                   cluster_name => $name,
                                                                    cluster_start => $start,
                                                                    cluster_end => $end,
                                                                    category => $category,
 		                                                   external_database_release_id => $extDbRlsId
                                                                    });
 	    $row_cluster->submit();                 
-            $self->undefPointerCache()
+            $self->undefPointerCache();
 	}
 
         if ($primaryTag  eq 'gene') {
@@ -212,19 +212,19 @@ sub loadClusters{
                                                                  antiSmash_annotation => $gene_kind,
                                                                  external_database_release_id => $extDbRlsId});
 	    $row_features->submit();
-	    $self->undefPointerCache()
+	    $self->undefPointerCache();
 
 	}
     }
-
 }
 
 sub undoTables {
     my ($self) = @_;
 
-    return ('ApiDB.antiSmashCluster');
-    return ('ApiDB.antiSmashFeatures');
-    return ('ApiDB.AntismashClusterFeature');
+    return ('ApiDB.antiSmashCluster',
+            'ApiDB.antiSmashFeatures',
+            'ApiDB.AntismashClusterFeature'
+           );
 }
 
 1;
