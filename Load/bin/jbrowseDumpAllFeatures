@@ -51,14 +51,15 @@ use constant {
   
 };
 
-my ($help, $outputDir, $orgFilter, $replaceExisting, $seqSizes);
+my ($help, $outputDir, $orgFilter, $replaceExisting, $seqSizes, $gusConfigFile);
 
 &GetOptions(
   'help|h'                     => \$help,
   'output_directory=s'         => \$outputDir,
   'organism_abbrev_filter=s'   => \$orgFilter,
   'replace_existing'           => \$replaceExisting,
-  'seq_sizes=s'                 => \$seqSizes
+  'seq_sizes=s'                => \$seqSizes,
+  'gus_config_file=s'          => \$gusConfigFile
 );
 
 if ($help || !$outputDir) {
@@ -72,8 +73,6 @@ if (!-d $outputDir) {
 unless ($ENV{GUS_HOME}) {
   die "Error: GUS_HOME environment variable is not set\n";
 }
-
-my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 unless (-f $gusConfigFile) {
   die "Error: GUS config file not found: $gusConfigFile\n";
