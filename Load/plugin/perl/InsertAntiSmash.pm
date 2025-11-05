@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertAntiSmash;
+B65;6800;1cpackage ApiCommonData::Load::Plugin::InsertAntiSmash;
 use lib "$ENV{GUS_HOME}/lib/perl";
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -15,7 +15,7 @@ use GUS::Model::ApiDB::AntismashClusterFeature;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
-sub getArgsDeclaration {
+sub getArgumentsDeclaration {
     my $argsDeclaration  =
             
        [   
@@ -102,7 +102,7 @@ sub new {
         
     my $documentation = &getDocumentation();
         
-    my $args = &getArgsDeclaration();
+    my $args = &getArgumentsDeclaration();
         
     $self->initialize({requiredDbVersion => 4.0,
                        cvsRevision => '$Revision$',
