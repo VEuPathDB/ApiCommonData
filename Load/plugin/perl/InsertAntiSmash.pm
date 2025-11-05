@@ -1,4 +1,4 @@
-B65;6800;1cpackage ApiCommonData::Load::Plugin::InsertAntiSmash;
+package ApiCommonData::Load::Plugin::InsertAntiSmash;
 use lib "$ENV{GUS_HOME}/lib/perl";
 @ISA = qw(GUS::PluginMgr::Plugin);
 
