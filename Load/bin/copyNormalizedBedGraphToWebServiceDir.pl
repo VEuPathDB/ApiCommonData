@@ -92,7 +92,9 @@ my $sampleHash;
 if(-e $analysisConfig) {
     $sampleHash = displayAndBaseName($analysisConfig);
 }
-
+else {
+  die "analysisConfig $analysisConfig does not exist."
+}
 
 
 foreach my $key (keys %$sampleHash) {
