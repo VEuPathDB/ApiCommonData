@@ -81,7 +81,7 @@ sub run {
     my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";    
 
     if ($foundTaxId) {
-        &loadClusters($gffFile,$extDbRlsId);
+	$self->loadClusters($gffFile, $extDbRlsId);
     }
 
     return $self;
@@ -117,61 +117,67 @@ sub checkParentSql {
     ";
 }
 
-sub loadClusters{
+sub loadClusters {
+    my ($self, $gffFile, $extDbRlsId) = @_;
 
-    my ($self, $gffFile, $extDbRlsId) = @_; 
-    
     my $fh;
-    if($gffFile =~ /\.gz$/) {
-        open($fh, "gzip -dc $gffFile |") or die "Could not open '$gffFile': $!";
+    if ($gffFile =~ /\.gz$/) {
+        open($fh, "-|", "gzip", "-dc", $gffFile)
+	    or die "Could not open '$gffFile' via gzip: $!";
+    } else {
+        open($fh, "<", $gffFile)
+	    or die "Could not open '$gffFile': $!";
     }
-    else {
-        open($fh, $gffFile) or die "Could not open '$gffFile': $!";
-    }
-
 
     my $gffIo = Bio::Tools::GFF->new(-fh => $fh, -gff_version => 3);
 
+    my ($clusterCount, $featureCount) = (0, 0);
+
     while (my $feature = $gffIo->next_feature()) {
         my $primaryTag = $feature->primary_tag();
-        my $sourceTag = $feature->source_tag();
-        my $SourceId = $feature->seq_id();
-        my ($name) = $feature->get_tag_values('ID');
+
+        my ($name) = $feature->has_tag('ID') ? $feature->get_tag_values('ID') : undef;
+        next unless defined $name;
+
         my $start = $feature->start();
-        my $end = $feature->end();
-        if ($primaryTag  eq 'protocluster') {
-            my ($category) = $feature->get_tag_values('category');
-	    
-	    my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
-                                                                   cluster_name => $name,
-                                                                   cluster_start => $start,
-                                                                   cluster_end => $end,
-                                                                   category => $category,
-		                                                   external_database_release_id => $extDbRlsId
-                                                                   });
-	    $row_cluster->submit();                 
-            $self->undefPointerCache();
-	}
+        my $end   = $feature->end();
 
-        if ($primaryTag  eq 'gene') {
-            my ($gene_kind);
-            
-	    if ($feature->has_tag('gene_kind')){
-                ($gene_kind) = $feature->get_tag_values('gene_kind');
-	    } else {
-                ($gene_kind) = ""
-		    
-	    }
-            
-	    my $row_features = GUS::Model::ApiDB::antiSmashFeature->new({
-                                                                 na_feature_id => $name,
-                                                                 antiSmash_annotation => $gene_kind,
-                                                                 external_database_release_id => $extDbRlsId});
-	    $row_features->submit();
-	    $self->undefPointerCache();
+        if ($primaryTag eq 'protocluster') {
+            my ($category) = $feature->has_tag('category') ? $feature->get_tag_values('category') : undef;
 
-	}
+            my $row_cluster = GUS::Model::ApiDB::antiSmashCluster->new({
+                cluster_name                  => $name,
+                cluster_start                 => $start,
+                cluster_end                   => $end,
+                category                      => $category,
+                external_database_release_id  => $extDbRlsId
+								       });
+            $row_cluster->submit();
+            $clusterCount++;
+        }
+        elsif ($primaryTag eq 'gene') {
+            my ($gene_kind) = $feature->has_tag('gene_kind')
+                ? $feature->get_tag_values('gene_kind')
+                : "";
+
+            my $row_features = GUS::Model::ApiDB::antiSmashFeature->new({
+                na_feature_id                 => $name,
+                antiSmash_annotation          => $gene_kind,
+                external_database_release_id  => $extDbRlsId
+									});
+            $row_features->submit();
+            $featureCount++;
+        }
+
+        # Clear cache periodically
+        $self->undefPointerCache() if (($clusterCount + $featureCount) % 500) == 0;
     }
+
+    close $fh;
+    $self->undefPointerCache();
+
+    $self->log("Inserted $clusterCount clusters and $featureCount features from $gffFile");
+    return { clusters => $clusterCount, features => $featureCount };
 }
 
 sub undoTables {
