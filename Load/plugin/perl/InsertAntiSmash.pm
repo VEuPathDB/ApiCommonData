@@ -177,7 +177,7 @@ sub undoTables {
     my ($self) = @_;
 
     return ('ApiDB.antiSmashCluster',
-            'ApiDB.antiSmashFeatures',
+            'ApiDB.antiSmashFeature',
             'ApiDB.AntismashClusterFeature'
            );
 }
