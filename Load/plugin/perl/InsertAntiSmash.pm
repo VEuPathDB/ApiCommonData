@@ -76,8 +76,12 @@ sub run {
 
     my $foundTaxId = &checkParent($ncbiTaxonId,$dbh);
 
+    my $extDbSpec = $self->getArg('extDbSpec');
+
+    my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";    
+
     if ($foundTaxId) {
-        &loadClusters($gffFile);
+        &loadClusters($gffFile,$extDbRlsId);
     }
 
     return $self;
@@ -115,10 +119,7 @@ sub checkParentSql {
 
 sub loadClusters{
 
-    my ($self, $gffFile) = @_; 
-    my $extDbSpec = $self->getArg('extDbSpec');
-    my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";    
-
+    my ($self, $gffFile, $extDbRlsId) = @_; 
     
     my $fh;
     if($gffFile =~ /\.gz$/) {
