@@ -420,13 +420,13 @@ sub getTransGOs {
   my ($dbhSub, $orgAbbrev, $extDbRlsId) = @_;
   my %transGOSub;
 
-  ## use apidbtuning.GoTermSummary table to get GO info
+  ## use webready.GoTermSummary_p table to get GO info
   my $sqlSub = "
 select TRANSCRIPT_SOURCE_ID, GO_ID, GO_TERM_NAME, EVIDENCE_CODE, REFERENCE,
 decode(ontology, 'Biological Process', 'GO_process',
                  'Molecular Function', 'GO_function',
                  'Cellular Component', 'GO_component', ontology) 
-from webready.GoTermSummary
+from webready.GoTermSummary_p
 where org_abbrev = '$orgAbbrev'
 ";
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);

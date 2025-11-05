@@ -88,8 +88,8 @@ while(<IN>){
 SELECT gf.source_id, bfmv.start_min, bfmv.end_max, bfmv.is_reversed,
        etb.name, etr.version, 
        bfmv.species as organism, bfmv.sequence_id as contig
-FROM   DoTS.GeneFeature gf, webready.GeneAttributes bfmv,
-       webready.GeneID gi, DoTS.ExternalNASequence nas,
+FROM   DoTS.GeneFeature gf, webready.GeneAttributes_p bfmv,
+       webready.GeneId_p gi, DoTS.ExternalNASequence nas,
        SRes.ExternalDatabase etb, SRes.ExternalDatabaseRelease etr
 WHERE  gf.na_sequence_id = nas.na_sequence_id
    AND gf.source_id = bfmv.source_id

@@ -55,13 +55,13 @@ open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write
 print STDERR "\$extDbRlsId = $extDbRlsId\n";
 
 my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
-               from webready.genomicseqattributes
+               from webready.GenomicSeqAttributes_p
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
                and org_abbrev = '$organismAbbrev'
                and is_top_level = 1";
 
 if ($ncbiTaxId) {
-  $sql = "select source_id, SEQUENCE_TYPE, LENGTH from apidbtuning.genomicseqattributes where ncbi_tax_id = $ncbiTaxId and is_top_level = 1";
+  $sql = "select source_id, SEQUENCE_TYPE, LENGTH from webready.GenomicSeqAttributes_p where ncbi_tax_id = $ncbiTaxId and is_top_level = 1";
 }
 
 my $stmt = $dbh->prepare($sql);
@@ -379,7 +379,7 @@ Usage: perl generateSeqRegionJson.pl --organismAbbrev pfalCD01
 where:
   --organismAbbrev: required, eg. pfal3D7
   --outputFileName: optional, default is organismAbbrev_genome.json
-  --gusConfigFile: required, it should point to a inc- instance due to query apidbtuning.genomicseqattributes table
+  --gusConfigFile: required, it should point to a inc- instance due to query webready.GenomicSeqAttributes_p table
                    default is \$GUS_HOME/config/gus.config
 
 ";
