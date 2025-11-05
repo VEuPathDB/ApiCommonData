@@ -2,15 +2,40 @@
 
 use strict;
 use lib $ENV{GUS_HOME} . "/lib/perl";
+use Getopt::Long;
 use Data::Dumper;
 use DBI;
 use JSON;
+use XML::LibXML;
 use CBIL::Util::PropertySet;
 
-my ($gusConfigFile, $organismAbbrev, $jbrowseConf) = @ARGV;
+my ($gusConfigFile, $organismAbbrev, $jbrowseConf, $jbrowseFlatFileDir, $jbrowseQueriesXmlFile);
 
-unless(-e $gusConfigFile) {
-  die "gus.config file not found! \n";
+GetOptions("gusConfigFile=s" => \$gusConfigFile,
+           "organismAbbrev=s" => \$organismAbbrev,
+           "jbrowseConf=s" => \$jbrowseConf,
+           "jbrowseFlatFileDir=s" => \$jbrowseFlatFileDir,
+           "jbrowseQueriesXmlFile=s" => \$jbrowseQueriesXmlFile)
+  or die "Error in command line arguments\n";
+
+unless($gusConfigFile && -e $gusConfigFile) {
+  die "gus.config file not provided or not found! \n";
+}
+
+unless($organismAbbrev) {
+  die "organismAbbrev is required! \n";
+}
+
+unless($jbrowseConf) {
+  die "jbrowseConf output file is required! \n";
+}
+
+unless($jbrowseFlatFileDir && -d $jbrowseFlatFileDir) {
+  die "jbrowseFlatFileDir not provided or not a valid directory! \n";
+}
+
+unless($jbrowseQueriesXmlFile && -e $jbrowseQueriesXmlFile) {
+  die "jbrowseQueriesXmlFile not provided or not found! \n";
 }
 
 my @properties = ();
@@ -26,11 +51,18 @@ open(FILE, '>', $jbrowseConf) or die "Cannot open file $jbrowseConf for reading:
 
 my $taxonId = &getTaxonId($dbh, $organismAbbrev);
 
-print FILE "hasCentromere=" . &hasCentromere($dbh, $taxonId) ."\n";
-print FILE "hasSnp=" . &hasSnp($dbh, $organismAbbrev) ."\n";
-print FILE "hasMassSpec=" . &hasMassSpec($dbh, $organismAbbrev) ."\n";
-print FILE "hasTRNA=" . &hasTRNA($dbh, $organismAbbrev) ."\n";
-print FILE "hasScaffold=" . &hasScaffold($dbh, $taxonId) ."\n";
+# Check for track files based on XML definitions
+my $trackNames = &getTrackNamesFromXml($jbrowseQueriesXmlFile);
+
+# This one is not in the xml.  it is handled separately
+push @$trackNames, "unifiedGenomicMassSpec";
+
+my $foundTracks = &findTrackFiles($jbrowseFlatFileDir, $trackNames);
+
+# Output track availability
+foreach my $trackName (sort keys %$foundTracks) {
+  print FILE "has" . ucfirst($trackName) . "=" . ($foundTracks->{$trackName} ? "1" : "0") ."\n";
+}
 
 my $chipChipDatasets = &getChipChipDatasetsHash($dbh, $organismAbbrev);
 
@@ -57,94 +89,38 @@ sub getTaxonId {
   return $result;
 }
 
-sub getHasRowsFromSql {
-  my ($dbh, $sql) = @_;
+sub getTrackNamesFromXml {
+  my ($xmlFile) = @_;
 
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-  my $count = $sh->fetchrow_array();
-  my $hasRows = $count > 0 ? 1 : 0;
-  $sh->finish(); 
-  return $hasRows
+  my $parser = XML::LibXML->new();
+  my $doc = $parser->parse_file($xmlFile);
+
+  my @trackNames;
+  foreach my $track ($doc->findnodes('//track')) {
+    my $name = $track->getAttribute('name');
+    push @trackNames, $name if $name;
+  }
+
+  return \@trackNames;
 }
 
-sub hasCentromere {
-  my ($dbh, $taxonId) = @_;
-  my $sql = "SELECT count(*)
-FROM  DOTS.MISCELLANEOUS f
-    , sres.ontologyTerm ot
-    , dots.nasequence s
-WHERE ot.ontology_term_id = f.sequence_ontology_id
- AND ot.name='centromere'
- AND f.na_sequence_id = s.na_sequence_id
- AND s.TAXON_ID = ${taxonId}";
+sub findTrackFiles {
+  my ($flatFileDir, $trackNames) = @_;
 
-  return &getHasRowsFromSql($dbh, $sql);
+  my %foundTracks;
+
+  foreach my $trackName (@$trackNames) {
+    # Look for files that start with the track name
+    opendir(my $dh, $flatFileDir) or die "Cannot open directory $flatFileDir: $!";
+    my @files = grep { /^${trackName}/ } readdir($dh);
+    closedir($dh);
+
+    $foundTracks{$trackName} = scalar(@files) > 0 ? 1 : 0;
+  }
+
+  return \%foundTracks;
 }
 
-
-sub hasScaffold {
-  my ($dbh, $taxonId) = @_;
-  my $sql = "select count(*)  from dots.scaffoldgapfeature sgf, dots.ExternalNaSequence na where na.na_sequence_id = sgf.na_sequence_id and na.taxon_id = '${taxonId}'";
-  return &getHasRowsFromSql($dbh, $sql);
-}
-
-
-sub hasSnp {
-  my ($dbh, $organismAbbrev) = @_;
-
-  my $sql = "select count(*) from sres.externaldatabase where name like '${organismAbbrev}%HTS_SNP_%'";
-
-  return &getHasRowsFromSql($dbh, $sql);
-}
-
-
-sub hasMassSpec {
-  my ($dbh, $organismAbbrev) = @_;
-
-  my $sql = "select count(*) from sres.externaldatabase where name like '${organismAbbrev}%massSpec%'";
-
-  return &getHasRowsFromSql($dbh, $sql);
-}
-
-
-sub hasTRNA {
-  my ($dbh, $organismAbbrev) = @_;
-
-  my $sql = "select count(*) from dots.rnafeature rnaf, sres.ontologyterm ot, dots.ExternalNaSequence na, apidb.organism o
-where ot.ontology_term_id = rnaf.sequence_ontology_id 
-and na.na_sequence_id = rnaf.na_sequence_id 
-and o.taxon_id = na.taxon_id  
-and ot.name ='tRNA' 
-and o.abbrev = '${organismAbbrev}'";
-
-  return &getHasRowsFromSql($dbh, $sql);
-}
-
-# FIXME:  
-# sub addCnvArray {
-#   my ($dbh, $result) = @_;
-
-#   my $sql = "select distinct pan.name
-# from study.protocolappnode pan
-#    , study.study s
-#    , study.studylink sl
-# where pan.PROTOCOL_APP_NODE_ID = sl.PROTOCOL_APP_NODE_ID
-# and sl.study_id = s.study_id
-# and s.name like 'tcruCLBrenerEsmeraldo-like_cghArrayExper_Tarelton_GSE23576_CNV_RSRC%'
-# order by pan.name";
-
-#   my $sh = $dbh->prepare($sql);
-#   $sh->execute();
-
-#   while(my ($panName) = $sh->fetchrow_array()){
-#         my $cnvArray = {cnvArray => $panName,
-#         }; 
-#   push @{$result->{jBrowseMetadata}}, $cnvArray;
-#   }
-#   $sh->finish();
-#   return $result;
-# }
 
 sub getChipChipDatasetsHash {
   my ($dbh, $organismAbbrev) = @_;
@@ -152,17 +128,17 @@ sub getChipChipDatasetsHash {
   my %chipChipDatasets;
 
  my $sql = "select d.name, s.name, pan.name
-from study.study s
+from study.nodeset s
    , SRES.EXTERNALDATABASERELEASE r
    , SRES.EXTERNALDATABASE d
    , study.protocolappnode pan
-   , study.studylink sl
+   , study.nodenodeset sl
 where d.name like '${organismAbbrev}%_chipChipExper_%'
 and s.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
 and r.EXTERNAL_DATABASE_ID = d.EXTERNAL_DATABASE_ID
-and s.study_id = sl.study_id
+and s.node_set_id = sl.node_set_id
 and sl.protocol_app_node_id = pan.PROTOCOL_APP_NODE_ID
-and s.investigation_id is null";
+";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
