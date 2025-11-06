@@ -118,7 +118,7 @@ sub checkParentSql {
 }
 
 sub loadClusters {
-    my ($self, $gffFile, $extDbRlsId) = @_;
+    my ($self, $gffFile, $extDbRlsId, $dbh) = @_;
 
     my $fh;
     if ($gffFile =~ /\.gz$/) {
