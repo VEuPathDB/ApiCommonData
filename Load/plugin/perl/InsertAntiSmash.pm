@@ -81,7 +81,7 @@ sub run {
     my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec";    
 
     if ($foundTaxId) {
-	$self->loadClusters($gffFile, $extDbRlsId);
+	$self->loadClusters($gffFile, $extDbRlsId, $dbh);
     }
 
     return $self;
@@ -160,13 +160,21 @@ sub loadClusters {
                 ? $feature->get_tag_values('gene_kind')
                 : "";
 
-            my $row_features = GUS::Model::ApiDB::antiSmashFeature->new({
-                na_feature_id                 => $name,
-                antiSmash_annotation          => $gene_kind,
-                external_database_release_id  => $extDbRlsId
-									});
-            $row_features->submit();
-            $featureCount++;
+	    my $sql = "SELECT na_feature_id FROM dots.nafeatureimp WHERE source_id = ?";
+	    my $sth = $dbh->prepare($sql);
+	    $sth->execute($name);
+
+	    my ($naFeatureId) = $sth->fetchrow_array();
+	    $sth->finish();
+
+	    if (defined $naFeatureId) {
+  		my $row_features = GUS::Model::ApiDB::antiSmashFeature->new({na_feature_id => $naFeatureId,
+                                                                             antiSmash_annotation => $gene_kind,
+                                                                             external_database_release_id => $extDbRlsId
+									   });
+		$row_features->submit();
+		$featureCount++;
+            }
         }
 
         # Clear cache periodically
