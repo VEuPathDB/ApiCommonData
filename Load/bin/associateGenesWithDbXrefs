@@ -1,0 +1,578 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use DBI;
+
+#############################
+# MAIN EXECUTION
+#############################
+
+my $args = parseAndValidateArgs();
+my $taxaListHash = getTaxonFilter($args);
+my $dbh = connectToDatabase($args);
+my ($geneData, $lookups) = queryAndProcessGeneData($dbh, $args, $taxaListHash);
+
+my ($geneToEntrezGene, $entrezGeneToGene) = processGeneInfo($args, $taxaListHash, $lookups);
+my $geneToPubmed = processGeneToPubmed($args, $taxaListHash, $entrezGeneToGene);
+my $geneToUniprot = processUniProtMapping($args, $entrezGeneToGene, $lookups->{proteinAccessionToGene});
+
+writeOutputFiles($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot);
+
+$dbh->disconnect();
+printSummary($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot);
+
+exit(0);
+
+#############################
+# SUBROUTINES
+#############################
+
+sub parseAndValidateArgs {
+    my ($geneInfoFile, $gene2pubmedFile, $idMappingFile, $taxId, $outputDir, $gusConfigFile, $verbose);
+
+    GetOptions("geneInfoFile=s"    => \$geneInfoFile,
+               "gene2pubmedFile=s"  => \$gene2pubmedFile,
+               "idMappingFile=s"    => \$idMappingFile,
+               "taxId=s"            => \$taxId,
+               "outputDir=s"        => \$outputDir,
+               "gusConfigFile=s"    => \$gusConfigFile,
+               "verbose!"           => \$verbose);
+
+    # Validate required arguments
+    usage() unless ($geneInfoFile && $gene2pubmedFile && $idMappingFile &&
+                    $taxId && $outputDir && $gusConfigFile);
+
+    # Validate files and directories exist
+    die "ERROR: geneInfoFile '$geneInfoFile' does not exist\n" unless -e $geneInfoFile;
+    die "ERROR: gene2pubmedFile '$gene2pubmedFile' does not exist\n" unless -e $gene2pubmedFile;
+    die "ERROR: idMappingFile '$idMappingFile' does not exist\n" unless -e $idMappingFile;
+    die "ERROR: gusConfigFile '$gusConfigFile' does not exist\n" unless -e $gusConfigFile;
+    die "ERROR: outputDir '$outputDir' does not exist\n" unless -d $outputDir;
+
+    return {
+        geneInfoFile    => $geneInfoFile,
+        gene2pubmedFile => $gene2pubmedFile,
+        idMappingFile   => $idMappingFile,
+        taxId           => $taxId,
+        outputDir       => $outputDir,
+        gusConfigFile   => $gusConfigFile,
+        verbose         => $verbose
+    };
+}
+
+sub getTaxonFilter {
+    my ($args) = @_;
+
+    print STDERR "Getting sub-taxa list for NCBI taxon $args->{taxId}...\n" if $args->{verbose};
+
+    my $subNCBITaxaList = `getSubNCBITaxaList --gusConfigFile $args->{gusConfigFile} --NCBITaxId $args->{taxId}`;
+    die "\nERROR: Failed to call 'getSubNCBITaxaList'\n" if $? >> 8;
+
+    my @taxaLists = split(/\,/, $subNCBITaxaList);
+    my %taxaListHash;
+    foreach my $taxon (@taxaLists) {
+        chomp $taxon;
+        $taxaListHash{$taxon} = 1;
+    }
+
+    print STDERR "  Found " . scalar(keys %taxaListHash) . " taxa to include\n" if $args->{verbose};
+
+    return \%taxaListHash;
+}
+
+sub connectToDatabase {
+    my ($args) = @_;
+
+    print STDERR "Establishing database connection...\n" if $args->{verbose};
+
+    my $gusconfig = GUS::Supported::GusConfig->new($args->{gusConfigFile});
+    my $dbh = DBI->connect(
+        $gusconfig->getDbiDsn(),
+        $gusconfig->getDatabaseLogin(),
+        $gusconfig->getDatabasePassword(),
+        { PrintError => 1, RaiseError => 1 }
+    ) or die "ERROR: Cannot connect to database: $DBI::errstr\n";
+
+    return $dbh;
+}
+
+sub queryAndProcessGeneData {
+    my ($dbh, $args, $taxaListHash) = @_;
+
+    print STDERR "Querying database for genes and proteins...\n" if $args->{verbose};
+
+    # Build comma-separated list of taxon IDs for SQL queries
+    my $ncbiTaxonIds = join(',', keys %$taxaListHash);
+
+    # Query 1: Get all gene source_ids
+    my ($geneData, $locusTagToGene) = queryGeneSourceIds($dbh, $ncbiTaxonIds, $args);
+
+    # Query 2 & 3: Get gene and transcript aliases (combined into one lookup)
+    my $geneTranscriptAliasToGene = queryGeneAliases($dbh, $ncbiTaxonIds, $geneData, $args);
+    $geneTranscriptAliasToGene = queryTranscriptAliases($dbh, $ncbiTaxonIds, $geneData, $geneTranscriptAliasToGene, $args);
+
+    # Query 4: Get protein accessions
+    my $proteinAccessionToGene = queryProteinAccessions($dbh, $ncbiTaxonIds, $geneData, $args);
+
+    print STDERR "  Database queries complete\n" if $args->{verbose};
+
+    my $lookups = {
+        locusTagToGene             => $locusTagToGene,
+        geneTranscriptAliasToGene  => $geneTranscriptAliasToGene,
+        proteinAccessionToGene     => $proteinAccessionToGene
+    };
+
+    return ($geneData, $lookups);
+}
+
+sub queryGeneSourceIds {
+    my ($dbh, $ncbiTaxonIds, $args) = @_;
+
+    my $query = <<SQL;
+select gf.source_id
+from dots.genefeature gf
+  join dots.nasequence s on gf.na_sequence_id = s.na_sequence_id
+  join sres.taxon t on s.taxon_id = t.taxon_id
+where t.ncbi_tax_id in ($ncbiTaxonIds)
+SQL
+
+    print STDERR "  Running query 1: Gene source IDs...\n" if $args->{verbose};
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my %geneData;
+    my %locusTagToGene;
+
+    while (my $row = $sth->fetchrow_hashref()) {
+        my $geneId = $row->{source_id};
+
+        $geneData{$geneId} = {
+            locus_tag          => $geneId,  # source_id IS the locus_tag
+            protein_accessions => []
+        };
+
+        $locusTagToGene{$geneId} = $geneId;
+    }
+    $sth->finish();
+
+    print STDERR "    Retrieved " . scalar(keys %geneData) . " genes\n" if $args->{verbose};
+
+    return (\%geneData, \%locusTagToGene);
+}
+
+sub queryGeneAliases {
+    my ($dbh, $ncbiTaxonIds, $geneData, $args) = @_;
+
+    my $query = <<SQL;
+select gf.source_id, dbref.primary_identifier as gene_alias
+from dots.genefeature gf
+  join dots.nasequence s on gf.na_sequence_id = s.na_sequence_id
+  join sres.taxon tax on tax.taxon_id = s.taxon_id
+  join dots.dbrefnafeature daf on gf.na_feature_id = daf.na_feature_id
+  join sres.dbref on daf.db_ref_id = dbref.db_ref_id
+  join sres.externaldatabaserelease r on dbref.external_database_release_id = r.external_database_release_id
+  join sres.externaldatabase d on r.external_database_id = d.external_database_id
+where tax.ncbi_tax_id in ($ncbiTaxonIds)
+and r.id_is_alias = 1
+SQL
+
+    print STDERR "  Running query 2: Gene aliases...\n" if $args->{verbose};
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my %aliasToGene;
+    my $aliasCount = 0;
+
+    while (my $row = $sth->fetchrow_hashref()) {
+        my $geneId = $row->{source_id};
+        my $alias = $row->{gene_alias};
+
+        next unless $alias && $alias ne '-';
+        next unless exists $geneData->{$geneId};
+
+        $aliasToGene{$alias} = $geneId unless exists $aliasToGene{$alias};
+        $aliasCount++;
+    }
+    $sth->finish();
+
+    print STDERR "    Retrieved $aliasCount gene aliases\n" if $args->{verbose};
+
+    return \%aliasToGene;
+}
+
+sub queryTranscriptAliases {
+    my ($dbh, $ncbiTaxonIds, $geneData, $geneTranscriptAliasToGene, $args) = @_;
+
+    my $query = <<SQL;
+select gf.source_id, dbref.primary_identifier as transcript_alias
+from dots.genefeature gf
+  join dots.nasequence s on gf.na_sequence_id = s.na_sequence_id
+  join dots.transcript t on gf.na_feature_id = t.parent_id
+  join sres.taxon tax on tax.taxon_id = s.taxon_id
+  join dots.dbrefnafeature daf on t.na_feature_id = daf.na_feature_id
+  join sres.dbref on daf.db_ref_id = dbref.db_ref_id
+  join sres.externaldatabaserelease r on dbref.external_database_release_id = r.external_database_release_id
+  join sres.externaldatabase d on r.external_database_id = d.external_database_id
+where tax.ncbi_tax_id in ($ncbiTaxonIds)
+and r.id_is_alias = 1
+SQL
+
+    print STDERR "  Running query 3: Transcript aliases...\n" if $args->{verbose};
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my $aliasCount = 0;
+
+    while (my $row = $sth->fetchrow_hashref()) {
+        my $geneId = $row->{source_id};
+        my $alias = $row->{transcript_alias};
+
+        next unless $alias && $alias ne '-';
+        next unless exists $geneData->{$geneId};
+
+        # Combine with gene aliases in same lookup
+        $geneTranscriptAliasToGene->{$alias} = $geneId unless exists $geneTranscriptAliasToGene->{$alias};
+        $aliasCount++;
+    }
+    $sth->finish();
+
+    print STDERR "    Retrieved $aliasCount transcript aliases\n" if $args->{verbose};
+
+    return $geneTranscriptAliasToGene;
+}
+
+sub queryProteinAccessions {
+    my ($dbh, $ncbiTaxonIds, $geneData, $args) = @_;
+
+    my $query = <<SQL;
+select gf.source_id
+     , dbref.primary_identifier as protein_alias
+from dots.genefeature gf
+  join dots.transcript t on gf.na_feature_id = t.parent_id
+  join dots.nasequence s on gf.na_sequence_id = s.na_sequence_id
+  join sres.taxon tax on tax.taxon_id = s.taxon_id
+  join dots.translatedaafeature taf on t.na_feature_id = taf.na_feature_id
+  join dots.dbrefaafeature daf on taf.aa_feature_id = daf.aa_feature_id
+  join sres.dbref on daf.db_ref_id = dbref.db_ref_id
+  join sres.externaldatabaserelease r on dbref.external_database_release_id = r.external_database_release_id
+  join sres.externaldatabase d on r.external_database_id = d.external_database_id
+where tax.ncbi_tax_id in ($ncbiTaxonIds)
+and d.name in ('Refseq', 'protein_id','EMBL')
+SQL
+
+    print STDERR "  Running query 4: Protein aliases/accessions...\n" if $args->{verbose};
+    my $sth = $dbh->prepare($query);
+    $sth->execute();
+
+    my %accessionToGene;
+    my $accessionCount = 0;
+
+    while (my $row = $sth->fetchrow_hashref()) {
+        my $geneId = $row->{source_id};
+        my $accession = $row->{protein_alias};
+
+        next unless $accession && $accession ne '-';
+        next unless exists $geneData->{$geneId};
+
+        push @{$geneData->{$geneId}->{protein_accessions}}, $accession;
+        $accessionToGene{$accession} = $geneId unless exists $accessionToGene{$accession};
+        $accessionCount++;
+    }
+    $sth->finish();
+
+    print STDERR "    Retrieved $accessionCount protein accessions\n" if $args->{verbose};
+
+    return \%accessionToGene;
+}
+
+sub processGeneInfo {
+    my ($args, $taxaListHash, $lookups) = @_;
+
+    print STDERR "Processing NCBI gene_info file...\n" if $args->{verbose};
+
+    my %geneToEntrezGene;
+    my %entrezGeneToGene;
+
+    my $fh = openPossiblyGzippedFile($args->{geneInfoFile});
+
+    my $header = <$fh>;  # Skip header
+    my $entrezCount = 0;
+
+    while (<$fh>) {
+        chomp;
+        my @fields = split(/\t/, $_);
+
+        # gene_info format:
+        # 0: tax_id, 1: GeneID, 2: Symbol, 3: LocusTag, 4: Synonyms, ...
+        my $taxonId = $fields[0];
+        my $entrezId = $fields[1];
+        my $symbol = $fields[2];
+        my $locusTag = $fields[3];
+        my $synonyms = $fields[4];
+
+        # Filter by taxon
+        next unless $taxaListHash->{$taxonId};
+
+        my $matchedGene = matchGeneByLocusTagOrAlias(
+            $locusTag,
+            $synonyms,
+            $lookups->{locusTagToGene},
+            $lookups->{geneTranscriptAliasToGene}
+        );
+
+        if ($matchedGene) {
+            $geneToEntrezGene{$matchedGene} = $entrezId;
+            $entrezGeneToGene{$entrezId} = $matchedGene;
+            $entrezCount++;
+        }
+    }
+
+    close($fh);
+    print STDERR "  Matched $entrezCount genes to EntrezGene IDs\n" if $args->{verbose};
+
+    return (\%geneToEntrezGene, \%entrezGeneToGene);
+}
+
+sub matchGeneByLocusTagOrAlias {
+    my ($locusTag, $synonyms, $locusTagToGene, $geneTranscriptAliasToGene) = @_;
+
+    # Try matching by locus_tag first
+    if ($locusTag && $locusTag ne '-' && exists $locusTagToGene->{$locusTag}) {
+        return $locusTagToGene->{$locusTag};
+    }
+
+    # Fallback: try matching by gene/transcript aliases
+    if ($synonyms && $synonyms ne '-') {
+        my @synList = split(/\|/, $synonyms);
+        foreach my $syn (@synList) {
+            if (exists $geneTranscriptAliasToGene->{$syn}) {
+                return $geneTranscriptAliasToGene->{$syn};
+            }
+        }
+    }
+
+    return undef;
+}
+
+sub processGeneToPubmed {
+    my ($args, $taxaListHash, $entrezGeneToGene) = @_;
+
+    print STDERR "Processing NCBI gene2pubmed file...\n" if $args->{verbose};
+
+    my %geneToPubmed;
+
+    my $fh = openPossiblyGzippedFile($args->{gene2pubmedFile});
+
+    my $header = <$fh>;  # Skip header
+    my $pubmedCount = 0;
+
+    while (<$fh>) {
+        chomp;
+        my @fields = split(/\t/, $_);
+
+        # gene2pubmed format:
+        # 0: tax_id, 1: GeneID, 2: PubMed_ID
+        my $taxonId = $fields[0];
+        my $entrezId = $fields[1];
+        my $pubmedId = $fields[2];
+
+        # Filter by taxon
+        next unless $taxaListHash->{$taxonId};
+
+        # Check if we have this EntrezGene ID mapped to a gene
+        if (exists $entrezGeneToGene->{$entrezId}) {
+            my $geneId = $entrezGeneToGene->{$entrezId};
+            push @{$geneToPubmed{$geneId}}, $pubmedId;
+            $pubmedCount++;
+        }
+    }
+
+    close($fh);
+    print STDERR "  Found $pubmedCount PubMed associations\n" if $args->{verbose};
+
+    return \%geneToPubmed;
+}
+
+sub processUniProtMapping {
+    my ($args, $entrezGeneToGene, $proteinAccessionToGene) = @_;
+
+    print STDERR "Processing UniProt idMapping file...\n" if $args->{verbose};
+
+    my %geneToUniprot;
+
+    my $fh = openPossiblyGzippedFile($args->{idMappingFile});
+
+    my $uniprotCount = 0;
+
+    while (<$fh>) {
+        chomp;
+        my @fields = split(/\t/, $_);
+
+        # idMapping format:
+        # 0: UniProt-AC, 1: ID_type, 2: ID
+        my $uniprotAc = $fields[0];
+        my $idType = $fields[1];
+        my $idValue = $fields[2];
+
+        # Primary strategy: Match on EntrezGene ID (GeneID)
+        if ($idType eq 'GeneID' && exists $entrezGeneToGene->{$idValue}) {
+            my $geneId = $entrezGeneToGene->{$idValue};
+            push @{$geneToUniprot{$geneId}}, $uniprotAc;
+            $uniprotCount++;
+        }
+        # Fallback strategy: Match on protein accessions (EMBL, RefSeq, protein_id)
+        elsif (($idType eq 'EMBL' || $idType eq 'RefSeq' || $idType eq 'GI')
+               && exists $proteinAccessionToGene->{$idValue}) {
+            my $geneId = $proteinAccessionToGene->{$idValue};
+            # Only add if we don't already have a UniProt mapping for this gene
+            unless (exists $geneToUniprot{$geneId}) {
+                push @{$geneToUniprot{$geneId}}, $uniprotAc;
+                $uniprotCount++;
+            }
+        }
+    }
+
+    close($fh);
+    print STDERR "  Found $uniprotCount UniProt associations\n" if $args->{verbose};
+
+    return \%geneToUniprot;
+}
+
+sub writeOutputFiles {
+    my ($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot) = @_;
+
+    print STDERR "Writing output files to $args->{outputDir}...\n" if $args->{verbose};
+
+    # Output file 1: EntrezGene mappings
+    my $entrezOutFile = "$args->{outputDir}/entrezgene_mappings.txt";
+    open(my $entrezFh, ">$entrezOutFile") || die "ERROR: Cannot open '$entrezOutFile' for writing: $!\n";
+    print $entrezFh "GeneSourceId\tEntrezGeneId\n";
+
+    foreach my $geneId (sort keys %$geneToEntrezGene) {
+        print $entrezFh "$geneId\t$geneToEntrezGene->{$geneId}\n";
+    }
+    close($entrezFh);
+    print STDERR "  Wrote " . scalar(keys %$geneToEntrezGene) . " EntrezGene mappings to $entrezOutFile\n"
+        if $args->{verbose};
+
+    # Output file 2: PubMed mappings
+    my $pubmedOutFile = "$args->{outputDir}/pubmed_mappings.txt";
+    open(my $pubmedFh, ">$pubmedOutFile") || die "ERROR: Cannot open '$pubmedOutFile' for writing: $!\n";
+    print $pubmedFh "GeneSourceId\tPubMedId\n";
+
+    my $totalPubmedMappings = 0;
+    foreach my $geneId (sort keys %$geneToPubmed) {
+        foreach my $pubmedId (@{$geneToPubmed->{$geneId}}) {
+            print $pubmedFh "$geneId\t$pubmedId\n";
+            $totalPubmedMappings++;
+        }
+    }
+    close($pubmedFh);
+    print STDERR "  Wrote $totalPubmedMappings PubMed mappings to $pubmedOutFile\n" if $args->{verbose};
+
+    # Output file 3: UniProt mappings
+    my $uniprotOutFile = "$args->{outputDir}/uniprot_mappings.txt";
+    open(my $uniprotFh, ">$uniprotOutFile") || die "ERROR: Cannot open '$uniprotOutFile' for writing: $!\n";
+    print $uniprotFh "GeneSourceId\tUniProtAccession\n";
+
+    my $totalUniprotMappings = 0;
+    foreach my $geneId (sort keys %$geneToUniprot) {
+        foreach my $uniprotAc (@{$geneToUniprot->{$geneId}}) {
+            print $uniprotFh "$geneId\t$uniprotAc\n";
+            $totalUniprotMappings++;
+        }
+    }
+    close($uniprotFh);
+    print STDERR "  Wrote $totalUniprotMappings UniProt mappings to $uniprotOutFile\n" if $args->{verbose};
+}
+
+sub printSummary {
+    my ($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot) = @_;
+
+    return unless $args->{verbose};
+
+    my $totalPubmedMappings = 0;
+    foreach my $geneId (keys %$geneToPubmed) {
+        $totalPubmedMappings += scalar(@{$geneToPubmed->{$geneId}});
+    }
+
+    my $totalUniprotMappings = 0;
+    foreach my $geneId (keys %$geneToUniprot) {
+        $totalUniprotMappings += scalar(@{$geneToUniprot->{$geneId}});
+    }
+
+    print STDERR "\nDone! Summary:\n";
+    print STDERR "  EntrezGene mappings: " . scalar(keys %$geneToEntrezGene) . " genes\n";
+    print STDERR "  PubMed mappings:     $totalPubmedMappings associations\n";
+    print STDERR "  UniProt mappings:    $totalUniprotMappings associations\n";
+}
+
+sub openPossiblyGzippedFile {
+    my ($filename) = @_;
+
+    my $fh;
+    if ($filename =~ /\.gz$/) {
+        open($fh, "zcat $filename|") || die "ERROR: Cannot open '$filename': $!\n";
+    } else {
+        open($fh, "$filename") || die "ERROR: Cannot open '$filename': $!\n";
+    }
+
+    return $fh;
+}
+
+sub usage {
+    print STDERR "
+usage: associateGenesWithDbXrefs --geneInfoFile file.gz --gene2pubmedFile file.gz \\
+                                  --idMappingFile file.gz --taxId 12345 \\
+                                  --outputDir /path/to/output --gusConfigFile gus.config [options]
+
+Associates genes and proteins from a GUS database with external database cross-references:
+  - EntrezGene IDs from NCBI gene_info
+  - PubMed IDs from NCBI gene2pubmed
+  - UniProt accessions from UniProt idMapping
+
+The script queries the database for genes (where source_id is the locus_tag), gene/transcript
+aliases, and protein accessions. It then matches them against NCBI and UniProt data files.
+All mappings use gene source_id as the primary identifier.
+
+Required Arguments:
+  --geneInfoFile      NCBI gene_info file (can be gzipped)
+  --gene2pubmedFile   NCBI gene2pubmed file (can be gzipped)
+  --idMappingFile     UniProt idMapping.dat file (must be gzipped)
+  --taxId             NCBI taxonomy ID for filtering records
+  --outputDir         Directory for output files (must exist)
+  --gusConfigFile     GUS configuration file
+
+Optional Arguments:
+  --verbose           Print progress messages to STDERR
+
+Output Files:
+  \$outputDir/entrezgene_mappings.txt  - Gene to EntrezGene ID mappings
+  \$outputDir/pubmed_mappings.txt      - Gene to PubMed ID mappings
+  \$outputDir/uniprot_mappings.txt     - Gene to UniProt accession mappings
+
+All output files are tab-delimited with headers: GeneSourceId and the respective ID type.
+
+Notes:
+  - Genes are matched to NCBI gene_info using locus_tag (with gene/transcript alias fallback)
+  - UniProt mappings use EntrezGene IDs primarily, with protein accessions (EMBL/RefSeq) as fallback
+  - Records are filtered by the specified NCBI taxonomy ID and its subtaxa
+  - Four database queries retrieve: gene source_ids, gene aliases, transcript aliases, and protein accessions
+
+Examples:
+  associateGenesWithDbXrefs \\
+    --geneInfoFile /data/ncbi/gene_info.gz \\
+    --gene2pubmedFile /data/ncbi/gene2pubmed.gz \\
+    --idMappingFile /data/uniprot/idmapping.dat.gz \\
+    --taxId 5833 \\
+    --outputDir /output/mappings \\
+    --gusConfigFile \$GUS_HOME/config/gus.config \\
+    --verbose
+
+";
+    exit(1);
+}
