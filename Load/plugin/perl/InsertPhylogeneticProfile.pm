@@ -90,6 +90,15 @@ sub run {
       $allTaxa{$orthomclAbbrev} = 1;
   }
 
+  my %proteinIdToOrthomclAbbrev;
+
+  my $idSql = "select org.orthomcl_abbrev, aas.source_id from dots.aasequence aas, apidb.organism org where aas.taxon_id = org.taxon_id";
+  my $idSth = $self->prepareAndExecute($idSql);
+
+  while (my ($orthoAbbrev,$source_id) = $sth->fetchrow_array()) {
+      $proteinIdToOrthomclAbbrev{$source_id} = $orthoAbbrev;
+  }
+
   my @allTaxaSorted = sort(keys(%allTaxa));
 
   open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
@@ -103,8 +112,7 @@ sub run {
     my %taxaInThisGroup;
 
     foreach my $member (@members) {
-      # pfal|PF11_0987
-      my ($taxonCode, $sourceId) = split(/\|/, $member);
+      my $taxonCode = $proteinIdToOrthomclAbbrev{$member};
       $taxaInThisGroup{$taxonCode} = 1;
     }
 
