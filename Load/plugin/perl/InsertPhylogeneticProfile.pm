@@ -95,7 +95,7 @@ sub run {
   my $idSql = "select org.orthomcl_abbrev, aas.source_id from dots.aasequence aas, apidb.organism org where aas.taxon_id = org.taxon_id";
   my $idSth = $self->prepareAndExecute($idSql);
 
-  while (my ($orthoAbbrev,$source_id) = $sth->fetchrow_array()) {
+  while (my ($orthoAbbrev,$source_id) = $idSth->fetchrow_array()) {
       $proteinIdToOrthomclAbbrev{$source_id} = $orthoAbbrev;
   }
 
