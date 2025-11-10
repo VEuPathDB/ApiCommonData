@@ -63,12 +63,6 @@ my $argsDeclaration =
             format         => '',
             constraintFunc => undef,
             isList         => 0, }),
-   stringArg({name => 'projectId',
-	      descr => 'eg PlasmoDB',
-	      constraintFunc => undef,
-	      reqd => 1,
-	      isList => 0
-	     }),
    stringArg({name => 'organismAbbrev',
 	      descr => 'internal organism abbrev',
 	      constraintFunc => undef,
@@ -98,7 +92,6 @@ sub run {
   my ($self) = @_;
 
   my $psqlFile = $self->getArg('psqlFile');
-  my $projectId = $self->getArg('projectId');
   my $organismAbbrev = $self->getArg('organismAbbrev');
 
   my $dbh = $self->getQueryHandle();
@@ -112,20 +105,20 @@ sub run {
 
   my $startTimeAll = time;
 
-  $self->processPsqlFile($psqlFile, $organismAbbrev, $projectId, $commitMode, $dbh);
+  $self->processPsqlFile($psqlFile, $organismAbbrev, $commitMode, $dbh);
 
   my $t = time - $startTimeAll;
   $self->log("TOTAL SQL TIME (sec) for psqlFile: $t");
 }
 
 sub processPsqlFile {
-  my ($self, $psqlFile, $organismAbbrev, $projectId, $commitMode, $dbh) = @_;
+  my ($self, $psqlFile, $organismAbbrev, $commitMode, $dbh) = @_;
 
   $self->log("Processing file $psqlFile");
   open my $fh, '<', $psqlFile or $self->error("error opening $psqlFile: $!");
   my $sqls = do { local $/; <$fh> };
 
-  my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $organismAbbrev, $projectId);
+  my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $organismAbbrev);
 
   my @sqlList = split(/;\n\s*/, $newSqls);
   foreach my $sql (@sqlList) {
