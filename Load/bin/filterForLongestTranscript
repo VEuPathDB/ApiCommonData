@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Getopt::Long;
+use File::Temp qw(tempdir);
+use File::Spec;
+use File::Basename;
+use File::Copy qw(move);
+
+my $fastaDir;
+GetOptions("fastaDir=s" => \$fastaDir) or die "Usage: $0 --fastaDir <directory>\n";
+die "Error: --fastaDir not provided\n" unless $fastaDir;
+die "Error: directory '$fastaDir' not found\n" unless -d $fastaDir;
+
+# Create a temporary working directory for filtered FASTAs
+my $tmpdir = tempdir(CLEANUP => 1);
+print "Temporary directory: $tmpdir\n";
+
+# Process each FASTA file in the directory
+opendir(my $dh, $fastaDir) or die "Cannot open directory $fastaDir: $!\n";
+while (my $file = readdir($dh)) {
+    next unless $file =~ /\.fa(sta)?$/i;  # only .fa or .fasta
+    my $path = File::Spec->catfile($fastaDir, $file);
+    process_fasta($path, $tmpdir);
+}
+closedir($dh);
+
+# Move processed files back to original directory
+opendir(my $tdh, $tmpdir) or die "Cannot open temp directory $tmpdir: $!\n";
+while (my $file = readdir($tdh)) {
+    next if $file =~ /^\./;
+    my $src = File::Spec->catfile($tmpdir, $file);
+    my $dest = File::Spec->catfile($fastaDir, $file);
+    move($src, $dest) or die "Failed to overwrite $dest: $!\n";
+}
+closedir($tdh);
+
+# ================================================= Subroutines ==================================================
+
+sub process_fasta {
+    my ($fasta, $tmpdir) = @_;
+    my %genes;
+
+    open(my $fh, '<', $fasta) or die "Cannot open $fasta: $!\n";
+    my ($header, $seq) = ('', '');
+    while (<$fh>) {
+        chomp;
+        if (/^>/) {
+            store_record($header, $seq, \%genes) if $header && $seq;
+            $header = $_;
+            $seq = '';
+        } else {
+            $seq .= $_;
+        }
+    }
+    store_record($header, $seq, \%genes) if $header && $seq;
+    close($fh);
+
+    my ($filename) = fileparse($fasta);
+    my $out = File::Spec->catfile($tmpdir, $filename);
+    open(my $outfh, '>', $out) or die "Cannot write $out: $!\n";
+
+    foreach my $gene (sort keys %genes) {
+        print $outfh $genes{$gene}->{header}, "\n", $genes{$gene}->{seq}, "\n";
+    }
+    close($outfh);
+}
+
+sub store_record {
+    my ($header, $seq, $genes_ref) = @_;
+    return unless $header && $seq;
+
+    my ($gene_id) = $header =~ /gene=([^\s]+)/;
+    # gene= currently consistent across all fastas, core and peripheral, but could change
+    unless ($gene_id) {
+        warn " No gene= found in header: $header\n";
+        return;
+    }
+
+    my $len = length($seq);
+    if (!exists $genes_ref->{$gene_id} || $len > $genes_ref->{$gene_id}->{len}) {
+        $genes_ref->{$gene_id} = {
+            header => $header,
+            seq    => $seq,
+            len    => $len
+        };
+    }
+}
