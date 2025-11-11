@@ -46,7 +46,8 @@ CREATE TABLE gene_info (
     symbol TEXT,
     locus_tag TEXT,
     synonyms TEXT,
-    db_xrefs TEXT
+    db_xrefs TEXT,
+    description TEXT
 );
 
 CREATE INDEX idx_tax_id ON gene_info(tax_id);
@@ -58,8 +59,8 @@ echo "Table created. Importing data..."
 TEMP_FILE=$(mktemp)
 trap "rm -f $TEMP_FILE" EXIT
 
-# Extract data without header, keeping only first 6 columns
-zcat "$INPUT_FILE" | tail -n +2 | cut -f1-6 > "$TEMP_FILE"
+# Extract data without header, keeping columns 1-6,9 (tax_id, gene_id, symbol, locus_tag, synonyms, db_xrefs, description)
+zcat "$INPUT_FILE" | tail -n +2 | cut -f1-6,9 > "$TEMP_FILE"
 
 # Import the data
 sqlite3 "$OUTPUT_DB" <<EOF

@@ -18,14 +18,14 @@ my $taxaListHash = getTaxonFilter($args);
 my $dbh = connectToDatabase($args);
 my ($geneData, $lookups) = queryAndProcessGeneData($dbh, $args, $taxaListHash);
 
-my ($geneToEntrezGene, $entrezGeneToGene) = processGeneInfo($args, $taxaListHash, $lookups);
+my ($geneToEntrezGene, $entrezGeneToGene, $geneToSymbol, $geneToDescription) = processGeneInfo($args, $taxaListHash, $lookups);
 my $geneToPubmed = processGeneToPubmed($args, $taxaListHash, $entrezGeneToGene);
 my $geneToUniprot = processUniProtMapping($args, $entrezGeneToGene, $lookups->{proteinAccessionToGene}, $taxaListHash);
 
-writeOutputFiles($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot);
+writeOutputFiles($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot, $geneToSymbol, $geneToDescription);
 
 $dbh->disconnect();
-printSummary($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot);
+printSummary($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot, $geneToSymbol, $geneToDescription);
 
 exit(0);
 
@@ -300,6 +300,8 @@ sub processGeneInfo {
 
     my %geneToEntrezGene;
     my %entrezGeneToGene;
+    my %geneToSymbol;
+    my %geneToDescription;
 
     # Connect to SQLite database
     my $dbh = DBI->connect("dbi:SQLite:dbname=$args->{geneInfoDb}", "", "",
@@ -310,13 +312,14 @@ sub processGeneInfo {
     my @taxa = keys %$taxaListHash;
     my $taxaPlaceholders = join(',', ('?') x scalar(@taxa));
 
-    my $query = "SELECT tax_id, gene_id, symbol, locus_tag, synonyms FROM gene_info WHERE tax_id IN ($taxaPlaceholders)";
+    my $query = "SELECT tax_id, gene_id, symbol, locus_tag, synonyms, description FROM gene_info WHERE tax_id IN ($taxaPlaceholders)";
 
     print STDERR "  Querying gene_info for " . scalar(@taxa) . " taxa...\n" if $args->{verbose};
     my $sth = $dbh->prepare($query);
     $sth->execute(@taxa);
 
     my $entrezCount = 0;
+    my $symbolCount = 0;
 
     while (my $row = $sth->fetchrow_hashref()) {
         my $taxonId = $row->{tax_id};
@@ -324,6 +327,7 @@ sub processGeneInfo {
         my $symbol = $row->{symbol};
         my $locusTag = $row->{locus_tag};
         my $synonyms = $row->{synonyms};
+        my $description = $row->{description};
 
         my $matchedGene = matchGeneByLocusTagOrAlias(
             $locusTag,
@@ -336,6 +340,21 @@ sub processGeneInfo {
             $geneToEntrezGene{$matchedGene} = $entrezId;
             $entrezGeneToGene{$entrezId} = $matchedGene;
             $entrezCount++;
+
+            # Store symbol if it exists and is not '-'
+            # Also exclude symbols that are the same as the gene ID or just variations (e.g., PF3D7_1038000.1)
+            if ($symbol && $symbol ne '-') {
+                # Exclude if symbol equals gene ID or is gene ID with version suffix (e.g., PF3D7_1038000.1)
+                unless ($symbol eq $matchedGene || $symbol =~ /^\Q$matchedGene\E\./) {
+                    $geneToSymbol{$matchedGene} = $symbol;
+                    $symbolCount++;
+
+                    # Also store description if available
+                    if ($description && $description ne '-') {
+                        $geneToDescription{$matchedGene} = $description;
+                    }
+                }
+            }
         }
     }
 
@@ -343,8 +362,9 @@ sub processGeneInfo {
     $dbh->disconnect();
 
     print STDERR "  Matched $entrezCount genes to EntrezGene IDs\n" if $args->{verbose};
+    print STDERR "  Found $symbolCount gene symbols\n" if $args->{verbose};
 
-    return (\%geneToEntrezGene, \%entrezGeneToGene);
+    return (\%geneToEntrezGene, \%entrezGeneToGene, \%geneToSymbol, \%geneToDescription);
 }
 
 sub matchGeneByLocusTagOrAlias {
@@ -495,7 +515,7 @@ sub processUniProtMapping {
 }
 
 sub writeOutputFiles {
-    my ($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot) = @_;
+    my ($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot, $geneToSymbol, $geneToDescription) = @_;
 
     print STDERR "Writing output files to $args->{outputDir}...\n" if $args->{verbose};
 
@@ -540,10 +560,34 @@ sub writeOutputFiles {
     }
     close($uniprotFh);
     print STDERR "  Wrote $totalUniprotMappings UniProt mappings to $uniprotOutFile\n" if $args->{verbose};
+
+    # Output file 4: Gene Symbol mappings
+    my $symbolOutFile = "$args->{outputDir}/symbol_mappings.txt";
+    open(my $symbolFh, ">$symbolOutFile") || die "ERROR: Cannot open '$symbolOutFile' for writing: $!\n";
+    print $symbolFh "GeneSourceId\tSymbol\n";
+
+    foreach my $geneId (sort keys %$geneToSymbol) {
+        my $symbol = $geneToSymbol->{$geneId};
+        print $symbolFh "$geneId\t$symbol\n";
+    }
+    close($symbolFh);
+    print STDERR "  Wrote " . scalar(keys %$geneToSymbol) . " gene symbol mappings to $symbolOutFile\n" if $args->{verbose};
+
+    # Output file 5: Gene Description mappings
+    my $descOutFile = "$args->{outputDir}/description_mappings.txt";
+    open(my $descFh, ">$descOutFile") || die "ERROR: Cannot open '$descOutFile' for writing: $!\n";
+    print $descFh "GeneSourceId\tDescription\n";
+
+    foreach my $geneId (sort keys %$geneToDescription) {
+        my $description = $geneToDescription->{$geneId};
+        print $descFh "$geneId\t$description\n";
+    }
+    close($descFh);
+    print STDERR "  Wrote " . scalar(keys %$geneToDescription) . " gene description mappings to $descOutFile\n" if $args->{verbose};
 }
 
 sub printSummary {
-    my ($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot) = @_;
+    my ($args, $geneToEntrezGene, $geneToPubmed, $geneToUniprot, $geneToSymbol, $geneToDescription) = @_;
 
     return unless $args->{verbose};
 
@@ -558,9 +602,11 @@ sub printSummary {
     }
 
     print STDERR "\nDone! Summary:\n";
-    print STDERR "  EntrezGene mappings: " . scalar(keys %$geneToEntrezGene) . " genes\n";
-    print STDERR "  PubMed mappings:     $totalPubmedMappings associations\n";
-    print STDERR "  UniProt mappings:    $totalUniprotMappings associations\n";
+    print STDERR "  EntrezGene mappings:  " . scalar(keys %$geneToEntrezGene) . " genes\n";
+    print STDERR "  Symbol mappings:      " . scalar(keys %$geneToSymbol) . " genes\n";
+    print STDERR "  Description mappings: " . scalar(keys %$geneToDescription) . " genes\n";
+    print STDERR "  PubMed mappings:      $totalPubmedMappings associations\n";
+    print STDERR "  UniProt mappings:     $totalUniprotMappings associations\n";
 }
 
 sub usage {
@@ -591,9 +637,11 @@ Optional Arguments:
   --verbose           Print progress messages to STDERR
 
 Output Files:
-  \$outputDir/entrezgene_mappings.txt  - Gene to EntrezGene ID mappings
-  \$outputDir/pubmed_mappings.txt      - Gene to PubMed ID mappings
-  \$outputDir/uniprot_mappings.txt     - Gene to UniProt accession mappings
+  \$outputDir/entrezgene_mappings.txt   - Gene to EntrezGene ID mappings
+  \$outputDir/symbol_mappings.txt       - Gene to EntrezGene Symbol mappings (only genes with symbols)
+  \$outputDir/description_mappings.txt  - Gene to EntrezGene Description mappings (only genes with descriptions)
+  \$outputDir/pubmed_mappings.txt       - Gene to PubMed ID mappings
+  \$outputDir/uniprot_mappings.txt      - Gene to UniProt accession mappings
 
 All output files are tab-delimited with headers: GeneSourceId and the respective ID type.
 
