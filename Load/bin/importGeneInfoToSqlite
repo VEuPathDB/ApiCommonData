@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Script to import gene_info.gz into an SQLite3 database
+# Usage: importGeneInfoToSqlite <data_directory>
+# Input: <data_directory>/gene_info.gz
+# Output: <data_directory>/gene_info.db
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <data_directory>"
+    echo "Example: $0 /path/to/data"
+    exit 1
+fi
+
+DATA_DIR="$1"
+INPUT_FILE="${DATA_DIR}/gene_info.gz"
+OUTPUT_DB="${DATA_DIR}/gene_info.db"
+
+# Check if data directory exists
+if [ ! -d "$DATA_DIR" ]; then
+    echo "Error: Data directory not found: $DATA_DIR"
+    exit 1
+fi
+
+# Check if input file exists
+if [ ! -f "$INPUT_FILE" ]; then
+    echo "Error: Input file not found: $INPUT_FILE"
+    exit 1
+fi
+
+# Remove existing database if present
+if [ -f "$OUTPUT_DB" ]; then
+    echo "Removing existing database: $OUTPUT_DB"
+    rm -f "$OUTPUT_DB"
+fi
+
+echo "Creating SQLite database: $OUTPUT_DB"
+echo "Processing input file: $INPUT_FILE"
+
+# Create the database and table schema
+sqlite3 "$OUTPUT_DB" <<'EOF'
+CREATE TABLE gene_info (
+    tax_id INTEGER,
+    gene_id INTEGER PRIMARY KEY,
+    symbol TEXT,
+    locus_tag TEXT,
+    synonyms TEXT,
+    db_xrefs TEXT,
+    description TEXT
+);
+
+CREATE INDEX idx_tax_id ON gene_info(tax_id);
+EOF
+
+echo "Table created. Importing data..."
+
+# Create a temporary file for import (SQLite .import doesn't work well with stdin)
+TEMP_FILE=$(mktemp)
+trap "rm -f $TEMP_FILE" EXIT
+
+# Extract data without header, keeping columns 1-6,9 (tax_id, gene_id, symbol, locus_tag, synonyms, db_xrefs, description)
+zcat "$INPUT_FILE" | tail -n +2 | cut -f1-6,9 > "$TEMP_FILE"
+
+# Import the data
+sqlite3 "$OUTPUT_DB" <<EOF
+.mode tabs
+.import $TEMP_FILE gene_info
+EOF
+
+# Get record count
+RECORD_COUNT=$(sqlite3 "$OUTPUT_DB" "SELECT COUNT(*) FROM gene_info;")
+
+echo "Import complete!"
+echo "Total records imported: $RECORD_COUNT"
+echo "Database location: $OUTPUT_DB"
+
+# Display some sample queries
+echo ""
+echo "Sample queries you can run:"
+echo "  sqlite3 $OUTPUT_DB \"SELECT * FROM gene_info LIMIT 10;\""
+echo "  sqlite3 $OUTPUT_DB \"SELECT COUNT(*) FROM gene_info WHERE tax_id = 9606;\""
+echo "  sqlite3 $OUTPUT_DB \"SELECT * FROM gene_info WHERE symbol = 'TP53';\""

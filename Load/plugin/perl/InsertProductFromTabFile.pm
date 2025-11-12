@@ -138,6 +138,8 @@ sub run {
 
   my $totalNum;
 
+  my $sourceIdMap = $self->getSourceIdToFeatureInfoMap($organismAbbrev);  
+
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
   while(<FILE>){
@@ -151,45 +153,36 @@ sub run {
       my ($sourceId, $product, $preferred, $pmid, $evCode, $with, $assignedBy) = split(/\t/,$_);
       next if ($sourceId =~ /^\s*$/ || $product =~ /^\s*$/);
       if ($preferred =~ /true/i || $preferred == 1) {
-	$preferred = 1;
+        $preferred = 1;
       } else {
-	$preferred = 0;
+        $preferred = 0;
       }
 
       $self->error("Either sourceId or product is null on line of $. of input file '$tabFile'") unless $sourceId && $product;
 
-#      my $preferred = 0;
+      if($sourceIdMap->{'Transcript'}->{$sourceId}) {
+        my $nafeatureId = $sourceIdMap->{'Transcript'}->{$sourceId}->{na_feature_id};
+        my $productReleaseId = $sourceIdMap->{'Transcript'}->{$sourceId}->{external_database_release_id};
 
-      my $gene = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
-      my $transcript = GUS::Model::DoTS::Transcript->new({source_id => $sourceId, row_project_id => $projectId});
+        $self->makeTranscriptProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with, $assignedBy);
 
-      if($transcript->retrieveFromDB()){
-	  my $transcriptProduct = $transcript->getChild('ApiDB::TranscriptProduct',1);
+        $processed++;
 
-#	  $preferred = 1 unless $transcriptProduct;
+      } elsif ($sourceIdMap->{'GeneFeature'}->{$sourceId}) {
+        my $nafeatureId = $sourceIdMap->{'GeneFeature'}->{$sourceId}->{na_feature_id};
+        my $productReleaseId = $sourceIdMap->{'GeneFeature'}->{$sourceId}->{external_database_release_id};
 
-	  my $nafeatureId = $transcript->getNaFeatureId();
-          my $productReleaseId = $transcript->getExternalDatabaseReleaseId();
+        $self->makeGeneFeatureProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with, $assignedBy);
 
-	  $self->makeTranscriptProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with, $assignedBy);
-
-	  $processed++;
-
-      }elsif ($gene->retrieveFromDB()) {
-	  my $nafeatureId = $gene->getNaFeatureId();
-          my $productReleaseId = $gene->getExternalDatabaseReleaseId();
-
-	  $self->makeGeneFeatureProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with, $assignedBy);
-
-	  $processed++;
+        $processed++;
 
       }else{
-	  $self->log("WARNING","gene or Transcript with source id '$sourceId' and organism '$organismAbbrev' cannot be found");
+        $self->log("WARNING","gene or Transcript with source id '$sourceId' and organism '$organismAbbrev' cannot be found");
       }
       $self->undefPointerCache();
   }
 
-  die "Less than half of the products were parsed and loaded\n" if ($processed/$totalNum < 0.5);
+  die "Less than half of the products were parsed and loaded\n" if ($totalNum>1 && $processed/$totalNum < 0.5);
 
   return "$processed gene feature products parsed and loaded";
 }
@@ -358,6 +351,33 @@ sub makeNewReleaseId{
 
     return $newReleasePk;
 
+}
+
+sub getSourceIdToFeatureInfoMap {
+  my ($self, $organismAbbrev) = @_;
+
+  my $sql = "select f.source_id
+     , f.na_feature_id
+     , f.external_database_release_id
+     , f.subclass_view
+from dots.nafeature f
+   join dots.nasequence s on f.na_sequence_id = s.na_sequence_id
+   join apidb.organism o on s.taxon_id = o.taxon_id
+where o.abbrev = ?
+and f.subclass_view in ('Transcript', 'GeneFeature')";
+
+  my $sth = $self->getQueryHandle()->prepare($sql);
+  $sth->execute($organismAbbrev);
+
+  my %sourceIdMap;
+  while (my ($sourceId, $naFeatureId, $extDbRlsId, $subClassView) = $sth->fetchrow_array()) {
+    $sourceIdMap{$subClassView}->{$sourceId} = {
+      na_feature_id => $naFeatureId,
+      external_database_release_id => $extDbRlsId
+    };
+  }
+
+  return \%sourceIdMap;
 }
 
 sub undoTables {

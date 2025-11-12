@@ -1,24 +1,4 @@
 #!/usr/bin/perl
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 use strict;
 
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -27,13 +7,14 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$dbrefExtDbSpec,$dbrefExtDbName,$outFile,$verbose,$projectName);
+my ($gusConfigFile,$dbrefExtDbSpec,$dbrefExtDbName,$outFile,$verbose,$projectName, $genomeExtDbRlsSpec);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	    "dbrefExtDbSpec=s" => \$dbrefExtDbSpec,
-	    "dbrefExtDbName=s" => \$dbrefExtDbName,
-	    "projectName=s" => \$projectName,
-	    "verbose!" => \$verbose,
-	    "outfile=s" => \$outFile);
+            "dbrefExtDbSpec=s" => \$dbrefExtDbSpec,
+            "dbrefExtDbName=s" => \$dbrefExtDbName,
+            "projectName=s" => \$projectName,
+            "genomeExtDbRlsSpec=s" => \$genomeExtDbRlsSpec,
+            "verbose!" => \$verbose,
+            "outfile=s" => \$outFile);
 
 print STDERR "Establishing dbi login\n";
 
@@ -48,6 +29,8 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 my $dbh = $db->getQueryHandle(0);
 
 my $dbrefExtDbRls;
+
+my $genomeExtDbRlsId = &getDbRlsId($genomeExtDbRlsSpec);
 
 if ($dbrefExtDbSpec){
 
@@ -83,7 +66,7 @@ if ($dbrefExtDbSpec){
 
 }
 
-my $sql = "select drf.primary_identifier as uniprot_accession,gf.source_id as eupath_source_id, 'http://www.'||'$projectName'||'.org/gene/'||gf.source_id as URL from sres.DBREF drf, DoTS.DbRefNAFeature nf, dots.GENEFEATURE gf where drf.db_ref_id=nf.db_ref_id and gf.na_feature_id=nf.na_feature_id and drf.external_database_release_id in($dbrefExtDbRls)";
+my $sql = "select drf.primary_identifier as uniprot_accession,gf.source_id as eupath_source_id, 'http://www.'||'$projectName'||'.org/gene/'||gf.source_id as URL from sres.DBREF drf, DoTS.DbRefNAFeature nf, dots.GENEFEATURE gf where drf.db_ref_id=nf.db_ref_id and gf.external_database_release_id = $genomeExtDbRlsId and gf.na_feature_id=nf.na_feature_id and drf.external_database_release_id in($dbrefExtDbRls)";
 
 my $stmt1 = $dbh->prepareAndExecute($sql);
 

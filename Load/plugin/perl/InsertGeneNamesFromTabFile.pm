@@ -1,24 +1,4 @@
 package ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | absent
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -71,7 +51,13 @@ stringArg({ name => 'geneNameDbVer',
 	  constraintFunc=> undef,
 	  reqd  => 1,
 	  isList => 0
-	 })
+	 }),
+ booleanArg({name           => 'isPreferred',
+            descr          => 'should we set the isPreferred flag for all names in this file',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
+
 
 ];
 
@@ -162,32 +148,25 @@ sub run{
 
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
+
+  my $preferred = $self->getArg('isPreferred');
+
+  my $sourceIdMap = $self->getSourceIdToNaFeatureIdMap($geneNameReleaseId);
+
   while(<FILE>){
-      next if (/^\s*$/);
+    next if (/^\s*$/);
+    chomp;
 
-      chomp;
+    my ($sourceId, $geneName) = split(/\t/,$_);
 
-      my ($sourceId, $geneName) = split(/\t/,$_);
-
-      my $preferred = 1;
-
-      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $geneNameReleaseId});
-
- 	       
-      if($geneFeature->retrieveFromDB()){
-	  my $geneNameFeat = $geneFeature->getChild('ApiDB::GeneFeatureName',1);
-
-#	  $preferred = 1 unless $geneNameFeat;
-
-	  my $nafeatureId = $geneFeature->getNaFeatureId();	       
-    
-	  $self->makeGeneName($geneNameReleaseId,$nafeatureId,$geneName,$preferred);
-  
-	  $processed++;
-      }else{
-	  $self->log("WARNING","Gene Feature with source id: $sourceId cannot be found");
-      }  
-      $self->undefPointerCache();
+    if(my $naFeatureId = $sourceIdMap->{$sourceId}) {
+      $self->makeGeneName($geneNameReleaseId,$naFeatureId,$geneName,$preferred);
+      
+      $processed++;
+    }else{
+      $self->log("WARNING","Gene Feature with source id: $sourceId cannot be found");
+    }  
+    $self->undefPointerCache();
   }        
 
 
@@ -196,6 +175,9 @@ sub run{
   return "$processed gene names parsed and loaded";	  
   
 }
+
+
+
 
 sub makeGeneName {
   my ($self,$geneNameReleaseId,$nafeatureId,$geneName,$preferred) = @_;
@@ -307,11 +289,30 @@ sub makeNewReleaseId{
 
 }
 
+sub getSourceIdToNaFeatureIdMap {
+  my ($self, $externalDatabaseReleaseId) = @_;
+
+  my $sql = "select source_id
+     , na_feature_id
+from dots.genefeature
+where external_database_release_id = ?";
+
+  my $sth = $self->getQueryHandle()->prepare($sql);
+  $sth->execute($externalDatabaseReleaseId);
+
+  my %sourceIdMap;
+  while (my ($sourceId, $naFeatureId) = $sth->fetchrow_array()) {
+    $sourceIdMap{$sourceId} = $naFeatureId;
+  }
+
+  return \%sourceIdMap;
+}
+
 sub undoTables {
   return ('ApiDB.GeneFeatureName',
 	  'SRes.ExternalDatabaseRelease',
 	  'SRes.ExternalDatabase',
-	 ); 
+	 );
 }
 
 return 1;
