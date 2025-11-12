@@ -519,52 +519,48 @@ sub writeOutputFiles {
 
     print STDERR "Writing output files to $args->{outputDir}...\n" if $args->{verbose};
 
-    # Output file 1: EntrezGene mappings
+    # Output file 1: EntrezGene mappings (no header, 3 columns)
     my $entrezOutFile = "$args->{outputDir}/entrezgene_mappings.txt";
     open(my $entrezFh, ">$entrezOutFile") || die "ERROR: Cannot open '$entrezOutFile' for writing: $!\n";
-    print $entrezFh "GeneSourceId\tEntrezGeneId\n";
 
     foreach my $geneId (sort keys %$geneToEntrezGene) {
-        print $entrezFh "$geneId\t$geneToEntrezGene->{$geneId}\n";
+        print $entrezFh "$geneId\t$geneToEntrezGene->{$geneId}\t$geneId\n";
     }
     close($entrezFh);
     print STDERR "  Wrote " . scalar(keys %$geneToEntrezGene) . " EntrezGene mappings to $entrezOutFile\n"
         if $args->{verbose};
 
-    # Output file 2: PubMed mappings
+    # Output file 2: PubMed mappings (no header, 3 columns)
     my $pubmedOutFile = "$args->{outputDir}/pubmed_mappings.txt";
     open(my $pubmedFh, ">$pubmedOutFile") || die "ERROR: Cannot open '$pubmedOutFile' for writing: $!\n";
-    print $pubmedFh "GeneSourceId\tPubMedId\n";
 
     my $totalPubmedMappings = 0;
     foreach my $geneId (sort keys %$geneToPubmed) {
         foreach my $pubmedId (@{$geneToPubmed->{$geneId}}) {
-            print $pubmedFh "$geneId\t$pubmedId\n";
+            print $pubmedFh "$geneId\t$pubmedId\t$geneId\n";
             $totalPubmedMappings++;
         }
     }
     close($pubmedFh);
     print STDERR "  Wrote $totalPubmedMappings PubMed mappings to $pubmedOutFile\n" if $args->{verbose};
 
-    # Output file 3: UniProt mappings
+    # Output file 3: UniProt mappings (no header, 3 columns)
     my $uniprotOutFile = "$args->{outputDir}/uniprot_mappings.txt";
     open(my $uniprotFh, ">$uniprotOutFile") || die "ERROR: Cannot open '$uniprotOutFile' for writing: $!\n";
-    print $uniprotFh "GeneSourceId\tUniProtAccession\n";
 
     my $totalUniprotMappings = 0;
     foreach my $geneId (sort keys %$geneToUniprot) {
         foreach my $uniprotAc (@{$geneToUniprot->{$geneId}}) {
-            print $uniprotFh "$geneId\t$uniprotAc\n";
+            print $uniprotFh "$geneId\t$uniprotAc\t$geneId\n";
             $totalUniprotMappings++;
         }
     }
     close($uniprotFh);
     print STDERR "  Wrote $totalUniprotMappings UniProt mappings to $uniprotOutFile\n" if $args->{verbose};
 
-    # Output file 4: Gene Symbol mappings
+    # Output file 4: Gene Symbol mappings (no header)
     my $symbolOutFile = "$args->{outputDir}/symbol_mappings.txt";
     open(my $symbolFh, ">$symbolOutFile") || die "ERROR: Cannot open '$symbolOutFile' for writing: $!\n";
-    print $symbolFh "GeneSourceId\tSymbol\n";
 
     foreach my $geneId (sort keys %$geneToSymbol) {
         my $symbol = $geneToSymbol->{$geneId};
@@ -573,10 +569,9 @@ sub writeOutputFiles {
     close($symbolFh);
     print STDERR "  Wrote " . scalar(keys %$geneToSymbol) . " gene symbol mappings to $symbolOutFile\n" if $args->{verbose};
 
-    # Output file 5: Gene Description mappings
+    # Output file 5: Gene Description mappings (no header)
     my $descOutFile = "$args->{outputDir}/description_mappings.txt";
     open(my $descFh, ">$descOutFile") || die "ERROR: Cannot open '$descOutFile' for writing: $!\n";
-    print $descFh "GeneSourceId\tDescription\n";
 
     foreach my $geneId (sort keys %$geneToDescription) {
         my $description = $geneToDescription->{$geneId};
@@ -637,13 +632,16 @@ Optional Arguments:
   --verbose           Print progress messages to STDERR
 
 Output Files:
-  \$outputDir/entrezgene_mappings.txt   - Gene to EntrezGene ID mappings
+  \$outputDir/entrezgene_mappings.txt   - Gene to EntrezGene ID mappings (3 columns: GeneSourceId, EntrezGeneId, GeneSourceId)
   \$outputDir/symbol_mappings.txt       - Gene to EntrezGene Symbol mappings (only genes with symbols)
   \$outputDir/description_mappings.txt  - Gene to EntrezGene Description mappings (only genes with descriptions)
-  \$outputDir/pubmed_mappings.txt       - Gene to PubMed ID mappings
-  \$outputDir/uniprot_mappings.txt      - Gene to UniProt accession mappings
+  \$outputDir/pubmed_mappings.txt       - Gene to PubMed ID mappings (3 columns: GeneSourceId, PubMedId, GeneSourceId)
+  \$outputDir/uniprot_mappings.txt      - Gene to UniProt accession mappings (3 columns: GeneSourceId, UniProtAccession, GeneSourceId)
 
-All output files are tab-delimited with headers: GeneSourceId and the respective ID type.
+Output file formats:
+  - All output files have NO headers
+  - entrezgene_mappings.txt, pubmed_mappings.txt, and uniprot_mappings.txt have 3 tab-delimited columns
+  - symbol_mappings.txt and description_mappings.txt have 2 tab-delimited columns (GeneSourceId, Symbol/Description)
 
 Notes:
   - taxId is used directly in database queries (WHERE ncbi_tax_id = taxId)
