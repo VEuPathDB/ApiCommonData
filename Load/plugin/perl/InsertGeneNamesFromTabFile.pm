@@ -160,7 +160,7 @@ sub run{
     my ($sourceId, $geneName) = split(/\t/,$_);
 
     if(my $naFeatureId = $sourceIdMap->{$sourceId}) {
-      $self->makeGeneName($geneNameReleaseId,$nafeatureId,$geneName,$preferred);
+      $self->makeGeneName($geneNameReleaseId,$naFeatureId,$geneName,$preferred);
       
       $processed++;
     }else{
