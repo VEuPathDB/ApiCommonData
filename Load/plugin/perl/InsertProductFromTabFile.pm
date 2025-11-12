@@ -182,7 +182,7 @@ sub run {
       $self->undefPointerCache();
   }
 
-  die "Less than half of the products were parsed and loaded\n" if ($totalNum && $processed/$totalNum < 0.5);
+  die "Less than half of the products were parsed and loaded\n" if ($totalNum>1 && $processed/$totalNum < 0.5);
 
   return "$processed gene feature products parsed and loaded";
 }
