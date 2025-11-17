@@ -130,7 +130,7 @@ sub getDbHandle {
                   $dsn, 
                   $login, 
                   $passwd,
-                  { PrintError => 1, RaiseError => 0}
+                  { PrintError => 1, RaiseError => 1}
                   ) or die "Can't connect to the database: $DBI::errstr\n";
   
   } else {
