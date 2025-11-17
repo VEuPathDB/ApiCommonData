@@ -38,7 +38,7 @@ usage() if !$instance or !$password or !$prefix;
 $schema = "ApidbTuning" if !$schema;
 
 my $dbh = DBI->connect("dbi:Oracle:" . $instance, $schema, $password,
-		       { PrintError => 1, RaiseError => 1}
+		       { PrintError => 1, RaiseError => 0}
 		      )
   or die $DBI::errstr;
 
