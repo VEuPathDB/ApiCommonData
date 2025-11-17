@@ -43,7 +43,7 @@ my $dsn = $gusconfig->getDbiDsn();
 my $dbh = DBI->connect($dsn,
 		       $login,
 		       $password,
-		       { PrintError => 1, RaiseError => 1}
+		       { PrintError => 1, RaiseError => 0}
 		      )
   or die "Can't connect to the tracking database: $DBI::errstr\n";
 
