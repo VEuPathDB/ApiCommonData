@@ -35,7 +35,7 @@ GetOptions("user:s" => \$user,
 	   "file:s" => \$file,
 	  );
 
-my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
+my $dbh = DBI->connect("dbi:mysql:$database", $user, $password, {RaiseError => 1})
   or die $DBI::errstr;
 
 if ($file) {

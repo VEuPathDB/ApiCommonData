@@ -15,7 +15,7 @@ my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, [], 1);
 my $u   = $gusconfig->{props}->{databaseLogin};
 my $pw  = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
-my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+my $dbh = DBI->connect($dsn, $u, $pw, {RaiseError => 1}) or die DBI::errstr;
 
 while(<DATA>) {
   chomp;

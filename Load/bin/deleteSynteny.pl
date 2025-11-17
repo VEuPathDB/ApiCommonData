@@ -32,7 +32,7 @@ my $u = $gusconfig->{props}->{databaseLogin};
 my $pw = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 
-my $dbh = DBI->connect($dsn, $u, $pw, {AutoCommit => 0}) or die DBI::errstr;
+my $dbh = DBI->connect($dsn, $u, $pw, {AutoCommit => 0, RaiseError => 1}) or die DBI::errstr;
 
 #########################################################
 ### get database and release ids before deleting anything

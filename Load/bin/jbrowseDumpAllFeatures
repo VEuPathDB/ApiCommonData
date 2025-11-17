@@ -81,7 +81,8 @@ unless (-f $gusConfigFile) {
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my $dbh = DBI->connect($gusconfig->getDbiDsn(),
                        $gusconfig->getDatabaseLogin(),
-                       $gusconfig->getDatabasePassword())
+                       $gusconfig->getDatabasePassword(),
+                       {RaiseError => 1})
   or die "Cannot connect to database: " . $DBI::errstr;
 
 $dbh->{LongTruncOk} = 0;
