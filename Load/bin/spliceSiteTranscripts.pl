@@ -68,7 +68,7 @@ sub loadRows {
 , ta.coding_start
 , ta.coding_end
 , ta.is_reversed
-from ${schema}.transcriptattributes ta
+from ${schema}.transcriptattributes_p ta
 , (select source_id from apidb.polyagenes
    union
    select source_id from apidb.splicesitegenes) ss
@@ -97,7 +97,7 @@ select ssg.source_id
   , ssf.strand
 from apidb.splicesitegenes ssg
  , apidb.splicesitefeature ssf
- , ${schema}.GenomicSeqAttributes gsa
+ , ${schema}.GenomicSeqAttributes_p gsa
 where ssg.splice_site_feature_id = ssf.splice_site_feature_id
  and ssf.na_sequence_id = gsa.na_sequence_id
  and gsa.org_abbrev = '$orgAbbrev'
@@ -115,7 +115,7 @@ select ssg.source_id
   , ssf.strand
 from apidb.polyagenes ssg
  , apidb.splicesitefeature ssf
- , ${schema}.GenomicSeqAttributes gsa
+ , ${schema}.GenomicSeqAttributes_p gsa
 where ssg.splice_site_feature_id = ssf.splice_site_feature_id
 and ssf.na_sequence_id = gsa.na_sequence_id
  and gsa.org_abbrev = '$orgAbbrev'
