@@ -45,7 +45,7 @@ my $usr = $gusconfig->{props}->{databaseLogin};
 my $pwd = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 
-my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
+my $dbh = DBI->connect($dsn, $usr, $pwd, {RaiseError => 1}) ||  die "Couldn't connect to database: " . DBI->errstr;
 
 open(FILE, '>', $jbrowseConf) or die "Cannot open file $jbrowseConf for reading: $!";
 

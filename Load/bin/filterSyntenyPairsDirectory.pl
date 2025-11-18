@@ -31,7 +31,7 @@ my $dsn = $gusconfig->getDbiDsn();
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
 
-my $dbh = DBI->connect($dsn, $login, $password) or die DBI->errstr;
+my $dbh = DBI->connect($dsn, $login, $password, {RaiseError => 1}) or die DBI->errstr;
 
 my $sql = "select d.name
 from sres.externaldatabase d
