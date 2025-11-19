@@ -49,7 +49,7 @@ $dbh->disconnect();
 sub deleteRows {
   my ($dbh, $schema, $orgAbbrev) = @_;
 
-  my $sql = "delete from ${schema}.splicesitetranscript where org_abbrev = ?";
+  my $sql = "delete from ${schema}.splicesitetranscript_p where org_abbrev = ?";
   my $sh = $dbh->prepare($sql);
   my $rows = $sh->execute($orgAbbrev);
 
@@ -129,7 +129,7 @@ order by source_id";
   my $sh = $dbh->prepare($ssSql);
   $sh->execute();
 
-  my $insertSql = "INSERT INTO ${schema}.SpliceSiteTranscript (location, type, na_sequence_id, is_unique, sum_cpm, dist_to_first_atg, transcript_source_id, dist_to_cds, is_dominant, gene_source_id, strand, project_id, org_abbrev, modification_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+  my $insertSql = "INSERT INTO ${schema}.SpliceSiteTranscript_p (location, type, na_sequence_id, is_unique, sum_cpm, dist_to_first_atg, transcript_source_id, dist_to_cds, is_dominant, gene_source_id, strand, project_id, org_abbrev, modification_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
   my $insertSh = $dbh->prepare($insertSql);
 
   my (@splicedLeaderFeatures, @polyAFeatures, $minLoc, $maxLoc, $polyAStrand, $slStrand);
