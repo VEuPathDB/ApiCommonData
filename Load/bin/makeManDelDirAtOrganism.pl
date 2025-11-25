@@ -1,9 +1,12 @@
 #!/usr/bin/perl
 
 use strict;
-## usage: a script to create all directories after organismAbbrev in the manual delivery directory
 
-my @dir_name= ("quantitativeMassSpec","proteinMicroarray","bindingSites","cellularLocation","chipChip","chipSeq","comparativeGenomics","dbxref","dnaSeq","epitope","EST","function","genome","genomeFeature","interaction","isolate","massSpec","microarrayExpression","microarrayPlatform","mRNA","phenotype","phylogeny","reagent","rnaSeq","sageTag","SNP","structure","alias","comment");
+## a script that creates all directories under organismAbbrev within the manual delivery directory
+## usage: perl makeManDelDirAtOrganism.pl
+
+
+my @dir_name= ("functAnnotStaging", "organismPatch", "quantitativeMassSpec","proteinMicroarray","bindingSites","cellularLocation","chipChip","chipSeq","comparativeGenomics","dbxref","dnaSeq","epitope","EST","function","genome","genomeFeature","interaction","isolate","massSpec","microarrayExpression","microarrayPlatform","mRNA","phenotype","phylogeny","reagent","rnaSeq","sageTag","SNP","structure","alias","comment");
 foreach my $each_dir (@dir_name)
 {
        mkdir( $each_dir ) || print $!;

@@ -1,82 +1,121 @@
 #!/usr/bin/perl
 
+=head1 NAME
+
+jbrowseDumpAllFeatures - Export genomic features to JBrowse-compatible GFF files
+
+=head1 SYNOPSIS
+
+  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seq_sizes=s]
+
+=head1 DESCRIPTION
+
+This script exports genomic features from the database to GFF, BED, or BigWig format files
+suitable for use with JBrowse. It processes tracks defined in jbrowseQueries.xml and creates
+compressed, indexed files for each track and organism.
+
+=head1 OPTIONS
+
+  --output_directory         Directory where output files will be created (required)
+  --organism_abbrev_filter   Filter to process only specific organism(s)
+  --replace_existing         Replace existing output files
+  --seq_sizes                 Chromosome sizes file (required for BigWig output)
+  --help, -h                 Display this help message
+
+=head1 AUTHOR
+
+VEuPathDB
+
+=cut
+
 use strict;
+use warnings;
 
 use lib $ENV{GUS_HOME} . "/lib/perl";
 
 use Getopt::Long;
-
-use JSON;
 use DBI;
-use DBD::Oracle;
-
+use DBD::Pg;
 use XML::Simple;
 use GUS::Supported::GusConfig;
+
+use File::Basename;
+
+
 use Data::Dumper;
+# Constants
+use constant {
+  GFF_SORT_KEY => "-k1,1 -k4,4n",
+  BED_SORT_KEY => "-k1,1 -k2,2n",
+  RELEASE_DIR_NAME => "release-CURRENT",
+  
+};
 
-use File::Temp qw/ tempfile tempdir /;
+my ($help, $outputDir, $orgFilter, $replaceExisting, $seqSizes, $gusConfigFile);
 
-my ($help, $outputDir, $orgFilter, $replaceExisting);
+&GetOptions(
+  'help|h'                     => \$help,
+  'output_directory=s'         => \$outputDir,
+  'organism_abbrev_filter=s'   => \$orgFilter,
+  'replace_existing'           => \$replaceExisting,
+  'seq_sizes=s'                => \$seqSizes,
+  'gus_config_file=s'          => \$gusConfigFile
+);
 
-&GetOptions('help|h' => \$help,
-            'output_directory=s' => \$outputDir,
-            'organism_abbrev_filter=s' => \$orgFilter,
-            'replace_existing' => \$replaceExisting
-    );
-
-if($help || ! $outputDir) {
-  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]\n";
+if ($help || !$outputDir) {
+  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing] [--seq_sizes=s]\n";
 }
 
-if(! -d $outputDir) {
-  die "directory not found: $outputDir";
+if (!-d $outputDir) {
+  die "Error: Output directory not found: $outputDir\n";
 }
 
-my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+unless ($ENV{GUS_HOME}) {
+  die "Error: GUS_HOME environment variable is not set\n";
+}
+
+unless (-f $gusConfigFile) {
+  die "Error: GUS config file not found: $gusConfigFile\n";
+}
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
- my $dbh = DBI->connect($gusconfig->getDbiDsn(),
-                        $gusconfig->getDatabaseLogin(),
-                        $gusconfig->getDatabasePassword(),
-     )
-    || die "Cannot connect to database:  " . $DBI::errstr;
+my $dbh = DBI->connect($gusconfig->getDbiDsn(),
+                       $gusconfig->getDatabaseLogin(),
+                       $gusconfig->getDatabasePassword(),
+                       {RaiseError => 1})
+  or die "Cannot connect to database: " . $DBI::errstr;
 
 $dbh->{LongTruncOk} = 0;
 $dbh->{LongReadLen} = 10000000;
 
 my $gbrowseXmlFile =  $ENV{GUS_HOME} . "/lib/xml/jbrowseQueries.xml";
-my $xml = XMLin($gbrowseXmlFile, ForceArray => ['trackConfigurations', 'properties' ] );
+
+unless (-f $gbrowseXmlFile) {
+  die "Error: JBrowse queries XML file not found: $gbrowseXmlFile\n";
+}
+
+my $xml = XMLin($gbrowseXmlFile, ForceArray => ['trackConfigurations', 'properties']);
 
 my @tracks = keys %{$xml->{track}};
 
-my $organisms = &getOrganismInfo($dbh);
+my $organisms = getOrganismInfo($dbh, $orgFilter);
+
+unless (@$organisms) {
+  die "Error: No organisms found matching the criteria\n";
+}
 
 print "starting dump at " . `date` . "\n";
 foreach my $o (@$organisms) {
-  next if($orgFilter && $o->{abbrev} ne $orgFilter);
-
-  my ($sequenceCount, $printedSequenceCount, $wroteProteinLengths);
-  my $genomicSequences = &getGenomicSequences($dbh, $o);
-  my $proteinSequences = &getProteinSequences($dbh, $o);
 
   my $project = $o->{project_name};
   my $nameForFilenames = $o->{name_for_filenames};
 
-  my $projectDir = "$outputDir/$project";
-  my $releaseDir = "$projectDir/release-CURRENT";
-  my $organismDir = "$releaseDir/$nameForFilenames";
-  my $outputDir = "$organismDir/jbrowse";
+  my $jbrowseDir = $outputDir; 
 
-  mkdir $projectDir unless(-d $projectDir);
-  mkdir $releaseDir unless(-d $releaseDir);
-  mkdir $organismDir unless(-d $organismDir);
-  mkdir $outputDir unless(-d $outputDir);
-
-  # TODO: write table of <protein sequence ID> TAB <length
 
   my $trackCount = 0;
   foreach my $trackName (@tracks) {
-    next if($trackName =~ /^\s*#/);
+    next if ($trackName =~ /^\s*#/);
 
     $trackCount++;
     my $startTime = time;
@@ -84,93 +123,127 @@ foreach my $o (@$organisms) {
     my $trackType = $xml->{track}->{$trackName}->{type};
     my $fileSuffix = $xml->{track}->{$trackName}->{fileSuffix};
 
-    die "track must provide trackType, fileSuffix, and trackName" unless($trackType && $fileSuffix && $trackName);
+    die "track must provide trackType, fileSuffix, and trackName" unless ($trackType && $fileSuffix && $trackName);
+    die "fileSuffix must be one of 'bed', 'gff', or 'bw'" unless ($fileSuffix =~ /^(bed|gff|bw)$/);
 
-    my $fullFileName = "$outputDir/${trackName}.gff";
+    if ($fileSuffix eq 'bw') {
+      die "seq_sizes argument is required when fileSuffix is 'bw'" unless $seqSizes;
+      die "seq_sizes file not found: $seqSizes" unless -f $seqSizes;
+    }
+
+    # For BigWig output, start with a temp bed file that will be converted later
+    my $fullFileName = ($fileSuffix eq 'bw')
+      ? "$jbrowseDir/${trackName}.temp.bed"
+      : "$jbrowseDir/${trackName}.${fileSuffix}";
 
     my $outFh;
 
     my $featureSqlRaw = $xml->{track}->{$trackName}->{sql};
 
-    my $sequences;
-    if($trackType eq 'genomic') {
-      $sequences = $genomicSequences;
-    }
-    elsif($trackType eq 'protein') {
-      $sequences = $proteinSequences;
-    }
-    else {
-      die "trackType can only be genomic or protein";
-    }
-
-    my $queryParams = &makeQueryParams($dbh, $trackName, $xml);
+    my $queryParams = makeQueryParams($dbh, $trackName, $xml);
 
     my @existingFiles = glob "${fullFileName}*";
     if (scalar @existingFiles) {
-      if($replaceExisting) {
-	print "unlinking existing file(s): " . join(", ", @existingFiles) . "\n";
-	unlink @existingFiles;
+      if ($replaceExisting) {
+        print "unlinking existing file(s): " . join(", ", @existingFiles) . "\n";
+        unlink @existingFiles;
       }
       else {
-	print STDERR "SKIPPING Existing file: $fullFileName\n";
-	next;
+        print STDERR "SKIPPING Existing file: $fullFileName\n";
+        next;
       }
     }
 
-    my $sortKey;
-    if($fileSuffix eq 'gff') {
-      $sortKey = "-k1,1 -k4,4n";
-    } elsif ($fileSuffix eq 'bed') {
-      $sortKey = "-k1,1 -k2,2n";
+    my $sortKey = ($fileSuffix eq 'gff') ? GFF_SORT_KEY : BED_SORT_KEY;
+    open($outFh, "|sort -T $jbrowseDir $sortKey >$fullFileName") or die "Cannot open file $fullFileName for writing: $!";
+
+    my $featureCountTotal = 0;
+
+    foreach my $qp (@$queryParams) {
+      my $featureSql = makeSql($featureSqlRaw, $o, $qp);
+      my $featureCount = ($fileSuffix eq 'gff')
+        ? addGffFeatures($dbh, $featureSql, $outFh)
+        : addBedFeatures($dbh, $featureSql, $outFh);
+      $featureCountTotal += $featureCount;
     }
-    open($outFh, "|sort -T $outputDir $sortKey >$fullFileName") or die "Cannot open file $fullFileName for writing: $!";
 
-    my $featureCountTotal;
-    foreach my $s (@$sequences) {
-      $sequenceCount++;
-      my $seqName = $s->{seqname};
-      my $seqId = $s->{seqid};
-
-      foreach my $qp (@$queryParams) {
-        my $featureSql = &makeSql($featureSqlRaw, $seqId, $qp);
-        my $featureCount = &addFeatures($dbh, $featureSql, $seqName, $outFh);
-
-        $featureCountTotal += $featureCount;
-      }
-    }
     close $outFh;
 
-    if($featureCountTotal > 0) {
-      if($fileSuffix eq 'gff') {
-        system("bgzip $fullFileName");
-        system("tabix -p gff ${fullFileName}.gz");
-      } elsif ($fileSuffix eq 'bed') {
+    if ($featureCountTotal > 0) {
+      if ($fileSuffix eq 'bw') {
+        # For BigWig format: create separate files for forward and reverse strands
+        my $seqSizesDir = dirname($seqSizes);
+        my @strands = (['+', 'fwd'], ['-', 'rev']);
+        my $success = 1;
 
-	my $lengthFile;
-	unless ($wroteProteinLengths) {
-	  $lengthFile = makeProteinLengthsFile($dbh, $o->{abbrev});
-	  $wroteProteinLengths = 1;
-	}
+        foreach my $strandInfo (@strands) {
+          my ($strandChar, $strandName) = @$strandInfo;
+          my $bwFile = "$jbrowseDir/${trackName}_${strandName}.bw";
+          my $bedGraphTmp = "$jbrowseDir/${trackName}_${strandName}.bedGraph.tmp";
+          my $bedGraphFile = "$jbrowseDir/${trackName}_${strandName}.bedGraph";
 
-	my $bedFileName = $fullFileName;
-	$bedFileName =~ s/\.gff$/.bed/;
+          # Filter by strand and cut columns 1,2,3,5 (chrom, start, end, score) to create bedGraph format
+          # Column 6 in BED format is the strand
+          my $cut_result = system("awk '\$6 == \"$strandChar\"' $fullFileName | cut -f1,2,3,5 > $bedGraphTmp");
+          if ($cut_result != 0) {
+            warn "Warning: filtering/cut failed for $fullFileName (strand $strandChar)\n";
+            $success = 0;
+            last;
+          }
 
-	my $bwFileName = $fullFileName;
-	$bwFileName =~ s/\.gff$/.bw/;
+          # Merge overlapping regions using bedtools merge
+          # -c 4 specifies to operate on column 4 (the score)
+          # -o mean calculates the mean of overlapping scores (change to max, sum, etc. as needed)
+          my $merge_result = system("bedtools merge -i $bedGraphTmp -c 4 -o mean > $bedGraphFile");
+          if ($merge_result != 0) {
+            warn "Warning: bedtools merge failed for $bedGraphTmp\n";
+            $success = 0;
+            last;
+          }
 
-        system("cut -f 1,4,5,6 < ${fullFileName} > $bedFileName");
-        system("bedGraphToBigWig $bedFileName $lengthFile $bwFileName");
-      } else {
-	print "WARN: unlink $fullFileName\n";
-	unlink $fullFileName;
+          # Convert bedGraph to BigWig
+          my $bw_result = system("bedGraphToBigWig $bedGraphFile $seqSizes $bwFile");
+          #my $bw_result = system("singularity exec --no-mount setgroups -B $jbrowseDir -B $seqSizesDir docker://veupathdb/shortreadaligner:latest bedGraphToBigWig $bedGraphFile $seqSizes $bwFile");
+          if ($bw_result != 0) {
+            warn "Warning: bedGraphToBigWig failed for $bedGraphFile\n";
+            $success = 0;
+            last;
+          }
+
+          # Clean up intermediate files for this strand
+          unlink $bedGraphTmp, $bedGraphFile;
+        }
+
+        # Clean up the original temp bed file
+        unlink $fullFileName;
+
+        if ($success) {
+          my $duration = time - $startTime;
+          print "$duration seconds wrote $featureCountTotal records for track $trackName (BigWig - forward and reverse)\n";
+        }
       }
-      print "organism " . $o->{abbrev} . " $sequenceCount sequences\n"
-	unless $printedSequenceCount;
-      $printedSequenceCount = 1;
+      else {
+        # For GFF and BED formats: compress and index
+        my $bgzip_result = system("bgzip $fullFileName");
+        if ($bgzip_result != 0) {
+          warn "Warning: bgzip failed for $fullFileName\n";
+          next;
+        }
 
-      my $duration = time - $startTime;
-      print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+        my $tabixPreset = ($fileSuffix eq 'gff') ? 'gff' : 'bed';
+        my $tabix_result = system("tabix -p $tabixPreset ${fullFileName}.gz");
+        if ($tabix_result != 0) {
+          warn "Warning: tabix failed for ${fullFileName}.gz\n";
+        }
+
+        my $duration = time - $startTime;
+        print "$duration seconds wrote $featureCountTotal records for track $trackName\n";
+      }
     }
+    else {
+      unlink $fullFileName;
+    }
+    
   }
 
   print "finished $trackCount tracks\n";
@@ -179,23 +252,41 @@ foreach my $o (@$organisms) {
 
 $dbh->disconnect();
 
-sub addFeatures {
-  my ($dbh, $featureSql, $seqName, $fh) = @_;
+#-------------------------------------------------------------------------------
+# Subroutines
+#-------------------------------------------------------------------------------
+
+=head2 addGffFeatures
+
+Executes a feature query and writes features to a GFF file handle.
+
+Arguments:
+  $dbh         - Database handle
+  $featureSql  - SQL query to fetch features
+  $fh          - File handle to write GFF output
+
+Returns:
+  Number of features processed
+
+=cut
+
+sub addGffFeatures {
+  my ($dbh, $featureSql, $fh) = @_;
 
   my $sh = $dbh->prepare($featureSql);
   $sh->execute();
 
-  my $featureCount;
+  my $featureCount = 0;
 
-#    Pf3D7_13_v3VEuPathDBexon624510626292.+.ID=exon_PF3D7_1314600.1-E1;Parent=PF3D7_1314600.1;gene_id=PF3D7_1314600
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+  # Process each feature from the database query
+  while (my $hash = $sh->fetchrow_hashref("NAME_lc")) {
     my $featureId = $hash->{feature_id};
     my $parentId = $hash->{parent_id};
 
     $hash->{atts} .= ";ID=$featureId";
-    $hash->{atts} .= ";Parent=$parentId" if($parentId);
+    $hash->{atts} .= ";Parent=$parentId" if ($parentId);
 
-    print $fh join("\t", ($seqName,
+    print $fh join("\t", ($hash->{sequence_source_id},
                            $hash->{source},
                            $hash->{feature},
                            $hash->{startm},
@@ -205,20 +296,20 @@ sub addFeatures {
                            $hash->{frame} || ".",
                            $hash->{atts})) . "\n";
 
-    if($hash->{tstarts}) {
-      my @tstarts = map { s/\s+//g; $_ - 1 } split /,/, $hash->{tstarts};
+    # Handle block-based features (e.g., exons in a transcript)
+    if ($hash->{tstarts}) {
+      my @tstarts = map { s/\s+//g; $_  } split /,/, $hash->{tstarts};
       my @blocksizes = map { s/\s+//g; $_ } split /,/, $hash->{blocksizes};
       my $counter = 0;
 
       foreach my $start (@tstarts) {
-        #TODO check end coords for possible 1 off error
         my $end = $start + $blocksizes[$counter] - 1;
 
         my $subAtts = "ID=" . $featureId . "_$counter;Parent=$featureId";
 
-        print $fh join("\t", ($seqName,
+        print $fh join("\t", ($hash->{sequence_source_id},
                                $hash->{source},
-                               "subfeature",
+                               "align",
                                $start,
                                $end,
                                $hash->{score} || ".",
@@ -226,7 +317,7 @@ sub addFeatures {
                                $hash->{frame} || ".",
                                $subAtts)) . "\n";
 
-        $counter = $counter + 1;
+        $counter++;
       }
     }
 
@@ -235,11 +326,69 @@ sub addFeatures {
   return $featureCount;
 }
 
+=head2 addBedFeatures
+
+Executes a feature query and writes features to a BED file handle.
+
+Arguments:
+  $dbh         - Database handle
+  $featureSql  - SQL query to fetch features
+  $fh          - File handle to write BED output
+
+Returns:
+  Number of features processed
+
+=cut
+
+sub addBedFeatures {
+  my ($dbh, $featureSql, $fh) = @_;
+
+  my $sh = $dbh->prepare($featureSql);
+  $sh->execute();
+
+  my $featureCount = 0;
+
+  # Process each feature from the database query
+  while (my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+    my $name = $hash->{feature_id} || ".";
+    my $score = $hash->{score} || ".";
+    my $strand = $hash->{strand} || ".";
+
+    # BED format: chr, start (0-based), end, name, score, strand
+    # Note: Converting from GFF 1-based to BED 0-based coordinates
+    my $bedStart = $hash->{startm} - 1;
+
+    print $fh join("\t", ($hash->{sequence_source_id},
+                           $bedStart,
+                           $hash->{end},
+                           $name,
+                           $score,
+                           $strand)) . "\n";
+
+    $featureCount++;
+  }
+  return $featureCount;
+}
+
+=head2 makeQueryParams
+
+Extracts query parameters from track configurations in the XML.
+
+Arguments:
+  $dbh        - Database handle (unused but passed for consistency)
+  $trackName  - Name of the track
+  $xml        - Parsed XML configuration
+
+Returns:
+  Array reference of query parameter hashes
+
+=cut
+
 sub makeQueryParams {
   my ($dbh, $trackName, $xml) = @_;
 
   my @rv;
-  if(my $trackConfigurations = $xml->{track}->{$trackName}->{trackConfigurations}) {
+  if (my $trackConfigurations = $xml->{track}->{$trackName}->{trackConfigurations}) {
 
     foreach my $tc (@$trackConfigurations) {
       foreach my $property (@{$tc->{properties}}) {
@@ -258,8 +407,22 @@ sub makeQueryParams {
   return [{INTERNAL => "INTERNAL"}];
 }
 
+=head2 getOrganismInfo
+
+Fetches organism information from the database.
+
+Arguments:
+  $dbh        - Database handle
+  $orgFilter  - Optional organism abbreviation filter
+
+Returns:
+  Array reference of organism hashes containing project_name, abbrev,
+  name_for_filenames, taxon_id, and external_database_release_id
+
+=cut
+
 sub getOrganismInfo {
-  my ($dbh) = @_;
+  my ($dbh, $orgFilter) = @_;
 
   my $sql = "select o.project_name
      , o.abbrev
@@ -275,86 +438,63 @@ and ds.taxon_id = o.taxon_id
 and ds.name = d.name
 and d.external_database_id = r.external_database_id";
 
+  if ($orgFilter) {
+    $sql .= " and o.abbrev = '$orgFilter'";
+  }
+
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
   my @rv;
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
+  while (my $hash = $sh->fetchrow_hashref("NAME_lc")) {
     push @rv, $hash;
   }
   $sh->finish();
   return \@rv;
 }
 
-sub getProteinSequences {
-  my ($dbh, $organism) = @_;
 
-  my $extDbRlsId = $organism->{external_database_release_id};
+=head2 makeSql
 
-  my $sql = "select source_id as seqname, aa_sequence_id as seqid from dots.translatedaasequence where external_database_release_id = ?";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($extDbRlsId);
+Performs variable substitution in SQL templates.
 
-  my @rv;
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
-    push @rv, $hash;
-  }
-  $sh->finish();
-  return \@rv;
-}
+Replaces placeholders in SQL with actual values:
+  $dlm                          -> ;
+  $org_abbrev                   -> organism abbreviation
+  $taxon_id                     -> organism taxon ID
+  $external_database_release_id -> external database release ID
+  $$KEY$$                       -> custom query parameter values
 
-sub getGenomicSequences {
-  my ($dbh, $organism) = @_;
-  my $extDbRlsId = $organism->{external_database_release_id};
+Arguments:
+  $sql         - SQL template with placeholders
+  $organism    - Organism hash with abbrev, taxon_id, external_database_release_id
+  $queryParams - Hash of additional query parameters
 
-  my $sql = "select source_id as seqname, na_sequence_id as seqid from dots.externalnasequence where external_database_release_id = ?";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($extDbRlsId);
+Returns:
+  SQL string with substituted values
 
-  my @rv;
-  while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
-    push @rv, $hash;
-  }
-  $sh->finish();
-  return \@rv;
-}
+=cut
 
 sub makeSql {
-  my ($sql, $seqId, $queryParams) = @_;
+  my ($sql, $organism, $queryParams) = @_;
 
+  my $org_abbrev = $organism->{abbrev};
+  my $taxon_id = $organism->{taxon_id};
+  my $external_database_release_id = $organism->{external_database_release_id};
+  
   $sql =~ s/\$dlm/;/g;
-  $sql =~ s/\$srcfeature_id/$seqId/g;
+
+  $sql =~ s/\$org_abbrev/${org_abbrev}/g;
+  $sql =~ s/\$taxon_id/${taxon_id}/g;
+  $sql =~ s/\$organism_external_database_release_id/$external_database_release_id/g;
 
   foreach my $key (keys %$queryParams) {
     my $value = $queryParams->{$key};
     $sql =~ s/\$\$${key}\$\$/${value}/g;
   }
 
-  return $sql
+  return $sql;
 }
 
 
-sub makeProteinLengthsFile {
-  my ($dbh, $abbrev, $filename) = @_;
-
-  my $sh = $dbh->prepare(<<SQL);
-    select source_id, length
-    from dots.TranslatedAASequence tas, apidb.Organism o
-    where o.public_abbrev = ?
-      and tas.taxon_id = o.taxon_id
-SQL
-
-  $sh->execute($abbrev);
-
-  my ($fh, $filename) = tempfile();
-
-  while (my ($sourceId, $length) = $sh->fetchrow_array()) {
-    print $fh "$sourceId\t$length\n";
-  }
-
-  $sh->finish();
-  close $fh;
-
-  return $filename;
-
-}
+1;

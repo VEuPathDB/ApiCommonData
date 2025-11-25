@@ -306,9 +306,9 @@ printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'h
 printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
-printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i && $isEbiGenome !~ /^y/i);
+#printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+#printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+#printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i && $isEbiGenome !~ /^y/i);
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 printRefStrainGenbankEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB

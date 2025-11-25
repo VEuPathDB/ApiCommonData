@@ -49,7 +49,7 @@ $dbh->disconnect();
 sub deleteRows {
   my ($dbh, $schema, $orgAbbrev) = @_;
 
-  my $sql = "delete from ${schema}.splicesitetranscript where org_abbrev = ?";
+  my $sql = "delete from ${schema}.splicesitetranscript_p where org_abbrev = ?";
   my $sh = $dbh->prepare($sql);
   my $rows = $sh->execute($orgAbbrev);
 
@@ -68,7 +68,7 @@ sub loadRows {
 , ta.coding_start
 , ta.coding_end
 , ta.is_reversed
-from ${schema}.transcriptattributes ta
+from ${schema}.transcriptattributes_p ta
 , (select source_id from apidb.polyagenes
    union
    select source_id from apidb.splicesitegenes) ss
@@ -97,7 +97,7 @@ select ssg.source_id
   , ssf.strand
 from apidb.splicesitegenes ssg
  , apidb.splicesitefeature ssf
- , ${schema}.GenomicSeqAttributes gsa
+ , ${schema}.GenomicSeqAttributes_p gsa
 where ssg.splice_site_feature_id = ssf.splice_site_feature_id
  and ssf.na_sequence_id = gsa.na_sequence_id
  and gsa.org_abbrev = '$orgAbbrev'
@@ -115,7 +115,7 @@ select ssg.source_id
   , ssf.strand
 from apidb.polyagenes ssg
  , apidb.splicesitefeature ssf
- , ${schema}.GenomicSeqAttributes gsa
+ , ${schema}.GenomicSeqAttributes_p gsa
 where ssg.splice_site_feature_id = ssf.splice_site_feature_id
 and ssf.na_sequence_id = gsa.na_sequence_id
  and gsa.org_abbrev = '$orgAbbrev'
@@ -129,7 +129,7 @@ order by source_id";
   my $sh = $dbh->prepare($ssSql);
   $sh->execute();
 
-  my $insertSql = "INSERT INTO ${schema}.SpliceSiteTranscript (location, type, na_sequence_id, is_unique, sum_cpm, dist_to_first_atg, transcript_source_id, dist_to_cds, is_dominant, gene_source_id, strand, project_id, org_abbrev, modification_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
+  my $insertSql = "INSERT INTO ${schema}.SpliceSiteTranscript_p (location, type, na_sequence_id, is_unique, sum_cpm, dist_to_first_atg, transcript_source_id, dist_to_cds, is_dominant, gene_source_id, strand, project_id, org_abbrev, modification_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
   my $insertSh = $dbh->prepare($insertSql);
 
   my (@splicedLeaderFeatures, @polyAFeatures, $minLoc, $maxLoc, $polyAStrand, $slStrand);

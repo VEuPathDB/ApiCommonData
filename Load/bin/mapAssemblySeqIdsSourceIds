@@ -129,8 +129,9 @@ while ( my $seq = $in->next_seq() ) {
 	}
     }
     else {
-	die "this file is not an EST file and should not be processed as such in mapAssemblySewIdsSourceIds from InsertBlatAlignments.pm file is $queryFile\n";
-	
+	#die "this file is not an EST file and should not be processed as such in mapAssemblySewIdsSourceIds from InsertBlatAlignments.pm file is $queryFile\n";
+	warn "SKIPPING: sequence '$id' does not match EST pattern in $queryFile\n";
+    next;
 	
     }
     
