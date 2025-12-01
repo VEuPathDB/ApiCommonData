@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Script to import gene2pubmed.gz into an SQLite3 database
+# Usage: importGene2PubmedToSqlite <data_directory>
+# Input: <data_directory>/gene2pubmed.gz
+# Output: <data_directory>/gene2pubmed.db
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <data_directory>"
+    echo "Example: $0 /path/to/data"
+    exit 1
+fi
+
+DATA_DIR="$1"
+INPUT_FILE="${DATA_DIR}/gene2pubmed.gz"
+OUTPUT_DB="${DATA_DIR}/gene2pubmed.db"
+
+# Check if data directory exists
+if [ ! -d "$DATA_DIR" ]; then
+    echo "Error: Data directory not found: $DATA_DIR"
+    exit 1
+fi
+
+# Check if input file exists
+if [ ! -f "$INPUT_FILE" ]; then
+    echo "Error: Input file not found: $INPUT_FILE"
+    exit 1
+fi
+
+# Remove existing database if present
+if [ -f "$OUTPUT_DB" ]; then
+    echo "Removing existing database: $OUTPUT_DB"
+    rm -f "$OUTPUT_DB"
+fi
+
+echo "Creating SQLite database: $OUTPUT_DB"
+echo "Processing input file: $INPUT_FILE"
+
+# Create the database and table schema
+sqlite3 "$OUTPUT_DB" <<'EOF'
+CREATE TABLE gene2pubmed (
+    tax_id INTEGER,
+    gene_id INTEGER,
+    pubmed_id INTEGER
+);
+
+CREATE INDEX idx_tax_id ON gene2pubmed(tax_id);
+EOF
+
+echo "Table created. Importing data..."
+
+# Create a temporary file for import (SQLite .import doesn't work well with stdin)
+TEMP_FILE=$(mktemp)
+trap "rm -f $TEMP_FILE" EXIT
+
+# Extract data without header, keeping only first 3 columns
+zcat "$INPUT_FILE" | tail -n +2 | cut -f1-3 > "$TEMP_FILE"
+
+# Import the data
+sqlite3 "$OUTPUT_DB" <<EOF
+.mode tabs
+.import $TEMP_FILE gene2pubmed
+EOF
+
+# Get record count
+RECORD_COUNT=$(sqlite3 "$OUTPUT_DB" "SELECT COUNT(*) FROM gene2pubmed;")
+
+echo "Import complete!"
+echo "Total records imported: $RECORD_COUNT"
+echo "Database location: $OUTPUT_DB"
+
+# Display some sample queries
+echo ""
+echo "Sample queries you can run:"
+echo "  sqlite3 $OUTPUT_DB \"SELECT * FROM gene2pubmed LIMIT 10;\""
+echo "  sqlite3 $OUTPUT_DB \"SELECT COUNT(*) FROM gene2pubmed WHERE tax_id = 9606;\""
+echo "  sqlite3 $OUTPUT_DB \"SELECT * FROM gene2pubmed WHERE gene_id = 7157;\""

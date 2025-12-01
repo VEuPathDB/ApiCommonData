@@ -225,6 +225,8 @@ sub run {
   my $projectName = $self->getArg('projectName');
   my $corePeripheral = $self->getArg('corePeripheral');
 
+  (my $sanitized_abbrev = $abbrev) =~ s/[\.\-]//g;
+
   # validate full name against ncbi taxon id
   my $sql = "select t.taxon_id, t.ncbi_tax_id 
              from sres.taxonname tn, sres.taxon t
@@ -246,10 +248,16 @@ sub run {
       $self->error("hasTemporaryNcbiTaxonId is false but the provided ncbi taxon ID looks like a temporary one.  (It must be greater than 9000000000 to be a temp ID)");
   }
 
+
+  my $sanitizedAbbrev = $abbrev;
+  $sanitizedAbbrev =~ s/[.-]//g;
+  
   my $organism =  GUS::Model::ApiDB::Organism->new({'taxon_id' => $taxon_id,
 						    'project_name' => $projectName,
 						    'abbrev' => $abbrev,
+						    'sanitized_abbrev' => $sanitizedAbbrev,
 						    'public_abbrev' => $abbrevPublic,
+                                                    'sanitized_abbrev' => $sanitized_abbrev,
 						    'name_for_filenames' => $nameForFilenames,
 						    'genome_source' => $genomeSource,
 						    'orthomcl_abbrev' => $abbrevOrthomcl,

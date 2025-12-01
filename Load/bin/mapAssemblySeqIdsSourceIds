@@ -31,8 +31,8 @@ my ($verbose,$queryFile,$blatFile,$mappedQueryFile,$mappedBlatFile,$gusConfigFil
 &GetOptions("verbose!"=> \$verbose,
             "queryFile=s"=> \$queryFile,
             "blatFile=s"=> \$blatFile,
-	    "queryOut=s" =>\$mappedQueryFile,
-	    "blatOut=s" =>\$mappedBlatFile,
+	        "queryOut=s" =>\$mappedQueryFile,
+	        "blatOut=s" =>\$mappedBlatFile,
             "gusConfigFile=s" => \$gusConfigFile);
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
@@ -61,7 +61,7 @@ my $dbh = $db->getQueryHandle();
 #my ($mappedQueryFH, $mappedQueryFile) = tempfile();
 #my ($mappedBlatFH, $mappedBlatFile) = tempfile();
 
-    my %sourceIdHash;
+my %sourceIdHash;
 #print Dumper "dbh is $dbh\n";
 #so first I want the hash for the uniDB stuff
 my $sql = <<EOSQL;
@@ -110,27 +110,28 @@ while ( my $seq = $in->next_seq() ) {
     if ($id =~ /^assemblySeqIds\|(.+)\|(.+)/) {
 	my $oldAssemblySeqId = $1;
 	my $sourceId = $2;
-#	print Dumper "$oldAssemblySeqId\t$sourceId\n";
+#print Dumper "$oldAssemblySeqId\t$sourceId\n";
 	if (exists $sourceIdHash{$sourceId}) {
-#	    print Dumper "getting HERE\n";
+#    print Dumper "getting HERE\n";
 	    my $header = $sourceIdHash{$sourceId};
-	    my $bsq_obj =    Bio::Seq::->new( -id   => $header,
-					      -seq  => $sequence);
+	        my $bsq_obj =    Bio::Seq::->new( -id   => $header,
+						  -seq  => $sequence);
 	    $out->write_seq($bsq_obj);
-#	    print OUT ">$header\n$sequence\n";
+#    print OUT ">$header\n$sequence\n";
 	    $mapHash{$oldAssemblySeqId}=$header;
-#	    print Dumper $bsq_obj;
+#    print Dumper $bsq_obj;
 	}
 
 	else {
-	print Dumper  "WARNING: no mapping of primary keys found for $id\n";
+	    print Dumper  "WARNING: no mapping of primary keys found for $id\n";
 	    next;
-	    
+	        
 	}
     }
     else {
-	die "this file is not an EST file and should not be processed as such in mapAssemblySewIdsSourceIds from InsertBlatAlignments.pm file is $queryFile\n";
-	
+	#die "this file is not an EST file and should not be processed as such in mapAssemblySewIdsSourceIds from InsertBlatAlignments.pm file is $queryFile\n";
+	warn "SKIPPING: sequence '$id' does not match EST pattern in $queryFile\n";
+    next;
 	
     }
     
@@ -156,12 +157,12 @@ while (my $line = <IN>) {
   # fixed on 03/14/2018 H.W.
 	#my $assemblySeq = $1;
 	$assemblySeq = $1;
-#	$sourceId = $2;
+#$sourceId = $2;
     }
     if (exists $mapHash{$assemblySeq}) {
 	my $newId = $mapHash{$assemblySeq};
 #   if (exists $sourceIdHash{$sourceId}) {
-#	my $newId = $sourceIdHash{$sourceId};
+#my $newId = $sourceIdHash{$sourceId};
 	for (my $i=0; $i <= @temps; $i++) {
 	    if ($i == 9) {
 		push (@new, $newId);
@@ -181,4 +182,3 @@ while (my $line = <IN>) {
 
 
  
-

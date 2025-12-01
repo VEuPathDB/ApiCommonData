@@ -48,7 +48,7 @@ my $geneStmt = $dbh->prepare(<<SQL);
 SELECT source_id, na_sequence_id, decode(strand,'forward','+','reverse','-') as strand,
 CASE WHEN coding_start is not null THEN coding_start ELSE CASE WHEN strand = 'forward' THEN start_min ELSE end_max END END as coding_start,
 CASE WHEN coding_end is not null THEN coding_end ELSE CASE WHEN strand = 'forward' THEN end_max ELSE start_min END END as coding_end
-FROM apidbtuning.GeneAttributes
+FROM webready.GeneAttributes_p
 WHERE source_id in (SELECT DISTINCT REGEXP_REPLACE(query_id,'(\\-\\d+\\-?\\*?\\(\\))','') AS source_id FROM  apidb.nextgenseq_align where sample = 'curated_long_splice')
 SQL
 

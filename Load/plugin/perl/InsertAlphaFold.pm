@@ -6,21 +6,28 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::AlphaFold;
+use GUS::Model::ApiDB::AlphaFold_Table;
+
 use Data::Dumper;
 use File::Temp qw/ tempfile /;
+
+use ApiCommonData::Load::Psql;
+use ApiCommonData::Load::Fifo;
+
+
 use POSIX qw/strftime/;
 
 sub getArgsDeclaration {
     my $argsDeclaration  =
-	[
-	 
-	 stringArg({ name => 'inputFile',
-		     descr => 'accession_ids.txt file from AlphaFold',
-		     constraintFunc=> undef,
-		     reqd  => 1,
-		     isList => 0,
-		     mustExist => 1,
-		   }),
+    [
+     
+     stringArg({ name => 'inputFile',
+             descr => 'accession_ids.txt file from AlphaFold',
+             constraintFunc=> undef,
+             reqd  => 1,
+             isList => 0,
+             mustExist => 1,
+           }),
 
    stringArg({name => 'extDbSpec',                                                                                                                                                                         
               descr => 'External database from whence this data came|version',
@@ -28,7 +35,7 @@ sub getArgsDeclaration {
               reqd  => 1,
               isList => 0
              }),
-	];
+    ];
     
     return $argsDeclaration;
 }
@@ -39,36 +46,36 @@ sub getDocumentation {
     my $description = <<NOTES;
 Load mappings between Uniprot ids and AlphaFold ids.
 NOTES
-	
-	my $purpose = <<PURPOSE;
+    
+    my $purpose = <<PURPOSE;
 Load mappings between Uniprot ids and AlphaFold ids.
 PURPOSE
-	
-	my $purposeBrief = <<PURPOSEBRIEF;
+    
+    my $purposeBrief = <<PURPOSEBRIEF;
 Load mappings between Uniprot ids and AlphaFold ids.
 PURPOSEBRIEF
-	
-	my $syntax = <<SYNTAX;
+    
+    my $syntax = <<SYNTAX;
 SYNTAX
-	
-	my $notes = <<NOTES;
+    
+    my $notes = <<NOTES;
 NOTES
-	
-	my $tablesAffected = <<AFFECT;
+    
+    my $tablesAffected = <<AFFECT;
 ApiDB.AlphaFold
 AFFECT
-	
-	my $tablesDependedOn = <<TABD;
+    
+    my $tablesDependedOn = <<TABD;
 TABD
-	
-	my $howToRestart = <<RESTART;
+    
+    my $howToRestart = <<RESTART;
 There are no restart facilities for this plugin
 RESTART
-	
-	my $failureCases = <<FAIL;
+    
+    my $failureCases = <<FAIL;
 FAIL
-	
-	my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
+    
+    my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
     
     return ($documentation);
 }
@@ -85,17 +92,19 @@ sub new {
     my $args = &getArgsDeclaration();
     
     $self->initialize({requiredDbVersion => 4.0,
-		       cvsRevision => '$Revision$',
-		       name => ref($self),
-		       argsDeclaration   => $args,
-		       documentation     => $documentation
-		      });
+               cvsRevision => '$Revision$',
+               name => ref($self),
+               argsDeclaration   => $args,
+               documentation     => $documentation
+              });
     return $self;
 }
 
 sub run {
     my $self = shift;
-   
+
+    my $tableName = "ApiDB.AlphaFold";
+
     my $extDbSpec = $self->getArg('extDbSpec');
     my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n";
 
@@ -103,11 +112,73 @@ sub run {
  
     my $uniprotIds = $self->getUniprotIds;
 
-    my $filteredFile = $self->filterInput($inputFile, $uniprotIds);
+    my $fifoName = "$inputFile\_filtered.txt";
+    my $fifo = ApiCommonData::Load::Fifo->new($fifoName);
 
-    my ($ctrlFh, $ctrlFile) = tempfile(SUFFIX => '.dat');
-    $self->loadAlphaFold($filteredFile, $ctrlFile, $extDbRlsId);
 
+    my $alphaFoldTable = GUS::Model::ApiDB::AlphaFold_Table->new();
+
+    my $psqlObj = $self->makePsqlObj($tableName, $fifoName, $alphaFoldTable->getAttributeList());
+    my $psqlProcessString = $psqlObj->getCommandLine();
+    
+    my $pid = $fifo->attachReader($psqlProcessString);
+    $self->addActiveForkedProcess($pid);
+
+    my $fh = $fifo->attachWriter();
+
+    my $rowCount = $self->filterInputAndLoad($inputFile, $uniprotIds, $fh, $extDbRlsId, $psqlObj);
+
+    $fifo->cleanup();
+
+}
+
+
+sub initPrimaryKey {
+    my ($self) = @_;
+
+    my $dbh = $self->getQueryHandle();
+    my $sql = "SELECT MAX(alphafold_id) from apidb.alphafold";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+
+    # Set to 0 if there are no rows in this table
+    my $primaryKeyInt = 0;;
+    while(my ($primaryKey) = $sh->fetchrow_array()) {
+        $primaryKeyInt = $primaryKey;
+    }
+    $sh->finish();
+    
+    return $primaryKeyInt++; 
+}
+
+sub makePsqlObj {
+  my ($self, $tableName, $fifo, $attributeList) = @_;
+  
+  my $dbiDsn = $self->getDb->getDSN();
+  $dbiDsn =~ /(:|;)dbname=((\w|\.)+);?/ ;
+  my $db = $2;
+
+  $dbiDsn =~ /(:|;)host=((\w|\.)+);?/ ;
+  my $hostName = $2;
+
+  my $psqlObj = ApiCommonData::Load::Psql->new({
+    _login => $self->getDb->getLogin(),
+    _password => $self->getDb->getPassword(),
+    _database => $db,
+    _hostName=> $hostName,
+    _quiet => 0,
+  });
+
+
+  $psqlObj->setInfileName($fifo);
+  $psqlObj->setTableName($tableName);
+  $psqlObj->setFieldDelimiter(",");
+
+  my @dataFields = map { lc($_) } @$attributeList;
+
+  $psqlObj->setFields(\@dataFields);
+
+  return $psqlObj;
 }
 
 # get uniprot ids from dbref table for filtering
@@ -139,105 +210,71 @@ sub getUniprotIds {
 }
 
 # filter out alphafold ids not in component database
-sub filterInput {
-    my ($self, $inputFile, $uniprotIds) = @_;
+sub filterInputAndLoad {
+    my ($self, $inputFile, $uniprotIds, $fh, $extDbRlsId, $psqlObj) = @_;
 
-    my $outputFile = "$inputFile\_filtered.txt";
+    my $fields = $psqlObj->getFields();
+    my $dbiDb = $self->getDb();
+    
+    my $primaryKeyValue = $self->initPrimaryKey();
+    my $rowGroupId = $dbiDb->getDefaultGroupId();
+    my $rowUserId = $dbiDb->getDefaultUserId();
+    my $rowProjectId = $dbiDb->getDefaultProjectId();
+    my $rowAlgInvocationId = $dbiDb->getDefaultAlgoInvoId();
+    my $userRead = $dbiDb->getDefaultUserRead();
+    my $userWrite =  $dbiDb->getDefaultUserWrite();
+    my $groupRead = $dbiDb->getDefaultGroupRead();
+    my $groupWrite = $dbiDb->getDefaultGroupWrite();
+    my $otherRead = $dbiDb->getDefaultOtherRead();
+    my $otherWrite = $dbiDb->getDefaultOtherWrite();
+    my $modificationDate = $self->getModificationDate();
 
     open(IN, $inputFile) or die "Cannot open input file $inputFile for reading. Please check and try again\n$!\n\n";
-    open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing. Please check and try again\n$!\n\n";
 
+    my $count;
+    
     while (<IN>) {
+        chomp;
         my $line = $_;
-        my $uniprot =  (split(',', $line))[0];
-        chomp($uniprot);
+        my @a =  split(',', $line);
+        my $uniprot = $a[0];
         if (exists $uniprotIds->{$uniprot}) {
-            print OUT $line;
+
+            my $firstResidueIndex = $a[1];
+            my $lastResidueIndex = $a[2];
+            my $sourceId = $a[3];
+            my $alphaFoldVersion = $a[4];
+
+            my $valuesHash = {alphafold_id => $primaryKeyValue,
+                        uniprot_id => $uniprot,
+                        first_residue_index => $firstResidueIndex,
+                        last_residue_index => $lastResidueIndex,
+                        source_id => $sourceId,
+                        alphafold_version => $alphaFoldVersion,
+                        external_database_release_id => $extDbRlsId,
+                        modification_date => $modificationDate,
+                        user_read => $userRead,
+                        user_write => $userWrite,
+                        group_read => $groupRead,
+                        group_write => $groupWrite,
+                        other_read => $otherRead,
+                        other_write => $otherWrite,
+                        row_user_id => $rowUserId,
+                        row_group_id => $rowGroupId,
+                        row_project_id => $rowProjectId,
+                        row_alg_invocation_id => $rowAlgInvocationId
+            };
+
+            my @values = map { $valuesHash->{$_} } @$fields;
+
+            print $fh join(",", @values) . "\n";
+            $count++;
+            $primaryKeyValue++;
         }
     }
     close(IN);
-    close(OUT);
 
-    return $outputFile;
-}
-
-
-sub loadAlphaFold {
-    my ($self, $inputFile, $ctrlFile, $extDbRlsId) = @_;
-
-    my $ctrlFile = "$ctrlFile.ctrl";
-    my $logFile = "$ctrlFile.log";
-
-    $self->writeConfigFile($ctrlFile, $inputFile, $extDbRlsId);
-
-    my $login = $self->getConfig->getDatabaseLogin();
-    my $password = $self->getConfig->getDatabasePassword();
-    my $dbiDsn = $self->getConfig->getDbiDsn();
-    my ($dbi, $type, $db) = split(':', $dbiDsn);
-
-    if($self->getArg('commit')) {
-        my $exitstatus = system("sqlldr $login/$password\@$db control=$ctrlFile log=$logFile rows=1000");
-        if ($exitstatus != 0){
-            die "ERROR: sqlldr returned exit status $exitstatus";
-        }
-
-        open(LOG, $logFile) or die "Cannot open log file $logFile: $!";
-        while (<LOG>) {
-            $self->log($_);
-        }
-        close LOG;
-        unlink $logFile;
-    }
-    unlink $ctrlFile;
-}
-
-sub writeConfigFile {                                                                                                                                                                                      
-  my ($self, $configFile, $inputFile, $extDbRlsId) = @_;
-
-  my $modDate = uc(strftime("%d-%b-%Y", localtime));
-  my $database = $self->getDb();
-  my $projectId = $database->getDefaultProjectId();
-  my $userId = $database->getDefaultUserId();
-  my $groupId = $database->getDefaultGroupId();
-  my $algInvocationId = $database->getDefaultAlgoInvoId();
-  my $userRead = $database->getDefaultUserRead();
-  my $userWrite = $database->getDefaultUserWrite();
-  my $groupRead = $database->getDefaultGroupRead();
-  my $groupWrite = $database->getDefaultGroupWrite();
-  my $otherRead = $database->getDefaultOtherRead();
-  my $otherWrite = $database->getDefaultOtherWrite();
-
-  open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
-
-  print CONFIG "LOAD DATA
-CHARACTERSET UTF8
-INFILE '$inputFile'
-APPEND
-INTO TABLE ApiDB.AlphaFold
-REENABLE DISABLED_CONSTRAINTS
-FIELDS TERMINATED BY ','
-TRAILING NULLCOLS
-(
-alphafold_id SEQUENCE(MAX,1),
-uniprot_id,
-first_residue_index,
-last_residue_index,
-source_id,
-alphafold_version,
-external_database_release_id constant $extDbRlsId,
-modification_date constant \"$modDate\",
-user_read constant $userRead,
-user_write constant $userWrite,
-group_read constant $groupRead,
-group_write constant $groupWrite,
-other_read constant $otherRead,
-other_write constant $otherWrite,
-row_user_id constant $userId,
-row_group_id constant $groupId,
-row_project_id constant $projectId,
-row_alg_invocation_id constant $algInvocationId
-)\n";
-  close CONFIG;
+    return $count;
 }
 
 sub getConfig {
@@ -249,6 +286,32 @@ sub getConfig {
     }
     $self->{config}
 }
+
+
+sub error {
+  my ($self, $msg) = @_;
+  print STDERR "\nERROR: $msg\n";
+
+  foreach my $pid (@{$self->getActiveForkedProcesses()}) {
+    kill(9, $pid);
+  }
+
+  $self->SUPER::error($msg);
+}
+
+sub getActiveForkedProcesses {
+  my ($self) = @_;
+
+  return $self->{_active_forked_processes} || [];
+}
+
+sub addActiveForkedProcess {
+  my ($self, $pid) = @_;
+
+  push @{$self->{_active_forked_processes}}, $pid;
+}
+
+
 
 # this will be run at the end of the workflow
 # truncate the table and reload everything with sqlldr rather than undoing rows
@@ -264,5 +327,13 @@ sub undoTables {
 
   return ('ApiDB.AlphaFold');
 }
+
+sub getModificationDate() { $_[0]->{_modification_date} }
+sub setModificationDate {
+  my ($self) = @_;
+  my $modificationDate = strftime "%m-%d-%Y", localtime();
+  $self->{_modification_date} = $modificationDate;
+}
+
 
 1;

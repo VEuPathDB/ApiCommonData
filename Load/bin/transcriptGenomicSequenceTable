@@ -18,7 +18,7 @@ my ($gusConfigFile, $orgAbbrev, $projectId, $schema, $mode);
 	    "schema=s" => \$schema,
             "mode=s" => \$mode);  # load or delete
 
-my $TABLENAME = "TranscriptGenomicSequence";
+my $TABLENAME = "TranscriptGenomicSequence_p";
 
 my @properties = ();
 my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
@@ -45,7 +45,7 @@ sub populateChildTable {
   my ($dbh, $schema, $projectId, $orgAbbrev) = @_;
 
   my $genomicSequenceSql = "select s.source_id, s.sequence
-      from $schema.genomicsequencesequence s
+      from $schema.genomicsequencesequence_p s
       where s.org_abbrev = '$orgAbbrev'
       order by source_id";
 
@@ -55,7 +55,7 @@ sub populateChildTable {
      , tl.end_max
      , tl.is_reversed
 FROM apidb.transcriptlocation tl
-   , $schema.geneattributes ga
+   , $schema.geneattributes_p ga
    , dots.transcript t
 WHERE t.na_feature_id  = tl.na_feature_id
 AND t.parent_id = ga.na_feature_id
@@ -127,9 +127,9 @@ sub insertTranscriptSequence {
 sub deleteRows {
   my ($dbh, $schema, $orgAbbrev) = @_;
 
-  my $rows = $dbh->do("delete from ${schema}.TranscriptGenomicSequence where org_abbrev = '$orgAbbrev'");
+  my $rows = $dbh->do("delete from ${schema}.TranscriptGenomicSequence_p where org_abbrev = '$orgAbbrev'");
 
-  print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence\n";
+  print STDERR "Deleted $rows rows from ${schema}.TranscriptGenomicSequence_p\n";
   $dbh->commit();
 }
 

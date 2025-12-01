@@ -59,7 +59,7 @@ my $u = $gusProp->{props}->{databaseLogin};
 my $pw = $gusProp->{props}->{databasePassword};
 my $dsn = $gusProp->{props}->{dbiDsn};
 
-my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+my $dbh = DBI->connect($dsn, $u, $pw, {RaiseError => 1}) or die DBI::errstr;
 
 my $fileTranslator = eval { 
   GUS::Community::FileTranslator->new($xmlFile, $logFile);

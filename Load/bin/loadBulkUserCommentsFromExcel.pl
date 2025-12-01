@@ -145,8 +145,8 @@ while(my ($k, $v) = each %hash) {
 SELECT gf.source_id, bfmv.start_min, bfmv.end_max, bfmv.strand,
        etb.name, etr.version, bfmv.project_id,
        bfmv.species as organism, bfmv.sequence_id as contig
-FROM   DoTS.GeneFeature gf, webready.GeneAttributes bfmv,
-       webready.GeneID gi, DoTS.ExternalNASequence nas,
+FROM   DoTS.GeneFeature gf, webready.GeneAttributes_p bfmv,
+       webready.GeneId_p gi, DoTS.ExternalNASequence nas,
        SRes.ExternalDatabase etb, SRes.ExternalDatabaseRelease etr
 WHERE  gf.na_sequence_id = nas.na_sequence_id
    AND gf.source_id = bfmv.source_id
@@ -214,19 +214,19 @@ foreach(@comments) {
 
   print "$source_id\nLocation: $location_string\nHeadline: $headline\nContent: $content\nCategory: $category\nAssociated genes:  $associated_genes\nPMID: $pmid\nGenBank: $genbank_acc\nOther authors: @other_authors\nSeq:$seq\n\n ";
 
-  my $sql = "SELECT userlogins5.comments_pkseq.nextval as comment_id from dual";
+  my $sql = "SELECT usercomments.comments_pkseq.nextval as comment_id from dual";
   my $sth = $userDb->prepare($sql);
   $sth->execute;
   my ($comment_id) = $sth->fetchrow_array;
 
-  my $sql = "SELECT userlogins5.external_databases_pkseq.nextval as external_database_id from dual";
+  my $sql = "SELECT usercomments.external_databases_pkseq.nextval as external_database_id from dual";
   my $sth = $userDb->prepare($sql);
   $sth->execute;
   my ($external_database_id) = $sth->fetchrow_array;
 
 
   $sql =<<EOL;
-INSERT INTO userlogins5.comments (comment_id, email, comment_date, 
+INSERT INTO usercomments.comments (comment_id, email, comment_date, 
                                 comment_target_id, stable_id, conceptual, 
                                 project_name, project_version, headline, 
                                 review_status_id, content, location_string, 
@@ -240,21 +240,21 @@ EOL
   $userDb->do($sql) if $commit;
 
   $sql =<<EOL;
-INSERT INTO userlogins5.locations 
+INSERT INTO usercomments.locations 
        (comment_id, location_id, location_start, location_end, is_reverse, coordinate_type) 
-VALUES ($comment_id, userlogins5.locations_pkseq.nextval, $start, $end, $is_reverse, 'genome')
+VALUES ($comment_id, usercomments.locations_pkseq.nextval, $start, $end, $is_reverse, 'genome')
 EOL
   $userDb->do($sql) if $commit;
 
   $sql =<<EOL;
-INSERT INTO userlogins5.external_databases 
+INSERT INTO usercomments.external_databases 
     (external_database_id, external_database_name, external_database_version) 
     VALUES ($external_database_id, '$db_name', '$db_version')
 EOL
   $userDb->do($sql) if $commit;
 
   $sql =<<EOL;
-INSERT INTO userlogins5.comment_external_database 
+INSERT INTO usercomments.comment_external_database 
      (external_database_id, comment_id) 
 VALUES ($external_database_id, $comment_id)
 EOL
@@ -263,9 +263,9 @@ EOL
 
 
   $sql =<<EOL;
-INSERT INTO userlogins5.CommentTargetCategory 
+INSERT INTO usercomments.CommentTargetCategory 
        (comment_target_category_id, comment_id, target_category_id )
-VALUES (userlogins5.commentTargetCategory_pkseq.nextval, $comment_id, $target_category_id)
+VALUES (usercomments.commentTargetCategory_pkseq.nextval, $comment_id, $target_category_id)
 EOL
   $userDb->do($sql) if $commit;
 
@@ -277,9 +277,9 @@ EOL
     foreach my $gene (@genes) {
       $gene =~ s/\s+//g;
       $sql =<<EOL;
-INSERT INTO userlogins5.CommentStableId 
+INSERT INTO usercomments.CommentStableId 
         (comment_stable_id, stable_id, comment_id)
-VALUES (userlogins5.commentStableId_pkseq.nextval, '$gene', $comment_id)
+VALUES (usercomments.commentStableId_pkseq.nextval, '$gene', $comment_id)
 EOL
       $userDb->do($sql) if $commit;
     }
@@ -294,9 +294,9 @@ EOL
     foreach my $id (@ids) {
   
       $sql =<<EOL;
-INSERT INTO userlogins5.CommentReference 
+INSERT INTO usercomments.CommentReference 
         (comment_reference_id, source_id, database_name, comment_id)
-VALUES (userlogins5.commentReference_pkseq.nextval, $id, 'pubmed', $comment_id)
+VALUES (usercomments.commentReference_pkseq.nextval, $id, 'pubmed', $comment_id)
 EOL
       $userDb->do($sql) if $commit;
     }
@@ -305,9 +305,9 @@ EOL
   if($doi) {
   
   $sql =<<EOL;
-INSERT INTO userlogins5.CommentReference 
+INSERT INTO usercomments.CommentReference 
         (comment_reference_id, source_id, database_name, comment_id)
-VALUES (userlogins5.commentReference_pkseq.nextval, '$doi', 'doi', $comment_id)
+VALUES (usercomments.commentReference_pkseq.nextval, '$doi', 'doi', $comment_id)
 EOL
     $userDb->do($sql) if $commit;
   }
@@ -316,9 +316,9 @@ EOL
   
 	foreach(@other_authors) {
   $sql =<<EOL;
-INSERT INTO userlogins5.CommentReference 
+INSERT INTO usercomments.CommentReference 
         (comment_reference_id, source_id, database_name, comment_id)
-VALUES (userlogins5.commentReference_pkseq.nextval, '$_', 'author', $comment_id)
+VALUES (usercomments.commentReference_pkseq.nextval, '$_', 'author', $comment_id)
 EOL
     $userDb->do($sql) if $commit;
 		}
@@ -328,9 +328,9 @@ EOL
   if($genbank_acc) {
   
   $sql =<<EOL;
-INSERT INTO userlogins5.CommentReference 
+INSERT INTO usercomments.CommentReference 
         (comment_reference_id, source_id, database_name, comment_id)
-VALUES (userlogins5.commentReference_pkseq.nextval, '$genbank_acc', 'genbank', $comment_id)
+VALUES (usercomments.commentReference_pkseq.nextval, '$genbank_acc', 'genbank', $comment_id)
 EOL
     $userDb->do($sql) if $commit;
   }
@@ -340,11 +340,11 @@ EOL
 
   if($seq) {
   $sql =<<EOL;
-INSERT INTO userlogins5.CommentSequence (comment_sequence_id, sequence, comment_id)
-VALUES (userlogins5.commentSequence_pkseq.nextval, ?, ?)
+INSERT INTO usercomments.CommentSequence (comment_sequence_id, sequence, comment_id)
+VALUES (usercomments.commentSequence_pkseq.nextval, ?, ?)
 EOL
 
-#VALUES (userlogins5.commentSequence_pkseq.nextval, '$seq', $comment_id)
+#VALUES (usercomments.commentSequence_pkseq.nextval, '$seq', $comment_id)
 
    my $sth = $userDb->prepare($sql);
     $sth->bind_param(1, $seq,  {ora_type => ORA_CLOB});
@@ -357,7 +357,7 @@ EOL
 	}
 
 =c
-INSERT INTO userlogins5.CommentFile (file_id, name, notes, comment_id)
+INSERT INTO usercomments.CommentFile (file_id, name, notes, comment_id)
 VALUES (?, ?, ?, ?)");
 
 =cut

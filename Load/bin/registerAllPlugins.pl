@@ -23,6 +23,7 @@ my $config = GUS::Supported::GusConfig->new($gusConfig);
 my $dbh = DBI->connect( $config->getDbiDsn(),
                         $config->getDatabaseLogin(),
                         $config->getDatabasePassword(),
+                        {RaiseError => 1}
     )
     || die "unable to open db handle to ", $config->getDbiDsn;
 

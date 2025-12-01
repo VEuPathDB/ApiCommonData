@@ -127,7 +127,7 @@ close OUT;
 
 sub getGroups {
     my ($dbh) = @_;
-    my $sql = "SELECT DISTINCT(group_name) FROM webready.proteinsequencegroup";
+    my $sql = "SELECT DISTINCT(group_name) FROM webready.ProteinSequence_pgroup";
     my $sh = $dbh->prepare($sql);
     $sh->execute();
     while(my ($groupId) = $sh->fetchrow_array()) {

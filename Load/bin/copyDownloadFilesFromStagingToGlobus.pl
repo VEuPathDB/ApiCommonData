@@ -32,7 +32,7 @@ my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, [], 1);
 my $user = $gusconfig->{props}->{databaseLogin};
 my $pass = $gusconfig->{props}->{databasePassword};
 my $dsn  = $gusconfig->{props}->{dbiDsn};
-my $dbh  = DBI->connect($dsn, $user, $pass) or die DBI::errstr;
+my $dbh  = DBI->connect($dsn, $user, $pass, {RaiseError => 1}) or die DBI::errstr;
 
 my $sql =<<SQL;
 SELECT distinct o.PROJECT_NAME, w.version, o.NAME_FOR_FILENAMES, 

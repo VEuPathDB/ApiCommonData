@@ -18,7 +18,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
-    <qualifier name="protein"      ignore="true"/>
     <qualifier name="_AED" ignore="true"/>
     <qualifier name="_QI" ignore="true"/>
     <qualifier name="_eAED" ignore="true"/>
@@ -26,6 +25,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="annot" ignore="true"/>
     <qualifier name="anticodon"  ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CGSNL" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
     <qualifier name="coverage" ignore="true"/>
     <qualifier name="covescore" ignore="true"/>
@@ -34,12 +34,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
+    <qualifier name="exception" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="fmax_partial" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
@@ -60,11 +61,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note" ignore="true"/>
     <qualifier name="old_locus_tag"         ignore="true"/>
     <qualifier name="Ontology_term"         ignore="true"/>
+    <qualifier name="original_prot_length"         ignore="true"/>
     <qualifier name="orthologue"         ignore="true"/>
     <qualifier name="orf_classification"         ignore="true"/>
-    <qualifier name="original_prot_length"         ignore="true"/>
+    <qualifier name="Oryzabase"         ignore="true"/>
     <qualifier name="ratt_ortholog" ignore="true"/>
     <qualifier name="parentID"          ignore="true"/>
+    <qualifier name="part"          ignore="true"/>
     <qualifier name="partial_mapping"          ignore="true"/>
     <qualifier name="portal_id"          ignore="true"/>
     <qualifier name="primary_name"          ignore="true"/>
@@ -73,11 +76,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product_source" ignore="true"/>
     <qualifier name="product_evidence" ignore="true"/>
     <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="protein"      ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
     <qualifier name="Target" ignore="true"/>
+    <qualifier name="Transcript"         ignore="true"/>
     <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="transcriptId"         ignore="true"/>
     <qualifier name="type" ignore="true"/>
@@ -85,13 +90,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
-    <qualifier name="pseudo"       ignore="true"/>
     <qualifier name="pseudogene"       ignore="true"/>
-    <qualifier name="isPseudo"       ignore="true"/>
-    <qualifier name="Partial"      ignore="true"/>
-    <qualifier name="partial"      ignore="true"/>
     <qualifier name="transl_table" ignore="true"/>
     <qualifier name="valid_ORFs" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"     handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="mRNA" so="mRNA">
@@ -109,21 +114,19 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="catalyzing" ignore="true"/>
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
+    <qualifier name="coverage" ignore="true"/>
     <qualifier name="date" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="DBxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
+    <qualifier name="exception" ignore="true"/>
+    <qualifier name="exosome" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
-    <qualifier name="coverage" ignore="true"/>
-    <qualifier name="identity" ignore="true"/>
-    <qualifier name="indels" ignore="true"/>
-    <qualifier name="involved" ignore="true"/>
-    <qualifier name="matches" ignore="true"/>
-    <qualifier name="mismatches" ignore="true"/>
-    <qualifier name="missing_stop_codon" ignore="true"/>
-    <qualifier name="unknowns" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_ebi_biotype" ignore="true"/>
     <qualifier name="gene_description" ignore="true"/>
@@ -131,20 +134,22 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="low_identity" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="kegg" ignore="true"/>
-    <qualifier name="exosome" ignore="true"/>
-    <qualifier name="THO" ignore="true"/>
+    <qualifier name="identity" ignore="true"/>
+    <qualifier name="indels" ignore="true"/>
+    <qualifier name="inference" ignore="true"/>
     <qualifier name="interprosca" ignore="true"/>
     <qualifier name="interproscan" ignore="true"/>
+    <qualifier name="involved" ignore="true"/>
+    <qualifier name="kegg" ignore="true"/>
     <qualifier name="length" ignore="true"/>
-    <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Loading_note" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="low_identity" ignore="true"/>
+    <qualifier name="matches" ignore="true"/>
+    <qualifier name="mismatches" ignore="true"/>
+    <qualifier name="missing_stop_codon" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
     <qualifier name="matches_ref_protein" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
@@ -156,6 +161,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="orig_protein_id" ignore="true"/>
     <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="part" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="primary_name" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -169,9 +175,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="stop_codon_redefined_as_selenocysteine" ignore="true"/>
     <qualifier name="Target" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="THO" ignore="true"/>
     <qualifier name="track" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcriptId" ignore="true"/>
+    <qualifier name="unknowns" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="valid_ORF" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
@@ -202,25 +210,25 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="evalue" ignore="true"/>
-    <qualifier name="gene_ebi_biotype" ignore="true"/>
     <qualifier name="gc" ignore="true"/>
-    <qualifier name="model_acc" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="GO" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="gene_ebi_biotype" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="model_acc" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -259,27 +267,28 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="description" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
+    <qualifier name="exception" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
     <qualifier name="gc_content" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_ebi_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="has_internal_stop" ignore="true"/>
     <qualifier name="isotype" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -312,34 +321,35 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="copy_num_ID"         ignore="true"/>
     <qualifier name="coverage"         ignore="true"/>
-    <qualifier name="extra_copy_number"         ignore="true"/>
-    <qualifier name="gene_ebi_biotype"         ignore="true"/>
-    <qualifier name="low_identity"         ignore="true"/>
-    <qualifier name="partial_mapping"         ignore="true"/>
-    <qualifier name="sequence_ID"         ignore="true"/>
     <qualifier name="date" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
-    <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="extra_copy_number"         ignore="true"/>
+    <qualifier name="gene_ebi_biotype"         ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="low_identity"         ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="partial_mapping"         ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
+    <qualifier name="sequence_ID"         ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
     <qualifier name="Target" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
@@ -357,6 +367,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID"             column="source_id"/>
     <qualifier name="Parent" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
@@ -378,27 +389,28 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
     <qualifier name="coverage" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="date" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_ebi_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="low_identity" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="low_identity" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -439,24 +451,23 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="low_identity" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncRNA_class" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
@@ -496,22 +507,21 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="GO" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="low_identity" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="GeneType" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="low_identity" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
@@ -547,21 +557,20 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -596,21 +605,64 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="name" ignore="true"/>
+    <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="proteinId" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="start_range" ignore="true"/>
+    <qualifier name="Target" ignore="true"/>
+    <qualifier name="tag" ignore="true"/>
+    <qualifier name="track" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcriptId" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="WebId" ignore="true"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="primary_transcript" so="transcript">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Aliases" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="date" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -644,27 +696,26 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
-    <qualifier name="Target" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="Target" ignore="true"/>
     <qualifier name="track" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcriptId" ignore="true"/>
@@ -692,21 +743,20 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -740,21 +790,20 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -789,21 +838,20 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -837,21 +885,20 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="GeneType" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -884,51 +931,51 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon"  ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
     <qualifier name="codons" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
     <qualifier name="coverage" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
     <qualifier name="ebi_biotype" ignore="true"/>
     <qualifier name="end_range" ignore="true"/>
+    <qualifier name="exception"         ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="extra_copy_number"         ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="isotype" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon"  ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="product_source" ignore="true"/>
     <qualifier name="product_evidence" ignore="true"/>
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
@@ -938,28 +985,29 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="codons" ignore="true"/>
     <qualifier name="copy_num_ID"          ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
     <qualifier name="coverage"          ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="ebi_biotype" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="extra_copy_number"         ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="biotype" ignore="true"/>
-    <qualifier name="codons" ignore="true"/>
-    <qualifier name="description" ignore="true"/>
-    <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="db_xref" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="ebi_biotype" ignore="true"/>
-    <qualifier name="end_range" ignore="true"/>
-    <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
@@ -967,20 +1015,19 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="nb_exon" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="product_source" ignore="true"/>
     <qualifier name="product_evidence" ignore="true"/>
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
@@ -990,28 +1037,25 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="product_source" ignore="true"/>
@@ -1019,6 +1063,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
     <qualifier name="partial"      handler="api"    method="setPartial"/>
@@ -1027,33 +1074,34 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="RNase_MRP_RNA_gene" so="RNase_MRP_RNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="product" ignore="true"/>
-    <qualifier name="product_source" ignore="true"/>
     <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
     <qualifier name="partial"      handler="api"    method="setPartial"/>
@@ -1062,45 +1110,48 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="biotype"         ignore="true"/>
     <qualifier name="copy_num_ID"         ignore="true"/>
     <qualifier name="coverage"         ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="Dbxref"         ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
     <qualifier name="extra_copy_number"         ignore="true"/>
-    <qualifier name="low_identity"         ignore="true"/>
-    <qualifier name="partial_mapping"         ignore="true"/>
-    <qualifier name="sequence_ID"         ignore="true"/>
     <qualifier name="ebi_biotype"         ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="biotype"         ignore="true"/>
-    <qualifier name="description" ignore="true"/>
-    <qualifier name="description" ignore="true"/>
-    <qualifier name="LocusTag" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="low_identity"         ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="partial_mapping"         ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="product_source" ignore="true"/>
     <qualifier name="product_evidence" ignore="true"/>
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="sequence_ID"         ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
     <qualifier name="partial"      handler="api"    method="setPartial"/>
@@ -1110,31 +1161,38 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="part" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
   </feature>
  
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
     <qualifier name="coverage" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="ebi_biotype"         ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="extra_copy_number"         ignore="true"/>
     <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
@@ -1142,10 +1200,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -1156,6 +1211,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="reason4rescue" ignore="true"/>
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
     <qualifier name="partial"      handler="api"    method="setPartial"/>
@@ -1164,24 +1222,27 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="ncRNA_gene" so="ncRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
     <qualifier name="coverage" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="end_range" ignore="true"/>
-    <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
@@ -1189,15 +1250,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="low_identity" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncRNA_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="tag" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="part" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="product_source" ignore="true"/>
@@ -1205,8 +1262,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
+    <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
@@ -1216,24 +1278,25 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
     <qualifier name="copy_num_ID" ignore="true"/>
     <qualifier name="coverage" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
-    <qualifier name="end_range" ignore="true"/>
-    <qualifier name="gbkey" ignore="true"/>
-    <qualifier name="gene_biotype" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
@@ -1241,14 +1304,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="low_identity" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="ncRNA_class" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="partial_mapping" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="product_source" ignore="true"/>
@@ -1256,9 +1315,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product_transfer_confi" ignore="true"/>
     <qualifier name="reason4removal" ignore="true"/>
     <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="version" ignore="true"/>
     <qualifier name="WebId" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
@@ -1271,13 +1334,16 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="biotype" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
     <qualifier name="version" ignore="true"/>
@@ -1289,22 +1355,26 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
-    <qualifier name="description" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gbkey"         ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
-    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
     <qualifier name="version" ignore="true"/>
@@ -1320,18 +1390,22 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gbkey"         ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
-    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
     <qualifier name="version" ignore="true"/>
@@ -1347,18 +1421,20 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gbkey"         ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
-    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
     <qualifier name="version" ignore="true"/>
@@ -1379,13 +1455,16 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
+    <qualifier name="tag" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
     <qualifier name="version" ignore="true"/>
@@ -1406,12 +1485,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
@@ -1445,21 +1526,47 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID" column="source_id"/>
     <qualifier name="Alias"              ignore="true"/>
     <qualifier name="assembly_name"              ignore="true"/>
-    <qualifier name="description"              ignore="true"/>
+    <qualifier name="blastn_file"            ignore="true"/>
+    <qualifier name="colour"                 ignore="true"/>
+    <qualifier name="comment_Nterm"     handler="api" method="commentNterm"/>
+    <qualifier name="curation"          ignore="true"/>
     <qualifier name="Dbxref"              ignore="true"/>
+    <qualifier name="description"              ignore="true"/>
+    <qualifier name="fasta_file"             ignore="true"/>
+    <qualifier name="FEAT_NAME"              ignore="true"/>
     <qualifier name="gbkey"              ignore="true"/>
+    <qualifier name="gene"              ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
     <qualifier name="Name"              ignore="true"/>
     <qualifier name="Note"              ignore="true"/>
     <qualifier name="note"              ignore="true"/>
-    <qualifier name="curation"          ignore="true"/>
     <qualifier name="rpt_family"        column="rpt_family"/>
     <qualifier name="rpt_type"          handler="api" method="rptType"/>
     <qualifier name="rpt_unit_seq"      handler="api" method="rptUnit"/>
-    <qualifier name="comment_Nterm"     handler="api" method="commentNterm"/>
+    <qualifier name="satellite"              ignore="true"/>
+  </feature> 
+
+  <feature name="direct_repeat" table="DoTS::Repeats" so="direct_repeat">
+    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Alias"              ignore="true"/>
+    <qualifier name="assembly_name"              ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="colour"                 ignore="true"/>
+    <qualifier name="comment_Nterm"     handler="api" method="commentNterm"/>
+    <qualifier name="curation"          ignore="true"/>
+    <qualifier name="description"              ignore="true"/>
+    <qualifier name="Dbxref"              ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
     <qualifier name="FEAT_NAME"              ignore="true"/>
+    <qualifier name="gbkey"              ignore="true"/>
+    <qualifier name="gene"              ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="Name"              ignore="true"/>
+    <qualifier name="Note"              ignore="true"/>
+    <qualifier name="note"              ignore="true"/>
+    <qualifier name="rpt_family"        column="rpt_family"/>
+    <qualifier name="rpt_type"          handler="api" method="rptType"/>
+    <qualifier name="rpt_unit_seq"      handler="api" method="rptUnit"/>
     <qualifier name="satellite"              ignore="true"/>
   </feature> 
 
