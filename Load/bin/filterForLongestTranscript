@@ -61,7 +61,22 @@ sub process_fasta {
     open(my $outfh, '>', $out) or die "Cannot write $out: $!\n";
 
     foreach my $gene (sort keys %genes) {
-        print $outfh $genes{$gene}->{header}, "\n", $genes{$gene}->{seq}, "\n";
+
+        my $h = $genes{$gene}->{header};
+        my $seq = $genes{$gene}->{seq};
+
+        # Extract metadata
+        my ($gene_id)      = $h =~ /gene=([^\s]+)/;
+        my ($transcript_id)= $h =~ /transcript=([^\s]+)/;
+        my ($length)       = $h =~ /length=([^\s]+)/;
+
+        # Build new header
+        my $new_header = ">$gene_id";
+        $new_header .= " length=$length"       if defined $length;
+        $new_header .= " transcript=$transcript_id" if defined $transcript_id;
+        $new_header .= " gene=$gene_id";
+
+        print $outfh $new_header, "\n", $seq, "\n";
     }
     close($outfh);
 }
@@ -71,7 +86,7 @@ sub store_record {
     return unless $header && $seq;
 
     my ($gene_id) = $header =~ /gene=([^\s]+)/;
-    # gene= currently consistent across all fastas, core and peripheral, but could change
+
     unless ($gene_id) {
         warn " No gene= found in header: $header\n";
         return;
