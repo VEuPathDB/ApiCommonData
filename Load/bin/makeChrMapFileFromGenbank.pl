@@ -7,7 +7,7 @@ use strict;
 
 my $input = $ARGV[0];
 my ($id, $vId, $chr, %chrs);
-open (IN, $input) || die "can not open input file to read.\n";
+open (IN, $input) || die "Can not open the genbank file, '$input' to read\nOr missing the argument input file\n  usage: makeChrMapFileFromGenbank.pl whole_genome.gbf > ../final/chromosomeMap.txt\n";
 while (<IN>)
 {
 	if ($_ =~ /^LOCUS\s+(\S+)/) {
