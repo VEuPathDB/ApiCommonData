@@ -204,7 +204,7 @@ sub loadClusters {
 
         foreach my $geneFeature (@geneFeatures) {
             # Use BioPerl's overlaps method to check for overlap
-            if ($clusterFeature->overlaps($geneFeature)) {
+            if ($clusterFeature->overlaps($geneFeature) && $clusterFeature->seq_id() eq $geneFeature->seq_id()) {
                 my ($geneGusId) = $geneFeature->get_tag_values('gus_id');
 
                 # Create association in AntismashClusterFeature table
