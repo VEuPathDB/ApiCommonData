@@ -133,6 +133,10 @@ sub loadClusters {
 
     my ($clusterCount, $featureCount) = (0, 0);
 
+    # Collect BioPerl feature objects for later overlap analysis
+    my @clusterFeatures;
+    my @geneFeatures;
+
     while (my $feature = $gffIo->next_feature()) {
         my $primaryTag = $feature->primary_tag();
 
@@ -154,6 +158,10 @@ sub loadClusters {
 								       });
             $row_cluster->submit();
             $clusterCount++;
+
+            # Store GUS ID as a tag in the BioPerl feature object
+            $feature->add_tag_value('gus_id', $row_cluster->getId());
+            push @clusterFeatures, $feature;
         }
         elsif ($primaryTag eq 'gene') {
             my ($gene_kind) = $feature->has_tag('gene_kind')
@@ -174,6 +182,10 @@ sub loadClusters {
 									   });
 		$row_features->submit();
 		$featureCount++;
+
+                # Store GUS ID as a tag in the BioPerl feature object
+                $feature->add_tag_value('gus_id', $row_features->getId());
+                push @geneFeatures, $feature;
             }
         }
 
@@ -182,10 +194,37 @@ sub loadClusters {
     }
 
     close $fh;
+
+    # Now iterate over protoclusters and find overlapping gene features
+    my $clusterFeatureCount = 0;
+    $self->log("Finding overlaps between $clusterCount clusters and $featureCount gene features");
+
+    foreach my $clusterFeature (@clusterFeatures) {
+        my ($clusterGusId) = $clusterFeature->get_tag_values('gus_id');
+
+        foreach my $geneFeature (@geneFeatures) {
+            # Use BioPerl's overlaps method to check for overlap
+            if ($clusterFeature->overlaps($geneFeature) && $clusterFeature->seq_id() eq $geneFeature->seq_id()) {
+                my ($geneGusId) = $geneFeature->get_tag_values('gus_id');
+
+                # Create association in AntismashClusterFeature table
+                my $clusterFeatureRow = GUS::Model::ApiDB::AntismashClusterFeature->new({
+                    antismash_cluster_id => $clusterGusId,
+                    antismash_feature_id => $geneGusId
+                });
+                $clusterFeatureRow->submit();
+                $clusterFeatureCount++;
+            }
+        }
+
+        # Clear cache periodically
+        $self->undefPointerCache() if ($clusterFeatureCount % 500) == 0;
+    }
+
     $self->undefPointerCache();
 
-    $self->log("Inserted $clusterCount clusters and $featureCount features from $gffFile");
-    return { clusters => $clusterCount, features => $featureCount };
+    $self->log("Inserted $clusterCount clusters, $featureCount features, and $clusterFeatureCount cluster-feature associations from $gffFile");
+    return { clusters => $clusterCount, features => $featureCount, cluster_features => $clusterFeatureCount };
 }
 
 sub undoTables {
