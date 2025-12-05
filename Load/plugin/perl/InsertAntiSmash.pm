@@ -230,9 +230,10 @@ sub loadClusters {
 sub undoTables {
     my ($self) = @_;
 
-    return ('ApiDB.antiSmashCluster',
+    return (
+            'ApiDB.AntismashClusterFeature',
             'ApiDB.antiSmashFeature',
-            'ApiDB.AntismashClusterFeature'
+	    'ApiDB.antiSmashCluster'
            );
 }
 
