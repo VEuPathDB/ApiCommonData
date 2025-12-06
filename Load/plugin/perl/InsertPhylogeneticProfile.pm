@@ -17,7 +17,7 @@ my $argsDeclaration =
             descr          => 'ortholog groups file as produced by orthofinder',
             reqd           => 1,
             mustExist      => 1,
-	    format         => 'OG7_0001009: osa|ENS1222992 pfa|PF11_0844...',
+	        format         => 'OG7_0001009: osa|ENS1222992 pfa|PF11_0844...',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -63,11 +63,11 @@ my $documentation = { purpose          => $purpose,
 # ----------------------------------------------------------------------
 
 sub new {
-  my ($class) = @_;
-  my $self = {};
-  bless($self,$class);
+    my ($class) = @_;
+    my $self = {};
+    bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 4.0,
+    $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
@@ -79,59 +79,67 @@ sub new {
 # ======================================================================
 
 sub run {
-  my ($self) = @_;
+    my ($self) = @_;
 
-  my %allTaxa;
+    my %allTaxa;
 
-  my $sql = "select orthomcl_abbrev from ApiDB.Organism";
-  my $sth = $self->prepareAndExecute($sql);
+    my $sql = "select orthomcl_abbrev from ApiDB.Organism";
+    my $sth = $self->prepareAndExecute($sql);
 
-  while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
-      $allTaxa{$orthomclAbbrev} = 1;
-  }
-
-  my @allTaxaSorted = sort(keys(%allTaxa));
-
-  open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
-
-  my ($counter);
-  while (my $line = <FILE>) {
-    chomp($line);
-    my ($groupId, $membersString) = split(/\:\s/, $line);
-    my @members = split(/\s/, $membersString);
-
-    my %taxaInThisGroup;
-
-    foreach my $member (@members) {
-      # pfal|PF11_0987
-      my ($taxonCode, $sourceId) = split(/\|/, $member);
-      $taxaInThisGroup{$taxonCode} = 1;
+    while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
+	$allTaxa{$orthomclAbbrev} = 1;
     }
 
-    my @fullProfile;
+    my %proteinIdToOrthomclAbbrev;
 
-    foreach my $taxaCode (@allTaxaSorted) {
-      my $yesNo = $taxaInThisGroup{$taxaCode} ? 'Y' : 'N';
-      push(@fullProfile, "$taxaCode:$yesNo");
+    my $idSql = "select org.orthomcl_abbrev, aas.source_id from dots.aasequence aas, apidb.organism org where aas.taxon_id = org.taxon_id";
+    my $idSth = $self->prepareAndExecute($idSql);
+
+    while (my ($orthoAbbrev,$source_id) = $idSth->fetchrow_array()) {
+	$proteinIdToOrthomclAbbrev{$source_id} = $orthoAbbrev;
     }
 
-    my $profileString = join(':', @fullProfile);
+    my @allTaxaSorted = sort(keys(%allTaxa));
 
-    my $profile = GUS::Model::ApiDB::PhylogeneticProfile->new({source_id => $groupId, profile_string => $profileString});
-    $profile->submit();
+    open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
 
-    $counter++;
-    if ($counter % 5000 == 0) {
-      $self->log("Processed $counter lines from groupsFile");
-      $self->undefPointerCache();
+    my ($counter);
+    while (my $line = <FILE>) {
+	chomp($line);
+	my ($groupId, $membersString) = split(/\:\s/, $line);
+	my @members = split(/\s/, $membersString);
+
+	my %taxaInThisGroup;
+
+	foreach my $member (@members) {
+	    my $taxonCode = $proteinIdToOrthomclAbbrev{$member};
+	    $taxaInThisGroup{$taxonCode} = 1;
+	}
+
+	my @fullProfile;
+
+	foreach my $taxaCode (@allTaxaSorted) {
+	    my $yesNo = $taxaInThisGroup{$taxaCode} ? 'Y' : 'N';
+	    push(@fullProfile, "$taxaCode:$yesNo");
+	}
+
+	my $profileString = join(':', @fullProfile);
+
+	my $profile = GUS::Model::ApiDB::PhylogeneticProfile->new({source_id => $groupId, profile_string => $profileString});
+	$profile->submit();
+
+	$counter++;
+	if ($counter % 5000 == 0) {
+	    $self->log("Processed $counter lines from groupsFile");
+	    $self->undefPointerCache();
+	}
+
     }
-
-  }
 }
 
 sub undoTables {
-  my ($self) = @_;
-  return ('ApiDB.PhylogeneticProfile');
+    my ($self) = @_;
+    return ('ApiDB.PhylogeneticProfile');
 }
 
 1;
