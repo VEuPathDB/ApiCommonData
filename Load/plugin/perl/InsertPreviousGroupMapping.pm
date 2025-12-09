@@ -56,14 +56,14 @@ sub run {
     while (my $line = <$data>) {
 	chomp $line;
 
-        # Format is like "OG6_0000000    OG7_0000000:110/120 OG7_0000001:10/120"
-	my ($oldGroupId, $newGroupIdsLine) = split(/\t/, $line);
-	my @newGroupIds = split(/\s/, $newGroupIdsLine);
-	foreach my $newGroupIdInfo (@newGroupIds) {
+        # Format is like "OGR8r1_0013446OGR8r1_0013446:10/10 OG6r22_550323:1/1 OGR7_0012790:1/10"
+	my ($newGroupId, $oldGroupIdsLine) = split(/\t/, $line);
+	my @oldGroupIds = split(/\s/, $oldGroupIdsLine);
+	foreach my $oldGroupIdInfo (@oldGroupIds) {
 
-	    if ($newGroupIdInfo =~ /(OG\S+):(\d+)\/(\d+)/) {
-                # New group Id
-		my $newGroupId = $1;
+	    if ($oldGroupIdInfo =~ /(OG\S+):(\d+)\/(\d+)/) {
+                # Old group Id
+		my $oldGroupId = $1;
                 # Number of sequences from old group that are found in the new group
 		my $overlapCount = $2;
                 # Number of sequences in the old group
@@ -80,7 +80,7 @@ sub run {
 
 	    }
 	    else {
-		die "Improper new group info format: $newGroupIdInfo\n";
+		die "Improper new group info format: $oldGroupIdInfo\n";
 	    }
 	}
 
