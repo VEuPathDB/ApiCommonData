@@ -36,6 +36,7 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
  my $dbh = DBI->connect($gusconfig->getDbiDsn(),
                         $gusconfig->getDatabaseLogin(),
                         $gusconfig->getDatabasePassword(),
+                        {RaiseError => 1}
      )
     || die "Cannot connect to database:  " . $DBI::errstr;
 

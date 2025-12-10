@@ -31,7 +31,7 @@ my (
     $haveChromosome,
     $haveSupercontig,
     $haveContig,
-    $dbxrefVersion,
+#    $dbxrefVersion,
     $soTerm,
     $format,
     $secondaryAnnot,
@@ -64,7 +64,7 @@ my (
 	    'familyRepOrganismAbbrev' => \$familyRepOrganismAbbrev,
 	    'familyNcbiTaxonIds' => \$familyNcbiTaxonIds,
 	    'familyNameForFiles' => \$familyNameForFiles,
-	    'dbxrefVersion=s' => \$dbxrefVersion,
+#	    'dbxrefVersion=s' => \$dbxrefVersion,
 	    'soTerm' => \$soTerm,
 	    'format=s' => \$format,
 	    'secondaryAnnot=s' => \$secondaryAnnot,
@@ -305,10 +305,10 @@ printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'h
 
 printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
-print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
-printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i && $isEbiGenome !~ /^y/i);
+#print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
+#printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+#printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+#printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i && $isEbiGenome !~ /^y/i);
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 printRefStrainGenbankEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB
@@ -1060,16 +1060,16 @@ sub printLinesBasedProject { ## print several lines based on projectname
 sub usage {
   die
 "
-Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-01-30
-       printDatasetXmlFileToLoad.pl --organismAbbrev afumA1163 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-03-06
+Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB
+       printDatasetXmlFileToLoad.pl --organismAbbrev afumA1163 --excelFile organismExcelFile.txt --projectName FungiDB
                                     --format gff3 --sourceIdRegex '^>(\\S+)' --isfMappingFile genemRNAExonCDS2Gus.xml
-       printDatasetXmlFileToLoad.pl --organismAbbrev ngruNEG-M --excelFile organismExcelFile.txt --projectName AmoebaDB --dbxrefVersion 2020-03-17 --isEbiGenome y --ebiVersion build_49 --ebi2gusTag 101
+       printDatasetXmlFileToLoad.pl --organismAbbrev ngruNEG-M --excelFile organismExcelFile.txt --projectName AmoebaDB --isEbiGenome y --ebiVersion build_49 --ebi2gusTag 101
 
 where
   --organismAbbrev: required, the organism abbrev
   --excelFile: required, the excel file in .txt format that has all info of genome
   --projectName: required, project name, such as PlasmoDB, etc. in full name
-  --dbxrefVersion: required, the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
+#  --dbxrefVersion: the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot. No longer need
   --format: optional, the format of annotation, such as GenBank, GeneDB, and etc.
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
   --sourceIdRegex: optional, it is required if format is gff3 or fasta

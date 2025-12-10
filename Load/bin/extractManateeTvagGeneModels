@@ -47,7 +47,7 @@ if ($annotation) {
   $source = "working";
 }
 
-my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
+my $dbh = DBI->connect("dbi:mysql:$database", $user, $password, {RaiseError => 1})
   or die $DBI::errstr;
 
 if ($outfile) {

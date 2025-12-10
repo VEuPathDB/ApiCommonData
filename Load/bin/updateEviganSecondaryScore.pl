@@ -60,7 +60,7 @@ my $u = $gusconfig->{props}->{databaseLogin};
 my $pw = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 
-my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+my $dbh = DBI->connect($dsn, $u, $pw, {RaiseError => 1}) or die DBI::errstr;
 
 
 my $sql = "select gf.na_feature_id, gf.source_id, gf.score

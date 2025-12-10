@@ -42,7 +42,7 @@ unless ($taxonId) {
   die "You must supply a nonzero NCBI taxon id via the --taxonId argument";
 }
 
-my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
+my $dbh = DBI->connect("dbi:mysql:$database", $user, $password, {RaiseError => 1})
   or die $DBI::errstr;
 
 if ($outfile) {

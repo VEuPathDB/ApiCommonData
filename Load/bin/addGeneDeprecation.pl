@@ -55,7 +55,7 @@ my $u = $gusconfig->{props}->{databaseLogin};
 my $pw = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 
-my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+my $dbh = DBI->connect($dsn, $u, $pw, {RaiseError => 1}) or die DBI::errstr;
 my @gene_id;
 my $count = 0;
 my $id;

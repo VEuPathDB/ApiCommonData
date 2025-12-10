@@ -36,7 +36,8 @@ $fallbackSpecies = undef if (defined $fallbackSpecies && lc($fallbackSpecies) eq
 
 my $dbh = DBI->connect($gusconfig->getDbiDsn(),
 		       $gusconfig->getDatabaseLogin(),
-		       $gusconfig->getDatabasePassword());
+		       $gusconfig->getDatabasePassword(),
+		       {RaiseError => 1});
 $dbh->{AutoCommit} = 0;
 
 
