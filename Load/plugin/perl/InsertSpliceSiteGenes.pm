@@ -120,8 +120,10 @@ my %stopCodons = (TAG => 1,
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
+  my $codingSoTerms = ['protein_coding_gene'];
+  my $geneOrTranscriptFilter = 'gene';
 
-  my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, undef, undef, 1);
+  my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, $codingSoTerms, undef, $geneOrTranscriptFilter);
 
   my $sh = $dbh->prepare("select sequence from dots.splicednasequence where source_id = ?");
 
@@ -135,6 +137,7 @@ my %stopCodons = (TAG => 1,
   my $logCount = 0;
 
   foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
+    next unless $geneSourceId eq 'Tb927.1.480';
 
     my $geneHash = $geneModelLocations->getGeneModelHashFromGeneSourceId($geneSourceId);
 
@@ -154,12 +157,12 @@ my %stopCodons = (TAG => 1,
     next unless($maxEnd < $nextStartMinOrSeqEnd && $minStart > $lastEndMaxOrSeqStart); # SKIP where several genes overlap
 
     my $collection = $spliceSiteCollections->{$naSequenceId};
+
     next unless($collection);
 
 
-    
-
     my ($subsetStart, $subsetEnd) = &findSubsetLocs($strand, $experimentType, $minStart, $maxEnd, $lastEndMaxOrSeqStart, $nextStartMinOrSeqEnd);
+
 
 
     my $collectionStrand;
