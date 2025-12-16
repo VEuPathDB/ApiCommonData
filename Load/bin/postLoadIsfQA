@@ -1,25 +1,4 @@
 #!/usr/bin/perl
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | broken
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | fixed
-#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -664,68 +643,6 @@ where
 
 ";
 }
-
-q{
-##### the list to check #########
-
-DONE -- 1. select * from dots.genefeature where external_database_release_id=374 and source_id IS NULL;
-DONE -- 2. select source_id, count(source_id) from dots.genefeature where external_database_release_id=374 group by source_id having (count(source_id)>1);
-DONE -- 3. select distinct name, count(*) from dots.genefeature where external_database_release_id=358 group by name;
-DONE -- 4. select count(*) from DOTS.genefeature where external_database_release_id=358;
-DONE -- 5. select distinct is_pseudo, count(*) from dots.genefeature where external_database_release_id=358 and name like 'coding_gene' group by is_pseudo;
-DONE -- 6. select distinct is_partial, count(*) from dots.genefeature where external_database_release_id=358 and name like 'coding_gene' group by is_partial;
-
-DONE -- 7. select * from dots.externalnasequence where external_database_release_id=358;
-DONE -- 8. select sum(length) from dots.externalnasequence where external_database_release_id=358;
-
-DONE -- 9. select * from dots.translatedaasequence where external_database_release_id=358;
-DONE -- 10. select count(*) from dots.translatedaafeature where external_database_release_id=358;
-DONE -- 12. select * from dots.translatedaafeature where external_database_release_id=358 and translation_stop is null;
-DONE -- 13. select * from dots.translatedaafeature where external_database_release_id=358 and translation_start < 0;
-
-DONE -- 14. select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf 
-where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and ef.coding_end is not null and gf.name not like 'pseudo_gene';
-
-DONE in 1 -- 15. select * from dots.translatedaafeature where external_database_release_id=358 and source_id is null;
-DONE in 1 -- 16. select * from dots.translatedaasequence where external_database_release_id=358 and source_id is null;
-
-DONE -- 17. select ens.na_sequence_id, nl.na_feature_id, ens.source_id, ens.length, nl.end_max 
-from dots.externalnasequence ens, dots.genefeature gf, dots.nalocation nl 
-where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=ens.na_sequence_id 
-and nl.end_max > ens.length and ens.external_database_release_id=358;
-
-DONE in 1 -- 18. select * from dots.exonfeature where external_database_release_id=358 and source_id IS NULL;
-DONE in 2 -- 19. select source_id, count(source_id) from dots.exonfeature where external_database_release_id=348 group by source_id having (count(source_id)>1);
-
-DONE -- 20. select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl
-where t.na_feature_id=rfe.rna_feature_id
-and nl.na_feature_id=rfe.exon_feature_id
-group by t.source_id, nl.start_min, nl.end_max having count(*)>1;
-
-## to check if there is duplicated exons, it happens in TriTrypDB
-DONE -- 21. select gf.source_id, ef.coding_start, ef.coding_end, ef.name, ef.source_id, nl.start_min, nl.end_max 
-from dots.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl
-where gf.na_feature_id=ef.parent_id and ef.na_feature_id=nl.na_feature_id
-and gf.source_id like 'PYYM_0902200%' and gf.external_database_release_id=358;
-
-DONE -- 22. select count(*) from dots.Repeats where external_database_release_id=358;
-DONOTNEED -- 23. select distinct na_sequence_id, count(na_sequence_id) from dots.Repeats where external_database_release_id=358 group by na_sequence_id;
-
-DONE -- 24. select count(*) from dots.ScaffoldGapFeature where external_database_release_id=358;
-
-DONE -- 25. select count(*) from DOTS.source where external_database_release_id=358;
-
-DONE -- 26. select * from dots.Miscellaneous where external_database_release_id=358;
-
-TODO -- 27. check if the UTRs is inside the CDS or there is any overlapping exons for Bug #13296
-
-## to check if there is overlap exons
-DONE -- 28. select gf.source_id, ef.source_id, nl.start_min, nl.end_max
-from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
-where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
-and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId'
-
-};
 
 
 sub getTafAAFeatureIds {
