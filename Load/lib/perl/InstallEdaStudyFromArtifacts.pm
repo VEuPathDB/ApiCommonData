@@ -524,7 +524,7 @@ sub bulkLoadTablePostgres {
                                              _password => $self->getDbPass(),
                                              _database => $self->getDbName(),
                                              _hostName => $fullHost,
-                                             _quiet => 0,
+                                             _quiet => 1,
                                              _infile_name => $dataFileName,
                                             });
   $psqlObj->setNullValue('');
