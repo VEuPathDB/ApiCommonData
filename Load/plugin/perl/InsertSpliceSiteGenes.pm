@@ -137,8 +137,6 @@ my %stopCodons = (TAG => 1,
   my $logCount = 0;
 
   foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
-    next unless $geneSourceId eq 'Tb927.1.480';
-
     my $geneHash = $geneModelLocations->getGeneModelHashFromGeneSourceId($geneSourceId);
 
     my $strand = $geneHash->{strand};
