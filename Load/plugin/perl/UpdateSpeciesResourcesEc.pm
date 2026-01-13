@@ -128,6 +128,7 @@ SQL
         #Remove known suffixes instead of splitting on "_"
         $currentFullAbbrev =~ s/_(orthomclProteome_RSRC
                               |orthomclPeripheral
+                              |orthomclPeripheralProteome_RSRC
                               |PeripheralFrom.*
                               |primary_genome_RSRC)$//x;
 
