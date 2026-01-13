@@ -246,7 +246,6 @@ sub loadOrthoResource {
 
     my $numRows=0;
     foreach my $abbrev (keys %{$species}) {
-	$abbrev = "rhiz" if ($abbrev eq "rirr"); # this is temporary, because rhiz on orthomcl equals rirr on fungidb
 	my $id = $species->{$abbrev}->{orthomclId};
 	if (! $id) {
 	    die "organism does not have an orthomcl_taxon_id:\nabbrev '$abbrev'\n";
