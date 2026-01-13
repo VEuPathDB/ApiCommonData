@@ -126,11 +126,16 @@ SQL
 	my $currentFullAbbrev = $row[0];
 
         #Remove known suffixes instead of splitting on "_"
-        $currentFullAbbrev =~ s/_(orthomclProteome_RSRC
-                              |orthomclPeripheral
-                              |orthomclPeripheralProteome_RSRC
-                              |PeripheralFrom.*
-                              |primary_genome_RSRC)$//x;
+	$currentFullAbbrev =~ s/
+    (?:_)?
+    (
+        orthomclProteome_RSRC
+      | orthomclPeripheral.*
+      | orthomclPeripheralProteome_RSRC
+      | PeripheralFrom.*
+      | primary_genome_RSRC.*
+    )
+$//x;
 
 	foreach my $abbrev (keys %$species) {
 	    if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
