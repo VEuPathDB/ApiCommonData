@@ -114,6 +114,7 @@ WHERE (ed.name like '%_orthomclProteome_RSRC'
           OR ed.name like '%_orthomclPeripheral%'
           OR ed.name like '%_PeripheralFrom%'
           OR ed.name like '%PeripheralFrom%'
+          OR ed.name like '%_orthomclPeripheralProteome_RSRC'
           OR ed.name like '%primary_genome_RSRC%')
       AND ed.external_database_id = edr.external_database_id
 SQL
