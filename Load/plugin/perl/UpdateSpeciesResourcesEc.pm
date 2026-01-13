@@ -121,15 +121,21 @@ SQL
     $sth = $dbh->prepareAndExecute($sql);
 
     while (my @row = $sth->fetchrow_array()) {
-	my @array = split(/_/, $row[0]);
-	my $currentFullAbbrev = shift @array;
-        my @abbrevs = keys %$species;
-        foreach my $abbrev (@abbrevs) {
-            if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
-            	$species->{$abbrev}->{version} = $row[1];
-        	$species->{$abbrev}->{url} = $row[2];
-            }
-        }
+
+	my $currentFullAbbrev = $row[0];
+
+        #Remove known suffixes instead of splitting on "_"
+        $currentFullAbbrev =~ s/_(orthomclProteome_RSRC
+                              |orthomclPeripheral
+                              |PeripheralFrom.*
+                              |primary_genome_RSRC)$//x;
+
+	foreach my $abbrev (keys %$species) {
+	    if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
+		$species->{$abbrev}->{version} = $row[1];
+		$species->{$abbrev}->{url}     = $row[2];
+	    }
+	}
     }
     
     foreach my $abbrev (keys %{$species}) {
