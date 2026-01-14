@@ -53,8 +53,8 @@ my (
 ## printPresentTemplate
 my $plainText = ($isAnnotatedGenome =~ /^y/i) ? "Genome Sequence and Annotation" : "Genome Sequence";
 
-print "  <datasetPresenter name=\"$organismAbbrev\_primary_genome_RSRC\"\n";
-print "                    projectName=\"$projectName\">\n";
+print "  <datasetPresenter name=\"$organismAbbrev\_primary_genome_RSRC\">\n";
+#print "                    projectName=\"$projectName\">\n";
 
 print "    <displayName><![CDATA[$plainText]]></displayName>\n";  ## need change by $isAnnot
 print "    <shortDisplayName></shortDisplayName>\n";
@@ -119,13 +119,13 @@ sub printAnnotatedGenome {
   my ($temp) = @_;
 
   if ($ifWithNonNuclear =~ /^y/i && $ifWithCentromere !~ /^y/i) {
-    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeWithNonNuclear\">\n";
+    print "    <templateInjector projectName=\"$projectName\" className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeWithNonNuclear\">\n";
   } elsif ($ifWithNonNuclear !~ /^y/i && $ifWithCentromere =~ /^y/i) {
-    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeCentromereTelomere\">\n";
+    print "    <templateInjector projectName=\"$projectName\" className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeCentromereTelomere\">\n";
   } elsif ($ifWithNonNuclear =~ /^y/i && $ifWithCentromere =~ /^y/i) {
-    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeCentromereWithNonNuclear\">\n";
+    print "    <templateInjector projectName=\"$projectName\" className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeCentromereWithNonNuclear\">\n";
   } else {
-    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenome\">\n";
+    print "    <templateInjector projectName=\"$projectName\" className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenome\">\n";
   }
 
   print "      <prop name=\"isEuPathDBSite\">true<\/prop>\n";
@@ -193,7 +193,7 @@ sub optimizedContactId {
 sub printUnAnnotatedGenome {
   my ($temp) = @_;
 
-  print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.UnannotatedGenome\"\/>\n";
+  print "    <templateInjector projectName=\"$projectName\" className=\"org.apidb.apicommon.model.datasetInjector.UnannotatedGenome\"\/>\n";
   return 0;
 }
 
