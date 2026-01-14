@@ -7,7 +7,7 @@ use HTTP::Date;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-my ($help, $notesFile, $db, $taxonId, $productFile);
+my ($help, $notesFile, $db, $taxonId, $productFile, $annotationDate);
 
 &GetOptions(
 	    'help|h' => \$help,
@@ -15,12 +15,15 @@ my ($help, $notesFile, $db, $taxonId, $productFile);
 	    'productFile=s' => \$productFile,
 	    'database=s' => \$db,
 	    'taxonId=s' => \$taxonId,
+	    'annotationDate=s' => \$annotationDate,
            );
 
 &usage() if($help);
 &usage("Missing a Required Argument") unless (defined $notesFile && $taxonId && $db);
 
 $taxonId = "taxon:".$taxonId;
+
+$date = ($annotationDate) ? $annotationDate : $date;
 
 my %products;
 
@@ -153,6 +156,7 @@ where
   --taxonId:      Required, NCBI taxon ID
   --database:     Required, GenBank, GeneDB, EupathDB ...
   --productFile:  Optional, give a product.txt file if there is no product info in Note or Comment file
+  --annotationDate:  Optional, annotation date in a format of YYYYMMDD
 
 ";
 }
