@@ -114,6 +114,7 @@ WHERE (ed.name like '%_orthomclProteome_RSRC'
           OR ed.name like '%_orthomclPeripheral%'
           OR ed.name like '%_PeripheralFrom%'
           OR ed.name like '%PeripheralFrom%'
+          OR ed.name like '%_orthomclPeripheralProteome_RSRC'
           OR ed.name like '%primary_genome_RSRC%')
       AND ed.external_database_id = edr.external_database_id
 SQL
@@ -121,15 +122,27 @@ SQL
     $sth = $dbh->prepareAndExecute($sql);
 
     while (my @row = $sth->fetchrow_array()) {
-	my @array = split(/_/, $row[0]);
-	my $currentFullAbbrev = shift @array;
-        my @abbrevs = keys %$species;
-        foreach my $abbrev (@abbrevs) {
-            if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
-            	$species->{$abbrev}->{version} = $row[1];
-        	$species->{$abbrev}->{url} = $row[2];
-            }
-        }
+
+	my $currentFullAbbrev = $row[0];
+
+        #Remove known suffixes instead of splitting on "_"
+	$currentFullAbbrev =~ s/
+    (?:_)?
+    (
+        orthomclProteome_RSRC
+      | orthomclPeripheral.*
+      | orthomclPeripheralProteome_RSRC
+      | PeripheralFrom.*
+      | primary_genome_RSRC.*
+    )
+$//x;
+
+	foreach my $abbrev (keys %$species) {
+	    if ($species->{$abbrev}->{abbrev} eq $currentFullAbbrev) {
+		$species->{$abbrev}->{version} = $row[1];
+		$species->{$abbrev}->{url}     = $row[2];
+	    }
+	}
     }
     
     foreach my $abbrev (keys %{$species}) {
@@ -233,7 +246,6 @@ sub loadOrthoResource {
 
     my $numRows=0;
     foreach my $abbrev (keys %{$species}) {
-	$abbrev = "rhiz" if ($abbrev eq "rirr"); # this is temporary, because rhiz on orthomcl equals rirr on fungidb
 	my $id = $species->{$abbrev}->{orthomclId};
 	if (! $id) {
 	    die "organism does not have an orthomcl_taxon_id:\nabbrev '$abbrev'\n";
