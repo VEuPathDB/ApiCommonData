@@ -77,8 +77,8 @@ if ($fileToCopy) {
     $outDir = "/eupath/data/EuPathDB/manualDelivery/$project/$orgAbbrev/dbxref/$dbxrefType\_from_annotation/$version/";
     $finalFile = "mapping.txt";
     print "dbxref type are $dbxrefType\n";
-  } elsif ($fileToCopy =~ /^alias/i || $fileToCopy =~ /^old_locus_tag/i || $fileToCopy =~ /^previous_systematic_id/i) {
-    if ($fileToCopy =~ /transcript$/i) {
+  } elsif ($fileToCopy =~ /^alias/i || $fileToCopy =~ /^old_locus_tag/i || $fileToCopy =~ /^previous_systematic_id/i || $fileToCopy =~ /^transcript_id/i) {
+    if ($fileToCopy =~ /transcript$/i || $fileToCopy =~ /^transcript/i) {
       $outDir = "/eupath/data/EuPathDB/manualDelivery/$project/$orgAbbrev/alias/PreviousTranscriptIDs/$version/";
     } else {
       $outDir = "/eupath/data/EuPathDB/manualDelivery/$project/$orgAbbrev/alias/PreviousGeneIDs/$version/";
