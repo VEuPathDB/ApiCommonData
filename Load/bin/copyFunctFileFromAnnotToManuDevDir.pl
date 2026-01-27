@@ -52,7 +52,7 @@ if ($fileToCopy) {
     system($cmd4ec) if ($cmd4ec);
     $fileToCopy = $processedEcFile;
 
-  } elsif ($fileToCopy =~ /^product/i) {
+  } elsif ($fileToCopy =~ /^product/i || $fileToCopy =~ /^description/i) {
     $outDir = "/eupath/data/EuPathDB/manualDelivery/$project/$orgAbbrev/function/$source\_product_names/$version/";
     $finalFile = "products.txt";
   } elsif ($fileToCopy =~ /^genename/i || $fileToCopy =~ /^gene/i || $fileToCopy =~ /^name/i ) {
