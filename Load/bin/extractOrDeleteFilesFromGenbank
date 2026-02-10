@@ -53,7 +53,8 @@ if ($recordLists) {
   open (LIST, $listFile) || die "can not open list file to read.\n";
   while (<LIST>) {
     chomp;
-    my $curr = $_;
+    #my $curr = $_;
+    my ($curr) = split (/\t/, $_);
     $curr =~ s/\s+//g;
     $skipIds{$curr} = $curr;
   }
