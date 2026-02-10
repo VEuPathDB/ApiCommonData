@@ -300,7 +300,7 @@ printGeneNameClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasName'
 
 printSynonymClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasSynonym'} =~ /^y/i);
 
-printCommentClass ($ofh, \%excelInfo, "transcript") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^t/i);
+printCommentClass ($ofh, \%excelInfo, "transcript") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^y/i);
 printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^g/i);
 
 printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
