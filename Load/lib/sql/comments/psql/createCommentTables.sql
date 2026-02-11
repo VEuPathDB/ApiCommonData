@@ -1,7 +1,9 @@
-set role COMM_WDK_W;  -- TODO: remove GRANTs to COMM_WDK_W
+reset role;
 
 CREATE SCHEMA IF NOT EXISTS usercomments;
 GRANT USAGE ON SCHEMA usercomments TO COMM_WDK_W;
+
+set role COMM_WDK_W;
 
 ---------------------------------------------------------------------------------
 -- These tables contain static enumerations referenced by other tables
