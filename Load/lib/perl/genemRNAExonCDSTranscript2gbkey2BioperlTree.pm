@@ -251,8 +251,8 @@ sub traverseSeqFeatures {
 	  $type = 'coding';
 	}
 
-	if($type eq 'transcript'){
-	  ($type) = ($RNA->has_tag('gbkey') ? $RNA->get_tag_values('gbkey') : 'coding';
+	if($type eq 'transcript') {
+	  ($type) = ($RNA->has_tag('gbkey')) ? $RNA->get_tag_values('gbkey') : 'coding';
 	}
 
 	my($geneID) = ($geneFeature->has_tag('ID')) ? $geneFeature->get_tag_values('ID') : die "ERROR: missing gene ID case 4\n";
@@ -260,6 +260,8 @@ sub traverseSeqFeatures {
 	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
 	  $gene->add_tag_value("ID",$geneID);
 	  $gene = &copyQualifiers($geneFeature, $gene);
+	} elsif ($gene && $type eq 'coding') {
+	  $gene->primary_tag('coding_gene');
 	}
 
 #	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
