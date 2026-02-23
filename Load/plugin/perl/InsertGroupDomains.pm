@@ -18,10 +18,10 @@ require Exporter;
 my $argsDeclaration =
 [
  stringArg({ descr => 'OrthoGroup types to edit (P=Peripheral,C=Core,R=Residual)',
-	     name  => 'groupTypesCPR',
-	     isList    => 0,
-	     reqd  => 1,
-	     constraintFunc => undef,
+	          name  => 'groupTypesCPR',
+	          isList    => 0,
+	          reqd  => 1,
+	          constraintFunc => undef,
 	   }),
 ];
 
@@ -35,37 +35,38 @@ Calculate the relevant pfam domain keywords for each ortholog group in the DB,
 and insert the domains (with keyword frequencies) into the OrthomclGroupDomain table.
 PURPOSE
 
-my $purposeBrief = <<PURPOSE_BRIEF;
+    my $purposeBrief = <<PURPOSE_BRIEF;
 Insert the group domain keywords into the OrthomclGroupDomain table  
 PURPOSE_BRIEF
 
-my $notes = <<NOTES;
+    my $notes = <<NOTES;
 NOTES
 
-my $tablesAffected = <<TABLES_AFFECTED;
+    my $tablesAffected = <<TABLES_AFFECTED;
 ApiDB.OrthomclGroupDomain,
 TABLES_AFFECTED
 
-my $tablesDependedOn = <<TABLES_DEPENDED_ON;
+    my $tablesDependedOn = <<TABLES_DEPENDED_ON;
 ApiDB.OrthologGroup,
-
+ApiDB.InterproResults,
+Dots.AaSequence,
 TABLES_DEPENDED_ON
 
-my $howToRestart = <<RESTART;
+    my $howToRestart = <<RESTART;
 Use the Undo plugin first.
 RESTART
 
-my $failureCases = <<FAIL_CASES;
+    my $failureCases = <<FAIL_CASES;
 
 FAIL_CASES
 
-my $documentation = { purpose          => $purpose,
+    my $documentation = { purpose          => $purpose,
                       purposeBrief     => $purposeBrief,
                       notes            => $notes,
                       tablesAffected   => $tablesAffected,
                       tablesDependedOn => $tablesDependedOn,
                       howToRestart     => $howToRestart,
-                      failureCases     => $failureCases };
+			  failureCases     => $failureCases };
 
 # ----------------------------------------------------------------------
 
@@ -81,12 +82,12 @@ my @noword=qw(
     family
     identical highly weakly likely nearly
     fragment
-);
+    );
 
 our @dashword = qw(
     dependent terminal containing specific associated directed rich
     transporting binding reducing conjugating translocating interacting
-);
+    );
 
 our @nosingleword = qw(
     protein proteins gene genes cds product peptide polypeptide enzyme sequence molecule factor
@@ -96,21 +97,21 @@ our @nosingleword = qw(
     alpha beta delta gamma sigma lambda epsilon
     specific associated
     small
-	precursor
-);
+    precursor
+    );
 our @capitalword = qw(
-		DNA RNA ATP ADP AMP GTP
-		ABC
-		ATPase GTPase
-		III
-		HIV
-		UV
-		Rab
-		NH2
-		SH3 SH2 WD LIM PPR
-		Na Fe
-		CoA
-	);
+    DNA RNA ATP ADP AMP GTP
+    ABC
+    ATPase GTPase
+    III
+    HIV
+    UV
+    Rab
+    NH2
+    SH3 SH2 WD LIM PPR
+    Na Fe
+    CoA
+    );
 
 my %word_filter;
 foreach (@nosingleword) {$word_filter{nosingleword}->{$_}=1;}
@@ -119,11 +120,11 @@ foreach (@capitalword) {$word_filter{capitalword}->{$_}=1;}
 # ---------------------------------------------------------------------
 
 sub new {
-  my ($class) = @_;
-  my $self = {};
-  bless($self,$class);
+    my ($class) = @_;
+    my $self = {};
+    bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 4,
+    $self->initialize({ requiredDbVersion => 4,
                       cvsRevision       => '$Revision: 1 $',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
@@ -160,18 +161,17 @@ sub run {
 	$orthIdToNum{$groupId} = $numSeqs;
     }
 
-    my $sql_domains_per_group = "SELECT og.group_id, ogs.aa_sequence_id, 
-                                        dbref.remark 
+    my $sql_domains_per_group = "SELECT og.group_id, ogs.aa_sequence_id,
+                                        ir.interpro_desc
                                  FROM apidb.OrthologGroup og,
-                                      apidb.OrthologGroupAaSequence ogs, 
-                                      dots.DomainFeature df,
-                                      dots.DbRefAaFeature dbaf,
-                                      sres.DbRef
-                                 WHERE ogs.aa_sequence_id = df.aa_sequence_id
-                                   AND df.aa_feature_id = dbaf.aa_feature_id
-                                   AND dbaf.db_ref_id = dbref.db_ref_id
-                                   AND ogs.group_id = og.group_id
-                                   AND dbref.remark IS NOT NULL";
+                                      apidb.OrthologGroupAaSequence ogs,
+                                      dots.AaSequence aas,
+                                      apidb.InterproResults ir
+                                 WHERE ogs.group_id = og.group_id
+                                   AND ogs.aa_sequence_id = aas.aa_sequence_id
+                                   AND aas.source_id = ir.protein_source_id
+                                   AND ir.interpro_db_name = 'Pfam'
+                                   AND ir.interpro_desc IS NOT NULL";
 
     my $ps_domains_per_group = $dbh->prepare($sql_domains_per_group);
     $ps_domains_per_group->execute();
@@ -208,7 +208,7 @@ sub undoTables {
     my ($self) = @_;
     
     return ('ApiDB.OrthomclGroupDomain',
-	    );
+	);
 }
 
 # ----------------------------------------------------------------------
