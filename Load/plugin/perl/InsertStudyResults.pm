@@ -132,7 +132,7 @@ sub run {
   my $header = <CONFIG>;
 
   my $nodeOrderNum = 1;
-
+  
   while(<CONFIG>) {
     chomp;
    
@@ -147,9 +147,11 @@ sub run {
 
     #my @studyLinks = $study->getChildren('Study::NodeNodeSet');
 
-    my $existingStudyAppNodes = $self->retrieveExistingAppNodes($extDbRlsId);
+    my $existingAllAppNodes = $self->retrieveExistingAllAppNodes($extDbRlsId);
+    
+    my $existingStudyAppNodes = $self->retrieveExistingStudyAppNodes($extDbRlsId, $studyName);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingStudyAppNodes, $study,  $nodeOrderNum); #$investigation,$existingInvestigationAppNodes
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAllAppNodes, $study,  $nodeOrderNum); #$investigation,$existingInvestigationAppNodes
 
     my $protocolType;
     if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/ || $protocolName eq "differential expression analysis data transformation") {
@@ -544,7 +546,10 @@ sub linkAppNodeToStudy {
   return $studyLink;
 }
 
-sub retrieveExistingAppNodes {
+
+
+
+sub retrieveExistingAllAppNodes {
   my ($self, $externalDatabaseReleaseId) = @_;
 
   my $dbh = $self->getQueryHandle();
@@ -556,6 +561,36 @@ and ns.node_set_id = nns.node_set_id";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute($externalDatabaseReleaseId);
+
+  my @appNodes;
+
+  while(my ($panId) = $sh->fetchrow_array()) {
+    my $pan = GUS::Model::Study::ProtocolAppNode->new({protocol_app_node_id => $panId});
+
+    unless($pan->retrieveFromDB()) {
+      $self->error("Error getting protocolappnode $panId");
+    }
+    push(@appNodes, $pan);
+  }
+
+  return \@appNodes;
+}
+
+
+    
+sub retrieveExistingStudyAppNodes {
+  my ($self, $externalDatabaseReleaseId, $studyName) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select distinct nns.protocol_app_node_id
+from study.nodeset ns, study.nodenodeset nns
+where ns.external_database_release_id = ?
+and ns.node_set_id = nns.node_set_id
+and ns.name = ?";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($externalDatabaseReleaseId, $studyName);
 
   my @appNodes;
 
