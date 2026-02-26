@@ -218,6 +218,7 @@ sub traverseSeqFeatures {
              'tRNA',
              'ncRNA',
              'lncRNA',
+             'lnc_RNA',
              'miRNA',
 	     'pseudogenic_transcript',
              'scRNA',
@@ -233,6 +234,10 @@ sub traverseSeqFeatures {
              )
         ) {
 
+
+        if ($type eq 'lnc_RNA') {
+          $type = "lncRNA";   ## normalise NCBI lnc_RNA to lncRNA used throughout
+        }
 
         if ($type eq 'srpRNA' || $type eq 'SRP.RNA') {
           $type = "SRP_RNA";
