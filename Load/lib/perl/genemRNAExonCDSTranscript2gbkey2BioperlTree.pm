@@ -116,16 +116,48 @@ sub preprocess {
 		}
 		for my $tag ($geneFeature->get_all_tags) {
 		    if($tag eq 'pseudo'){
-			if ($geneFeature->get_SeqFeatures){
+
+			## Inspect children to decide which option to take.
+			##
+			## NCBI pseudogenes come in two forms:
+			##   (a) No children at all           -> original else-branch handles this
+			##   (b) Bare exon children, no mRNA  -> NCBI GFF3 style; same treatment needed
+			##   (c) Has mRNA/transcript children -> handled downstream by traverseSeqFeatures
+			##
+			## The original code used get_SeqFeatures as a simple boolean: any children
+			## -> skip. That causes form (b) to fall through to traverseSeqFeatures where
+			## exon-type features are not in the allowed RNA type list, so $gene is never
+			## created and the pseudogene is silently dropped.
+			my @children = $geneFeature->get_SeqFeatures;
+			my $hasTranscriptChild = grep {
+			    $_->primary_tag =~ /^(?:mRNA|transcript|pseudogenic_transcript|RNA)$/i
+			} @children;
+
+			if (@children && $hasTranscriptChild) {
+			    ## Option (c): proper transcript wrapper exists; traverseSeqFeatures handles it
 			    next;
-			}else{
+			} else {
+			    ## Option (a) or (b): no children, or only bare exon children.
+			    ## Synthesise a pseudo mRNA wrapper so the gene loads correctly.
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("ID", $gID.".mRNA");
 			    $transcript->add_tag_value("pseudo","");
 
-			    my @exonLocs = $geneLoc->each_Location();
+			    ## Use the bare exon children when they exist (Option b),
+			    ## otherwise fall back to the gene's own sub-locations (Option a).
+			    my @exonLocs;
+			    if (@children) {
+				## Sort bare exons by start so the transcript is built in order
+				foreach my $child (sort { $a->location->start
+							      <=> $b->location->start } @children) {
+				    push @exonLocs, $child->location;
+				}
+			    } else {
+				@exonLocs = $geneLoc->each_Location();
+			    }
+
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
                                 if ($exonLoc->strand == -1){
@@ -135,7 +167,6 @@ sub preprocess {
 				  $exon->add_tag_value('CodingStart', $exonLoc->start());
 				  $exon->add_tag_value('CodingEnd', $exonLoc->end());
 				}
-
 				$transcript->add_SeqFeature($exon);
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
