@@ -403,14 +403,18 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="lncRNA" so="lncRNA">
     <qualifier name="ID"             column="source_id"/>
     <qualifier name="Parent" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="experiment" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="inference" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
   </feature>
 
   <feature name="snoRNA" so="snoRNA">
@@ -1214,14 +1218,20 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="lncRNA_gene" so="lncRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="experiment" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_biotype" ignore="true"/>
     <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="part" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
   </feature>
  
   <feature name="snoRNA_gene" so="snoRNA_encoding">
@@ -1525,6 +1535,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Note" ignore="true"/>
     <qualifier name="orig_transcript_id" ignore="true"/>
     <qualifier name="product" ignore="true"/>
+    <qualifier name="start_range" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
