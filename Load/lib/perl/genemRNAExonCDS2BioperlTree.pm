@@ -37,6 +37,10 @@ sub preprocess {
     ## check if gene, rna, exon or CDS are on the same strand
     &checkGeneStructure (\@topSeqFeatures);
 
+    ## do one bulk add_SeqFeature call after the loop, instead push into a plain Perl array during the loop,
+    ## so BioPerl sorts the list exactly once.
+    my @processedFeatures;
+
     OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
@@ -54,13 +58,13 @@ sub preprocess {
 		if(!($bioperlFeatureTree->has_tag("ID"))){
 		    $bioperlFeatureTree->add_tag_value("ID",$bioperlSeq->accession());
 		}
-		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+		push @processedFeatures, $bioperlFeatureTree;  ## repeat_region
 	    }
 	    if($type eq 'STS'){
 		if(!($bioperlFeatureTree->has_tag("ID"))){
 		    $bioperlFeatureTree->add_tag_value("ID",$bioperlSeq->accession());
 		}
-		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+		push @processedFeatures, $bioperlFeatureTree;  ## STS
 	    }
 
 	    ## for tRNA and rRNA that do not have gene as parent
@@ -85,7 +89,7 @@ sub preprocess {
 		$transcript->add_SeqFeature($exon);
 	      }
 	      $gene->add_SeqFeature($transcript);
-	      $bioperlSeq->add_SeqFeature($gene); 
+	      push @processedFeatures, $gene;  ## standalone tRNA/rRNA/snRNA/snoRNA
 	    }  ## end of $type eq tRNA or rRNA
 
 	    if ($type eq 'gene' || $type eq 'ncRNA_gene') {
@@ -97,7 +101,7 @@ sub preprocess {
 		    die "Feature $type does not have tag: ID\n";
 		} else {
 		  ($gID) = $geneFeature->get_tag_values("ID");
-		  print STDERR "processing $gID...\n";
+		  #print STDERR "processing $gID...\n";
 		}
 
 		if($geneFeature->has_tag("Note")){
@@ -166,7 +170,7 @@ sub preprocess {
                     my $tType = $RNA->primary_tag();
                     if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
                       my ($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values("ID") : die "ERROR: missing transcript ID for case 3\n";
-                      print STDERR "found pseudo: $tID\n";
+                      #print STDERR "found pseudo: $tID\n";
                       foreach my $exon ($RNA->get_SeqFeatures) {
                         $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
                         $exon->add_tag_value('CodingStart', '');
@@ -175,21 +179,23 @@ sub preprocess {
                       }
                     }
                   }
-		    $bioperlSeq->add_SeqFeature($gene);
+		  push @processedFeatures, $gene;  ## normal gene
 		}
 
 		foreach my $UTR (@UTRs){
-		    $bioperlSeq->add_SeqFeature($UTR);
+		    push @processedFeatures, $UTR;  ## UTR
 		}
 
 	    }else{
 		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_utr'
 		   || $type eq 'five_prime_utr' || $type eq 'splice_acceptor_site'){
-		    $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+		    push @processedFeatures, $bioperlFeatureTree;  ## gap/repeat/UTR/splice
 		}
 	    }
 
 	}
+    ## one bulk call here replaces the N individual calls
+    $bioperlSeq->add_SeqFeature(@processedFeatures) if @processedFeatures;
 }
 
 sub traverseSeqFeatures {
