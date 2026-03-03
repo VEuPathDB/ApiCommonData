@@ -258,9 +258,19 @@ sub traverseSeqFeatures {
 	  $type = 'misc_feature';
 	}
 
-	if($type eq 'mRNA' || $type eq 'transcript'){
+	if($type eq 'mRNA') {
 	  $type = 'coding';
 	}
+
+        if($type eq 'transcript') {
+	  if ($RNA->has_tag('biotype')) {
+	    ($type) = $RNA->get_tag_values('biotype');
+	  } elsif ($RNA->has_tag('gbkey')) {
+	    ($type) = $RNA->get_tag_values('gbkey');
+	  } else {
+	    ($type) = 'coding';
+	  }
+        }
 
 	my($geneID) = ($geneFeature->has_tag('ID')) ? $geneFeature->get_tag_values('ID') : die "ERROR: missing gene ID case 4\n";
 	if (!$gene) {    ## only create one gene for multiple transcript
