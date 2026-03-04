@@ -1,9 +1,8 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 ##                 InsertEcMappingFromOrtho.pm
 ##
-## Creates new entries in the table DoTS.AASequenceEnzymeClass to represent
-## the EC mappings found in a tab delimited file of the form EC number, alias
-## $Id$
+## Creates new entries in the table DoTS.AASequenceEnzymeClass from the
+## TSV output produced by assignEcByOrthologs.pl
 ##
 #######################################################################
 
@@ -14,88 +13,80 @@ use strict 'vars';
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use FileHandle;
-use Carp;
 use GUS::Model::DoTS::AASequenceEnzymeClass;
 use GUS::Model::SRes::EnzymeClass;
-use GUS::Model::DoTS::TranslatedAAFeature;
-use GUS::Model::DoTS::GeneFeature;
-#use GUS::Model::DoTS::NAFeatureNaGene;
-use GUS::Model::DoTS::NAGene;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Creates new entries in table DoTS.AASequenceEnzymeClass to represent new aa sequence/enzyme class associations.
+Creates new entries in table DoTS.AASequenceEnzymeClass from transitive EC
+assignments produced by assignEcByOrthologs.pl.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Takes in a tab delimited file of the order EC number, identifier, and creates new entries in table DoTS.AASequenceEnzymeClass to represent new aa sequence/enzyme class associations.  If the identifier is not the primary identifier, we will map the EC number to the primary identifier via the NAGene table, which houses gene aliases.  The mapping then will be NAGene to NAFeatureNAGene to Transcript.
+Reads the TSV output of assignEcByOrthologs.pl and inserts EC assignments
+into DoTS.AASequenceEnzymeClass.  The aa_sequence_id is taken directly from
+the file, so no identifier lookup is required.  Cluster- and group-level
+statistics from the file are stored alongside each assignment.
 PLUGIN_PURPOSE
 
 my $tablesAffected =
-	[['DoTS.AASequenceEnzymeClass', 'The entries representing the new aa_sequence/enzyme class mappings are created here']];
+    [['DoTS.AASequenceEnzymeClass', 'New aa_sequence/enzyme class mappings are inserted here']];
 
-my $tablesDependedOn = [['SRes::EnzymeClass','The EC Numbers from the EC mapping file must have entries in this table to be considered legitimate'],['DoTS::TranslatedAAFeature','The sequences mapped to EC Numbers by the EC mapping file must have entries in this table'],['DoTS::GeneFeature','This table may contain the source ID that will be used to map from the Pfid provided by the mapping file to the entry in DoTS::TranslatedAAFeature'],['DoTS::NAFeatureNaGene','If DoTS::GeneFeature does not contain the Pfid from the mapping file as a source ID, we will need to use this table to check synonyms so that we can map the Pfid to the entry in DoTS::TranslatedAAFeature'],['DoTS::NAGene','If DoTS::GeneFeature does not contain the Pfid from the mapping file as a source ID, we will need to check this table for synonyms so that we can map the Pfid to the entry in DoTS::TranslatedAAFeature']];
+my $tablesDependedOn =
+    [['SRes.EnzymeClass',     'EC numbers must already exist in this table'],
+     ['DoTS.AASequenceImp',   'aa_sequence_id values must already exist in this table']];
 
 my $howToRestart = <<PLUGIN_RESTART;
-There is currently no restart method
+Re-running the plugin is safe: existing rows are detected via retrieveFromDB
+and skipped.
 PLUGIN_RESTART
 
 my $failureCases = <<PLUGIN_FAILURE_CASES;
-There are no known failure cases
+Rows whose EC number is not present in SRes.EnzymeClass are skipped and logged.
 PLUGIN_FAILURE_CASES
 
 my $notes = <<PLUGIN_NOTES;
-
+Both novel (is_novel=1) and already-annotated (is_novel=0) rows are loaded.
 PLUGIN_NOTES
 
-my $documentation = { purpose=>$purpose,
-		      purposeBrief=>$purposeBrief,
-		      tablesAffected=>$tablesAffected,
-		      tablesDependedOn=>$tablesDependedOn,
-		      howToRestart=>$howToRestart,
-		      failureCases=>$failureCases,
-		      notes=>$notes
-		    };
+my $documentation = { purpose          => $purpose,
+                      purposeBrief     => $purposeBrief,
+                      tablesAffected   => $tablesAffected,
+                      tablesDependedOn => $tablesDependedOn,
+                      howToRestart     => $howToRestart,
+                      failureCases     => $failureCases,
+                      notes            => $notes
+                    };
 
-
-my $argsDeclaration = 
+my $argsDeclaration =
   [
-   fileArg({name => 'ECMappingFile',
-	  descr => 'pathname for the file containing the EC mapping data',
-	  constraintFunc => undef,
-	  reqd => 1,
-	  isList => 0,
-	  mustExist => 1,
-	  format => 'Two column tab delimited file in the order EC number, identifier'
-        }),
-   stringArg({name => 'evidenceCode',
-	      descr => 'the evidence code with which data should be entered into the AASequenceEnzymeClass table',
-	      reqd => 1,
-	      constraintFunc => undef,
-	      isList => 0,
-	     }), 
-   stringArg({name => 'aaSeqLocusTagMappingSql',
-              descr => 'sql which returns aa_sequence_id(s) for a given identifier in the EC mapping file. Use a question mark as a macro for where the id should be interpolated into the sql string.  Id will most likely be a locus tag',
-	      reqd => 1,
-	      constraintFunc => undef,
-	      isList => 0,
-	     })
-
+   fileArg({ name           => 'ECMappingFile',
+             descr          => 'TSV file produced by assignEcByOrthologs.pl',
+             constraintFunc => undef,
+             reqd           => 1,
+             isList         => 0,
+             mustExist      => 1,
+             format         => 'Tab-delimited with header row'
+           }),
+   stringArg({ name           => 'evidenceCode',
+               descr          => 'Evidence code to store in AASequenceEnzymeClass (e.g. OrthoMCLDerived)',
+               reqd           => 1,
+               constraintFunc => undef,
+               isList         => 0,
+             }),
   ];
 
 sub new {
     my ($class) = @_;
     my $self = {};
-    bless($self,$class);
+    bless($self, $class);
 
-    $self->initialize({requiredDbVersion => 4.0,
-		       cvsRevision => '$Revision: 24836 $', # cvs fills this in!
-		       name => ref($self),
-		       argsDeclaration => $argsDeclaration,
-		       documentation => $documentation
-		      });
-
+    $self->initialize({ requiredDbVersion => 4.0,
+                        cvsRevision       => '$Revision$',
+                        name              => ref($self),
+                        argsDeclaration   => $argsDeclaration,
+                        documentation     => $documentation
+                      });
     return $self;
 }
 
@@ -107,87 +98,98 @@ sub run {
     my ($self) = @_;
 
     my $mappingFile = $self->getArg('ECMappingFile');
-    my $evidCode = $self->getArg('evidenceCode');
+    my $evidCode    = $self->getArg('evidenceCode');
+
     $self->getAlgInvocation()->setMaximumNumberOfObjects(100000);
 
-    my $queryHandle = $self->getQueryHandle();
+    my %ecCache;   # ec_number => enzyme_class_id
+    my ($inserted, $skipped_existing, $skipped_no_ec) = (0, 0, 0);
 
-    my %ecNumbers;
-    my %aaSeqIds;
+    open(my $FH, '<', $mappingFile) or die "Cannot open '$mappingFile': $!\n";
 
-    open (ECMAP, "$mappingFile") || die "Can't open the file $mappingFile.  Reason: $!\n";
-    while (my $line = <ECMAP>) {
-	chomp($line);
-	my @row = split('\t',$line);
-	next if (scalar @row != 9);
-	my ($id,$ec,$numProteinsWithEc,$numTotalProteins,$numGeneraWithEc,$numTotalGenera,$lengthScore,$blastScore,$domainScore) = @row; 
+    my $header = <$FH>;   # skip header line
 
-	my $enzymeClass = $self->getEnzymeClass($ec, \%ecNumbers);
-        if (!$enzymeClass) {
-            print "This EC does not exist\n";
+    while (my $line = <$FH>) {
+        chomp $line;
+        my @row = split('\t', $line);
+
+        # Expected columns (0-based):
+        #  0  group_id
+        #  1  aa_sequence_id
+        #  2  source_id
+        #  3  protein_length
+        #  4  assigned_ec_number
+        #  5  is_novel
+        #  6  confidence_score
+        #  7  n_supporting
+        #  8  n_annotated_in_cluster
+        #  9  cluster_size
+        # 10  cluster_mean_length
+        # 11  length_vs_cluster_mean
+        # 12  cluster_profile
+        # 13  group_size
+        # 14  n_annotated_in_group
+        # 15  n_supporting_in_group
+
+        next unless scalar @row == 16;
+
+        my ($group_id, $aa_sequence_id, $source_id, $protein_length,
+            $ec_number, $is_novel, $confidence_score,
+            $n_supporting, $n_annotated_in_cluster, $cluster_size,
+            $cluster_mean_length, $length_vs_cluster_mean, $cluster_profile,
+            $group_size, $n_annotated_in_group, $n_supporting_in_group) = @row;
+
+        my $enzyme_class_id = $self->getEnzymeClassId($ec_number, \%ecCache);
+        unless ($enzyme_class_id) {
+            $self->log("WARNING: EC number '$ec_number' not found in SRes.EnzymeClass — skipping $source_id");
+            $skipped_no_ec++;
             next;
         }
 
-        my $aaSeqId = $self->getAASeqId($id, $queryHandle);
-        if (!$aaSeqId) {
-            print "This aaSeqId does not exist\n";
-            next;
-        }
-
-	$self->log("Processing Pfid: $id, ECNumber: $ec");
-	
-        my $newAASeqEnzClass =  GUS::Model::DoTS::AASequenceEnzymeClass->new({
-                'aa_sequence_id' => $aaSeqId,
-		'enzyme_class_id' => $enzymeClass,
-		'evidence_code' => $evidCode,
-		'num_protein_with_ec' => $numProteinsWithEc,
-		'num_protein_in_group' => $numTotalProteins,
-		'num_genera_with_ec' => $numGeneraWithEc,
-		'num_genera_in_group' => $numTotalGenera,
-		'length_score' => $lengthScore,
-		'blast_score' => $blastScore,
-		'domain_score' => $domainScore
+        my $newRow = GUS::Model::DoTS::AASequenceEnzymeClass->new({
+            aa_sequence_id         => $aa_sequence_id,
+            enzyme_class_id        => $enzyme_class_id,
+            evidence_code          => $evidCode,
+            domain_score           => $confidence_score,
+            length_score           => $length_vs_cluster_mean,
+            length_mean            => $cluster_mean_length,
+            num_supporting_cluster => $n_supporting,
+            num_protein_cluster    => $cluster_size,
+            num_any_ec_cluster     => $n_annotated_in_cluster,
+            num_supporting_group   => $n_supporting_in_group,
+            num_protein_group      => $group_size,
+            num_any_ec_group       => $n_annotated_in_group,
         });
-        if (! $newAASeqEnzClass->retrieveFromDB()) {
-	      $newAASeqEnzClass->submit();
-	      $self->log("  submitted enzyme $enzymeClass, seq $aaSeqId");
+
+        if ($newRow->retrieveFromDB()) {
+            $skipped_existing++;
+        } else {
+            $newRow->submit();
+            $self->log("Inserted EC=$ec_number for $source_id (aa_sequence_id=$aa_sequence_id, group=$group_id)");
+            $inserted++;
         }
-	$self->undefPointerCache();
+
+        $self->undefPointerCache();
     }
-    return "Finished processing EC Mapping file\n";
+
+    close($FH);
+
+    return "Inserted $inserted rows. Skipped: $skipped_existing already in DB, $skipped_no_ec unknown EC.\n";
 }
 
-###### FETCH THE EC ID FOR A GIVEN EC NUMBER ######
-sub getEnzymeClass {
-    my ($self, $ecNumber, $ecHash) = @_;
-    if (! exists $ecHash->{$ecNumber}) {
-	my $newEnzymeClass =  GUS::Model::SRes::EnzymeClass->new({
-	    'ec_number' => $ecNumber
-								 });
-	$newEnzymeClass->retrieveFromDB();
-	$ecHash->{$ecNumber} = $newEnzymeClass->getId();
+sub getEnzymeClassId {
+    my ($self, $ecNumber, $cache) = @_;
+    unless (exists $cache->{$ecNumber}) {
+        my $ec = GUS::Model::SRes::EnzymeClass->new({ ec_number => $ecNumber });
+        $ec->retrieveFromDB();
+        $cache->{$ecNumber} = $ec->getId();
     }
-    return $ecHash->{$ecNumber};
-}
-
-###### FETCH THE AA SEQUNCE ID FOR A GIVEN ALIAS ######
-sub getAASeqId {
-    my ($self, $id, $dbh) = @_;
-    my $sql = "SELECT aa_sequence_id from dots.externalaasequence where source_id = '$id'";
-    my $sth = $dbh->prepare($sql);
-    $sth->execute();
-    my $aaSeqId;
-    while (my $aaSequenceId = $sth->fetchrow_array()) {
-        $aaSeqId = $aaSequenceId;
-    }
-    $sth->finish();
-    return $aaSeqId;
+    return $cache->{$ecNumber};
 }
 
 sub undoTables {
-  my ($self) = @_;
-
-  return ('DoTS.AASequenceEnzymeClass');
+    my ($self) = @_;
+    return ('DoTS.AASequenceEnzymeClass');
 }
 
 1;
