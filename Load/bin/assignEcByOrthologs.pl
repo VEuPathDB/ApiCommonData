@@ -9,7 +9,7 @@ use Getopt::Long;
 use DBI;
 use GUS::Supported::GusConfig;
 
-my ($gusConfigFile, $output, $threshold, $group_id, $verbose);
+my ($gusConfigFile, $output, $threshold, $group_id, $source_id, $verbose);
 $threshold = 0.60;
 
 &GetOptions(
@@ -17,10 +17,11 @@ $threshold = 0.60;
     "output=s"        => \$output,
     "threshold=f"     => \$threshold,
     "group_id=s"      => \$group_id,
+    "source_id=s"     => \$source_id,
     "verbose"         => \$verbose,
 );
 
-die "Usage: assignEcByOrthologs.pl --output <file> [--gusConfigFile <path>] [--threshold 0.60] [--group_id <id>] [--verbose]\n"
+die "Usage: assignEcByOrthologs.pl --output <file> [--gusConfigFile <path>] [--threshold 0.60] [--group_id <id>] [--source_id <source_id>] [--verbose]\n"
     unless $output;
 
 $gusConfigFile ||= "$ENV{GUS_HOME}/config/gus.config";
@@ -153,6 +154,13 @@ print STDERR "Loaded InterPro profiles for ", scalar(keys %protein_profile), " p
 
 $dbh->disconnect();
 
+if ($source_id) {
+    my ($focus_aaid) = grep { $protein_info{$_}{source_id} eq $source_id } keys %protein_info;
+    die "ERROR: source_id '$source_id' not found in loaded data. Check the ID or --group_id filter.\n"
+        unless defined $focus_aaid;
+    print STDERR "Focusing on source_id=$source_id  (aa_sequence_id=$focus_aaid)\n" if $verbose;
+}
+
 # --- Open output ---
 open(my $OUT, '>', $output) or die "Cannot open output '$output': $!\n";
 
@@ -184,6 +192,25 @@ for my $gid (sort keys %group_members) {
         push @{ $clusters{$key} }, $aaid;
     }
 
+    # Report which cluster the focus protein landed in
+    if ($verbose && $source_id) {
+        my ($focus_aaid) = grep { $protein_info{$_}{source_id} eq $source_id } @members;
+        if (defined $focus_aaid) {
+            my $profile = $protein_profile{$focus_aaid} // '';
+            my $display = $profile eq '' ? 'none (no InterPro family hits)' : $profile;
+            print STDERR "\n  PROTEIN $source_id  (aa_sequence_id=$focus_aaid)\n";
+            print STDERR "    group=$gid\n";
+            print STDERR "    InterPro profile: $display\n";
+            my $own_ecs = @{ $protein_ec{$focus_aaid} // [] }
+                ? join(', ', @{ $protein_ec{$focus_aaid} })
+                : '(none)';
+            print STDERR "    existing ECs on this protein: $own_ecs\n";
+            my $cluster_key = $protein_profile{$focus_aaid} // '';
+            my $cluster_size = scalar @{ $clusters{$cluster_key} };
+            print STDERR "    cluster_size (same profile): $cluster_size\n\n";
+        }
+    }
+
     for my $profile_key (sort keys %clusters) {
         my @cluster = @{ $clusters{$profile_key} };
 
@@ -199,6 +226,14 @@ for my $gid (sort keys %group_members) {
         }
 
         my $n_annotated = scalar keys %protein_ecs_in_cluster;
+
+        if ($n_annotated == 0 && $verbose && $source_id) {
+            my ($focus_aaid) = grep { $protein_info{$_}{source_id} eq $source_id } @cluster;
+            if (defined $focus_aaid) {
+                my $display = $profile_key eq '' ? 'none' : $profile_key;
+                print STDERR "  PROTEIN $source_id: cluster (profile=$display) has no annotated proteins — nothing to propagate\n\n";
+            }
+        }
         next if $n_annotated == 0;   # nothing to propagate from
 
         my $cluster_size    = scalar @cluster;
@@ -237,6 +272,53 @@ for my $gid (sort keys %group_members) {
                     $support, $n_annotated, $score, $threshold;
             }
         }
+        # If we are focusing on a specific protein, print its cluster context
+        # regardless of whether any ECs pass threshold
+        if ($verbose && $source_id) {
+            my ($focus_aaid) = grep { $protein_info{$_}{source_id} eq $source_id } @cluster;
+            if (defined $focus_aaid) {
+                print STDERR "\n  PROTEIN $source_id  (aa_sequence_id=$focus_aaid)\n";
+                print STDERR "    group=$gid  cluster_size=$cluster_size  n_annotated=$n_annotated\n";
+                print STDERR "    profile=$display_profile\n";
+                my $own_ecs = @{ $protein_ec{$focus_aaid} // [] }
+                    ? join(', ', @{ $protein_ec{$focus_aaid} })
+                    : '(none)';
+                print STDERR "    existing ECs on this protein: $own_ecs\n";
+                if ($n_annotated > 0) {
+                    print STDERR "    cluster members with ECs:\n";
+                    for my $other (sort keys %protein_ecs_in_cluster) {
+                        my $osrc = $protein_info{$other}{source_id};
+                        my @norm = normalize_ecs(@{ $protein_ecs_in_cluster{$other} });
+                        printf STDERR "      %s  raw=[%s]  normalized=[%s]\n",
+                            $osrc,
+                            join(', ', @{ $protein_ecs_in_cluster{$other} }),
+                            join(', ', @norm);
+                    }
+                    print STDERR "    EC vote results:\n";
+                    for my $ec (sort keys %ec_support) {
+                        my $score = $ec_support{$ec} / $n_annotated;
+                        my $verdict = $score >= $threshold ? 'PASS' : 'fail';
+                        printf STDERR "      EC=%s  %d/%d = %.2f  %s\n",
+                            $ec, $ec_support{$ec}, $n_annotated, $score, $verdict;
+                    }
+                } else {
+                    print STDERR "    no annotated proteins in this cluster — nothing to propagate\n";
+                }
+                if (@passing_ecs) {
+                    print STDERR "    ECs to be assigned:\n";
+                    my %existing_ecs = map { $_ => 1 } @{ $protein_ec{$focus_aaid} // [] };
+                    for my $pass (@passing_ecs) {
+                        my $novel = $existing_ecs{$pass->{ec}} ? 'already annotated' : 'NOVEL';
+                        printf STDERR "      EC=%s  score=%.2f (%d/%d)  %s\n",
+                            $pass->{ec}, $pass->{score}, $pass->{support}, $n_annotated, $novel;
+                    }
+                } else {
+                    print STDERR "    no ECs passed threshold — nothing assigned\n";
+                }
+                print STDERR "\n";
+            }
+        }
+
         next unless @passing_ecs;
 
         for my $aaid (@cluster) {
