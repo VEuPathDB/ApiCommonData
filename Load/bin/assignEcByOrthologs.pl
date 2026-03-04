@@ -6,6 +6,7 @@ use warnings;
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 use Getopt::Long;
+use List::Util qw(sum);
 use DBI;
 use GUS::Supported::GusConfig;
 
@@ -175,7 +176,12 @@ print $OUT join("\t", qw(
     n_supporting
     n_annotated_in_cluster
     cluster_size
+    cluster_mean_length
+    length_vs_cluster_mean
     cluster_profile
+    group_size
+    n_annotated_in_group
+    n_supporting_in_group
 )), "\n";
 
 # --- Process each group ---
@@ -190,6 +196,21 @@ for my $gid (sort keys %group_members) {
     for my $aaid (@members) {
         my $key = $protein_profile{$aaid} // '';
         push @{ $clusters{$key} }, $aaid;
+    }
+
+    # Group-level stats (computed once per group, used in every output row).
+    # These are derived solely from %protein_ec, which is loaded from the DB
+    # at startup and never modified during processing, so these counts always
+    # reflect original (pre-transitive) annotations only.
+    my $group_size         = scalar @members;
+    my $n_annotated_group  = scalar grep { $protein_ec{$_} && @{ $protein_ec{$_} } } @members;
+    my %group_ec_count;   # ec => count of proteins in group originally carrying it
+    for my $aaid (@members) {
+        my %seen;
+        for my $ec (@{ $protein_ec{$aaid} // [] }) {
+            next if $seen{$ec}++;
+            $group_ec_count{$ec}++;
+        }
     }
 
     # Report which cluster the focus protein landed in
@@ -238,6 +259,9 @@ for my $gid (sort keys %group_members) {
 
         my $cluster_size    = scalar @cluster;
         my $display_profile = $profile_key eq '' ? 'none' : $profile_key;
+
+        my @cluster_lengths = map { $protein_info{$_}{protein_length} } @cluster;
+        my $cluster_mean = sum(@cluster_lengths) / $cluster_size;
 
         # Count support per EC (post-normalization)
         my %ec_support;
@@ -331,7 +355,11 @@ for my $gid (sort keys %group_members) {
                 my $score   = $pass->{score};
                 my $is_novel = $existing_ecs{$ec} ? 0 : 1;
 
-                printf $OUT "%s\t%s\t%s\t%d\t%s\t%d\t%.4f\t%d\t%d\t%d\t%s\n",
+                my $len_vs_mean = $cluster_mean > 0
+                    ? ($info->{protein_length} - $cluster_mean) / $cluster_mean
+                    : 0;
+
+                printf $OUT "%s\t%s\t%s\t%d\t%s\t%d\t%.4f\t%d\t%d\t%d\t%d\t%.4f\t%s\t%d\t%d\t%d\n",
                     $gid,
                     $aaid,
                     $info->{source_id},
@@ -342,7 +370,12 @@ for my $gid (sort keys %group_members) {
                     $support,
                     $n_annotated,
                     $cluster_size,
-                    $display_profile;
+                    int($cluster_mean + 0.5),
+                    $len_vs_mean,
+                    $display_profile,
+                    $group_size,
+                    $n_annotated_group,
+                    $group_ec_count{$ec} // 0;
 
                 $rows_written++;
             }
