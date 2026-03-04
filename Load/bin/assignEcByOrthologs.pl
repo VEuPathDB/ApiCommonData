@@ -201,6 +201,9 @@ for my $gid (sort keys %group_members) {
         my $n_annotated = scalar keys %protein_ecs_in_cluster;
         next if $n_annotated == 0;   # nothing to propagate from
 
+        my $cluster_size    = scalar @cluster;
+        my $display_profile = $profile_key eq '' ? 'none' : $profile_key;
+
         # Count support per EC (post-normalization)
         my %ec_support;
         for my $aaid (keys %protein_ecs_in_cluster) {
@@ -212,6 +215,16 @@ for my $gid (sort keys %group_members) {
             }
         }
 
+        if ($verbose) {
+            # Report any raw ECs that were dropped by hierarchy normalization
+            my %raw_unique = map { $_ => 1 } @all_cluster_ecs;
+            for my $ec (sort keys %raw_unique) {
+                unless (exists $ec_support{$ec}) {
+                    print STDERR "  SKIP $gid  profile=$display_profile  EC=$ec: subsumed by more specific EC in cluster\n";
+                }
+            }
+        }
+
         # Majority vote
         my @passing_ecs;
         for my $ec (sort keys %ec_support) {
@@ -219,12 +232,12 @@ for my $gid (sort keys %group_members) {
             my $score   = $support / $n_annotated;
             if ($score >= $threshold) {
                 push @passing_ecs, { ec => $ec, support => $support, score => $score };
+            } elsif ($verbose) {
+                printf STDERR "  SKIP $gid  profile=$display_profile  EC=$ec: score too low (%d/%d = %.2f < %.2f)\n",
+                    $support, $n_annotated, $score, $threshold;
             }
         }
         next unless @passing_ecs;
-
-        my $cluster_size    = scalar @cluster;
-        my $display_profile = $profile_key eq '' ? 'none' : $profile_key;
 
         for my $aaid (@cluster) {
             my $info = $protein_info{$aaid};
