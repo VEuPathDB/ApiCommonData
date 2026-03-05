@@ -130,7 +130,7 @@ sub preprocess {
 		    next OUTER;
 		  }
 
-		  print STDERR "processing $gID...\n";
+		  #print STDERR "processing $gID...\n";
 		}
 
 		## for $geneFeature that only have gene feature, but do not have subFeature, such as mRNA and exon, 
@@ -166,6 +166,8 @@ sub preprocess {
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+				## No need to assign CodingStart and CodingEnd for pseudogenes
+				## since pseudogenes do not load CDS and these fields will be reset to NULL later
 				if ($exonLoc->strand == -1){
 				    $exon->add_tag_value('CodingStart', $exonLoc->end());
 				    $exon->add_tag_value('CodingEnd', $exonLoc->start());
@@ -183,13 +185,13 @@ sub preprocess {
 		    }
 		}       
 		my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
-		if($gene){
 
+		if($gene){
                   ## update all pseudogene not loading CDS
                   foreach my $RNA ($gene->get_SeqFeatures) {
                     my $tType = $RNA->primary_tag();
                     if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
-                      my ($tID) = $RNA->get_tag_values("ID") if ($RNA->has_tag("ID"));
+                      my ($tID) = $RNA->get_tag_values("locus_tag") if ($RNA->has_tag("locus_tag"));
                       print STDERR "found pseudo: $tID\n";
                       foreach my $exon ($RNA->get_SeqFeatures) {
                         $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
