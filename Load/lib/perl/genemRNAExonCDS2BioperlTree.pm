@@ -132,6 +132,8 @@ sub preprocess {
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+                                ## No need to assign CodingStart and CodingEnd for pseudogenes
+                                ## since pseudogenes do not load CDS and these fields will be reset to NULL later
                                 if ($exonLoc->strand == -1){
 				  $exon->add_tag_value('CodingStart', $exonLoc->end());
 				  $exon->add_tag_value('CodingEnd', $exonLoc->start());
