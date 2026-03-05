@@ -27,6 +27,11 @@ my ($testFraction,$totalEcsTested,$noEcMatch,$testExact,$testLessPrecise,$testMo
 
 my ($logFh,$netGroupsRef,$dbh,$groups) = &setUpPrediction($outputDir,$fractionOfGroups,$minNumProteinsWithEc,$maxNumProteinsWithEc,$createLogFile, $gusConfigFile);
 
+if (!$test) {
+    open(my $outFh, ">", $outputFile) || die "Cannot open file '$outputFile' for writing";
+    close $outFh;
+}
+
 foreach my $group (keys %{$groups}) {
     next if (&nextGroup($fractionOfGroups,$netGroupsRef,$logFh));
 
@@ -756,13 +761,11 @@ sub blastScore {
     my ($id,$ec,$blastStatsPerEc,$blastStatsPerProtein,$proteinToEc) = @_;
     #print "EC is $ec ID is $id\n";
     # This protein was already assigned this EC
-    if ($proteinToEc->{$id}) {
-        if ($proteinToEc->{$id} eq $ec) {
-            return 4;
-        }
+    if ($proteinToEc->{$id} && $proteinToEc->{$id} eq $ec) {
+        return 4;
     }
     # This protein has no significant hit to the best representative
-    elsif (!$blastStatsPerProtein->{$id}) {
+    if (!$blastStatsPerProtein->{$id}) {
 	return 0;
     }
     # This protein did not have a good hit to the best rep
@@ -887,8 +890,6 @@ sub scoreToNumber {
 
 sub printEcScores {
     my ($scores,$outputFile,$dbh) = @_;
-    open(OUT,">",$outputFile) || die "Cannot open file '$outputFile' for writing";
-    close OUT;
     foreach my $id (keys %{$scores}) {
 	my $editedId = $id;
 	my $abbrev;
@@ -1383,14 +1384,31 @@ sub groupsSql {
 
 sub orthoOrganismSql {
     my ($excludeOld) = @_;
-    my $whereClause = $excludeOld ? "AND o.three_letter_abbrev NOT LIKE '%-old'" : "";
-    return "SELECT o.three_letter_abbrev, p.three_letter_abbrev
-            FROM apidb.OrthomclClade o,
-                 (SELECT orthomcl_clade_id,three_letter_abbrev
-                  FROM apidb.orthomclClade
-                  WHERE core_peripheral='Z') p
-            WHERE o.parent_id = p.orthomcl_clade_id
-                  AND o.core_peripheral IN ('C','P') $whereClause";
+    my $whereClause = $excludeOld ? "AND three_letter_abbrev NOT LIKE '%-old'" : "";
+    return "WITH RECURSIVE TaxonHierarchy AS (
+                SELECT
+                    three_letter_abbrev,
+                    orthomcl_clade_id,
+                    core_peripheral,
+                    three_letter_abbrev AS taxon_group_abbrev
+                FROM apidb.OrthomclClade
+                WHERE core_peripheral = 'Z'
+
+                UNION ALL
+
+                SELECT
+                    child.three_letter_abbrev,
+                    child.orthomcl_clade_id,
+                    child.core_peripheral,
+                    parent.taxon_group_abbrev
+                FROM apidb.OrthomclClade child
+                JOIN TaxonHierarchy parent
+                  ON child.parent_id = parent.orthomcl_clade_id
+            )
+            SELECT three_letter_abbrev, taxon_group_abbrev
+            FROM TaxonHierarchy
+            WHERE core_peripheral IN ('C','P')
+                  $whereClause";
 }
 
 sub getDbHandle {
