@@ -234,6 +234,7 @@ sub traverseSeqFeatures {
              'SRP.RNA',
              'RNase_MRP_RNA',
              'SRP_RNA',
+             'pre_miRNA',
              'antisense_RNA',
              'telomerase_RNA',
              'V_gene_segment',
