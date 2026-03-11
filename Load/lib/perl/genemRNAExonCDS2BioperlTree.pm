@@ -157,21 +157,24 @@ sub preprocess {
 		my @UTRs = @{$UTRArrayRef};
 
 		foreach my $gene (@genes) {
-		  my($geneID) = ($geneFeature->has_tag('ID')) ? $geneFeature->get_tag_values('ID') : die "ERROR: missing geneID for case 1\n";
+		  my($geneID) = ($geneFeature->has_tag('ID')) ? $geneFeature->get_tag_values('ID')
+                                                              : die "ERROR: missing geneID for case 1 at " . $gene->seq_id . " , " . $gene->start . " .. " . $gene->end . "\n";
 		  $geneID =~ s/\:pseudogene//;
 		  $gene->remove_tag('ID');
 		  $gene->add_tag_value("ID",$geneID);
 
                   ## update all pseudogene not loading CDS
                   foreach my $RNA ($gene->get_SeqFeatures) {
-		    my($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing transcript ID for case 2\n";
+		    my($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID')
+                                                     : die "ERROR: missing transcript ID for case 2 at " . $gene->seq_id . " , " . $RNA->start . " .. " . $RNA->end . "\n";
 		    $tID =~ s/\:pseudogenic_transcript/\:mRNA/;
 		    $RNA->remove_tag('ID');
 		    $RNA->add_tag_value("ID",$tID);
 
                     my $tType = $RNA->primary_tag();
                     if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
-                      my ($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values("ID") : die "ERROR: missing transcript ID for case 3\n";
+                      my ($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values("ID")
+                                                        : die "ERROR: missing transcript ID for case 3 at " . $gene->seq_id . " , " . $RNA->start . " .. " . $RNA->end . "\n";
                       #print STDERR "found pseudo: $tID\n";
                       foreach my $exon ($RNA->get_SeqFeatures) {
                         $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
@@ -275,7 +278,8 @@ sub traverseSeqFeatures {
 	  }
         }
 
-	my($geneID) = ($geneFeature->has_tag('ID')) ? $geneFeature->get_tag_values('ID') : die "ERROR: missing gene ID case 4\n";
+	my($geneID) = ($geneFeature->has_tag('ID')) ? $geneFeature->get_tag_values('ID')
+                                                    : die "ERROR: missing gene ID case 4 at " . $geneFeature->seq_id . " , " . $RNA->start . " .. " . $RNA->end . "\n";
 	if (!$gene) {    ## only create one gene for multiple transcript
 	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
 	  $gene->add_tag_value("ID",$geneID);
@@ -406,7 +410,8 @@ sub traverseSeqFeatures {
 	    }
 
 	    if ($#codingStartAndEndPairs > 0) {
-	      my ($errorGene) = ($gene->has_tag('ID')) ? $gene->get_tag_values('ID') : die "ERROR: missing gene ID for case 5\n";
+	      my ($errorGene) = ($gene->has_tag('ID')) ? $gene->get_tag_values('ID')
+                                                       : die "ERROR: missing gene ID for case 5  at " . $gene->seq_id . " , " . $gene->start . " .. " . $gene->end . "\n";
 	      my ($start, $end) = split (/\t/, shift(@codingStartAndEndPairs) );
 	      die "double check the number of CDS for $errorGene has $start..$end ...... it is not consistant with the exon number\n";
 	    }
@@ -459,7 +464,8 @@ sub checkGeneStructure {
       my @RNAs = $gene->get_SeqFeatures;
       foreach my $RNA (sort {$a->location->start <=> $b->location->start
 			       || $a->location->end <=> $b->location->end} @RNAs){
-	my ($rID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing RNA id for case 6\n";
+	my ($rID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID')
+                                          : die "ERROR: missing RNA id for case 6, at " . $gene->seq_id . " , " . $RNA->start . " .. " . $RNA->end . "\n";
 	die "gene and rna are not on the same strand: $rID \n" if ($gene->location->strand != $RNA->location->strand);
 	my @exons= $RNA->get_SeqFeatures;
 	foreach my $exon(sort {$a->location->start <=> $b->location->start} @exons){
