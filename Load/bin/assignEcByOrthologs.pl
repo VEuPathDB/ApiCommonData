@@ -258,6 +258,7 @@ for my $gid (sort keys %group_members) {
         next if $n_annotated == 0;   # nothing to propagate from
 
         my $cluster_size    = scalar @cluster;
+        next if $cluster_size == 1;
         my $display_profile = $profile_key eq '' ? 'none' : $profile_key;
 
         my @cluster_lengths = map { $protein_info{$_}{protein_length} } @cluster;
@@ -354,6 +355,7 @@ for my $gid (sort keys %group_members) {
                 my $support = $pass->{support};
                 my $score   = $pass->{score};
                 my $is_novel = $existing_ecs{$ec} ? 0 : 1;
+                next unless $is_novel;
 
                 my $len_vs_mean = $cluster_mean > 0
                     ? ($info->{protein_length} - $cluster_mean) / $cluster_mean
