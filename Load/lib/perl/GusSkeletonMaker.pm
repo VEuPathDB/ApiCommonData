@@ -191,7 +191,7 @@ sub makeGeneSkeleton{
 
        ) {
 
-      #next if ($bioperlTranscript->has_tag("pseudo"));
+      next if ($bioperlTranscript->has_tag("pseudo"));
       my $translatedAAFeat = &makeTranslatedAAFeat($plugin, $dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
       $translatedAAFeat->{bioperlTranscript} = $bioperlTranscript;
