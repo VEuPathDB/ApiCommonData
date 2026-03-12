@@ -257,9 +257,10 @@ for my $gid (sort keys %group_members) {
         }
         next if $n_annotated == 0;   # nothing to propagate from
 
+        next if $profile_key eq '';   # no InterPro domains — skip
         my $cluster_size    = scalar @cluster;
         next if $cluster_size == 1;
-        my $display_profile = $profile_key eq '' ? 'none' : $profile_key;
+        my $display_profile = $profile_key;
 
         my @cluster_lengths = map { $protein_info{$_}{protein_length} } @cluster;
         my $cluster_mean = sum(@cluster_lengths) / $cluster_size;
