@@ -223,6 +223,7 @@ sub traverseSeqFeatures {
              'mRNA',
              'transcript',
              'misc_RNA',
+             'siRNA',
              'rRNA',
              'snRNA',
              'snoRNA',
