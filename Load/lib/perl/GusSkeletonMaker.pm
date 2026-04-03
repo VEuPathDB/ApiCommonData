@@ -522,6 +522,7 @@ sub setTranscriptIds{
   foreach my $gusTranscript (@gusTranscripts) {
 
     my $transcriptSeq = $gusTranscript->getFeatureSequence();
+    $transcriptSeq =~ s/[^ATCG]/N/gi;
 
     ## get exonPath
     my @ePaths;
@@ -534,7 +535,7 @@ sub setTranscriptIds{
     if ($transcriptId) { ## set transcript ID in gus object
       $gusTranscript->setSourceId($transcriptId);
     } else {
-      die "Can not find the generated transcript ID for gene: $geneId\n";
+      die "Can not find the generated transcript ID for gene: '$geneId' with exonFeatPath: '$exonFeatPath'\n  \$transcriptSeq = $transcriptSeq\n";
     }
 
     my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence');
