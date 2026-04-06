@@ -24,6 +24,12 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   stringArg({name           => 'organismAbbrev',
+            descr          => 'Organism Abbreviation',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
+
    stringArg({ name => 'extDbRlsSpec',
                  descr => 'externaldatabase spec to use',
                  constraintFunc => undef,
@@ -62,7 +68,7 @@ sub run {
  my ($self) = @_;
 
  my $fileName = $self->getArg('resultsFile');
- my $ncbiTaxId = $self->getArg('ncbiTaxId');
+ my $organismAbbrev = $self->getArg('organismAbbrev');
  my $rowCount = 0;
 
  my $dbh = $self->getQueryHandle();
@@ -80,6 +86,10 @@ sub run {
      $proteinToGene{$proteinId} = $geneId;
  }
 
+ my $taxonIdSql = "select taxon_id from apidb.organism where abbrev = '$organismAbbrev'";
+ my $taxonIdStmt = $dbh->prepareAndExecute($taxonIdSql);
+ my $taxonId = $stmt->fetchrow_array();
+
  open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
  while (my $line = <$data>) {
      my $rowCount++;
@@ -91,7 +101,7 @@ sub run {
 
      my $geneSourceId = $proteinToGene{$proteinSourceId};
 
-     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, SOURCE => $source, NCBI_TAXON_ID => $ncbiTaxId});
+     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, SOURCE => $source, TAXON_ID => $taxonId});
      $row->submit();
      $self->undefPointerCache();
  }
