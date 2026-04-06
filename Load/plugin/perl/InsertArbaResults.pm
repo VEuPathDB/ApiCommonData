@@ -18,6 +18,12 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   stringArg({name           => 'ncbiTaxId',
+            descr          => 'NCBI Taxon Id of Organism',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
+
    stringArg({ name => 'extDbRlsSpec',
                  descr => 'externaldatabase spec to use',
                  constraintFunc => undef,
