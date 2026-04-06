@@ -45,7 +45,7 @@ sub preprocess {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
 
-	    if($type eq 'protein_coding_gene'){
+	    if($type eq 'protein_coding_gene' || $type eq 'ncRNA_gene'){
 		$bioperlFeatureTree->primary_tag('gene');
 		$type = "gene";
 	    }
