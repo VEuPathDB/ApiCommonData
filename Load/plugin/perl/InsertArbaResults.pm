@@ -84,13 +84,13 @@ sub run {
      my $rowCount++;
      chomp $line;
 
-     my ($proteinSourceId, $description, $one, $empty, $iea, $domains, $veupathdb) = split(/\t/, $line);
+     my ($proteinSourceId, $description, $one, $empty, $iea, $source, $veupathdb) = split(/\t/, $line);
 
-     $domains =~ s/^Pfam://;
+     $source =~ s/^Pfam://;
 
      my $geneSourceId = $proteinToGene{$proteinSourceId};
 
-     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, DOMAINS => $domains});
+     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, SOURCE => $source});
      $row->submit();
      $self->undefPointerCache();
  }
