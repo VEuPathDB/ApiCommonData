@@ -62,6 +62,7 @@ sub run {
  my ($self) = @_;
 
  my $fileName = $self->getArg('resultsFile');
+ my $ncbiTaxId = $self->getArg('ncbiTaxId');
  my $rowCount = 0;
 
  my $dbh = $self->getQueryHandle();
@@ -90,7 +91,7 @@ sub run {
 
      my $geneSourceId = $proteinToGene{$proteinSourceId};
 
-     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, SOURCE => $source});
+     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, SOURCE => $source, NCBI_TAXON_ID => $ncbiTaxId});
      $row->submit();
      $self->undefPointerCache();
  }
