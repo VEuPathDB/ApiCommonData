@@ -82,9 +82,9 @@ sub run {
  open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
  while (my $line = <$data>) {
      my $rowCount++;
-
      chomp $line;
-     my ($proteinSourceId, $description, $one, $iea, $domains, $veupathdb) = split(/\t/, $line);
+
+     my ($proteinSourceId, $description, $one, $empty, $iea, $domains, $veupathdb) = split(/\t/, $line);
 
      $domains =~ s/^Pfam://;
 
