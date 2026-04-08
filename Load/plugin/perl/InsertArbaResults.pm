@@ -2,11 +2,20 @@ package ApiCommonData::Load::Plugin::InsertArbaResults;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
-use GUS::Model::ApiDB::ArbaResults;
 use GUS::PluginMgr::Plugin;
+use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::Transcript;
+use GUS::Model::ApiDB::GeneFeatureProduct;
+use GUS::Model::ApiDB::TranscriptProduct;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
+use GUS::Supported::Util;
+use GUS::Model::ApiDB::Organism;
+use GUS::Model::SRes::OntologyTerm;
+use GUS::Supported::OntologyLookup;
+
 use strict;
+
 # ----------------------------------------------------------------------
 my $argsDeclaration =
   [
@@ -19,23 +28,22 @@ my $argsDeclaration =
             isList         => 0, }),
 
    stringArg({name           => 'ncbiTaxId',
-            descr          => 'NCBI Taxon Id of Organism',
-            reqd           => 1,
-            constraintFunc => undef,
-            isList         => 0, }),
+              descr          => 'NCBI Taxon Id of Organism',
+              reqd           => 1,
+              constraintFunc => undef,
+              isList         => 0, }),
 
    stringArg({name           => 'organismAbbrev',
-            descr          => 'Organism Abbreviation',
-            reqd           => 1,
-            constraintFunc => undef,
-            isList         => 0, }),
+              descr          => 'Organism Abbreviation',
+              reqd           => 1,
+              constraintFunc => undef,
+              isList         => 0, }),
 
-   stringArg({ name => 'extDbRlsSpec',
-                 descr => 'externaldatabase spec to use',
-                 constraintFunc => undef,
-                 reqd => 1,
-                 isList => 0,
-               })
+   stringArg({name           => 'extDbRlsSpec',
+              descr          => 'externaldatabase spec to use',
+              constraintFunc => undef,
+              reqd           => 1,
+              isList         => 0, }),
   ];
 
 my $documentation = { purpose          => "",
@@ -51,13 +59,13 @@ my $documentation = { purpose          => "",
 sub new {
   my ($class) = @_;
   my $self = {};
-  bless($self,$class);
+  bless($self, $class);
 
   $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
-                      documentation     => $documentation});
+                      documentation     => $documentation });
 
   return $self;
 }
@@ -65,52 +73,119 @@ sub new {
 # ======================================================================
 
 sub run {
- my ($self) = @_;
+  my $self = shift;
 
- my $fileName = $self->getArg('resultsFile');
- my $organismAbbrev = $self->getArg('organismAbbrev');
- my $rowCount = 0;
+  my $dbh = $self->getQueryHandle();
 
- my $dbh = $self->getQueryHandle();
+  my $fileName       = $self->getArg('resultsFile');
+  my $organismAbbrev = $self->getArg('organismAbbrev');
+  my $taxonId        = $self->getArg('ncbiTaxId');
 
- my $externalDatabaseSpec = $self->getArg('extDbRlsSpec');
- my $dbRlsId = $self->getExtDbRlsId("$externalDatabaseSpec");
+  my $organismInfo = GUS::Model::ApiDB::Organism->new({'abbrev' => $organismAbbrev});
+  $organismInfo->retrieveFromDB();
+  my $projectId = $organismInfo->getRowProjectId();
 
- my %proteinToTranscript;
- my %proteinToGene;
+  my $externalDatabaseSpec = $self->getArg('extDbRlsSpec');
+  my $dbRlsId = $self->getExtDbRlsId("$externalDatabaseSpec");
 
- my $sourceSql = "select gf.source_id as geneId, t.source_id as transcriptId, aas.source_id as proteinId from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id";
- my $stmt = $dbh->prepareAndExecute($sourceSql);
- while(my ($geneId, $transcriptId, $proteinId) = $stmt->fetchrow_array()) {
-     $proteinToTranscript{$proteinId} = $transcriptId;
-     $proteinToGene{$proteinId} = $geneId;
- }
+  my %proteinToGene;
 
- my $taxonIdSql = "select taxon_id from apidb.organism where abbrev = '$organismAbbrev'";
- my $taxonIdStmt = $dbh->prepareAndExecute($taxonIdSql);
- my $taxonId = $stmt->fetchrow_array();
+  my $sourceSql = "select gf.source_id as geneId, aas.source_id as proteinId from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id";
+  my $stmt = $dbh->prepareAndExecute($sourceSql);
+  while (my ($geneId, $proteinId) = $stmt->fetchrow_array()) {
+    $proteinToGene{$proteinId} = $geneId;
+  }
 
- open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
- while (my $line = <$data>) {
-     my $rowCount++;
-     chomp $line;
+  my $processed;
+  my $totalNum;
 
-     my ($proteinSourceId, $description, $one, $empty, $iea, $source, $veupathdb) = split(/\t/, $line);
+  my $sourceIdMap = $self->getSourceIdToFeatureInfoMap($organismAbbrev, $dbh);
 
-     $source =~ s/^Pfam://;
+  open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
+  while (my $line = <$data>) {
+    chomp $line;
 
-     my $geneSourceId = $proteinToGene{$proteinSourceId};
+    # Example line
+    # PF3D7_0100300.1-p1	acidic terminal segments, variant surface antigen of PfEMP1 | Duffy-binding-like domain, C-terminal subdomain | Duffy binding domain | N-terminal segments of PfEMP1 | domain-containing protein	1		IEA	Pfam:PF15445,PF22672,PF05424,PF15447	VEuPathDB
+    my ($proteinSourceId, $description, $one, $empty, $iea, $source, $veupathdb) = split(/\t/, $line);
 
-     my $row = GUS::Model::ApiDB::ArbaResults->new({GENE_SOURCE_ID => $geneSourceId, DESCRIPTION => $description, SOURCE => $source, TAXON_ID => $taxonId});
-     $row->submit();
-     $self->undefPointerCache();
- }
- print "$rowCount rows added.\n"
+    $source =~ s/^Pfam://;
+    $source =~ s/ //;
+
+    my $geneSourceId = $proteinToGene{$proteinSourceId};
+
+    $totalNum++;
+
+    if ($sourceIdMap->{'GeneFeature'}->{$geneSourceId}) {
+      my $nafeatureId      = $sourceIdMap->{'GeneFeature'}->{$geneSourceId}->{na_feature_id};
+      my $productReleaseId = $sourceIdMap->{'GeneFeature'}->{$geneSourceId}->{external_database_release_id};
+
+      $self->makeGeneFeatureProduct($productReleaseId, $nafeatureId, $description, 0, undef, undef, undef, 'ARBA');
+
+      $processed++;
+    } else {
+      $self->log("WARNING", "gene with source id '$geneSourceId' and organism '$organismAbbrev' cannot be found");
+    }
+    $self->undefPointerCache();
+  }
+
+  die "Less than half of the products were parsed and loaded\n" if ($totalNum > 1 && $processed / $totalNum < 0.5);
+  return "$processed gene feature products parsed and loaded";
+}
+
+# =========================== Subroutines ================================================================================
+
+sub makeGeneFeatureProduct {
+  my ($self, $geneReleaseId, $naFeatId, $product, $preferred, $pmid, $evCode, $with, $assignedBy) = @_;
+
+  my $evCodeLink = getEvidCodeLink($self, $evCode) if ($evCode);
+  my $geneProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
+                                                                 'product'       => $product,
+                                                                 'publication'   => $pmid,
+                                                                });
+
+  unless ($geneProduct->retrieveFromDB()) {
+    $geneProduct->set("is_preferred", $preferred);
+    $geneProduct->set("external_database_release_id", $geneReleaseId);
+    $geneProduct->set("evidence_code", $evCodeLink);
+    $geneProduct->set("with_from", $with);
+    $geneProduct->set("assigned_by", $assignedBy);
+    $geneProduct->submit();
+  } else {
+    $self->log("WARNING", "product $product already exists for na_feature_id: $naFeatId\n");
+  }
+}
+
+sub getSourceIdToFeatureInfoMap {
+  my ($self, $organismAbbrev, $dbh) = @_;
+
+  my $sql = "select f.source_id
+     , f.na_feature_id
+     , f.external_database_release_id
+     , f.subclass_view
+from dots.nafeature f
+   join dots.nasequence s on f.na_sequence_id = s.na_sequence_id
+   join apidb.organism o on s.taxon_id = o.taxon_id
+where o.abbrev = ?
+and f.subclass_view in ('GeneFeature')";
+
+  my $sth = $dbh->prepare($sql);
+  $sth->execute($organismAbbrev);
+
+  my %sourceIdMap;
+  while (my ($sourceId, $naFeatureId, $extDbRlsId, $subClassView) = $sth->fetchrow_array()) {
+    $sourceIdMap{$subClassView}->{$sourceId} = {
+      na_feature_id                => $naFeatureId,
+      external_database_release_id => $extDbRlsId,
+    };
+  }
+
+  return \%sourceIdMap;
 }
 
 sub undoTables {
   my ($self) = @_;
-  return ('ApiDB.ArbaResults');
+  return ('ApiDB.GeneFeatureProduct');
 }
 
 1;
