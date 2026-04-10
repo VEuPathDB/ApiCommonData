@@ -138,16 +138,15 @@ sub run {
 sub makeGeneFeatureProduct {
   my ($self, $geneReleaseId, $naFeatId, $product, $preferred, $pmid, $evCode, $with, $assignedBy) = @_;
 
-  my $evCodeLink = getEvidCodeLink($self, $evCode) if ($evCode);
   my $geneProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
-                                                                 'product'       => $product,
-                                                                 'publication'   => $pmid,
-                                                                });
+                                                                'product'       => $product,
+                                                                'publication'   => $pmid,
+                                                               });
 
   unless ($geneProduct->retrieveFromDB()) {
     $geneProduct->set("is_preferred", $preferred);
     $geneProduct->set("external_database_release_id", $geneReleaseId);
-    $geneProduct->set("evidence_code", $evCodeLink);
+    $geneProduct->set("evidence_code", $evCode);
     $geneProduct->set("with_from", $with);
     $geneProduct->set("assigned_by", $assignedBy);
     $geneProduct->submit();
