@@ -575,7 +575,7 @@ sub writeOutputFiles {
 
     foreach my $geneId (sort keys %$geneToDescription) {
         my $description = $geneToDescription->{$geneId};
-        print $descFh "$geneId\t$description\n";
+        print $descFh "$geneId\t$description\t\t\t\t\tEntrezGene\n";
     }
     close($descFh);
     print STDERR "  Wrote " . scalar(keys %$geneToDescription) . " gene description mappings to $descOutFile\n" if $args->{verbose};
@@ -641,7 +641,8 @@ Output Files:
 Output file formats:
   - All output files have NO headers
   - entrezgene_mappings.txt, pubmed_mappings.txt, and uniprot_mappings.txt have 3 tab-delimited columns
-  - symbol_mappings.txt and description_mappings.txt have 2 tab-delimited columns (GeneSourceId, Symbol/Description)
+  - symbol_mappings.txt has 2 tab-delimited columns (GeneSourceId, Symbol)
+  - description_mappings.txt has 7 tab-delimited columns (GeneSourceId, Description, preferred, pmid, evCode, with, assignedBy)
 
 Notes:
   - taxId is used directly in database queries (WHERE ncbi_tax_id = taxId)
