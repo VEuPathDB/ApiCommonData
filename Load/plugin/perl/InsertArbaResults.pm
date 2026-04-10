@@ -120,7 +120,7 @@ sub run {
       my $nafeatureId      = $sourceIdMap->{'GeneFeature'}->{$geneSourceId}->{na_feature_id};
       my $productReleaseId = $sourceIdMap->{'GeneFeature'}->{$geneSourceId}->{external_database_release_id};
 
-      $self->makeGeneFeatureProduct($productReleaseId, $nafeatureId, $description, 0, undef, undef, undef, 'ARBA');
+      $self->makeGeneFeatureProduct($productReleaseId, $nafeatureId, $description, 0, undef, 149, undef, 'ARBA');
 
       $processed++;
     } else {
