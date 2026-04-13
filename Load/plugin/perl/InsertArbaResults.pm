@@ -90,7 +90,7 @@ sub run {
 
   my %proteinToGene;
 
-  my $sourceSql = "select geneId, proteinId from (select gf.source_id as geneId, aas.source_id as proteinId, rank() over (partition by gf.source_id order by aas.length desc) as rnk from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id) ranked where rnk = 1";
+  my $sourceSql = "select gf.source_id as geneId, aas.source_id as proteinId from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id";
   my $stmt = $dbh->prepareAndExecute($sourceSql);
   while (my ($geneId, $proteinId) = $stmt->fetchrow_array()) {
     $proteinToGene{$proteinId} = $geneId;
