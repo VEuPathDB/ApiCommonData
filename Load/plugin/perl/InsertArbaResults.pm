@@ -90,10 +90,18 @@ sub run {
 
   my %proteinToGene;
 
-  my $sourceSql = "select gf.source_id as geneId, aas.source_id as proteinId from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id";
+  my $sourceSql = "select geneId, proteinId from (select gf.source_id as geneId, aas.source_id as proteinId, rank() over (partition by gf.source_id order by aas.length desc) as rnk from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taf, dots.translatedaasequence aas where t.parent_id = gf.na_feature_id and t.na_feature_id = taf.na_feature_id and gf.external_database_release_id = '$dbRlsId' and taf.aa_sequence_id = aas.aa_sequence_id) ranked where rnk = 1";
   my $stmt = $dbh->prepareAndExecute($sourceSql);
   while (my ($geneId, $proteinId) = $stmt->fetchrow_array()) {
     $proteinToGene{$proteinId} = $geneId;
+  }
+
+  my %allProteins;
+
+  my $allProteinsSql = "select aas.source_id from dots.translatedaasequence aas, dots.translatedaafeature taf, dots.transcript t, dots.genefeature gf where aas.aa_sequence_id = taf.aa_sequence_id and taf.na_feature_id = t.na_feature_id and t.parent_id = gf.na_feature_id and gf.external_database_release_id = '$dbRlsId'";
+  my $allProteinsStmt = $dbh->prepareAndExecute($allProteinsSql);
+  while (my ($proteinId) = $allProteinsStmt->fetchrow_array()) {
+    $allProteins{$proteinId} = 1;
   }
 
   my $processed;
@@ -111,6 +119,10 @@ sub run {
 
     $source =~ s/^Pfam://;
     $source =~ s/ //;
+
+    unless ($allProteins{$proteinSourceId}) {
+      $self->log("WARNING", "protein '$proteinSourceId' from results file not found in dots.translatedaasequence");
+    }
 
     my $geneSourceId = $proteinToGene{$proteinSourceId};
 
