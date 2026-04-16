@@ -177,7 +177,7 @@ sub runExtDbRlsQuery {
 sub getQueryExtDbRlsIds {
     my ($dbh, $isEst, $externalDatabaseSpec) = @_;
 
-    my ($name, $version) = split(/\|/, $targetExtDbRlsSpec);
+    my ($name, $version) = split(/\|/, $externalDatabaseSpec);
 
     my $query = $isEst ? &getEstDatasetsQuery() : &getOneDatasetQuery($name, $version);
 
