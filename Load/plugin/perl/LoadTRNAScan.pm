@@ -184,6 +184,9 @@ sub new {
 
 sub run {
   my $self = shift;
+ 
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
 
   my $scanReleaseId =  $self->getOrCreateExtDbAndDbRls($self->getArg('scanDbName'),$self->getArg('scanDbVer'))|| $self->error("Can't find db_el_id for tRNA Scan");
 
