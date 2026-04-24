@@ -126,6 +126,8 @@ sub run {
 
     my $geneSourceId = $proteinToGene{$proteinSourceId};
 
+    next unless $geneSourceId;
+
     $totalNum++;
 
     if ($sourceIdMap->{'GeneFeature'}->{$geneSourceId}) {
