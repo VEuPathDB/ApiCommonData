@@ -179,6 +179,15 @@ delete from dots.AaSequenceEnzymeClass
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+create table apidb.pgp2_PDBSimilarity_:CLEAN_ORG_ABBREV as
+select *
+from apidb.PDBSimilarity
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from apidb.PDBSimilarity
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
 create table apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV as
 select *
 from dots.TranslatedAASequence
@@ -225,6 +234,7 @@ drop table apidb.pgp2_AaFeature_:CLEAN_ORG_ABBREV;
 drop table apidb.pgp2_AaSequenceAttribute_:CLEAN_ORG_ABBREV;
 drop table apidb.pgp2_MassSpecSummary_:CLEAN_ORG_ABBREV;
 drop table apidb.pgp2_AaSequenceEnzymeClass_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_PDBSimilarity_:CLEAN_ORG_ABBREV;
 drop table apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV;
 drop table apidb.pgp2_TranslatedAaFeature_:CLEAN_ORG_ABBREV;
 drop table apidb.pgp2_FeatureLocation_:CLEAN_ORG_ABBREV;
