@@ -7,6 +7,7 @@
 --
 
 -- organism-scoped gene na_feature_ids
+drop table if exists apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV;
 create table apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV as
 select gf.na_feature_id
 from dots.GeneFeature gf
@@ -33,17 +34,20 @@ where is_pseudo = 0
   and na_feature_id in (select na_feature_id from apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV);
 
 -- create lists of IDs of affected NaFeature / AaFeature / AaSequence records
+drop table if exists apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV;
 create table apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV as
 select t.na_feature_id
 from dots.Transcript t
   join apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV pg on t.parent_id = pg.na_feature_id
 where t.is_pseudo = 1;
 
+drop table if exists apidb.new_pseudoAaFeatureId_:CLEAN_ORG_ABBREV;
 create table apidb.new_pseudoAaFeatureId_:CLEAN_ORG_ABBREV as
 select taf.aa_feature_id
 from dots.TranslatedAaFeature taf
   join apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV pnf on taf.na_feature_id = pnf.na_feature_id;
 
+drop table if exists apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV;
 create table apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV as
 select taf.aa_sequence_id
 from dots.TranslatedAaFeature taf
@@ -52,6 +56,7 @@ from dots.TranslatedAaFeature taf
 --------------------------------------------------------------------------------
 -- set coding start/end NULL
 
+drop table if exists apidb.pgp2_RnaFeatureExon_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_RnaFeatureExon_:CLEAN_ORG_ABBREV as
 select *
 from dots.RnaFeatureExon
@@ -66,6 +71,7 @@ where (coding_start is not null or coding_end is not null)
 
 --------------------------------------------------------------------------------
 
+drop table if exists apidb.pgp2_SecondaryStructureCall_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_SecondaryStructureCall_:CLEAN_ORG_ABBREV as
 select *
 from dots.SecondaryStructureCall
@@ -83,6 +89,7 @@ where secondary_structure_id in (
 );
 
 
+drop table if exists apidb.pgp2_SecondaryStructure_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_SecondaryStructure_:CLEAN_ORG_ABBREV as
 select *
 from dots.SecondaryStructure
@@ -92,6 +99,7 @@ delete from dots.SecondaryStructure
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_DbRefAaFeature_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_DbRefAaFeature_:CLEAN_ORG_ABBREV as
 select *
 from dots.DbRefAaFeature
@@ -109,6 +117,7 @@ where aa_feature_id in (
 );
 
 
+drop table if exists apidb.pgp2_AaFeatureExon_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_AaFeatureExon_:CLEAN_ORG_ABBREV as
 select *
 from dots.AaFeatureExon
@@ -126,6 +135,7 @@ where aa_feature_id in (
 );
 
 
+drop table if exists apidb.pgp2_AaLocation_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_AaLocation_:CLEAN_ORG_ABBREV as
 select *
 from dots.AaLocation
@@ -143,6 +153,7 @@ where aa_feature_id in (
 );
 
 
+drop table if exists apidb.pgp2_AaFeature_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_AaFeature_:CLEAN_ORG_ABBREV as
 select *
 from dots.AaFeature
@@ -152,6 +163,7 @@ delete from dots.AaFeature
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_AaSequenceAttribute_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_AaSequenceAttribute_:CLEAN_ORG_ABBREV as
 select *
 from apidb.AaSequenceAttribute
@@ -161,6 +173,7 @@ delete from apidb.AaSequenceAttribute
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_MassSpecSummary_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_MassSpecSummary_:CLEAN_ORG_ABBREV as
 select *
 from apidb.MassSpecSummary
@@ -170,6 +183,7 @@ delete from apidb.MassSpecSummary
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_AaSequenceEnzymeClass_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_AaSequenceEnzymeClass_:CLEAN_ORG_ABBREV as
 select *
 from dots.AaSequenceEnzymeClass
@@ -179,6 +193,7 @@ delete from dots.AaSequenceEnzymeClass
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_PDBSimilarity_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_PDBSimilarity_:CLEAN_ORG_ABBREV as
 select *
 from apidb.PDBSimilarity
@@ -188,6 +203,7 @@ delete from apidb.PDBSimilarity
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV as
 select *
 from dots.TranslatedAASequence
@@ -198,6 +214,7 @@ where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId
 
 --------------------------------------------------------------------------------
 
+drop table if exists apidb.pgp2_TranslatedAaFeature_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_TranslatedAaFeature_:CLEAN_ORG_ABBREV as
 select *
 from dots.TranslatedAaFeature
@@ -207,6 +224,7 @@ delete from dots.TranslatedAaFeature
 where na_feature_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_FeatureLocation_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_FeatureLocation_:CLEAN_ORG_ABBREV as
 select *
 from apidb.FeatureLocation
