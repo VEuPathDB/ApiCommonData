@@ -1,0 +1,240 @@
+--
+-- patch script for unwanted exons and proteins on pseudogenes
+--
+-- creates tables listing na_feature_ids (of transcripts), aa_feature_ids, and
+-- aa_sequence_ids to remove, and copies affected records of each table X to a
+-- new table "PGP_X" (for "pseudogenes patch")
+--
+
+-- organism-scoped gene na_feature_ids
+create table apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV as
+select gf.na_feature_id
+from dots.GeneFeature gf
+  join dots.NaSequence ns on gf.na_sequence_id = ns.na_sequence_id
+  join apidb.Organism o on ns.taxon_id = o.taxon_id
+where o.public_abbrev = ':ORG_ABBREV';
+
+-- set IS_PSEUDO for genes named "pseudogene", and their transcripts, where it isn't already
+update dots.Transcript
+set is_pseudo = 1
+where is_pseudo = 0
+  and na_feature_id in (
+    select t.na_feature_id
+    from dots.Transcript t
+      join dots.GeneFeature gf on t.parent_id = gf.na_feature_id
+      join apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV pg on gf.na_feature_id = pg.na_feature_id
+    where gf.name = 'pseudogene'
+  );
+
+update dots.GeneFeature
+set is_pseudo = 1
+where is_pseudo = 0
+  and name = 'pseudogene'
+  and na_feature_id in (select na_feature_id from apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV);
+
+-- create lists of IDs of affected NaFeature / AaFeature / AaSequence records
+create table apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV as
+select t.na_feature_id
+from dots.Transcript t
+  join apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV pg on t.parent_id = pg.na_feature_id
+where t.is_pseudo = 1;
+
+create table apidb.new_pseudoAaFeatureId_:CLEAN_ORG_ABBREV as
+select taf.aa_feature_id
+from dots.TranslatedAaFeature taf
+  join apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV pnf on taf.na_feature_id = pnf.na_feature_id;
+
+create table apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV as
+select taf.aa_sequence_id
+from dots.TranslatedAaFeature taf
+  join apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV pnf on taf.na_feature_id = pnf.na_feature_id;
+
+--------------------------------------------------------------------------------
+-- set coding start/end NULL
+
+create table apidb.pgp2_RnaFeatureExon_:CLEAN_ORG_ABBREV as
+select *
+from dots.RnaFeatureExon
+where (coding_start is not null or coding_end is not null)
+  and rna_feature_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
+
+update dots.RnaFeatureExon
+set coding_start = null,
+    coding_end = null
+where (coding_start is not null or coding_end is not null)
+  and rna_feature_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
+
+--------------------------------------------------------------------------------
+
+create table apidb.pgp2_SecondaryStructureCall_:CLEAN_ORG_ABBREV as
+select *
+from dots.SecondaryStructureCall
+where secondary_structure_id in (
+  select ss.secondary_structure_id
+  from dots.SecondaryStructure ss
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on ss.aa_sequence_id = pasi.aa_sequence_id
+);
+
+delete from dots.SecondaryStructureCall
+where secondary_structure_id in (
+  select ss.secondary_structure_id
+  from dots.SecondaryStructure ss
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on ss.aa_sequence_id = pasi.aa_sequence_id
+);
+
+
+create table apidb.pgp2_SecondaryStructure_:CLEAN_ORG_ABBREV as
+select *
+from dots.SecondaryStructure
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from dots.SecondaryStructure
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_DbRefAaFeature_:CLEAN_ORG_ABBREV as
+select *
+from dots.DbRefAaFeature
+where aa_feature_id in (
+  select aaf.aa_feature_id
+  from dots.AaFeature aaf
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on aaf.aa_sequence_id = pasi.aa_sequence_id
+);
+
+delete from dots.DbRefAaFeature
+where aa_feature_id in (
+  select aaf.aa_feature_id
+  from dots.AaFeature aaf
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on aaf.aa_sequence_id = pasi.aa_sequence_id
+);
+
+
+create table apidb.pgp2_AaFeatureExon_:CLEAN_ORG_ABBREV as
+select *
+from dots.AaFeatureExon
+where aa_feature_id in (
+  select aaf.aa_feature_id
+  from dots.AaFeature aaf
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on aaf.aa_sequence_id = pasi.aa_sequence_id
+);
+
+delete from dots.AaFeatureExon
+where aa_feature_id in (
+  select aaf.aa_feature_id
+  from dots.AaFeature aaf
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on aaf.aa_sequence_id = pasi.aa_sequence_id
+);
+
+
+create table apidb.pgp2_AaLocation_:CLEAN_ORG_ABBREV as
+select *
+from dots.AaLocation
+where aa_feature_id in (
+  select aaf.aa_feature_id
+  from dots.AaFeature aaf
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on aaf.aa_sequence_id = pasi.aa_sequence_id
+);
+
+delete from dots.AaLocation
+where aa_feature_id in (
+  select aaf.aa_feature_id
+  from dots.AaFeature aaf
+    join apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV pasi on aaf.aa_sequence_id = pasi.aa_sequence_id
+);
+
+
+create table apidb.pgp2_AaFeature_:CLEAN_ORG_ABBREV as
+select *
+from dots.AaFeature
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from dots.AaFeature
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_AaSequenceAttribute_:CLEAN_ORG_ABBREV as
+select *
+from apidb.AaSequenceAttribute
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from apidb.AaSequenceAttribute
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_MassSpecSummary_:CLEAN_ORG_ABBREV as
+select *
+from apidb.MassSpecSummary
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from apidb.MassSpecSummary
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_AaSequenceEnzymeClass_:CLEAN_ORG_ABBREV as
+select *
+from dots.AaSequenceEnzymeClass
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from dots.AaSequenceEnzymeClass
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_PDBSimilarity_:CLEAN_ORG_ABBREV as
+select *
+from apidb.PDBSimilarity
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from apidb.PDBSimilarity
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV as
+select *
+from dots.TranslatedAASequence
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from dots.TranslatedAASequence
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+--------------------------------------------------------------------------------
+
+create table apidb.pgp2_TranslatedAaFeature_:CLEAN_ORG_ABBREV as
+select *
+from dots.TranslatedAaFeature
+where na_feature_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
+
+delete from dots.TranslatedAaFeature
+where na_feature_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
+
+
+create table apidb.pgp2_FeatureLocation_:CLEAN_ORG_ABBREV as
+select *
+from apidb.FeatureLocation
+where feature_type in ('UTR', 'CDS')
+  and parent_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
+
+delete from apidb.FeatureLocation
+where feature_type in ('UTR', 'CDS')
+  and parent_id in (select na_feature_id from apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV);
+
+--------------------------------------------------------------------------------
+-- cleanup
+
+drop table apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV;
+drop table apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV;
+drop table apidb.new_pseudoAaFeatureId_:CLEAN_ORG_ABBREV;
+drop table apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_RnaFeatureExon_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_SecondaryStructureCall_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_SecondaryStructure_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_DbRefAaFeature_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_AaFeatureExon_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_AaLocation_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_AaFeature_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_AaSequenceAttribute_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_MassSpecSummary_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_AaSequenceEnzymeClass_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_PDBSimilarity_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_TranslatedAaFeature_:CLEAN_ORG_ABBREV;
+drop table apidb.pgp2_FeatureLocation_:CLEAN_ORG_ABBREV;
