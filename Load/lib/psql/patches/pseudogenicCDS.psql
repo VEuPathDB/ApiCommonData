@@ -33,6 +33,11 @@ where is_pseudo = 0
   and name = 'pseudogene'
   and na_feature_id in (select na_feature_id from apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV);
 
+update dots.GeneFeature
+set name = 'pseudogene'
+where name = 'pseudogene_with_CDS'
+  and na_feature_id in (select na_feature_id from apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV);
+
 -- create lists of IDs of affected NaFeature / AaFeature / AaSequence records
 drop table if exists apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV;
 create table apidb.new_pseudoNaFeatureId_:CLEAN_ORG_ABBREV as
