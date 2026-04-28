@@ -210,6 +210,16 @@ delete from apidb.PDBSimilarity
 where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
 
 
+drop table if exists apidb.pgp2_AASequenceEpitope_:CLEAN_ORG_ABBREV;
+create table apidb.pgp2_AASequenceEpitope_:CLEAN_ORG_ABBREV as
+select *
+from apidb.AASequenceEpitope
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+delete from apidb.AASequenceEpitope
+where aa_sequence_id in (select aa_sequence_id from apidb.new_pseudoAaSequenceId_:CLEAN_ORG_ABBREV);
+
+
 drop table if exists apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV;
 create table apidb.pgp2_TranslatedAASequence_:CLEAN_ORG_ABBREV as
 select *
