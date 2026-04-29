@@ -15,6 +15,12 @@ from dots.GeneFeature gf
   join apidb.Organism o on ns.taxon_id = o.taxon_id
 where o.public_abbrev = ':ORG_ABBREV';
 
+
+update dots.GeneFeature
+set name = 'pseudogene'
+where name = 'pseudogene_with_CDS'
+  and na_feature_id in (select na_feature_id from apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV);
+
 -- set IS_PSEUDO for genes named "pseudogene", and their transcripts, where it isn't already
 update dots.Transcript
 set is_pseudo = 1
@@ -27,11 +33,6 @@ where is_pseudo = 0
     where gf.name = 'pseudogene'
   );
 
-
-update dots.GeneFeature
-set name = 'pseudogene'
-where name = 'pseudogene_with_CDS'
-  and na_feature_id in (select na_feature_id from apidb.pgp_pseudoGeneId_:CLEAN_ORG_ABBREV);
 
 update dots.GeneFeature
 set is_pseudo = 1
