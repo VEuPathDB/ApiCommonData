@@ -1,11 +1,11 @@
 -- genefeature
 UPDATE dots.GeneFeature
 SET product = NULL
-WHERE product ~ 'Source:UniProtKB'
+WHERE product ~* 'Source:UniProtKB'
   AND na_feature_id IN (
     SELECT gf.na_feature_id
     FROM dots.GeneFeature gf
       JOIN dots.NaSequence ns ON gf.na_sequence_id = ns.na_sequence_id
       JOIN apidb.Organism o ON ns.taxon_id = o.taxon_id
-    WHERE o.public_abbrev = ':ORG_ABBREV'
+    WHERE o.abbrev = ':ORG_ABBREV'
   );
