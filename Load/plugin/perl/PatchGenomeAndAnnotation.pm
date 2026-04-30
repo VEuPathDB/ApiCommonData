@@ -118,7 +118,7 @@ sub processPsqlFile {
   open my $fh, '<', $psqlFile or $self->error("error opening $psqlFile: $!");
   my $sqls = do { local $/; <$fh> };
 
-  my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, $organismAbbrev);
+  my $newSqls = ApiCommonData::Load::InstantiatePsql::instantiateSql($sqls, undef, undef, $organismAbbrev);
 
   my @sqlList = split(/;\n\s*/, $newSqls);
   foreach my $sql (@sqlList) {
