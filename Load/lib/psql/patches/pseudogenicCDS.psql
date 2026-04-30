@@ -13,7 +13,7 @@ select gf.na_feature_id
 from dots.GeneFeature gf
   join dots.NaSequence ns on gf.na_sequence_id = ns.na_sequence_id
   join apidb.Organism o on ns.taxon_id = o.taxon_id
-where o.public_abbrev = ':ORG_ABBREV';
+where o.abbrev = ':ORG_ABBREV';
 
 
 update dots.GeneFeature
