@@ -1,0 +1,94 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my ($gusConfigFile,$taxonId,$orthoGroupFile,$geneSourceIdOrthologFile,$chrsForCalcsFile);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+            "taxonId=s" => \$taxonId,
+            "orthoGroupFile=s" => \$orthoGroupFile,
+            "geneSourceIdOrthologFile=s" => \$geneSourceIdOrthologFile,
+            "chrsForCalcsFile=s" => \$chrsForCalcsFile);
+
+my $proteinToGeneSql = "
+SELECT aas.source_id AS protein_source_id,
+       gf.source_id  AS gene_source_id
+FROM dots.AASequence aas
+JOIN dots.TranslatedAASequence tas ON aas.aa_sequence_id = tas.aa_sequence_id
+JOIN dots.TranslatedAAFeature taf ON taf.aa_sequence_id = tas.aa_sequence_id
+JOIN dots.Transcript t ON taf.na_feature_id = t.na_feature_id
+JOIN dots.GeneFeature gf ON t.parent_id = gf.na_feature_id
+WHERE aas.subclass_view = 'TranslatedAASequence'
+  AND aas.taxon_id = $taxonId
+  AND aas.taxon_id IN (
+      SELECT taxon_id
+      FROM apidb.organism
+      WHERE is_annotated_genome = 1
+  )
+";
+
+my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name = 'chromosome' and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle();
+
+my $proteinToGeneStmt = $dbh->prepare($proteinToGeneSql);
+$proteinToGeneStmt->execute();
+
+my %proteinToGene;
+while (my @row = $proteinToGeneStmt->fetchrow_array()){
+    $proteinToGene{$row[0]} = $row[1];
+}
+
+my %proteinToGroup;
+open(GROUPS, "<$orthoGroupFile") or die "Cannot open $orthoGroupFile: $!";
+while (my $line = <GROUPS>) {
+    chomp $line;
+    my ($groupId, $proteinList) = split(/:\s*/, $line, 2);
+    next unless defined $proteinList;
+    foreach my $protein (split(/\s+/, $proteinList)) {
+        $proteinToGroup{$protein} = $groupId;
+    }
+}
+close GROUPS;
+
+my @proteinsWithNoGroup;
+open(GENE, ">$geneSourceIdOrthologFile") or die "Cannot open $geneSourceIdOrthologFile: $!";
+while (my ($protein, $gene) = each %proteinToGene) {
+    my $group = $proteinToGroup{$protein};
+    unless ($group) {
+        (my $altProtein = $protein) =~ s/:/\_/g;
+        $group = $proteinToGroup{$altProtein};
+    }
+    if ($group) {
+        print GENE "$gene\t$group\n";
+    } else {
+        push @proteinsWithNoGroup, $protein;
+    }
+}
+close GENE;
+
+if (@proteinsWithNoGroup) {
+    print STDERR "The following proteins have no group assignment in $orthoGroupFile:\n" . join("\n", @proteinsWithNoGroup) . "\n";
+}
+
+my $chrsForCalcs = $dbh->prepare($chrsForCalcsSql);
+$chrsForCalcs->execute();
+
+open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
+while (my @row = $chrsForCalcs->fetchrow_array()){
+    print CHRS "$row[0]\t\n";
+}
+close CHRS;
+
+$dbh->disconnect();
