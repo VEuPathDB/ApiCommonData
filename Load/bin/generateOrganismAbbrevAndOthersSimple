@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+
+use Getopt::Long;
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+use CBIL::Util::Utils;
+use ApiCommonData::Load::NCBIToolsUtils;
+
+
+my ($organismFullName,
+    $gcaNumber,
+     $help);
+
+&GetOptions(
+            'organismFullName=s' => \$organismFullName,
+            'gcaNumber=s' => \$gcaNumber,
+	    'help|h' => \$help,
+	    );
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $organismFullName);
+
+
+my @items = split (/\s/, $organismFullName);
+
+my $genus = shift @items;
+$genus =~ s/^\[//;
+$genus =~ s/\]$//;
+my $species = shift @items;
+my $strainAbbrev = join ('', @items);
+$strainAbbrev =~ s/isolate//i;
+$strainAbbrev =~ s/strain//i;
+$strainAbbrev =~ s/breed//i;
+$strainAbbrev =~ s/str\.//i;
+$strainAbbrev =~ s/\///g;
+$strainAbbrev =~ s/\,//g;
+$strainAbbrev =~ s/\://g;
+$strainAbbrev =~ s/\#/\-/g;
+$strainAbbrev =~ s/\./\-/g;
+
+my $organismAbbrev = lc(substr($genus, 0, 1)).substr($species, 0, 3).$strainAbbrev;
+my $organismNameForFiles = substr($genus, 0, 1).$species.$strainAbbrev;
+my $orthomclAbbrev = lc(substr($genus, 0, 1)).substr($species, 0, 3);
+
+print "organismAbbrev       = $organismAbbrev\n";
+print "organismNameForFiles = $organismNameForFiles\n";
+print "strainAbbrev         = $strainAbbrev\n";
+print "orthomclAbbrev       = $orthomclAbbrev\n";
+
+
+## based on organismFullName, retrieve ncbiTaxId from taxonomy at NCBI
+my $xmlTaxonomy = ApiCommonData::Load::NCBIToolsUtils::eFetch4ResultPage($organismFullName);
+my $ncbiTaxId = ApiCommonData::Load::NCBIToolsUtils::getTaxonId($xmlTaxonomy);
+my $speciesNcbiTaxonId;
+if ($ncbiTaxId) {
+  $speciesNcbiTaxonId = ApiCommonData::Load::NCBIToolsUtils::getSpeciesTaxonId($xmlTaxonomy);
+} else {
+  $xmlTaxonomy = ApiCommonData::Load::NCBIToolsUtils::eFetch4ResultPage("$genus $species");
+  $speciesNcbiTaxonId = ApiCommonData::Load::NCBIToolsUtils::getTaxonId($xmlTaxonomy);
+}
+print "ncbiTaxId            = $ncbiTaxId\n";
+print "speciesNcbiTaxonId   = $speciesNcbiTaxonId\n";
+
+
+## check if GCA_ number is Unique
+my $cmd = "grep $gcaNumber \$PROJECT_HOME\/ApiCommonPresenters\/Model\/lib\/xml\/datasetPresenters\/\*.xml";
+my $out = `$cmd`;
+print "GCA number, $gcaNumber found at:\n$out\n" if ($out);
+
+
+##############
+sub usage {
+  die
+"
+Usage: generateOrganismAbbrevAndOthers --organismFullName 'Aspergillus versicolor CBS 583.65'
+
+where
+  --organismFullName: organism full name
+  --gcaNumber: optional, GCA_ number, check to make sure it is unique
+
+
+SOP for organismAbbrev:
+    It should be unique. It is internal. It shouldn't have any special characters.
+    It uses the 1st letter of genus (lower case), the first three letters of species (lower case), plus a strain abbrevation.
+    The strain abbrevation should exclude any special characters, such as spaces, backslashes, forward slashes, parenthesis, brackets and etc.
+    In case there is a subspecies name, include the subspecies name as strain abbrevation too, eg. pvinvinckeiCY for 'Plasmodium vinckei vinckei CY'
+
+";
+}
