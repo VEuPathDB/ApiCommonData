@@ -248,8 +248,9 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 print STDERR "  check if pseudo...\n";
-while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
-  ($if == 1 )? print STDERR "    is pseudogene = $psdCount\n" : print STDERR "    is not pseudogene = $psdCount\n";
+my ($ifp, $psdCount);
+while (($ifp, $psdCount) = $stmt->fetchrow_array()) {
+  ($ifp == 1 )? print STDERR "    is pseudogene = $psdCount\n" : print STDERR "    is not pseudogene = $psdCount\n";
 }
 $stmt->finish();
 
@@ -290,7 +291,9 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaSeq) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR: the number of translatedAASequence, $tranAaSeq, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\nIt also happen when gene has multiple transcripts that mixed with protein-coding and non-protein-coding\n" unless ($tranAaSeq == $codingTransCount);
+print STDERR "WARNING: the number of translatedAASequence, $tranAaSeq, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\nIt also happen when gene has multiple transcripts that mixed with protein-coding and non-protein-coding\n" unless ($tranAaSeq == $codingTransCount);
+
+print STDERR "   but the total number of transcript is equal to the number of translation + the number of pseudogene, which is correct.\n" if ($codingTransCount == $tranAaSeq + $psdCount);
 
 my $sql = <<SQL;
   select count(*) from dots.translatedaafeature where external_database_release_id=$extDbRlsId
