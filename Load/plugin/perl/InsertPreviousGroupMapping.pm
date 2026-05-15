@@ -46,8 +46,17 @@ sub new {
 sub run {
     my ($self) = @_;
 
+    my $dbh = $self->getQueryHandle();
+    my %validGroupIds;
+    my $groupQuery = $dbh->prepare("SELECT group_id FROM apidb.orthologgroup");
+    $groupQuery->execute();
+    while (my ($gId) = $groupQuery->fetchrow_array()) {
+        $validGroupIds{$gId} = 1;
+    }
+
     my $fileName = $self->getArg('mappingFile');
     my $rowCount = 0;
+    my $skippedCount = 0;
     my $groupCount = 0;
 
     $self->getDb()->manageTransaction(0, 'begin');
@@ -68,6 +77,12 @@ sub run {
 		my $overlapCount = $2;
                 # Number of sequences in the old group
 		my $groupSize = $3;
+
+                unless ($validGroupIds{$newGroupId}) {
+                    $self->log("Skipping mapping to $newGroupId: not found in apidb.orthologgroup");
+                    $skippedCount++;
+                    next;
+                }
 
                 my $row = GUS::Model::ApiDB::GroupMapping->new({OLD_GROUP_ID => $oldGroupId,NEW_GROUP_ID => $newGroupId,OVERLAP_COUNT => $overlapCount, GROUP_SIZE => $groupSize});
 		$row->submit(undef, 1);
@@ -90,7 +105,7 @@ sub run {
 	}
     }
     $self->getDb()->manageTransaction(0, 'commit');
-    print "$rowCount rows added.\n"
+    print "$rowCount rows added, $skippedCount rows skipped.\n"
 }
 
 sub undoTables {

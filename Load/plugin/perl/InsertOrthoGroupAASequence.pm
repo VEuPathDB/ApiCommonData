@@ -140,7 +140,8 @@ sub formatInputAndLoad {
               $aaSequenceId = $sequenceIds{$seq};
             }
             else {
-              die "No aasequenceId for sequence $before (changed to $seq)\n";
+              $self->log("Skipping protein $before (changed to $seq): not found in dots.aasequence");
+              next;
             }
           }
 

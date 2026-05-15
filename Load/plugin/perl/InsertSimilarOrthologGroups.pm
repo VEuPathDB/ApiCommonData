@@ -78,15 +78,31 @@ sub new {
 sub run {
     my ($self) = @_;
 
+    my $dbh = $self->getQueryHandle();
+    my %validGroupIds;
+    my $groupQuery = $dbh->prepare("SELECT group_id FROM apidb.orthologgroup");
+    $groupQuery->execute();
+    while (my ($gId) = $groupQuery->fetchrow_array()) {
+        $validGroupIds{$gId} = 1;
+    }
+
     my $similarGroupsFile = $self->getArg('similarGroups');
 
     open GROUPS_FILE, "<$similarGroupsFile";
     my $lineCount = 0;
+    my $skippedCount = 0;
     while (<GROUPS_FILE>) {
         chomp;
         $lineCount++;
 
         my ($groupId,$similarGroup,$evalue) = split(/\t/,$_);
+
+        unless ($validGroupIds{$groupId} && $validGroupIds{$similarGroup}) {
+            $self->log("Skipping similar group pair $groupId / $similarGroup: one or both not found in apidb.orthologgroup");
+            $skippedCount++;
+            next;
+        }
+
         my $similarOrthologGroup = GUS::Model::ApiDB::SimilarOrthologGroup->new({group_id => $groupId,
                                                                                  similar_group_id => $similarGroup,
                                                                                  evalue => $evalue
@@ -94,7 +110,7 @@ sub run {
         $similarOrthologGroup->submit();
         $similarOrthologGroup->undefPointerCache();
     }
-    $self->log("total $lineCount lines processed.");
+    $self->log("total $lineCount lines processed, $skippedCount skipped.");
 }
 
 # ----------------------------------------------------------------------

@@ -88,13 +88,29 @@ sub run {
 
     my $statsFile = $self->getArg('groupStatsFile');
     my $proteinSubset = $self->getArg('proteinSubset');
+
+    my $dbh = $self->getQueryHandle();
+    my %validGroupIds;
+    my $groupQuery = $dbh->prepare("SELECT group_id FROM apidb.orthologgroup");
+    $groupQuery->execute();
+    while (my ($gId) = $groupQuery->fetchrow_array()) {
+        $validGroupIds{$gId} = 1;
+    }
+
     open(my $data, '<', $statsFile) || die "Could not open file $statsFile: $!";
     my $rowCount = 0;
+    my $skippedCount = 0;
     while (my $line = <$data>) {
         chomp $line;
 
         my ($group,$max,$seventyfifth,$median,$twentyfifth,$min,$count) = split(/\t/, $line);
-      
+
+        unless ($validGroupIds{$group}) {
+            $self->log("Skipping stats for group $group: not found in apidb.orthologgroup");
+            $skippedCount++;
+            next;
+        }
+
         if ($min eq "0") {
             addRow($group,"min",$min,$proteinSubset);
             $rowCount++;
@@ -136,7 +152,7 @@ sub run {
             $rowCount++;
         }
     }
-    print "$rowCount rows added.\n"
+    print "$rowCount rows added, $skippedCount groups skipped.\n"
 }
 
 # ----------------------------------------------------------------------

@@ -112,29 +112,43 @@ sub run {
 
     my $dbReleaseId = $self->getDbRls();
 
+    my $dbh = $self->getQueryHandle();
+    my %validSeqIds;
+    my $seqQuery = $dbh->prepare("SELECT source_id FROM dots.aasequence");
+    $seqQuery->execute();
+    while (my ($sourceId) = $seqQuery->fetchrow_array()) {
+        $validSeqIds{$sourceId} = 1;
+    }
+
     open ORTHO_FILE, "<$orthologFile";
     my $groupCount = 0;
+    my $skippedCount = 0;
     my $lineCount = 0;
     while (<ORTHO_FILE>) {
         chomp;
         $lineCount++;
 
-        if ($self->_parseGroup($_, $orthoVersion, $dbReleaseId)) {
+        my $result = $self->_parseGroup($_, $orthoVersion, $dbReleaseId, \%validSeqIds);
+        if ($result == 1) {
             $groupCount++;
             if (($groupCount % 1000) == 0) {
                 $self->log("$groupCount ortholog groups loaded.");
             }
+        } elsif ($result == 2) {
+            $skippedCount++;
         } else {
             $self->log("line cannot be parsed:\n#$lineCount '$_'.");
         }
     }
-    $self->log("total $lineCount lines processed, and $groupCount groups loaded.");
+    $self->log("total $lineCount lines processed, $groupCount groups loaded, $skippedCount groups skipped (all proteins are pseudogenes).");
 }
 
 sub _parseGroup {
-    my ($self, $line, $orthoVersion, $dbReleaseId) = @_;
+    my ($self, $line, $orthoVersion, $dbReleaseId, $validSeqIds) = @_;
 
     # example line: OG2_1009: osa|ENS1222992 pfa|PF11_0844
+    my @proteins = split(/\s+/, (split(/:\s/, $line))[1] // '');
+
     my $groupId;
     if ($line = /^(OG\d+_\d+):\s.*/) {
         $groupId = $1;
@@ -142,7 +156,26 @@ sub _parseGroup {
     else {
         die "Improper group file format";
     }
-         
+
+    my $hasValidProtein = 0;
+    foreach my $protein (@proteins) {
+        if ($validSeqIds->{$protein}) {
+            $hasValidProtein = 1;
+            last;
+        }
+        (my $transformed = $protein) =~ s/_mRNA/:mRNA/;
+        $transformed =~ s/_RNA/:RNA/;
+        $transformed =~ s/_pseudogenic_transcript/:pseudogenic_transcript/;
+        if ($validSeqIds->{$transformed}) {
+            $hasValidProtein = 1;
+            last;
+        }
+    }
+    unless ($hasValidProtein) {
+        $self->log("Skipping group $groupId: no proteins found in dots.aasequence");
+        return 2;
+    }
+
     # create a OrthlogGroup instance
     my $orthoGroup = GUS::Model::ApiDB::OrthologGroup->new({group_id => $groupId,
                                                             is_residual => 0,
