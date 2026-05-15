@@ -158,17 +158,23 @@ sub _parseGroup {
     }
 
     my $hasValidProtein = 0;
-    foreach my $protein (@proteins) {
+    PROTEIN: foreach my $protein (@proteins) {
         if ($validSeqIds->{$protein}) {
             $hasValidProtein = 1;
             last;
         }
-        (my $transformed = $protein) =~ s/_mRNA/:mRNA/;
-        $transformed =~ s/_RNA/:RNA/;
-        $transformed =~ s/_pseudogenic_transcript/:pseudogenic_transcript/;
-        if ($validSeqIds->{$transformed}) {
-            $hasValidProtein = 1;
-            last;
+        for my $makeCandidate (
+            sub { (my $s = $_[0]) =~ s/_mRNA/:mRNA/; $s },
+            sub { (my $s = $_[0]) =~ s/_RNA/:RNA/; $s },
+            sub { (my $s = $_[0]) =~ s/_pseudogenic_transcript/:pseudogenic_transcript/; $s },
+            sub { (my $s = $_[0]) =~ s/_/:/; $s },
+        ) {
+            my $candidate = $makeCandidate->($protein);
+            next if $candidate eq $protein;
+            if ($validSeqIds->{$candidate}) {
+                $hasValidProtein = 1;
+                last PROTEIN;
+            }
         }
     }
     unless ($hasValidProtein) {

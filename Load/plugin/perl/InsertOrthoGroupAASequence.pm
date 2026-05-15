@@ -133,15 +133,22 @@ sub formatInputAndLoad {
 
           unless ($aaSequenceId) {
             my $before = $seq;
-            $seq =~ s/_mRNA/:mRNA/;
-            $seq =~ s/_RNA/:RNA/;
-            $seq =~ s/_pseudogenic_transcript/:pseudogenic_transcript/;
-            if ($sequenceIds{$seq}) {
-              $aaSequenceId = $sequenceIds{$seq};
+            for my $makeCandidate (
+                sub { (my $s = $_[0]) =~ s/_mRNA/:mRNA/; $s },
+                sub { (my $s = $_[0]) =~ s/_RNA/:RNA/; $s },
+                sub { (my $s = $_[0]) =~ s/_pseudogenic_transcript/:pseudogenic_transcript/; $s },
+                sub { (my $s = $_[0]) =~ s/_/:/; $s },
+            ) {
+                my $candidate = $makeCandidate->($before);
+                next if $candidate eq $before;
+                if ($sequenceIds{$candidate}) {
+                    $aaSequenceId = $sequenceIds{$candidate};
+                    last;
+                }
             }
-            else {
-              $self->log("Skipping protein $before (changed to $seq): not found in dots.aasequence");
-              next;
+            unless ($aaSequenceId) {
+                $self->log("Skipping protein $before: not found in dots.aasequence");
+                next;
             }
           }
 
