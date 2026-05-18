@@ -1,0 +1,173 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Getopt::Long;
+use CBIL::Util::PropertySet;
+use File::Basename;
+use File::Spec;
+use File::Temp qw(tempdir);
+use File::Copy qw(move);
+
+my ($fastaDir, $gusConfigFile);
+GetOptions(
+    "fastaDir=s"      => \$fastaDir,
+    "gusConfigFile=s" => \$gusConfigFile,
+) or die usage();
+
+die usage() unless $fastaDir && $gusConfigFile;
+die "fastaDir '$fastaDir' does not exist\n" unless -d $fastaDir;
+die "gusConfigFile '$gusConfigFile' does not exist\n" unless -e $gusConfigFile;
+
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+my $dsn  = $gusconfig->{props}->{dbiDsn};
+my $user = $gusconfig->{props}->{databaseLogin};
+my $pass = $gusconfig->{props}->{databasePassword};
+
+my $dbh = DBI->connect($dsn, $user, $pass) or die DBI::errstr;
+$dbh->{RaiseError} = 1;
+
+# Discover all pgp_pseudoGeneId_* tables that still exist
+my $pgpSth = $dbh->prepare(
+    "SELECT table_schema || '.' || table_name "
+    . "FROM information_schema.tables "
+    . "WHERE table_schema = 'apidb' "
+    . "AND lower(table_name) LIKE 'pgp_pseudogeneid_%'"
+);
+$pgpSth->execute();
+my @pgpTables;
+while (my ($t) = $pgpSth->fetchrow_array()) {
+    push @pgpTables, $t;
+}
+print STDERR "Found " . scalar(@pgpTables) . " pgp_pseudoGeneId table(s)\n";
+
+# Collect pseudogene protein source_ids from the database.
+# Part 1: transcripts explicitly flagged as pseudogene
+my $sql = <<SQL;
+SELECT aa.source_id
+FROM dots.aasequence aa
+JOIN dots.translatedaafeature taf ON aa.aa_sequence_id = taf.aa_sequence_id
+JOIN dots.transcript t             ON taf.na_feature_id = t.na_feature_id
+WHERE t.is_pseudo = 1
+SQL
+
+# Part 2: transcripts not yet flagged but whose gene is in a pgp table
+if (@pgpTables) {
+    my $pgpUnion = join(
+        "\nUNION ALL\n",
+        map { "SELECT na_feature_id FROM $_" } @pgpTables
+    );
+    $sql .= <<SQL;
+
+UNION
+
+SELECT aa.source_id
+FROM dots.aasequence aa
+JOIN dots.translatedaafeature taf ON aa.aa_sequence_id = taf.aa_sequence_id
+JOIN dots.transcript t             ON taf.na_feature_id = t.na_feature_id
+JOIN dots.genefeature gf           ON t.parent_id       = gf.na_feature_id
+WHERE t.is_pseudo = 0
+  AND gf.name = 'pseudogene'
+  AND gf.na_feature_id IN (
+      $pgpUnion
+  )
+SQL
+}
+
+my %pseudoIds;
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+while (my ($sourceId) = $sth->fetchrow_array()) {
+    # Store the source_id as returned by the database
+    $pseudoIds{$sourceId} = 1;
+
+    # Also store common header-format variants so we match regardless of
+    # whether the FASTA was written with ':' or '_' as the taxon separator,
+    # mirroring the transformations used in the OrthoMCL load plugins.
+    for my $makeVariant (
+        sub { (my $s = $_[0]) =~ s/_mRNA/:mRNA/; $s },
+        sub { (my $s = $_[0]) =~ s/_RNA/:RNA/; $s },
+        sub { (my $s = $_[0]) =~ s/_pseudogenic_transcript/:pseudogenic_transcript/; $s },
+        sub { (my $s = $_[0]) =~ s/_/:/; $s },
+        sub { (my $s = $_[0]) =~ s/:/_/; $s },
+    ) {
+        my $variant = $makeVariant->($sourceId);
+        $pseudoIds{$variant} = 1 unless $variant eq $sourceId;
+    }
+}
+$sth->finish();
+$dbh->disconnect();
+
+my $pseudoCount = scalar(keys %pseudoIds);
+print STDERR "Found $pseudoCount pseudogene protein source_id variants to filter\n";
+
+# Filter each FASTA file, writing results to a temp dir then moving back
+my $tmpdir = tempdir(CLEANUP => 1);
+
+opendir(my $dh, $fastaDir) or die "Cannot open directory '$fastaDir': $!\n";
+my @fastas = grep { /\.fasta$/i } readdir($dh);
+closedir($dh);
+
+die "No .fasta files found in '$fastaDir'\n" unless @fastas;
+
+my $totalFiltered = 0;
+
+foreach my $file (@fastas) {
+    my $inPath  = File::Spec->catfile($fastaDir, $file);
+    my $outPath = File::Spec->catfile($tmpdir,   $file);
+    my $filtered = filterFasta($inPath, $outPath, \%pseudoIds);
+    $totalFiltered += $filtered;
+    print STDERR "  $file: filtered $filtered pseudogene sequences\n" if $filtered > 0;
+    move($outPath, $inPath) or die "Cannot move filtered $file back: $!\n";
+}
+
+print STDERR "Total pseudogene proteins filtered: $totalFiltered\n";
+
+# Re-create fastas.tar.gz in the parent directory so downstream steps
+# that consume the archive get the filtered content.
+my $outputDir  = dirname($fastaDir);
+my $fastasBase = basename($fastaDir);
+print STDERR "Re-creating $outputDir/$fastasBase.tar.gz\n";
+system("tar -zcf $outputDir/$fastasBase.tar.gz -C $outputDir $fastasBase") == 0
+    or die "Failed to re-create $fastasBase.tar.gz: $?\n";
+
+# -----------------------------------------------------------------------
+
+sub filterFasta {
+    my ($inFile, $outFile, $pseudoIds) = @_;
+
+    open(my $in,  '<', $inFile)  or die "Cannot open $inFile: $!\n";
+    open(my $out, '>', $outFile) or die "Cannot open $outFile: $!\n";
+
+    my $skip    = 0;
+    my $removed = 0;
+
+    while (my $line = <$in>) {
+        if ($line =~ /^>(\S+)/) {
+            my $seqId = $1;
+            $skip = exists $pseudoIds->{$seqId} ? 1 : 0;
+            $removed++ if $skip;
+        }
+        print $out $line unless $skip;
+    }
+
+    close($in);
+    close($out);
+    return $removed;
+}
+
+sub usage {
+    return <<USAGE;
+Usage: filterPseudogeneProteins --fastaDir <dir> --gusConfigFile <file>
+
+Removes pseudogene protein sequences from all .fasta files in <dir>,
+querying the database to identify pseudogenes. Re-creates fastas.tar.gz
+in the parent directory after filtering.
+
+USAGE
+}
