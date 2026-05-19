@@ -431,6 +431,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CGSNL" ignore="true"/>
     <qualifier name="CGSNL_Gene_Name" ignore="true"/>
     <qualifier name="CGSNL_Gene_Symbol" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="experiment" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
@@ -442,10 +443,44 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="Manual" ignore="true"/>
     <qualifier name="Manual_Curation" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ORF_evidence" ignore="true"/>
     <qualifier name="Oryzabase" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="tag" ignore="true"/>
+    <qualifier name="Transcript_evidence" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+  </feature>
+
+  <feature name="guide_RNA" so="guide_RNA">
+    <qualifier name="ID"             column="source_id"/>
+    <qualifier name="Parent" ignore="true"/>
+    <qualifier name="B5toI1" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CGSNL" ignore="true"/>
+    <qualifier name="CGSNL_Gene_Name" ignore="true"/>
+    <qualifier name="CGSNL_Gene_Symbol" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="experiment" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="inference" ignore="true"/>
+    <qualifier name="InterPro" ignore="true"/>
+    <qualifier name="Literature_PMID" ignore="true"/>
+    <qualifier name="Locus_id" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Manual" ignore="true"/>
+    <qualifier name="Manual_Curation" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="ORF_evidence" ignore="true"/>
+    <qualifier name="Oryzabase" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
     <qualifier name="Transcript_evidence" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
@@ -551,6 +586,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="low_identity" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="ncRNA_class" ignore="true"/>
@@ -1432,6 +1468,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CGSNL_Gene_Symbol" ignore="true"/>
     <qualifier name="date_creation" ignore="true"/>
     <qualifier name="date_last_modified" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="ebi_biotype" ignore="true"/>
     <qualifier name="gbkey" ignore="true"/>
@@ -1445,11 +1482,51 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Manual" ignore="true"/>
     <qualifier name="Manual_Curation" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="ORF_evidence" ignore="true"/>
     <qualifier name="Oryzabase" ignore="true"/>
     <qualifier name="part" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="tag" ignore="true"/>
+    <qualifier name="Transcript" ignore="true"/>
+    <qualifier name="Transcript_evidence" ignore="true"/>
+    <qualifier name="Transcript_variants" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+  </feature>
+ 
+  <feature name="guide_RNA_gene" so="ncRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="B5toI1" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CGSNL" ignore="true"/>
+    <qualifier name="CGSNL_Gene_Name" ignore="true"/>
+    <qualifier name="CGSNL_Gene_Symbol" ignore="true"/>
+    <qualifier name="date_creation" ignore="true"/>
+    <qualifier name="date_last_modified" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="ebi_biotype" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="Literature_PMID" ignore="true"/>
+    <qualifier name="Locus_id" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Manual" ignore="true"/>
+    <qualifier name="Manual_Curation" ignore="true"/>
+    <qualifier name="model_evidence" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="ORF_evidence" ignore="true"/>
+    <qualifier name="Oryzabase" ignore="true"/>
+    <qualifier name="part" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="tag" ignore="true"/>
     <qualifier name="Transcript" ignore="true"/>
     <qualifier name="Transcript_evidence" ignore="true"/>
