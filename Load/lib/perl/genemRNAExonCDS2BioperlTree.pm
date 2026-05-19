@@ -228,6 +228,7 @@ sub traverseSeqFeatures {
              'mRNA',
              'transcript',
              'misc_RNA',
+             'guide_RNA',
              'siRNA',
              'rRNA',
              'snRNA',
@@ -252,6 +253,10 @@ sub traverseSeqFeatures {
              )
         ) {
 
+
+        if ($type eq 'misc_RNA') {
+          $type = "ncRNA";   ## ncRNA is usually the safest/general replacement of misc_RNA
+        }
 
         if ($type eq 'lnc_RNA') {
           $type = "lncRNA";   ## normalise NCBI lnc_RNA to lncRNA used throughout
