@@ -679,12 +679,7 @@ sub createColumnsPostgres {
   foreach my $field (@$fields) {
     my $colSpec = $field->{name};
     if ($field->{type} eq 'SQL_VARCHAR') {
-      if ($field->{maxLength} > 255) {
 	$colSpec .= " TEXT";
-      }			      # PostgreSQL uses TEXT for large strings
-      else {
-	$colSpec .= " VARCHAR" . ($field->{maxLength} eq 'NA'? "" : "($field->{maxLength})");
-      }
     } elsif ($field->{type} eq 'SQL_DATE') {
       $colSpec .= " DATE";
     } elsif ($field->{type} eq 'SQL_NUMBER') {
