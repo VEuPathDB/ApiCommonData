@@ -274,7 +274,15 @@ sub uninstallData {
 	print STDERR "RUNNING SQL: $sql\n\n";
 	$dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
 
-	# finally, remove UD data dir.  leave this for last, to retain install.json if there are any errors
+        $sql = "delete from $schema.Variable where dataset_id = '$userDatasetId'";
+        print STDERR "RUNNING SQL: $sql\n\n";
+        $dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
+
+        $sql = "delete from $schema.VariableCategoricalValue where dataset_id = '$userDatasetId'";
+        print STDERR "RUNNING SQL: $sql\n\n";
+        $dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
+
+        # finally, remove UD data dir.  leave this for last, to retain install.json if there are any errors
 	if (-e "$datasetDir/install.json") {
 	    print STDERR "Deleting $datasetDir/install.json\n";
 	    unlink("$datasetDir/install.json") || die "Can't remove file '$datasetDir/install.json'\n" unless $self->isDryRun();
@@ -334,6 +342,9 @@ sub installData {
         } else {
             $self->createTable($config);
             $self->bulkLoadTable($config);
+
+	    # if user dataset, add rows to aggregation tables
+            if ($config->{name} =~ /attributegraph/i && $self->hasUserDatasetId()) { $self->updateVariableTables($config->{name}); }
         }
     }
 
@@ -702,7 +713,46 @@ sub getSqlLdrCmdLine {
     return $cmd . ' >/dev/null 2>&1';
 }
 
+sub updateVariableTables {
+    my ($self, $attGraphTableName) = @_;
+    
+    my $dbh = $self->getDbh();
+    my $schema = $self->getDbSchema();
+    my $userDatasetId = $self->getUserDatasetId();
 
+    $attGraphTableName =~ /_\w+_(\w+)$/ or die "Can't parse attribute graph table $attGraphTableName";
 
+    my $entityAbbrev = $1;
+
+    my $sql = "
+          INSERT INTO $schema.VariableCategoricalValue (study_stable_id, dataset_id, entity_stable_id, stable_id, value)
+          SELECT s.stable_id as study_stable_id, '$userDatasetId' as dataset_id, e.stable_id as entity_stable_id, ag.stable_id, v.value
+            FROM $schema.$attGraphTableName ag,
+                 $schema.study s,
+                 $schema.entitytypegraph e
+           CROSS JOIN LATERAL jsonb_array_elements_text(ag.vocabulary::jsonb) AS v(value)
+           WHERE ag.data_shape = 'categorical'
+             AND ag.vocabulary IS NOT NULL
+             AND ag.stable_id != 'VEUPATHDB_GENE_ID'
+             AND s.user_dataset_id = '$userDatasetId'
+             AND e.internal_abbrev = '$entityAbbrev'
+             and e.study_stable_id = s.stable_id
+";     
+
+    $dbh->do($sql) unless $self->isDryRun();
+
+    $sql = "
+       INSERT INTO $schema.variable (dataset_id, study_stable_id, entity_stable_id, stable_id, data_shape, data_type, definition, display_name, display_range_max, display_range_min, provider_label, hidden)
+       SELECT '$userDatasetId', s.stable_id as study_stable_id, e.stable_id as entity_stable_id, ag.stable_id, data_shape, data_type, definition, ag.display_name, display_range_max, display_range_min, provider_label, hidden
+       FROM $schema.$attGraphTableName ag,
+            $schema.study s,
+            $schema.entitytypegraph e
+       WHERE ag.stable_id != 'VEUPATHDB_GENE_ID'
+             AND s.user_dataset_id = '$userDatasetId'
+             AND e.internal_abbrev = '$entityAbbrev'
+             and e.study_stable_id = s.stable_id
+";
+    $dbh->do($sql) unless $self->isDryRun();
+}
 
 1;
