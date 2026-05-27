@@ -439,7 +439,7 @@ sub mapColValues {
   if ($valueFromFile eq '@STUDY_ID@') { return $platform eq 'Oracle'? "$schema.study_sq.nextval" : "nextval($schema.study_sq)"; }
   if ($valueFromFile eq '@MODIFICATION_DATE@') { return $platform eq 'Oracle'? "SYSDATE" : 'LOCALTIMESTAMP' ; }
   if ($valueFromFile eq '@ENTITY_TYPE_GRAPH_ID@') { return $platform eq 'Oracle'? "$schema.entitytypegraph_sq.nextval" : "nextval($schema.entitytypegraph_sq)"; }
-  if (($colType eq 'SQL_NUMBER' or $colType eq 'SQL_DATE') and $valueFromFile eq "")  { return "NULL"; }
+  if (!defined $valueFromFile or $valueFromFile eq "")  { return "NULL"; }
   if ($colType eq 'SQL_VARCHAR' or $colType eq 'SQL_DATE') { return "'$valueFromFile'"; }
   return $valueFromFile;
 }
