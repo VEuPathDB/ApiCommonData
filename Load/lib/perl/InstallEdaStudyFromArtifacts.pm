@@ -742,8 +742,7 @@ sub updateVariableTables {
        FROM $schema.$attGraphTableName ag,
             $schema.study s,
             $schema.entitytypegraph e
-       WHERE ag.stable_id != 'VEUPATHDB_GENE_ID'
-             AND s.user_dataset_id = '$userDatasetId'
+       WHERE s.user_dataset_id = '$userDatasetId'
              AND e.internal_abbrev = '$entityAbbrev'
              and e.study_stable_id = s.stable_id
 ";
