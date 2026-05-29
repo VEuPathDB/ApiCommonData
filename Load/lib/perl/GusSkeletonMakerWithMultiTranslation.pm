@@ -102,7 +102,11 @@ sub makeGeneSkeleton{
 
     my @sortedExons = sort { $a->start <=> $b->start || $a->end <=> $b->end } $bioperlTranscript->get_SeqFeatures();
     my @sortedExonLocationStrings = map { $_->start . "_" . $_->end } @sortedExons;
-    my $transcriptKey = join(",", @sortedExonLocationStrings);
+    ## Include the transcript type in the key so that an mRNA and a non-coding transcript
+    ## (e.g. misc_RNA/ncRNA) with identical exon coordinates are treated as distinct
+    ## transcripts.  Without this, the mRNA would be silently merged into the ncRNA GUS
+    ## object and its CDS would never be loaded.
+    my $transcriptKey = $bioperlTranscript->primary_tag() . ":" . join(",", @sortedExonLocationStrings);
 
     #print STDERR "\$transcriptKey = $transcriptKey\n";
 
