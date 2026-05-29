@@ -295,6 +295,13 @@ sub traverseSeqFeatures {
 	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
 	  $gene->add_tag_value("ID",$geneID);
 	  $gene = &copyQualifiers($geneFeature, $gene);
+	} elsif ($type eq 'coding' && $gene->primary_tag() ne 'coding_gene') {
+	  ## A later transcript is a protein-coding mRNA but the gene was already created
+	  ## from an earlier non-coding transcript (e.g. misc_RNA/transcript comes before
+	  ## mRNA in the GFF3).  Promote the gene type to coding_gene so that
+	  ## GusSkeletonMaker will create TranslatedAAFeature/TranslatedAASequence for
+	  ## the mRNA transcript and load its CDS correctly.
+	  $gene->primary_tag('coding_gene');
 	}
 
 #	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
