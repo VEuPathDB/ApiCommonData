@@ -260,9 +260,17 @@ sub uninstallData {
     }
 
     if ($self->hasUserDatasetId()) {
-	
+
 	# delete rows from shared tables
-	my $sql = "
+        my $sql = "delete from $schema.Variable where dataset_id = '$userDatasetId'";
+        print STDERR "RUNNING SQL: $sql\n\n";
+        $dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
+
+        $sql = "delete from $schema.VariableCategoricalValue where dataset_id = '$userDatasetId'";
+        print STDERR "RUNNING SQL: $sql\n\n";
+        $dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
+
+	$sql = "
  delete from $schema.entitytypegraph
  where study_stable_id in (
  select stable_id from $schema.study where user_dataset_id = '$userDatasetId'
@@ -273,14 +281,6 @@ sub uninstallData {
 	$sql = "delete from $schema.study where user_dataset_id = '$userDatasetId'";
 	print STDERR "RUNNING SQL: $sql\n\n";
 	$dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
-
-        $sql = "delete from $schema.Variable where dataset_id = '$userDatasetId'";
-        print STDERR "RUNNING SQL: $sql\n\n";
-        $dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
-
-        $sql = "delete from $schema.VariableCategoricalValue where dataset_id = '$userDatasetId'";
-        print STDERR "RUNNING SQL: $sql\n\n";
-        $dbh->do($sql) || die "Failed running sql: $sql\n" unless $self->isDryRun();
 
         # finally, remove UD data dir.  leave this for last, to retain install.json if there are any errors
 	if (-e "$datasetDir/install.json") {
@@ -342,9 +342,6 @@ sub installData {
         } else {
             $self->createTable($config);
             $self->bulkLoadTable($config);
-
-	    # if user dataset, add rows to aggregation tables
-            if ($config->{name} =~ /attributegraph/i && $self->hasUserDatasetId()) { $self->updateVariableTables($config->{name}); }
         }
     }
 
@@ -359,6 +356,12 @@ sub installData {
         next unless $config->{type} eq 'view';
         $self->createView($config);
     }
+
+    # user dataset attributegraph tables post-processing
+    if ($self->hasUserDatasetId()) {
+      $self->postProcessAttributeGraph($self->getUserDatasetId());
+    }
+
 }
 
 
@@ -708,16 +711,48 @@ sub getSqlLdrCmdLine {
     return $cmd . ' >/dev/null 2>&1';
 }
 
+sub postProcessAttributeGraph {
+  my ($self, $userDatasetId) = @_;
+
+  my $dbh = $self->getDbh();
+  my $schema = $self->getDbSchema();
+
+  my $sql = "
+    SELECT s.internal_abbrev AS study_abbrev,
+           e.internal_abbrev AS entity_abbrev
+    FROM   $schema.study s
+    JOIN   $schema.entitytypegraph e
+           ON e.study_stable_id = s.stable_id
+    WHERE  s.user_dataset_id = '$userDatasetId'
+";
+
+  my $sth = $dbh->prepare($sql);
+  while (my ($studyAbbrev, $entityAbbrev) = $sth->fetchrow_array()) {
+    my $tbl = "attributegraph_${studyAbbrev}_$entityAbbrev";
+    $self->patchProviderLabel($tbl, $userDatasetId);
+    $self->updateVariableTables($tbl, $entityAbbrev, $userDatasetId);
+  }
+}
+
+# some legacy datasets have empty provider_label.  populate with display_name
+sub patchProviderLabel {
+  my ($self, $attGraphTableName, $userDatasetId) = @_;
+
+  my $dbh = $self->getDbh();
+  my $schema = $self->getDbSchema();
+
+  my $sql = "
+update $schema.$attGraphTableName set provider_label = display_name
+where provider_label is null or provider_label = ''
+";
+  $dbh->do($sql) unless $self->isDryRun();
+}
+
 sub updateVariableTables {
-    my ($self, $attGraphTableName) = @_;
-    
+    my ($self, $attGraphTableName, $entityAbbrev, $userDatasetId) = @_;
+
     my $dbh = $self->getDbh();
     my $schema = $self->getDbSchema();
-    my $userDatasetId = $self->getUserDatasetId();
-
-    $attGraphTableName =~ /_\w+_(\w+)$/ or die "Can't parse attribute graph table $attGraphTableName";
-
-    my $entityAbbrev = $1;
 
     my $sql = "
           INSERT INTO $schema.VariableCategoricalValue (study_stable_id, dataset_id, entity_stable_id, stable_id, value)
