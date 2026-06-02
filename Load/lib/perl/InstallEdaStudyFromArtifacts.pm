@@ -727,6 +727,7 @@ sub postProcessAttributeGraph {
 ";
 
   my $sth = $dbh->prepare($sql);
+  $sth->execute();
   while (my ($studyAbbrev, $entityAbbrev) = $sth->fetchrow_array()) {
     my $tbl = "attributegraph_${studyAbbrev}_$entityAbbrev";
     $self->patchProviderLabel($tbl, $userDatasetId);
