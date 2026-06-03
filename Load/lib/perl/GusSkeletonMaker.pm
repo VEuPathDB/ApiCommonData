@@ -477,6 +477,7 @@ sub printTranscriptInfo {
     #my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence', 1);
     #my $transcriptSeq = $splicedNaSeq->getSequence();
     my $transcriptSeq = $gusTranscript->getFeatureSequence();
+    $transcriptSeq =~ s/[^ATCG]/N/gi;
 
     my @exonPath;
     my @exonLocations;
