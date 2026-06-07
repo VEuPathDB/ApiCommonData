@@ -743,7 +743,7 @@ sub patchProviderLabel {
   my $schema = $self->getDbSchema();
 
   my $sql = "
-update $schema.$attGraphTableName set provider_label = '["' || display_name || '"]'
+update $schema.$attGraphTableName set provider_label = '[\"' || display_name || '\"]'
 where provider_label is null or provider_label = ''
 ";
   $dbh->do($sql) unless $self->isDryRun();
