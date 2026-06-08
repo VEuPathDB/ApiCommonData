@@ -228,7 +228,7 @@ sub uninstallData {
     my ($self) = @_;
 
     my $userDatasetId = $self->getUserDatasetId();
-    my $installJsonFile = $self->getInstallJsonFile($self->getDataFilesDir());
+    my $installJsonFile = $self->getDataFilesDir() . "/install.json";
 
     my $schema = $self->getDbSchema();
     my $datasetDir = $self->getDataFilesDir();
