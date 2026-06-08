@@ -11,12 +11,13 @@ use Getopt::Long;
 use DBI;
 use CBIL::Util::PropertySet;
 
-my ($help, $downloadDir, $component, $gusConfigFile);
+my ($help, $downloadDir, $gusConfigFile, $build_number);
+my $projectName = 'UniDB';
 
 &GetOptions('help' => \$help,
             'downloadDir=s' => \$downloadDir,
-            'component=s' => \$component,
-            "gusConfigFile=s" => \$gusConfigFile,
+            'gusConfigFile=s' => \$gusConfigFile,
+            'build_number=i' => \$build_number,
     );
 
 if($help) {
@@ -24,13 +25,18 @@ if($help) {
   exit;
 }
 
-unless(-e $gusConfigFile) {
-  &usage("gus.config file not found!");
+unless($build_number) {
+  &usage("--build_number is required!");
   exit;
 }
 
-unless($component) {
-  &usage("Component must be specified");
+unless($gusConfigFile) {
+  &usage("--gusConfigFile is required!");
+  exit;
+}
+
+unless(-e $gusConfigFile) {
+  &usage("gus.config file not found: $gusConfigFile");
   exit;
 }
 
@@ -42,60 +48,37 @@ my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 my $usr = $gusconfig->{props}->{databaseLogin};
 my $pwd = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
-my $instance = $dsn;
 
-#print STDERR "$instance, $usr, $pwd --CONECT NOW \n";
 
 my %orgName;
 getOrgNames();
 
 
 
-#Get Organism Abbrev used for EST (like Pfalciparum is Plasmodium falciparum)
-my %orgEst;
-getOrgForEst();
-
-
 ## To get the projRelpaths (release-xyz)
 $downloadDir = "/var/www/Common/apiSiteFilesMirror/downloadSite/" if (!$downloadDir);
 
-my $projPath = $downloadDir . $component;
+my $projPath = $downloadDir . "UniDB/release-$build_number";
 my @projRelpaths;
-
+# print STDERR "Project path!! $projPath \n"; 
 opendir( my $DIR, $projPath );
 
 while (my $entry = readdir $DIR) {
-  #next unless -d $projPath . '/' . $entry;
-  next if $entry eq '.' or $entry eq '..' or $entry eq 'Current_Release' or $entry eq 'pathwayFiles';
-  next unless $entry =~/release(\S)+/;
-
-
-  ##  ignore release nums less than 23
-  my $minBld = $entry;
-  $minBld =~s/^(.)*release\-(\d+\.?\d*)(.)*/$2/;  # gives 55, etc
-  next unless ($minBld >=24);
-  #print "MIN BLD = $minBld \n";
-
-#    next unless $entry =~/release-64/;
-
   push (@projRelpaths, $entry);
 }
 
 my %fileInfo;
 
-#my $path = $downloadDir . $component . "/" . $build . "/";
-foreach my $path (sort @projRelpaths) {
-  $path = $downloadDir . $component . "/" . $path . "/";
-
   ###   ONLY fasta and gff files, say
   # my @files = File::Find::Rule->file()->name('*.fasta','*.gff')->in($path);
 
   ### ALL FILES
-  my @files = File::Find::Rule->file()->name('*')->in($path);
-  # print Dumper @files;
+  my @files = File::Find::Rule->file()->name('*')->in($projPath);
 
-
-  foreach my $f (@files){
+  my $count = 1;
+  foreach my $f (sort @files){
+    $count++ ; 
+    print STDERR "$count FILE \n" if ($count % 100==0);
     ## Some of the exceptions!
     next if $f =~m/(.)*\~$/;
     next if ($f =~/index.html/ || $f =~/index.shtml/);
@@ -110,31 +93,28 @@ foreach my $path (sort @projRelpaths) {
     next if $f =~/HEADER/;  # toxo
     next if $f =~/Software/;  # toxo
 
-    my $bld = $f;
-    $bld =~s/^(.)*release\-(\d+\.?\d*)(.)*/$2/;  # gives 55, etc
-
+  
+  my $bld = $build_number;
+  
     my $name = $f;
     $name =~ s{^.*/}{};
     # Neglect "Build_number" files
     next if ($name eq 'Build_number');
 
     my $org = $f;
-    $org =~s/^(.)*release\-\d+\.?\d*\/([a-zA-Z0-9\-\_]+).*$/$2/;  #  "Pfalciparum 3D7", etc
-    # needed for just "Orf50.gff" files only
-    if ($name eq 'Orf50.gff'){
-      $name = $component . "-" . $bld . "_" . $org . "_" . $name;
+    $org =~s/^(.)*release\-\d+\.?\d*\/([a-zA-Z0-9\-\_.]+).*$/$2/;  #  "Pfalciparum 3D7", etc
+    # needed for just "Orf50.gff.gz" files only
+    if ($name eq 'Orf50.gff.gz'){
+      $name = $projectName . "-" . $bld . "_" . $org . "_" . $name;
     }
-
 
     # set the full organism name
     if (my $o = $orgName{$org}){
+      #print STDERR "abbrev = $org, and name = $o\n";
       $org = $o;
-    } elsif ($orgEst{$org}) { # org entries for ESTs
-      $org = $orgEst{$org};
-#    } else {
-#      print "NO MAPPING for $org \n"; # no org assignment should NOT happen
     }
-
+    else {print STDERR "abbrev = $org NOT MAPPED!!\n";
+    }
     #  my $key = $bld.$org.$name; # primary_key
     my $key = $bld.$name; # primary_key
     $fileInfo{$key}->{build} = $bld;
@@ -159,23 +139,27 @@ foreach my $path (sort @projRelpaths) {
       $fileInfo{$key}->{file_format} = $type;
     }
 
+    if ($fileInfo{$key}->{file_format} eq  "zip" || $fileInfo{$key}->{file_format} eq  "gzip"){
+	$fileInfo{$key}->{file_format} = "gz";
+    }
+
 
     $fileInfo{$key}->{checksum} = md5_hex(do { local $/; IO::File->new("$f")->getline });
     $fileInfo{$key}->{size} = -s $f;
 
     my $path =$f;
-    $path =~ s/$downloadDir$component/\/common\/downloads/;
+    $path =~ s/$downloadDir$projectName/\/common\/downloads/;
     $fileInfo{$key}->{path} = $path;
 
 
     # set the data_type OR the file_type
-    $fileInfo{$key}->{data_type} = 'genome' if ($fileInfo{$key}->{filename} =~/_Genome.fasta/);
-    $fileInfo{$key}->{data_type} = 'transcript' if ($name =~/_AnnotatedTranscripts.fasta/);
-    $fileInfo{$key}->{data_type} = 'protein' if ($f =~/^(.)+_AnnotatedProteins.fasta/);
+    $fileInfo{$key}->{data_type} = 'Genome' if ($fileInfo{$key}->{filename} =~/_Genome.fasta/);
+    $fileInfo{$key}->{data_type} = 'Transcript' if ($name =~/_AnnotatedTranscripts.fasta/);
+    $fileInfo{$key}->{data_type} = 'Protein' if ($f =~/^(.)+_AnnotatedProteins.fasta/);
     $fileInfo{$key}->{data_type} = 'CDS' if ($f =~/^(.)+_AnnotatedCDSs.fasta/);
     $fileInfo{$key}->{data_type} = 'EST' if ($f =~/^(.)+_ESTs.fasta/);
-    $fileInfo{$key}->{data_type} = 'ORF' if ($f =~/Orf50.gff/);
-    $fileInfo{$key}->{data_type} = 'Full GFF' if (($f =~/.gff/) && !($f =~/Orf50.gff/));
+    $fileInfo{$key}->{data_type} = 'ORF' if ($f =~/Orf50.gff.gz/);
+    $fileInfo{$key}->{data_type} = 'Full GFF' if (($f =~/.gff/) && !($f =~/Orf50.gff.gz/));
     $fileInfo{$key}->{data_type} = 'Codon Usage' if ($f =~/^(.)+_CodonUsage.txt/);
     $fileInfo{$key}->{data_type} = 'Interpro Domains' if ($f =~/^(.)+_InterproDomains.txt/);
     $fileInfo{$key}->{data_type} = 'Gene Ontology (GO)' if ($f =~/_GO.gaf/);
@@ -183,78 +167,59 @@ foreach my $path (sort @projRelpaths) {
     $fileInfo{$key}->{data_type} = 'Popset' if ($f =~/^(.)+_Isolates.fasta/);
     $fileInfo{$key}->{data_type} = 'Popset' if ($f =~/^(.)+Isolate.txt/);
     $fileInfo{$key}->{data_type} = '' if (!$fileInfo{$key}->{data_type});
-
     # set the category
+    my $dt = $fileInfo{$key}->{data_type};
     $fileInfo{$key}->{category} = '';
-    $fileInfo{$key}->{category} = 'Sequence' if (($fileInfo{$key}->{data_type} eq 'Codon Usage')||
-						 ($fileInfo{$key}->{data_type} eq 'genome')||
-						 ($fileInfo{$key}->{data_type} eq 'CDS')||
-						 ($fileInfo{$key}->{data_type} eq 'transcript')||
-						 ($fileInfo{$key}->{data_type} eq 'protein')||
-						 ($fileInfo{$key}->{data_type} eq 'EST')||
-						 ($fileInfo{$key}->{data_type} eq 'ORF')
+    $fileInfo{$key}->{category} = 'Sequence' if (($dt eq 'Codon Usage')||
+						 ($dt eq 'Genome')||
+						 ($dt eq 'CDS')||
+						 ($dt eq 'Transcript')||
+						 ($dt eq 'Protein')||
+						 ($dt eq 'EST')||
+						 ($dt eq 'ORF')
 						);
-    $fileInfo{$key}->{category} = 'Function prediction' if $fileInfo{$key}->{data_type} eq 'Gene Ontology (GO)';
-    $fileInfo{$key}->{category} = 'Function prediction' if $fileInfo{$key}->{data_type} eq 'Interpro Domains';
-    $fileInfo{$key}->{category} = 'Annotation and Curation' if $fileInfo{$key}->{data_type} eq 'Gene Aliases';
-    $fileInfo{$key}->{category} = 'Annotation and Curation' if $fileInfo{$key}->{data_type} eq 'Full GFF';
-    $fileInfo{$key}->{category} = 'Genetic Variation' if $fileInfo{$key}->{data_type} eq 'Popset';
+    $fileInfo{$key}->{category} = 'Function prediction' if $dt eq 'Gene Ontology (GO)';
+    $fileInfo{$key}->{category} = 'Function prediction' if $dt eq 'Interpro Domains';
+    $fileInfo{$key}->{category} = 'Annotation and Curation' if $dt eq 'Gene Aliases';
+    $fileInfo{$key}->{category} = 'Annotation and Curation' if $dt eq 'Full GFF';
+    $fileInfo{$key}->{category} = 'Genetic Variation' if $dt eq 'Popset';
     $fileInfo{$key}->{category} = 'LinkOuts' if ($f =~/^(.)+_NCBILinkout_(.)+.xml/);
+
+    #PRINT THE RECORD
+    print $key
+    ."\t". $fileInfo{$key}->{filename}
+    ."\t". $fileInfo{$key}->{path}
+    ."\t". $fileInfo{$key}->{org}
+    ."\t". $fileInfo{$key}->{build}
+    ."\t". $fileInfo{$key}->{category}
+    ."\t". $fileInfo{$key}->{data_type}
+    ."\t". $fileInfo{$key}->{file_format}
+    ."\t". $fileInfo{$key}->{size}
+    ."\t". $fileInfo{$key}->{checksum}
+    ."\n";
+
   }
-}
+  print STDERR "ALL FILES DONE.";
 
-# print the tab-delimited records
-foreach my $test (keys( %fileInfo )){
-  print $test
-  ."\t". $fileInfo{$test}->{filename}
-  ."\t". $fileInfo{$test}->{path}
-  ."\t". $fileInfo{$test}->{org}
-  ."\t". $fileInfo{$test}->{build}
-  ."\t". $fileInfo{$test}->{category}
-  ."\t". $fileInfo{$test}->{data_type}
-  ."\t". $fileInfo{$test}->{file_format}
-  ."\t". $fileInfo{$test}->{size}
-  ."\t". $fileInfo{$test}->{checksum}
-  ."\n";
-
-}
 
 
 sub getOrgNames{
-  my $dbh = DBI->connect("dbi:Oracle:$instance", $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
+  my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
 
   my $sql =
-  q{select name_for_filenames as fileAbbrev, n.name as organism
-    from apidb.organism o, sres.taxonName n
-    where o.taxon_id = n.taxon_id(+)
-    and n.name_class = 'scientific name'
-    order by name_for_filenames };
+  q{SELECT organism_name as organism,
+           name_for_filenames as fileAbbrev
+    FROM apidbtuning.organismAttributes
+    UNION
+    SELECT distinct  ea.organism,
+           regexp_replace(ea.organism, '^(\S)\S+\s+(\S+).*$', '\1\2') as  fileAbbrev
+    FROM webready.estattributes_p ea};
 
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
-  while (my ($fileAbbrev, $organism) = $sth->fetchrow_array()) {
+  while (my ($organism, $fileAbbrev) = $sth->fetchrow_array()) {
+    #print "DEBUG $organism $fileAbbrev \n";
     $orgName{$fileAbbrev} = $organism;
-  }
-  $dbh->disconnect;
-}
-
-sub getOrgForEst {
-  my $dbh = DBI->connect("dbi:Oracle:$instance", $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
-
-  my $sql =
-  q{with estOrgs as (
-   select distinct ea.organism,
-          regexp_replace(ea.organism, '(\S)\S+\s* ', '\1') as briefname
-   from webready.EstAttributes_p ea)
-  select distinct  fa.organism, eo.organism
-  from apidb.fileAttributes fa, estOrgs eo
-  where fa.organism = eo.briefname};
-
-
-  my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
-  $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
-  while (my ($fileAbbrev, $organism) = $sth->fetchrow_array()) {
-    $orgEst{$fileAbbrev} = $organism;
   }
   $dbh->disconnect;
 }
@@ -265,6 +230,6 @@ sub usage {
   if($m) {
     print STDERR "$m\n\n";
   }
-  print STDERR "usage:\nperl extractDownloadData.pl  --gusConfigFile <GUS_CONFIG> --component=s > [FILE]\n";
+  print STDERR "usage:\nperl extractDownloadData.pl --gusConfigFile <GUS_CONFIG> --build_number <BUILD> [--downloadDir <DIR>]\n";
   exit;
 }
