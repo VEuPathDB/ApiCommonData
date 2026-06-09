@@ -432,9 +432,11 @@ sub getGeneFeatProduct {
 
   $product =~ s/\d//g;
 
-  my $geneFeatProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({   'external_database_release_id' => $scanReleaseId,
-						                       'product' => "tRNA $product",
-						                       'is_preferred' => 1});
+  my $geneFeatProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'external_database_release_id' => $scanReleaseId,
+                                                                    'product' => "tRNA $product",
+                                                                    'assigned_by' => 'tRNAscan',
+                                                                    'is_preferred' => 1
+                                                                   });
 
   return $geneFeatProduct;
 }
