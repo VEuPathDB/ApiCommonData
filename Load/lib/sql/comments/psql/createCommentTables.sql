@@ -321,6 +321,10 @@ CREATE TABLE usercomments.comment_ai_run
   CONSTRAINT comment_ai_run_pkey PRIMARY KEY (job_id)
 );
 
+ALTER TABLE usercomments.comment_ai_run OWNER TO userdb_owner;
+GRANT SELECT ON usercomments.comment_ai_run TO usercomments_r;
+GRANT INSERT, UPDATE, DELETE ON usercomments.comment_ai_run TO usercomments_w;
+
 CREATE TABLE usercomments.comment_ai_provenance
 (
   comment_id    BIGINT       NOT NULL,
@@ -337,10 +341,9 @@ CREATE TABLE usercomments.comment_ai_provenance
 CREATE INDEX comment_ai_provenance_run_idx
   ON usercomments.comment_ai_provenance (run_job_id);
 
-GRANT insert, update, delete ON usercomments.comment_ai_run        TO COMM_WDK_W;
-GRANT insert, update, delete ON usercomments.comment_ai_provenance TO COMM_WDK_W;
-GRANT select                 ON usercomments.comment_ai_run        TO GUS_R;
-GRANT select                 ON usercomments.comment_ai_provenance TO GUS_R;
+ALTER TABLE usercomments.comment_ai_provenance OWNER TO userdb_owner;
+GRANT SELECT ON usercomments.comment_ai_provenance TO usercomments_r;
+GRANT INSERT, UPDATE, DELETE ON usercomments.comment_ai_provenance TO usercomments_w;
 
 /*==============================================================================
  * Pre-populate comment_target, targetcategory, and review_status with static values.
