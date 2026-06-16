@@ -299,51 +299,6 @@ WHERE c.comment_id = idMap.comment_id;
 ALTER VIEW usercomments.mappedComment OWNER TO userdb_owner;
 GRANT SELECT ON usercomments.mappedComment TO usercomments_r;
 
-CREATE TABLE usercomments.comment_ai_run
-(
-  job_id                       VARCHAR(64)  NOT NULL,   -- hex SHA-256
-  model_name                   VARCHAR(64)  NOT NULL,   -- e.g. 'claude-sonnet-4-6'
-  prompt_version               VARCHAR(32)  NOT NULL,   -- manually-bumped per-prompt-stage constant
-  source_kind                  VARCHAR(16)  NOT NULL,   -- 'pubmed' | 'upload'
-  pubmed_id                    VARCHAR(32),             -- iff source_kind='pubmed'
-  external_url                 TEXT,                    -- iff source_kind='upload', optional
-  external_title               VARCHAR(4000),           -- iff source_kind='upload', optional
-  external_notes               TEXT,                    -- iff source_kind='upload', optional
-  pdf_content_sha256           VARCHAR(64),             -- iff source_kind='upload'
-  gene_id                      VARCHAR(128) NOT NULL,
-  synonyms_used                TEXT[]       NOT NULL,   -- canonicalised, sorted, baked into job_id
-  options_json                 TEXT         NOT NULL,   -- canonical JSON of request `options`, baked into job_id
-  terminal_status              VARCHAR(32)  NOT NULL,   -- 'success' | 'mentioned-in-passing' | 'gene-not-mentioned'
-  is_only_mentioned_in_passing BOOLEAN      NOT NULL,
-  ai_headline                  VARCHAR(2000),           -- null iff terminal_status != 'success'
-  ai_content                   TEXT,                    -- null iff terminal_status != 'success'
-  completed_at                 TIMESTAMP    NOT NULL,
-  CONSTRAINT comment_ai_run_pkey PRIMARY KEY (job_id)
-);
-
-ALTER TABLE usercomments.comment_ai_run OWNER TO userdb_owner;
-GRANT SELECT ON usercomments.comment_ai_run TO usercomments_r;
-GRANT INSERT, UPDATE, DELETE ON usercomments.comment_ai_run TO usercomments_w;
-
-CREATE TABLE usercomments.comment_ai_provenance
-(
-  comment_id    BIGINT       NOT NULL,
-  run_job_id    VARCHAR(64)  NOT NULL,
-  is_edited     BOOLEAN      NOT NULL,
-  created_at   TIMESTAMP,               -- set when (edited and) approved
-  CONSTRAINT comment_ai_provenance_pkey PRIMARY KEY (comment_id),
-  CONSTRAINT comment_ai_prov_comment_id_fkey FOREIGN KEY (comment_id)
-      REFERENCES usercomments.comments (comment_id),
-  CONSTRAINT comment_ai_prov_run_fkey FOREIGN KEY (run_job_id)
-      REFERENCES usercomments.comment_ai_run (job_id)
-);
-
-CREATE INDEX comment_ai_provenance_run_idx
-  ON usercomments.comment_ai_provenance (run_job_id);
-
-ALTER TABLE usercomments.comment_ai_provenance OWNER TO userdb_owner;
-GRANT SELECT ON usercomments.comment_ai_provenance TO usercomments_r;
-GRANT INSERT, UPDATE, DELETE ON usercomments.comment_ai_provenance TO usercomments_w;
 
 /*==============================================================================
  * Pre-populate comment_target, targetcategory, and review_status with static values.
