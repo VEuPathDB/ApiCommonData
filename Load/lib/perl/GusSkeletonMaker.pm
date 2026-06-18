@@ -66,7 +66,7 @@ my $soTerms = { #'coding_gene'=>'protein_coding',
 		'siRNA' => 'siRNA',
 		'misc_RNA' => 'ncRNA',  ## coding for ncRNA since misc_RNA is not in ONTOLOGYTERM table yet
 		'ncRNA' => 'ncRNA',
-		'lncRNA' => 'ncRNA',
+		'lncRNA' => 'lncRNA',
 		'rRNA' => 'rRNA',
 		'RNase_MRP_RNA' => 'RNase_MRP_RNA',
 		'RNase_P_RNA' => 'RNase_P_RNA',
@@ -433,6 +433,7 @@ sub printTranscriptIds {
     #my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence', 1);
     #my $transcriptSeq = $splicedNaSeq->getSequence();
     my $transcriptSeq = $gusTranscript->getFeatureSequence();
+    $transcriptSeq =~ s/[^ATCG]/N/gi;
 
     my @exonPath;
     my @exonLocations;
