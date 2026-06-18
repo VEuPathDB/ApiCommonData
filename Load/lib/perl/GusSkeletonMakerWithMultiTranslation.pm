@@ -488,8 +488,12 @@ sub printTranscriptIds {
     { my %seen; @exonLocations = grep { !$seen{$_}++ } sort {$a <=> $b} @exonLocations; }
     my $exonLocationsStr = join (",", @exonLocations);
 
+    ## Include the transcript SO type (e.g. mRNA, ncRNA) as an extra key column so that
+    ## two transcripts of different types but with identical exon coordinates (and therefore
+    ## the same transcriptSeq and exonPath) do not collide in the postprocessDataStore hash.
+    my $transcriptType = $gusTranscript->getName() // '';
     #print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\n";
-    print $postprocessDataStore "$geneId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\t$transcriptId\n";
+    print $postprocessDataStore "$geneId\t$transcriptType\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\t$transcriptId\n";
   }
 
   return $postprocessDataStore;
@@ -533,7 +537,9 @@ sub printTranscriptInfo {
     { my %seen; @exonLocations = grep { !$seen{$_}++ } sort {$a <=> $b} @exonLocations; }
     my $exonLocationsStr = join (",", @exonLocations);
 
-    print $postprocessDataStore "$geneId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
+    ## Include the transcript SO type as an extra key column (mirrors printTranscriptIds).
+    my $transcriptType = $gusTranscript->getName() // '';
+    print $postprocessDataStore "$geneId\t$transcriptType\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
   }
 
   return $postprocessDataStore;
@@ -549,9 +555,22 @@ sub setTranscriptIds{
     $fh->open("$postprocessDir/transcriptInfoAndIds") || die "Can't open transcript info and IDs file '$postprocessDir/transcriptInfoAndIds'\n";
     while(<$fh>) {
       chomp;
-      my ($geneId, $transcriptSeq, $exonPath, $exonLocations, $transcriptId) = split(/\t/);
+      ## File format: geneId TAB transcriptType TAB transcriptSeq TAB exonPath TAB exonLocations TAB transcriptId
+      ## (The transcriptType column was added to disambiguate transcripts of different types
+      ##  that share identical exon coordinates, e.g. an ncRNA and an mRNA on the same locus.)
+      ## Fall back gracefully to the old 5-column format (no transcriptType) for files
+      ## written by earlier versions of this code.
+      my @fields = split(/\t/);
+      my ($geneId, $transcriptType, $transcriptSeq, $exonPath, $exonLocations, $transcriptId);
+      if (@fields == 6) {
+        ($geneId, $transcriptType, $transcriptSeq, $exonPath, $exonLocations, $transcriptId) = @fields;
+      } else {
+        ## old 5-column format -- use empty string as transcriptType key
+        ($geneId, $transcriptSeq, $exonPath, $exonLocations, $transcriptId) = @fields;
+        $transcriptType = '';
+      }
       die "Invalid line in file $postprocessDir/transcriptInfoAndIds:\n$_\n" unless $geneId && $transcriptSeq && $transcriptId;
-      $postprocessDataStore->{$geneId}->{$transcriptSeq}->{$exonPath} = $transcriptId;
+      $postprocessDataStore->{$geneId}->{$transcriptType}{$transcriptSeq}->{$exonPath} = $transcriptId;
     }
     $fh->close();
   }
@@ -575,10 +594,16 @@ sub setTranscriptIds{
     @ePaths = grep { !$_seenPath{$_}++ } sort {$a <=> $b} @ePaths;
     my $exonFeatPath = join (",", @ePaths);
 
-    ## Try lookup with normalised seq first; fall back to raw seq for files written
-    ## without normalisation (pre-existing inconsistency between PRINT and SET passes).
-    my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq}->{$exonFeatPath}
-                    // $postprocessDataStore->{$geneId}->{$rawTranscriptSeq}->{$exonFeatPath};
+    ## Determine the transcript type key (matches what was written by printTranscriptIds/Info).
+    my $transcriptType = $gusTranscript->getName() // '';
+
+    ## Try lookup with: (1) type+normalised seq, (2) type+raw seq, (3) empty-type+normalised seq
+    ## (old 5-column file format), (4) empty-type+raw seq.  This ordering ensures both new
+    ## and old transcriptInfoAndIds files work correctly.
+    my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptType}{$transcriptSeq}->{$exonFeatPath}
+                    // $postprocessDataStore->{$geneId}->{$transcriptType}{$rawTranscriptSeq}->{$exonFeatPath}
+                    // $postprocessDataStore->{$geneId}->{''}{$transcriptSeq}->{$exonFeatPath}
+                    // $postprocessDataStore->{$geneId}->{''}{$rawTranscriptSeq}->{$exonFeatPath};
     if ($transcriptId) { ## set transcript ID in gus object
       $gusTranscript->setSourceId($transcriptId);
     } else {
