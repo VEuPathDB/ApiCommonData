@@ -65,26 +65,28 @@ sub run {
     while (my $line = <$data>) {
 	chomp $line;
 
-        # Format is like "OG6_0000000    OG7_0000000:110/120 OG7_0000001:10/120"
-	my ($oldGroupId, $newGroupIdsLine) = split(/\t/, $line);
-	my @newGroupIds = split(/\s/, $newGroupIdsLine);
-	foreach my $newGroupIdInfo (@newGroupIds) {
+        # Format is like "OG8_0000000    OG6_0000000:110/120 OG7_0000001:10/120"
+        # First column is the current group (in apidb.orthologgroup); remaining columns are previous/old groups
+	my ($currentGroupId, $prevGroupIdsLine) = split(/\t/, $line);
+	my @prevGroupIds = split(/\s/, $prevGroupIdsLine);
 
-	    if ($newGroupIdInfo =~ /(OG\S+):(\d+)\/(\d+)/) {
-                # New group Id
-		my $newGroupId = $1;
-                # Number of sequences from old group that are found in the new group
+        unless ($validGroupIds{$currentGroupId}) {
+            $self->log("Skipping mapping for $currentGroupId: not found in apidb.orthologgroup");
+            $skippedCount++;
+            next;
+        }
+
+	foreach my $prevGroupIdInfo (@prevGroupIds) {
+
+	    if ($prevGroupIdInfo =~ /(OG\S+):(\d+)\/(\d+)/) {
+                # Previous (old) group Id
+		my $prevGroupId = $1;
+                # Number of sequences from old group that are found in the current group
 		my $overlapCount = $2;
                 # Number of sequences in the old group
 		my $groupSize = $3;
 
-                unless ($validGroupIds{$newGroupId}) {
-                    $self->log("Skipping mapping to $newGroupId: not found in apidb.orthologgroup");
-                    $skippedCount++;
-                    next;
-                }
-
-                my $row = GUS::Model::ApiDB::GroupMapping->new({OLD_GROUP_ID => $oldGroupId,NEW_GROUP_ID => $newGroupId,OVERLAP_COUNT => $overlapCount, GROUP_SIZE => $groupSize});
+                my $row = GUS::Model::ApiDB::GroupMapping->new({OLD_GROUP_ID => $prevGroupId, NEW_GROUP_ID => $currentGroupId, OVERLAP_COUNT => $overlapCount, GROUP_SIZE => $groupSize});
 		$row->submit(undef, 1);
 		$row->undefPointerCache();
 
@@ -95,7 +97,7 @@ sub run {
 
 	    }
 	    else {
-		die "Improper new group info format: $newGroupIdInfo\n";
+		die "Improper previous group info format: $prevGroupIdInfo\n";
 	    }
 	}
 
