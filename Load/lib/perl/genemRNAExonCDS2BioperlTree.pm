@@ -139,13 +139,13 @@ sub preprocess {
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
                                 ## No need to assign CodingStart and CodingEnd for pseudogenes
                                 ## since pseudogenes do not load CDS and these fields will be reset to NULL later
-                                if ($exonLoc->strand == -1){
-				  $exon->add_tag_value('CodingStart', $exonLoc->end());
-				  $exon->add_tag_value('CodingEnd', $exonLoc->start());
-				} else {
-				  $exon->add_tag_value('CodingStart', $exonLoc->start());
-				  $exon->add_tag_value('CodingEnd', $exonLoc->end());
-				}
+                                #if ($exonLoc->strand == -1){
+				#  $exon->add_tag_value('CodingStart', $exonLoc->end());
+				#  $exon->add_tag_value('CodingEnd', $exonLoc->start());
+				#} else {
+				#  $exon->add_tag_value('CodingStart', $exonLoc->start());
+				#  $exon->add_tag_value('CodingEnd', $exonLoc->end());
+				#}
 
 				$transcript->add_SeqFeature($exon);
 			    }
@@ -156,7 +156,7 @@ sub preprocess {
 		    }
 		}
 
-		my ($geneArrayRef,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq);
+		my ($geneArrayRef,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq, $plugin);
 
 		my @genes = @{$geneArrayRef};
 		my @UTRs = @{$UTRArrayRef};
@@ -209,7 +209,7 @@ sub preprocess {
 }
 
 sub traverseSeqFeatures {
-    my ($geneFeature, $bioperlSeq) = @_;
+    my ($geneFeature, $bioperlSeq, $plugin) = @_;
     my (@genes, $gene, @UTRs);
     my @RNAs = $geneFeature->get_SeqFeatures;
 
@@ -224,35 +224,35 @@ sub traverseSeqFeatures {
     foreach my $RNA ( sort {$a->location->start <=> $b->location->start 
 			      || $a->location->end <=> $b->location->end} @RNAs){
 	my $type = $RNA->primary_tag;
-        if (grep {$type eq $_} (
-             'mRNA',
-             'transcript',
-             'misc_RNA',
-             'guide_RNA',
-             'siRNA',
-             'rRNA',
-             'snRNA',
-             'snoRNA',
-             'tRNA',
-             'ncRNA',
-             'lncRNA',
-             'lnc_RNA',
-             'miRNA',
-	     'pseudogenic_transcript',
-             'scRNA',
-             'srpRNA',
-             'SRP.RNA',
-             'RNase_MRP_RNA',
-             'SRP_RNA',
-             'pre_miRNA',
-             'antisense_RNA',
-             'telomerase_RNA',
-             'V_gene_segment',
-             'C_gene_segment',
-             'primary_transcript',
-             )
-        ) {
 
+	my %RNA_TYPES = map { $_ => 1 } qw(
+            mRNA
+            transcript
+            misc_RNA
+            guide_RNA
+            siRNA
+            rRNA
+            snRNA
+            snoRNA
+            tRNA
+            ncrna
+            lncRNA
+            lnc_RNA
+            miRNA
+            pseudogenic_transcript
+            scRNA
+            srpRNA
+            SRP.RNA
+            RNase_MRP_RNA
+            SRP_RNA pre_miRNA
+            antisense_RNA
+            telomerase_RNA
+            V_gene_segment
+            C_gene_segment
+            primary_transcript
+        );
+
+      if ($RNA_TYPES{$type}) {
 
         if ($type eq 'misc_RNA') {
           $type = "ncRNA";   ## ncRNA is usually the safest/general replacement of misc_RNA
@@ -449,12 +449,12 @@ sub traverseSeqFeatures {
 	    }
 
 	    if($gene->location->start > $transcript->location->start){
-		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
+		$plugin->log("The transcript for gene $geneID is not within parent boundaries.\n");
 		$gene->location->start($transcript->location->start);
 	    }
 
 	    if($gene->location->end < $transcript->location->end){
-		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
+		$plugin->log("The transcript for gene $geneID is not within parent boundaries.\n");
 		$gene->location->end($transcript->location->end);
 	    }
 
