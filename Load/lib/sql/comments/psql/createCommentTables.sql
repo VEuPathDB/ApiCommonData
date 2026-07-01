@@ -84,8 +84,8 @@ GRANT SELECT ON usercomments.comments TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.comments TO usercomments_w;
 
 CREATE SEQUENCE usercomments.comments_pkseq START WITH 100000000 INCREMENT BY 10;
-
-GRANT SELECT ON usercomments.comments_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.comments_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.comments_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -106,7 +106,8 @@ GRANT SELECT ON usercomments.commentfile TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.commentfile TO usercomments_w;
 
 CREATE SEQUENCE usercomments.commentfile_pkseq START WITH 100000000 INCREMENT BY 10;
-GRANT SELECT ON usercomments.commentfile_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.commentfile_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.commentfile_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -128,7 +129,8 @@ GRANT SELECT ON usercomments.commentreference TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.commentreference TO usercomments_w;
 
 CREATE SEQUENCE usercomments.commentreference_pkseq START WITH 100000000 INCREMENT BY 10;
-GRANT SELECT ON usercomments.commentreference_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.commentreference_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.commentreference_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -148,7 +150,8 @@ GRANT SELECT ON usercomments.commentsequence TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.commentsequence TO usercomments_w;
 
 CREATE SEQUENCE usercomments.commentsequence_pkseq START WITH 100000000 INCREMENT BY 10;
-GRANT SELECT ON usercomments.commentsequence_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.commentsequence_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.commentsequence_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -169,7 +172,8 @@ GRANT SELECT ON usercomments.commentstableid TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.commentstableid TO usercomments_w;
 
 CREATE SEQUENCE usercomments.commentstableid_pkseq START WITH 100000000 INCREMENT BY 10;
-GRANT SELECT ON usercomments.commentstableid_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.commentstableid_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.commentstableid_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -192,8 +196,9 @@ GRANT SELECT ON usercomments.commenttargetcategory TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.commenttargetcategory TO usercomments_w;
 
 CREATE SEQUENCE usercomments.commenttargetcategory_pkseq START WITH 100000000 INCREMENT BY 10;
+ALTER SEQUENCE usercomments.commenttargetcategory_pkseq OWNER TO userdb_owner;
 
-GRANT SELECT ON usercomments.commenttargetcategory_pkseq TO usercomments_r;
+GRANT USAGE, SELECT ON usercomments.commenttargetcategory_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -209,7 +214,8 @@ GRANT SELECT ON usercomments.external_databases TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.external_databases TO usercomments_w;
 
 CREATE SEQUENCE usercomments.external_databases_pkseq START WITH 100000000 INCREMENT BY 10;
-GRANT SELECT ON usercomments.external_databases_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.external_databases_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.external_databases_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
@@ -249,7 +255,8 @@ GRANT SELECT ON usercomments.locations TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.locations TO usercomments_w;
 
 CREATE SEQUENCE usercomments.locations_pkseq START WITH 100000000 INCREMENT BY 10;
-GRANT SELECT ON usercomments.locations_pkseq TO usercomments_r;
+ALTER SEQUENCE usercomments.locations_pkseq OWNER TO userdb_owner;
+GRANT USAGE, SELECT ON usercomments.locations_pkseq TO usercomments_r;
 
 -------------------------------------------------------------------------
 
