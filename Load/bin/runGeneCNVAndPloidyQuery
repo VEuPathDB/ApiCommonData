@@ -3,14 +3,15 @@
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
-use DBI;
+use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
+use CBIL::Util::PropertySet;
 
 my ($gusConfigFile,$taxonId,$orthoGroupFile,$geneSourceIdOrthologFile,$chrsForCalcsFile);
-&GetOptions("gusConfigFile=s" => \$gusConfigFile,
-            "taxonId=s" => \$taxonId,
+&GetOptions("taxonId=s" => \$taxonId,
             "orthoGroupFile=s" => \$orthoGroupFile,
             "geneSourceIdOrthologFile=s" => \$geneSourceIdOrthologFile,
+            "gusConfigFile=s" => \$gusConfigFile,
             "chrsForCalcsFile=s" => \$chrsForCalcsFile);
 
 my $proteinToGeneSql = "
@@ -32,13 +33,19 @@ WHERE aas.subclass_view = 'TranslatedAASequence'
 
 my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name = 'chromosome' and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
 
-my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+#$gusConfigFile = $ENV{GUS_HOME}."/config/gus.config";
+die "Config file $gusConfigFile does not exist" unless -e $gusConfigFile;
 
-my $dbh = DBI->connect($gusconfig->getDbiDsn(),
-                       $gusconfig->getDatabaseLogin(),
-                       $gusconfig->getDatabasePassword(),
-                       { RaiseError => 1, AutoCommit => 0 }
-) or die DBI::errstr;
+my @properties = ();
+my $gusConfig = CBIL::Util::PropertySet -> new ($gusConfigFile, \@properties, 1);
+
+my $db = GUS::ObjRelP::DbiDatabase-> new($gusConfig->{props}->{dbiDsn},
+                                         $gusConfig->{props}->{databaseLogin},
+                                         $gusConfig->{props}->{databasePassword},
+                                         0,0,1, # verbose, no insert, default
+                                         $gusConfig->{props}->{coreSchemaName});
+
+my $dbh = $db->getQueryHandle();
 
 my $proteinToGeneStmt = $dbh->prepare($proteinToGeneSql);
 $proteinToGeneStmt->execute();
@@ -90,3 +97,9 @@ while (my @row = $chrsForCalcs->fetchrow_array()){
 close CHRS;
 
 $dbh->disconnect();
+
+
+
+
+
+
