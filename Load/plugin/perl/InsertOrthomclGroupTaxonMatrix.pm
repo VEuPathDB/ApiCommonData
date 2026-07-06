@@ -159,32 +159,23 @@ sub getSpeciesToClades {
     my ($self,$dbh) = @_;
 
     my %tree;
-    my %clades;
+    my %abbrevs;
     my %species;
 
+    # Walk apidb.orthomclclade's own parent_id hierarchy (species and clades
+    # share the same orthomcl_clade_id key space in this table), rather than
+    # mixing in sres.taxon, whose taxon_ids are an unrelated numbering scheme.
     my $sql = <<EOF;
-SELECT org.taxon_id, st.parent_id, org.orthomcl_abbrev, org.core_peripheral
-FROM apidb.organism org, sres.taxon st
-WHERE org.taxon_id = st.taxon_id
+SELECT orthomcl_clade_id, parent_id, three_letter_abbrev, is_species
+FROM apidb.orthomclclade
 EOF
 
     my $stmt = $dbh->prepareAndExecute($sql);
     $self->log("Starting to get species to clades");
-    while ( my ($id, $parent, $name, $type) = $stmt->fetchrow_array() ) {
-	$tree{$id}=$parent if ($parent);
-        $species{$id}=$name;
-    }
-    $self->undefPointerCache();
-
-    my $cladeSql = <<EOF;
-SELECT orthomcl_clade_id, parent_id, three_letter_abbrev, core_peripheral
-FROM apidb.orthomclclade
-WHERE core_peripheral = 'Z'
-EOF
-
-    my $cladeStmt = $dbh->prepareAndExecute($cladeSql);
-    while ( my ($id, $parent, $name, $type) = $cladeStmt->fetchrow_array() ) {
-        $clades{$id}=$name;
+    while ( my ($id, $parent, $abbrev, $isSpecies) = $stmt->fetchrow_array() ) {
+	$tree{$id}=$parent if (defined $parent);
+        $abbrevs{$id}=$abbrev;
+        $species{$id}=$abbrev if ($isSpecies);
     }
     $self->undefPointerCache();
 
@@ -192,9 +183,9 @@ EOF
     my $speciesToClades;
     foreach my $speciesId (keys %species) {
 	my $parents=[];
-        
+
 	getParents($parents,$speciesId,\%tree);
-	my @parentNames = map { $clades{$_} } @{$parents};
+	my @parentNames = map { $abbrevs{$_} } @{$parents};
 	$speciesToClades->{$species{$speciesId}} = [];
 	push $speciesToClades->{$species{$speciesId}}, @parentNames;
     }
