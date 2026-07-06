@@ -186,8 +186,7 @@ EOF
 
 	getParents($parents,$speciesId,\%tree);
 	my @parentNames = map { $abbrevs{$_} } @{$parents};
-	$speciesToClades->{$species{$speciesId}} = [];
-	push $speciesToClades->{$species{$speciesId}}, @parentNames;
+	$speciesToClades->{$species{$speciesId}} = [ @parentNames ];
     }
     $self->log("Got Parents");
 
