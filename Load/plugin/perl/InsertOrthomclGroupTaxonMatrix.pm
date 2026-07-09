@@ -220,6 +220,7 @@ EOF
     $self->undefPointerCache();
 
     my $numCladeRows = 0;
+    my $commitBatchSize = 1000;
     $sql = <<EOF;
 INSERT INTO apidb.orthologgrouptaxon (three_letter_abbrev,number_of_proteins,number_of_taxa,group_id,modification_date)
 VALUES (?,?,?,?,CURRENT_TIMESTAMP)
@@ -230,11 +231,15 @@ EOF
 	    my $numProteins = $clades->{$clade}->{$orthoId}->{numProteins};
 	    my $numTaxa = $clades->{$clade}->{$orthoId}->{numTaxa};
 	    $stmt->execute($clade,$numProteins,$numTaxa,$orthoId);
-	    $dbh->commit();
-            $self->undefPointerCache();
 	    $numCladeRows++;
+	    if ($numCladeRows % $commitBatchSize == 0) {
+		$dbh->commit();
+		$self->undefPointerCache();
+	    }
 	}
     }
+    $dbh->commit();
+    $self->undefPointerCache();
 
     return $numCladeRows;
 }
