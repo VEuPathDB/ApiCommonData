@@ -53,7 +53,44 @@ sub new {
   return $self;
 }
 
-sub run { die "not yet implemented\n"; }
+sub run {
+  my ($self) = @_;
+
+  my $inputDir       = $self->getArg('inputDir');
+  my $organismAbbrev = $self->getArg('organismAbbrev');
+  my $schema         = $self->getArg('targetSchema');
+  my $extDbRlsId     = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'))
+    or $self->error("Cannot resolve extDbRlsSpec: " . $self->getArg('extDbRlsSpec'));
+
+  my $map      = $self->getTranscriptMap($organismAbbrev);
+  my $validSeq = $self->getGenomicSequenceIds($organismAbbrev);
+  $self->validateSequenceIds($inputDir, $validSeq);
+
+  my $dir = tempdir(CLEANUP => 1);
+  my ($vf, $tp, $ve) = ("$dir/vf.tmp", "$dir/tp.tmp", "$dir/ve.tmp");
+
+  my $nvf = $self->transformFile($inputDir, 'variationFeature.dat', $vf,
+    sub { transformVariationFeature($_[0], $_[1], $extDbRlsId) });
+  my $ntp = $self->transformFile($inputDir, 'transcript_product.dat', $tp,
+    sub { transformTranscriptProduct($_[0], $_[1], $map) });
+  my $nve = $self->transformFile($inputDir, 'snpeff.dat', $ve,
+    sub { transformVariationEffect($_[0], $_[1], $map) });
+
+  $self->loadAll($schema, $extDbRlsId, $vf, $tp, $ve);
+
+  return "Loaded VariationFeature=$nvf VariationTranscriptProduct=$ntp VariationEffect=$nve";
+}
+
+sub transformFile {
+  my ($self, $inputDir, $name, $outFile, $transform) = @_;
+  open(my $in,  '<', "$inputDir/$name") or $self->error("Cannot open $inputDir/$name: $!");
+  open(my $out, '>', $outFile)          or $self->error("Cannot write $outFile: $!");
+  my $n = eval { $transform->($in, $out) };
+  $self->error("Transform of $name failed: $@") if $@;
+  close $in; close $out;
+  $self->log("Transformed $name: $n rows");
+  return $n;
+}
 
 sub getTranscriptMap {
   my ($self, $organismAbbrev) = @_;
