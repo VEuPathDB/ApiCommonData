@@ -69,4 +69,49 @@ dies_ok {
   ApiCommonData::Load::VariationLoader::transformVariationFeature($r, $w, 1);
 } 'dies on wrong field count';
 
+use ApiCommonData::Load::VariationLoader qw/transformTranscriptProduct/;
+
+{
+  my %map = ('LmjF.01.0010:mRNA' => 9000001);
+  my $header = "#" . join("\t", qw/seq_id location transcript_id pos_in_cds
+    pos_in_protein codon pos_in_codon count product matches_ref_codon
+    matches_ref_product downstream_of_frameshift_strain_ids hgvs_p/);
+  my $row = join("\t", 'LmjF.01', 3745, 'LmjF.01.0010:mRNA', 958, 320, 'GAC',
+    1, 3, 'D', 1, 1, '{1,3,4}', 'p.Asp320=');
+
+  my ($inFh, $inFile)   = tempfile(UNLINK => 1);
+  my ($outFh, $outFile) = tempfile(UNLINK => 1);
+  print $inFh "$header\n$row\n"; close $inFh;
+  open(my $rh, '<', $inFile) or die $!;
+
+  my $n = transformTranscriptProduct($rh, $outFh, \%map);
+  close $outFh; close $rh;
+  is($n, 1, 'one row');
+
+  open(my $oh, '<', $outFile); my $out = <$oh>; chomp $out; close $oh;
+  my @f = split /\t/, $out, -1;
+  is(scalar @f, 12, 'output has 12 fields (dropped column)');
+  is($f[2], 9000001, 'transcript_id resolved to na_feature_id');
+  is($f[7], 3, 'count value now in strain_count position');
+  is($f[-1], 'p.Asp320=', 'hgvs_p last; frameshift ids column dropped');
+}
+
+dies_ok {
+  my %map = ('LmjF.01.0010:mRNA' => 9000001);
+  my $header = "#seq_id\tlocation\ttranscript_id\tpos_in_cds\tpos_in_protein\tcodon\tpos_in_codon\tcount\tproduct\tmatches_ref_codon\tmatches_ref_product\tdownstream_of_frameshift_strain_ids\thgvs_p";
+  my ($rh,$f)=tempfile(UNLINK=>1);
+  print $rh "$header\nLmjF.01\t3745\tUNKNOWN:mRNA\t1\t1\tGAC\t1\t1\tD\t1\t1\t\tp.x\n"; close $rh;
+  open(my $r,'<',$f); my $j; open(my $w,'>',\$j);
+  transformTranscriptProduct($r,$w,\%map);
+} 'dies on unresolvable transcript_id';
+
+dies_ok {
+  my %map;
+  my $header = "#seq_id\tlocation\ttranscript_id\tpos_in_cds\tpos_in_protein\tcodon\tpos_in_codon\tcount\tproduct\tmatches_ref_codon\tmatches_ref_product\tdownstream_of_frameshift_strain_ids\thgvs_p";
+  my ($rh,$f)=tempfile(UNLINK=>1);
+  print $rh "$header\nLmjF.01\t3745\t\t1\t1\tGAC\t1\t1\tD\t1\t1\t\tp.x\n"; close $rh;
+  open(my $r,'<',$f); my $j; open(my $w,'>',\$j);
+  transformTranscriptProduct($r,$w,\%map);
+} 'dies on empty transcript_id (NOT NULL column)';
+
 done_testing;

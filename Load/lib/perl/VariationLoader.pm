@@ -77,4 +77,34 @@ sub transformVariationFeature {
   return $n;
 }
 
+sub transformTranscriptProduct {
+  my ($inFh, $outFh, $map) = @_;
+  my $header = <$inFh>;
+  die "transcript_product.dat: empty file\n" unless defined $header;
+  my $cols = parseHeader($header);
+  die "transcript_product.dat: expected 13 columns, got " . scalar(@$cols) . "\n"
+    unless @$cols == 13;
+  die "transcript_product.dat: unexpected header (want seq_id first)\n"
+    unless $cols->[0] eq 'seq_id';
+
+  my $n = 0;
+  while (my $line = <$inFh>) {
+    chomp $line;
+    my @f = split /\t/, $line, -1;
+    die "transcript_product.dat line $.: expected 13 fields, got " . scalar(@f) . "\n"
+      unless @f == 13;
+    my $tid = $f[2];
+    die "transcript_product.dat line $.: empty transcript_id (na_feature_id is NOT NULL)\n"
+      if $tid eq '';
+    my $nfid = $map->{$tid};
+    die "transcript_product.dat line $.: transcript_id '$tid' not found for this organism\n"
+      unless defined $nfid;
+    # out: seq_id, location, na_feature_id, cols 4..11 (pos_in_cds..matches_ref_product), hgvs_p
+    # drop col index 11 (downstream_of_frameshift_strain_ids); hgvs_p is index 12
+    print $outFh join("\t", @f[0,1], $nfid, @f[3..10], $f[12]), "\n";
+    $n++;
+  }
+  return $n;
+}
+
 1;
