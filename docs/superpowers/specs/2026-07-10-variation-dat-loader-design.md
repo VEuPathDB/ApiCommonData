@@ -77,23 +77,57 @@ same is true of `source_id`. This is an accepted constraint of the design, not a
 oversight, but it must be stated: **the tables model "the variation calls for this
 genome," not "the variation calls from this experiment."**
 
-### Consequence: `undoTables` does not work
+### Consequence: undo goes through `undoPreprocess`, not `undoTables`
 
 The schema commit deliberately omits housekeeping columns and a `core.TableInfo` entry
-(legacy SNP-table precedent). GUS's undo machinery deletes by `row_alg_invocation_id`
-and resolves tables through `core.TableInfo`; these tables have neither. Every plugin
-precedent (`InsertAlphaFold`, `InsertSyntenySpans`) gets undo for free. **We do not.**
+(legacy SNP-table precedent). `GUS::Community::Plugin::Undo` (`Undo.pm`) implements
+`undoTables` by issuing `DELETE FROM <table> WHERE row_alg_invocation_id IN (...)`.
+These tables have no such column, so **`undoTables` must return `()`**.
 
-Undo is therefore explicit, and the loader owns it:
+`Undo.pm` provides a second, undocumented hook. Its `run()` does, in order:
 
-```sql
-DELETE FROM apidb.VariationFeature WHERE external_database_release_id = <id>;
+1. `$plugin = $pluginName->new()` — a **fresh, uninitialized** plugin instance.
+2. `$plugin->undoPreprocess($dbh, $algInvocationIds)`, inside a transaction with
+   `AutoCommit=0`, committed if `--commit`. A missing method is caught and skipped.
+3. Deletes each `undoTables()` entry by `row_alg_invocation_id`.
+4. Deletes `Core.AlgorithmParam`, then `Core.AlgorithmInvocation`.
+
+Because step 2 precedes step 4, `undoPreprocess` can still read the plugin's original
+arguments out of `core.AlgorithmParam`. Because the instance in step 1 is fresh,
+`getArg()` and the initialized GUS handle are **not** available — arguments must be
+recovered by querying the passed `$dbh`. `InsertEdaStudyFromArtifacts` is the
+reference implementation, via its `getAlgorithmParam($dbh, $rowAlgInvocationList, $key)`
+helper, which joins `core.AlgorithmParamKey`, `core.AlgorithmImplementation`, and
+`core.AlgorithmParam` on the plugin name and invocation id.
+
+So this loader implements:
+
+```perl
+sub undoTables { return (); }
+
+sub undoPreprocess {
+  my ($self, $dbh, $rowAlgInvocationList) = @_;
+  my $spec = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'extDbRlsSpec')->[0];
+  # resolve $spec -> external_database_release_id against $dbh, then:
+  #   DELETE FROM apidb.VariationFeature WHERE external_database_release_id = ?
+}
 ```
 
-`ON DELETE CASCADE` on both children clears them. This is what the schema's cascade
-was designed for. The absence of `core.TableInfo` also means no `GUS::Model::ApiDB::*`
-classes exist, so object-based inserts are unavailable: `COPY` is not merely the fast
-path, it is the only path.
+`ON DELETE CASCADE` on both children clears them. Resolve the spec with plain SQL
+against `sres.ExternalDatabaseRelease`/`sres.ExternalDatabase` rather than
+`$self->getExtDbRlsId`, which needs an initialized plugin.
+
+The arg must be named exactly `extDbRlsSpec`, since that string is the
+`core.AlgorithmParamKey` lookup key.
+
+Note this deletes **all** rows for that external database release, not merely those
+from the given algorithm invocation. Given no per-invocation tracking exists in these
+tables, that is the only available granularity, and it is consistent with the
+one-dataset-per-genome constraint above.
+
+The absence of `core.TableInfo` also means no `GUS::Model::ApiDB::*` classes exist, so
+object-based inserts are unavailable: `COPY` is not merely the fast path, it is the
+only path.
 
 ## Loader design
 
@@ -200,8 +234,24 @@ failure so the offending row can be inspected.
 
 Load order is parent then children, or the foreign key checks fail.
 
-The leading `DELETE` makes re-running the loader idempotent — which matters
-disproportionately, because it is the *only* undo these tables have.
+The leading `DELETE` makes re-running the loader idempotent, and mirrors exactly what
+`undoPreprocess` does.
+
+**Verified against `unidb_shu_a` (2026-07-10), loading the sample data into `jbrestel`:**
+
+- One transaction loads 1504 / 781 / 1978 rows. Empty fields become NULL:
+  `VariationEffect.na_feature_id` is non-null in exactly 797 rows (1978 − 1181
+  intergenic); `indel_frame_effect` in exactly 273 (207 + 42 + 24).
+- Re-running is idempotent: `DELETE 1504`, reload, identical counts.
+- **Atomicity holds.** Appending one FK-violating row to the third `\COPY` aborts the
+  transaction and the pre-existing 1504 / 781 / 1978 survive — the leading `DELETE`
+  does *not* commit. Under three separate `psql --command` invocations the same
+  failure would have committed the `DELETE` and both parent COPYs, leaving a reloaded
+  parent and an empty `VariationEffect`. This is the concrete reason for the single
+  script.
+- Cascade delete by `external_database_release_id` clears all three tables (0 / 0 / 0).
+- `Psql.pm`'s exact `\COPY` configuration (`FORMAT CSV, DELIMITER E'\t', QUOTE '` + "`" + `'`)
+  round-trips the data unchanged.
 
 ### Step 6 — report
 
@@ -222,13 +272,14 @@ construction, empty-to-NULL passthrough, intergenic NULL `na_feature_id`, and fa
 handling of an unresolvable transcript id. No database required, which is the point of
 factoring the transform out of the plugin.
 
-**Integration (`jbrestel` schema).** Create `jbrestel` (it does not exist yet), holding
+**Integration (`jbrestel` schema).** *Created 2026-07-10.* The `jbrestel` schema holds
 copies of the three tables *without* the `dots`/`sres` foreign keys but *with* the
-parent→child `ON DELETE CASCADE`, plus a stub transcript relation carrying the 78
-`LmjF` source ids mapped to synthetic `na_feature_id`s. Run the loader with
-`--targetSchema jbrestel`. This exercises the generated SQL script end to end: column
-order, null handling, load ordering, cascade delete, transaction atomicity, and
-idempotent re-run.
+parent→child `ON DELETE CASCADE`, plus `jbrestel.StubTranscript` carrying the 78 `LmjF`
+source ids mapped to synthetic `na_feature_id`s (9000001+, chosen not to collide with
+real values). Run the loader with `--targetSchema jbrestel`. This exercises the
+generated SQL script end to end: column order, null handling, load ordering, cascade
+delete, transaction atomicity, and idempotent re-run — all four already confirmed by
+hand with a throwaway prototype of the transform.
 
 **Lookup query (real data).** The organism-scoped transcript query and the sequence
 validation query are tested directly against `afumAf293`, which is really loaded.
@@ -258,7 +309,8 @@ separately against real data.
 |---|---|
 | Perl GUS plugin, not standalone script | Consistency; `getExtDbRlsId`, `--commit` semantics |
 | Temp files + `\COPY`, not `DBD::Pg` `pg_putcopydata` | Repo precedent; `Psql.pm` reuse |
-| One psql script, not three `system()` calls | Atomicity across a parent and two FK children |
+| One psql script, not three `system()` calls | Atomicity across a parent and two FK children (verified) |
+| Empty `undoTables()` + `undoPreprocess()` | No `row_alg_invocation_id`; recover `extDbRlsSpec` from `core.AlgorithmParam` |
 | `source_id` = `Variant_<seq>_<loc>` | Stable across re-merges; `variant_type` is derived |
 | `source_id` on parent only | Avoids denormalizing an identifier into three tables |
 | Drop `downstream_of_frameshift_strain_ids` | Dangling reference to unloaded `sample.dat` |
