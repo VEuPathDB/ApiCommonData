@@ -110,4 +110,70 @@ sub validateSequenceIds {
   $self->log("Validated " . scalar(keys %seen) . " distinct sequence ids");
 }
 
+# Parse host/port/dbname out of the gus.config dbiDsn. NOTE: the port matters —
+# the default config runs on 5433, and psql defaults to 5432, so an omitted port
+# silently hits the wrong database.
+sub getPsqlConnection {
+  my ($self) = @_;
+  my $cfg = GUS::Supported::GusConfig->new();
+  my $dsn = $cfg->getDbiDsn();     # dbi:Pg:dbname=...;host=...;port=...
+  my ($dbname) = $dsn =~ /dbname=([^;]+)/;
+  my ($host)   = $dsn =~ /host=([^;]+)/;
+  my ($port)   = $dsn =~ /port=([^;]+)/;
+  return {
+    login    => $cfg->getDatabaseLogin(),
+    password => $cfg->getDatabasePassword(),
+    dbname   => $dbname,
+    host     => $host || 'localhost',
+    port     => $port || 5432,
+  };
+}
+
+# Build a single-line \copy command. Psql.pm's getCommand() emits multi-line,
+# which fails in a psql -f script, so we assemble it here. QUOTE '`' matches
+# Psql.pm and is verified against this data (no backticks, double quotes, or CRs
+# occur in any field); the data is unquoted so QUOTE only needs a byte that
+# never appears.
+sub copyCommand {
+  my ($self, $table, $columns, $file) = @_;
+  my $cols = join(", ", @$columns);
+  return "\\copy $table ($cols) FROM '$file' "
+       . "WITH (FORMAT CSV, DELIMITER E'\\t', QUOTE '`', ENCODING 'UTF8')";
+}
+
+sub loadAll {
+  my ($self, $schema, $extDbRlsId, $vfFile, $tpFile, $veFile) = @_;
+  my $conn = $self->getPsqlConnection();
+  my $dir  = tempdir(CLEANUP => 1);
+  my $sqlFile = "$dir/load.sql";
+
+  open(my $sql, '>', $sqlFile) or $self->error("Cannot write $sqlFile: $!");
+  print $sql "BEGIN;\n";
+  print $sql "DELETE FROM $schema.VariationFeature WHERE external_database_release_id = $extDbRlsId;\n";
+  print $sql $self->copyCommand("$schema.VariationFeature",           variationFeatureColumns(),  $vfFile) . "\n";
+  print $sql $self->copyCommand("$schema.VariationTranscriptProduct", transcriptProductColumns(), $tpFile) . "\n";
+  print $sql $self->copyCommand("$schema.VariationEffect",            variationEffectColumns(),   $veFile) . "\n";
+  print $sql "COMMIT;\n";
+  close $sql;
+
+  my $connStr = "postgresql://$conn->{login}:$conn->{password}\@$conn->{host}:$conn->{port}/$conn->{dbname}";
+  my $logFile = "$dir/psql.log";
+  my $cmd = "psql -v ON_ERROR_STOP=1 --log-file='$logFile' -f '$sqlFile' '$connStr'";
+
+  $self->log("Running single-transaction load via psql");
+  my $rc = system($cmd);
+  if ($rc != 0) {
+    $self->printFile($logFile);
+    $self->error("psql load failed (rc=$rc); transaction rolled back, prior data intact");
+  }
+}
+
+sub printFile {
+  my ($self, $file) = @_;
+  return unless -e $file;
+  open(my $fh, '<', $file) or return;
+  while (<$fh>) { $self->log("psql: $_") }
+  close $fh;
+}
+
 1;
