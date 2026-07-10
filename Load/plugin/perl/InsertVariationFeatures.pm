@@ -213,4 +213,54 @@ sub printFile {
   close $fh;
 }
 
+sub undoTables { return (); }   # no row_alg_invocation_id on these tables
+
+sub undoPreprocess {
+  my ($self, $dbh, $rowAlgInvocationList) = @_;
+
+  my $specs = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'extDbRlsSpec');
+  $self->error("undo: could not recover extDbRlsSpec from core.AlgorithmParam")
+    unless $specs && @$specs;
+
+  # targetSchema is optional; default to apidb if it was not recorded.
+  my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'targetSchema');
+  my $schema  = ($schemas && @$schemas && $schemas->[0]) ? $schemas->[0] : 'apidb';
+
+  foreach my $spec (@$specs) {
+    my ($name, $version) = split /\|/, $spec;
+    my $sql = "
+      SELECT r.external_database_release_id
+      FROM   sres.ExternalDatabaseRelease r, sres.ExternalDatabase d
+      WHERE  d.external_database_id = r.external_database_id
+        AND  d.name = ? AND r.version = ?";
+    my $sth = $dbh->prepare($sql);
+    $sth->execute($name, $version);
+    my ($id) = $sth->fetchrow_array;
+    $self->error("undo: no external_database_release_id for '$spec'") unless $id;
+
+    my $del = $dbh->prepare("DELETE FROM $schema.VariationFeature WHERE external_database_release_id = ?");
+    my $n = $del->execute($id);
+    $self->log("undo: deleted $n VariationFeature rows (children cascade) for $spec");
+  }
+}
+
+# Recover a plugin argument's recorded value(s) from core.AlgorithmParam, keyed by
+# plugin name and invocation id. Pattern from InsertEdaStudyFromArtifacts.
+sub getAlgorithmParam {
+  my ($self, $dbh, $rowAlgInvocationList, $paramKey) = @_;
+  my $pluginName = ref($self);
+  my @values;
+  foreach my $rowAlgInvId (@$rowAlgInvocationList) {
+    my $sql = "SELECT p.STRING_VALUE
+      FROM core.ALGORITHMPARAMKEY k
+      LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID
+      LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID
+      WHERE a.EXECUTABLE = ? AND p.ROW_ALG_INVOCATION_ID = ? AND k.ALGORITHM_PARAM_KEY = ?";
+    my $sth = $dbh->prepare($sql);
+    $sth->execute($pluginName, $rowAlgInvId, $paramKey);
+    while (my ($v) = $sth->fetchrow_array) { push @values, $v if defined $v; }
+  }
+  return \@values;
+}
+
 1;
