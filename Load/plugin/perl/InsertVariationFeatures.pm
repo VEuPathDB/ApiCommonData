@@ -21,7 +21,7 @@ sub getArgsDeclaration {
                 constraintFunc => undef, reqd => 1, isList => 0 }),
     stringArg({ name => 'organismAbbrev', descr => 'apidb.organism.abbrev to scope the transcript lookup',
                 constraintFunc => undef, reqd => 1, isList => 0 }),
-    stringArg({ name => 'targetSchema', descr => 'schema to load into (default apidb; tests use jbrestel)',
+    stringArg({ name => 'targetSchema', descr => 'schema to load into (default apidb)',
                 constraintFunc => undef, reqd => 0, isList => 0, default => 'apidb' }),
   ];
 }
