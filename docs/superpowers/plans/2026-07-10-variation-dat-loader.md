@@ -35,17 +35,39 @@
 export PROJECT_HOME=/home/jbrestel/workspaces/dataLoad/project_home
 export GUS_HOME=/home/jbrestel/workspaces/dataLoad/gus_home
 export PATH=$GUS_HOME/bin:$PATH
-export PERL5LIB=$GUS_HOME/lib/perl
+export PERL5LIB=$GUS_HOME/lib/perl:/home/jbrestel/perl5/lib/perl5
 ```
 
-`GUS_HOME` holds **copies** of source, not symlinks. After editing any `.pm` under
-`$PROJECT_HOME/ApiCommonData`, reinstall before running the plugin:
+**Module resolution (important — do not skip):** Source `.pm` files live *flat* under
+`Load/lib/perl/` (e.g. `Load/lib/perl/VariationLoader.pm`) but declare the full package
+`ApiCommonData::Load::VariationLoader`. Perl can only resolve that from a directory that
+has an `ApiCommonData/Load/` subtree — i.e. the **built** copy at
+`$GUS_HOME/lib/perl/ApiCommonData/Load/`. Therefore:
 
-```bash
-$PROJECT_HOME/install/bin/build ApiCommonData -append
-```
+- Every `.t` file uses `use lib "$ENV{GUS_HOME}/lib/perl";` (matching all existing repo
+  tests), **not** a `$PROJECT_HOME/...` path.
+- After editing any `.pm`, sync it into the built tree before running tests or the plugin.
+  Dev-loop sync (fast; what to use during this work):
 
-Unit tests (Task 2–5) run directly from `$PROJECT_HOME` without a build and without a DB.
+  ```bash
+  cp $PROJECT_HOME/ApiCommonData/Load/lib/perl/VariationLoader.pm \
+     $GUS_HOME/lib/perl/ApiCommonData/Load/
+  # plugin file, when it exists:
+  cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/InsertVariationFeatures.pm \
+     $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/
+  ```
+
+  The full deploy build is `build ApiCommonData install ...` (heavyweight: touches config
+  and DB schema). Do **not** run it for this dev loop; the `cp` sync is sufficient and is
+  standard GUS dev practice. The committed source is the source of truth; the `cp` is a
+  local install step, never committed.
+
+- `Test::Exception` is a repo test dependency (used by `ontology_mapping.t`). If missing,
+  install once: `cpanm --local-lib=/home/jbrestel/perl5 Test::Exception`. The `PERL5LIB`
+  above already includes `/home/jbrestel/perl5/lib/perl5`.
+
+Unit tests (Tasks 2–5) need the `cp` sync but no DB. The integration test (Task 11) needs
+both the sync and the live `unidb_shu_a` database.
 
 ## File structure
 
@@ -131,7 +153,7 @@ Create `ApiCommonData/Load/t/variationLoader.t`:
 ```perl
 use strict;
 use warnings;
-use lib "$ENV{PROJECT_HOME}/ApiCommonData/Load/lib/perl";
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Test::More;
 use Test::Exception;
 use ApiCommonData::Load::VariationLoader qw/
@@ -640,7 +662,7 @@ sub run { die "not yet implemented\n"; }
 - [ ] **Step 2: Build and verify the plugin loads**
 
 ```bash
-$PROJECT_HOME/install/bin/build ApiCommonData -append
+cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/InsertVariationFeatures.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/
 perl -c $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/InsertVariationFeatures.pm
 ```
 Expected: `... syntax OK`.
@@ -725,7 +747,7 @@ sub validateSequenceIds {
 - [ ] **Step 2: Build and syntax-check**
 
 ```bash
-$PROJECT_HOME/install/bin/build ApiCommonData -append
+cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/InsertVariationFeatures.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/
 perl -c $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/InsertVariationFeatures.pm
 ```
 Expected: `syntax OK`.
@@ -819,7 +841,7 @@ sub printFile {
 - [ ] **Step 2: Build and syntax-check**
 
 ```bash
-$PROJECT_HOME/install/bin/build ApiCommonData -append
+cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/InsertVariationFeatures.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/
 perl -c $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/InsertVariationFeatures.pm
 ```
 Expected: `syntax OK`.
@@ -886,7 +908,7 @@ sub transformFile {
 - [ ] **Step 2: Build and syntax-check**
 
 ```bash
-$PROJECT_HOME/install/bin/build ApiCommonData -append
+cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/InsertVariationFeatures.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/
 perl -c $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/InsertVariationFeatures.pm
 ```
 Expected: `syntax OK`.
@@ -968,7 +990,7 @@ sub getAlgorithmParam {
 - [ ] **Step 2: Build and syntax-check**
 
 ```bash
-$PROJECT_HOME/install/bin/build ApiCommonData -append
+cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/InsertVariationFeatures.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/
 perl -c $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/InsertVariationFeatures.pm
 ```
 Expected: `syntax OK`.
@@ -1007,7 +1029,7 @@ Expected: `78`. If the schema is gone, recreate it with the scratchpad SQL
 ```perl
 use strict;
 use warnings;
-use lib "$ENV{PROJECT_HOME}/ApiCommonData/Load/lib/perl";
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Test::More;
 use File::Temp qw/tempdir/;
 use ApiCommonData::Load::VariationLoader qw/
