@@ -68,14 +68,29 @@ Not loaded: `allele.dat`, `sample.dat`, `merged.ann.vcf.gz`, the `hsss_readFreq*
 `(sequence_source_id, location)` and the child tables keep their existing composite
 foreign key. `source_id` is **not** denormalized onto the children.
 
-### Consequence: one variation dataset per genome
+### Assumption: one variation dataset per genome
 
 `VariationFeature`'s primary key is `(sequence_source_id, location)` and carries no
 `external_database_release_id`. Two variation datasets for the same organism — say,
 different strain sets — cannot coexist; the second collides on the primary key. The
-same is true of `source_id`. This is an accepted constraint of the design, not an
-oversight, but it must be stated: **the tables model "the variation calls for this
-genome," not "the variation calls from this experiment."**
+same is true of `source_id`. **Accepted:** the tables model "the variation calls for
+this genome," not "the variation calls from this experiment." `mergeExperiments`
+produces one merged call set per organism, so this matches the pipeline.
+
+### Uniqueness of `source_id`
+
+`Variant_<seq>_<loc>` is unique iff genomic sequence source ids are unique across
+organisms. Verified in `unidb_shu_a`: `dots.ExternalNaSequence` (a view over
+`dots.NaSequence`, restricted to genomic sequences) has zero duplicate `source_id`s
+across all 8 loaded organisms.
+
+Note this is a *data property*, not an enforced constraint — `dots.NaSequence` in a
+UniDB build carries zero indexes and zero constraints, not even a primary key. The
+guarantee we actually rely on is our own `UNIQUE (source_id)` on `VariationFeature`,
+which turns any hypothetical cross-organism collision into a loud load failure rather
+than a silent merge of two organisms' variants. (The one duplicate in the base table
+is 79 `SplicedNASequence` rows sharing an empty `source_id` — transcript sequences
+with no id, outside the genomic view.)
 
 ### Consequence: undo goes through `undoPreprocess`, not `undoTables`
 
@@ -299,9 +314,8 @@ separately against real data.
   the sample (zero `&` in 1,978 rows). If a future SnpEff config stops splitting,
   `VariationEffect.effect VARCHAR(60)` will start truncating. Worth a full-size run
   before production.
-- **`--targetSchema`** is a test affordance in production code. It is small and
-  documented, but it is a seam that will be misused eventually if left undefended;
-  default it to `apidb` and never document it as a user-facing knob.
+- **`--targetSchema`** is a test affordance in production code (accepted 2026-07-10).
+  Default it to `apidb` and do not document it as a user-facing knob.
 
 ## Decisions log
 
