@@ -150,4 +150,69 @@ dies_ok {
   transformVariationEffect($r,$w,\%map);
 } 'dies on non-empty unresolvable transcript_id';
 
+# --- Full-row column-mapping assertions --------------------------------------
+# These guard the lockstep between the *Columns() lists and the transform bodies.
+# A count-preserving column reorder would pass the count checks above but corrupt
+# this exact-output check. Each input column carries a distinct sentinel value so
+# any misplacement is visible.
+
+sub run_transform {
+  my ($fn, $header, $row, @extra) = @_;
+  my ($in, $inF)  = tempfile(UNLINK => 1);
+  my ($out, $outF) = tempfile(UNLINK => 1);
+  print $in "$header\n$row\n"; close $in;
+  open(my $rh, '<', $inF) or die $!;
+  $fn->($rh, $out, @extra);
+  close $out; close $rh;
+  open(my $oh, '<', $outF) or die $!;
+  my $line = <$oh>; close $oh; chomp $line;
+  return [ split /\t/, $line, -1 ];
+}
+
+{
+  # variationFeature: 31 in -> 33 out. Distinct values c2..c30 for the pass-through columns.
+  my @in = ('100', 'SEQ');
+  push @in, "c$_" for (2..30);
+  is(scalar @in, 31, 'vf full-row: input has 31 fields');
+  my $header = join("\t", qw/location seq_id reference_strain is_coding variant_type
+    distinct_strain_count called_strain_count no_call_strain_count call_rate
+    total_ploidy_count ref_allele_frequency het_strain_count
+    snp_ref_allele snp_major_allele snp_major_allele_frequency snp_major_allele_strain_count
+    snp_minor_allele snp_minor_allele_frequency snp_minor_allele_strain_count
+    snp_major_genomic_hgvs snp_minor_genomic_hgvs
+    indel_ref_allele indel_major_allele indel_major_allele_frequency indel_major_allele_strain_count
+    indel_minor_allele indel_minor_allele_frequency indel_minor_allele_strain_count
+    indel_major_genomic_hgvs indel_minor_genomic_hgvs indel_frame_effect/);
+  my $got = run_transform(\&transformVariationFeature, $header, join("\t", @in), 77);
+  my @expect = ('Variant_SEQ_100', 'SEQ', '100');
+  push @expect, "c$_" for (2..30);
+  push @expect, '77';
+  is_deeply($got, \@expect, 'vf full-row maps every column to the right position');
+}
+
+{
+  # transcriptProduct: 13 in -> 12 out. transcript_id 'T'->555; col 11 dropped.
+  my %map = ('T' => 555);
+  my $header = "#" . join("\t", qw/seq_id location transcript_id pos_in_cds
+    pos_in_protein codon pos_in_codon count product matches_ref_codon
+    matches_ref_product downstream_of_frameshift_strain_ids hgvs_p/);
+  my @in = ('SEQ','100','T','pc','pp','COD','pcod','CNT','PROD','mrc','mrp','DROPME','HP');
+  is(scalar @in, 13, 'tp full-row: input has 13 fields');
+  my $got = run_transform(\&transformTranscriptProduct, $header, join("\t", @in), \%map);
+  is_deeply($got,
+    ['SEQ','100',555,'pc','pp','COD','pcod','CNT','PROD','mrc','mrp','HP'],
+    'tp full-row: na_feature_id resolved, frameshift column dropped, count->strain_count');
+}
+
+{
+  # variationEffect: 8 in -> 8 out, reordered. transcript_id 'T'->555.
+  my %map = ('T' => 555);
+  my $header = join("\t", qw/location seq_id allele transcript_id impact effect hgvs_c source/);
+  my @in = ('100','SEQ','AL','T','IMP','EFF','HC','SRC');
+  my $got = run_transform(\&transformVariationEffect, $header, join("\t", @in), \%map);
+  is_deeply($got,
+    ['SEQ','100','AL',555,'IMP','EFF','HC','SRC'],
+    've full-row: reordered to sequence_source_id, location, allele, na_feature_id, ...');
+}
+
 done_testing;

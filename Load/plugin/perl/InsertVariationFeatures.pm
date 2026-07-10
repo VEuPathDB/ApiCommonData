@@ -58,7 +58,7 @@ sub run {
 
   my $inputDir       = $self->getArg('inputDir');
   my $organismAbbrev = $self->getArg('organismAbbrev');
-  my $schema         = $self->getArg('targetSchema');
+  my $schema         = $self->validSchema($self->getArg('targetSchema'));
   my $extDbRlsId     = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'))
     or $self->error("Cannot resolve extDbRlsSpec: " . $self->getArg('extDbRlsSpec'));
 
@@ -86,10 +86,25 @@ sub transformFile {
   open(my $in,  '<', "$inputDir/$name") or $self->error("Cannot open $inputDir/$name: $!");
   open(my $out, '>', $outFile)          or $self->error("Cannot write $outFile: $!");
   my $n = eval { $transform->($in, $out) };
-  $self->error("Transform of $name failed: $@") if $@;
-  close $in; close $out;
+  my $err = $@;
+  close $in;
+  # Check close on the OUTPUT handle: a failed flush (e.g. disk full) would
+  # silently truncate the temp file, and the reported count would still be $n.
+  my $closedOk = close $out;
+  $self->error("Transform of $name failed: $err") if $err;
+  $self->error("Failed to flush/close $outFile (write may be incomplete): $!") unless $closedOk;
   $self->log("Transformed $name: $n rows");
   return $n;
+}
+
+# Guard a schema name before interpolating it into SQL. targetSchema is an
+# operator-supplied bare identifier (default 'apidb'); reject anything that
+# isn't a plain identifier so it can never carry SQL.
+sub validSchema {
+  my ($self, $schema) = @_;
+  $self->error("Invalid schema name '$schema' (expected a bare identifier)")
+    unless defined $schema && $schema =~ /^\w+$/;
+  return $schema;
 }
 
 sub getTranscriptMap {
@@ -193,15 +208,24 @@ sub loadAll {
   print $sql "COMMIT;\n";
   close $sql;
 
-  my $connStr = "postgresql://$conn->{login}:$conn->{password}\@$conn->{host}:$conn->{port}/$conn->{dbname}";
   my $logFile = "$dir/psql.log";
-  my $cmd = "psql -v ON_ERROR_STOP=1 --log-file='$logFile' -f '$sqlFile' '$connStr'";
+  # List-form system() bypasses the shell entirely: no quoting, and no way for a
+  # password or path containing shell/URI metacharacters to be misparsed. The
+  # password travels in the child's env (PGPASSWORD), never on the command line.
+  local $ENV{PGPASSWORD} = $conn->{password};
+  my @cmd = ('psql',
+             '-h', $conn->{host}, '-p', $conn->{port},
+             '-U', $conn->{login}, '-d', $conn->{dbname},
+             '-v', 'ON_ERROR_STOP=1',
+             '--log-file', $logFile,
+             '-f', $sqlFile);
 
   $self->log("Running single-transaction load via psql");
-  my $rc = system($cmd);
+  my $rc = system(@cmd);
   if ($rc != 0) {
     $self->printFile($logFile);
-    $self->error("psql load failed (rc=$rc); transaction rolled back, prior data intact");
+    my $exit = ($rc == -1) ? -1 : ($rc >> 8);   # decode wait status to exit code
+    $self->error("psql load failed (exit=$exit); transaction rolled back, prior data intact");
   }
 }
 
@@ -225,6 +249,7 @@ sub undoPreprocess {
   # targetSchema is optional; default to apidb if it was not recorded.
   my $schemas = $self->getAlgorithmParam($dbh, $rowAlgInvocationList, 'targetSchema');
   my $schema  = ($schemas && @$schemas && $schemas->[0]) ? $schemas->[0] : 'apidb';
+  $schema = $self->validSchema($schema);
 
   foreach my $spec (@$specs) {
     my ($name, $version) = split /\|/, $spec;
