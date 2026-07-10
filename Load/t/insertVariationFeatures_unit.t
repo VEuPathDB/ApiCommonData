@@ -3,11 +3,9 @@ use warnings;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Test::More;
 
-# DB-free unit test of the plugin's psql \copy assembly. The load path is
-# exercised end-to-end by insertVariationFeatures_integration.t, but that test
-# constructs its own SQL; this one pins the actual copyCommand output so the two
-# cannot silently drift, and guards the single-line invariant (a multi-line
-# \copy fails in psql -f).
+# DB-free unit test of the plugin's psql \copy assembly. This pins the actual
+# copyCommand output and guards the single-line invariant (a multi-line \copy
+# fails in psql -f), plus the validSchema identifier check.
 
 require ApiCommonData::Load::Plugin::InsertVariationFeatures;
 
