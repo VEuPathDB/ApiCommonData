@@ -294,7 +294,7 @@ use ApiCommonData::Load::VariationLoader qw/transformVariationFeature/;
   # 233 SNV row with empty indel_* fields
   my @vals = (233, 'LmjF.01', 'lmajFriedlin', 0, 'SNV',
     5,4,0,'1.0000',9,'0.7778',0, 'C','G','0.2222',1,'','','', 'LmjF.01:g.233C>G','',
-    '','','',  '','','',  '','','');
+    '','','',  '','','',  '','','', '');   # 31 values, matching the 31-col header
   my $row = join("\t", @vals);
 
   my ($inFh, $inFile)   = tempfile(UNLINK => 1);
