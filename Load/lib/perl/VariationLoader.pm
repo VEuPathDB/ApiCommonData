@@ -54,4 +54,27 @@ sub buildSourceId {
   return "Variant_${seq}_${loc}";
 }
 
+sub transformVariationFeature {
+  my ($inFh, $outFh, $extDbRlsId) = @_;
+  my $header = <$inFh>;
+  die "variationFeature.dat: empty file\n" unless defined $header;
+  my $cols = parseHeader($header);
+  die "variationFeature.dat: expected 31 columns, got " . scalar(@$cols) . "\n"
+    unless @$cols == 31;
+  die "variationFeature.dat: unexpected header (want location, seq_id first)\n"
+    unless $cols->[0] eq 'location' && $cols->[1] eq 'seq_id';
+
+  my $n = 0;
+  while (my $line = <$inFh>) {
+    chomp $line;
+    my @f = split /\t/, $line, -1;
+    die "variationFeature.dat line $.: expected 31 fields, got " . scalar(@f) . "\n"
+      unless @f == 31;
+    my ($loc, $seq) = @f[0, 1];
+    print $outFh join("\t", buildSourceId($seq, $loc), $seq, $loc, @f[2..30], $extDbRlsId), "\n";
+    $n++;
+  }
+  return $n;
+}
+
 1;
