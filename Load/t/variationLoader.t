@@ -114,4 +114,40 @@ dies_ok {
   transformTranscriptProduct($r,$w,\%map);
 } 'dies on empty transcript_id (NOT NULL column)';
 
+use ApiCommonData::Load::VariationLoader qw/transformVariationEffect/;
+
+{
+  my %map = ('LmjF.01.0010:mRNA' => 9000001);
+  my $header = join("\t", qw/location seq_id allele transcript_id impact effect hgvs_c source/);
+  my $coding     = join("\t", 3745, 'LmjF.01', 'A', 'LmjF.01.0010:mRNA', 'MODERATE', 'missense_variant', 'c.958G>A', 'snpeff');
+  my $intergenic = join("\t", 233,  'LmjF.01', 'G', '',                  'MODIFIER', 'intergenic_region', 'n.233C>G', 'snpeff');
+
+  my ($inFh, $inFile)   = tempfile(UNLINK => 1);
+  my ($outFh, $outFile) = tempfile(UNLINK => 1);
+  print $inFh "$header\n$coding\n$intergenic\n"; close $inFh;
+  open(my $rh, '<', $inFile) or die $!;
+
+  my $n = transformVariationEffect($rh, $outFh, \%map);
+  close $outFh; close $rh;
+  is($n, 2, 'two rows');
+
+  open(my $oh, '<', $outFile); my @lines = <$oh>; close $oh;
+  my @c = split /\t/, $lines[0], -1;
+  is(scalar @c, 8, 'output has 8 fields');
+  is($c[0], 'LmjF.01', 'sequence_source_id first');
+  is($c[1], 3745, 'location second');
+  is($c[3], 9000001, 'coding row resolved na_feature_id');
+  my @i = split /\t/, $lines[1], -1;
+  is($i[3], '', 'intergenic row has empty na_feature_id (-> NULL)');
+}
+
+dies_ok {
+  my %map;
+  my $header = "location\tseq_id\tallele\ttranscript_id\timpact\teffect\thgvs_c\tsource";
+  my ($rh,$f)=tempfile(UNLINK=>1);
+  print $rh "$header\n1\tLmjF.01\tA\tUNKNOWN:mRNA\tHIGH\tx\tc.1A>T\tsnpeff\n"; close $rh;
+  open(my $r,'<',$f); my $j; open(my $w,'>',\$j);
+  transformVariationEffect($r,$w,\%map);
+} 'dies on non-empty unresolvable transcript_id';
+
 done_testing;

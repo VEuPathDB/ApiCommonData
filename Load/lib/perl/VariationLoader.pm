@@ -107,4 +107,33 @@ sub transformTranscriptProduct {
   return $n;
 }
 
+sub transformVariationEffect {
+  my ($inFh, $outFh, $map) = @_;
+  my $header = <$inFh>;
+  die "snpeff.dat: empty file\n" unless defined $header;
+  my $cols = parseHeader($header);
+  die "snpeff.dat: expected 8 columns, got " . scalar(@$cols) . "\n"
+    unless @$cols == 8;
+  die "snpeff.dat: unexpected header (want location first)\n"
+    unless $cols->[0] eq 'location';
+
+  my $n = 0;
+  while (my $line = <$inFh>) {
+    chomp $line;
+    my @f = split /\t/, $line, -1;
+    die "snpeff.dat line $.: expected 8 fields, got " . scalar(@f) . "\n"
+      unless @f == 8;
+    my ($loc, $seq, $allele, $tid, $impact, $effect, $hgvsc, $source) = @f;
+    my $nfid = '';                       # empty -> NULL for intergenic
+    if ($tid ne '') {
+      $nfid = $map->{$tid};
+      die "snpeff.dat line $.: transcript_id '$tid' not found for this organism\n"
+        unless defined $nfid;
+    }
+    print $outFh join("\t", $seq, $loc, $allele, $nfid, $impact, $effect, $hgvsc, $source), "\n";
+    $n++;
+  }
+  return $n;
+}
+
 1;
