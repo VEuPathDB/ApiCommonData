@@ -294,6 +294,8 @@ CREATE TABLE usercomments.comment_ai_run (
   ai_headline                  VARCHAR(2000),         -- null iff terminal_status != 'success'
   ai_content                   TEXT,                  -- null iff terminal_status != 'success'
   completed_at                 TIMESTAMP    NOT NULL,
+  external_ref                 VARCHAR(500),          -- iff source_kind='upload', optional PubMed id or DOI
+  external_ref_kind            VARCHAR(16),           -- 'pubmed' | 'doi', iff external_ref present
   CONSTRAINT comment_ai_run_pkey PRIMARY KEY (job_id)
 );
 
