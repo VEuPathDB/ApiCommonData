@@ -301,6 +301,9 @@ ALTER TABLE usercomments.comment_ai_run OWNER TO userdb_owner;
 GRANT SELECT ON usercomments.comment_ai_run TO usercomments_r;
 GRANT INSERT, UPDATE, DELETE ON usercomments.comment_ai_run TO usercomments_w;
 
+ALTER TABLE usercomments.comment_ai_run ADD COLUMN external_ref      VARCHAR(500); -- iff source_kind='upload', optional PubMed id or DOI
+ALTER TABLE usercomments.comment_ai_run ADD COLUMN external_ref_kind VARCHAR(16);  -- 'pubmed' | 'doi', iff external_ref present
+
 -------------------------------------------------------------------------
 
 CREATE TABLE usercomments.comment_ai_provenance (
