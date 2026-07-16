@@ -167,7 +167,12 @@ sub validateSequenceIds {
 # silently hits the wrong database.
 sub getPsqlConnection {
   my ($self) = @_;
-  my $cfg = GUS::Supported::GusConfig->new();
+#  my $cfg = GUS::Supported::GusConfig->new();
+  my $gusConfigFile  = $self->getArg('gusConfigFile');
+  my $cfg = $gusConfigFile
+    ? GUS::Supported::GusConfig->new($gusConfigFile)
+      : GUS::Supported::GusConfig->new();
+
   my $dsn = $cfg->getDbiDsn();     # dbi:Pg:dbname=...;host=...;port=...
   my ($dbname) = $dsn =~ /dbname=([^;]+)/;
   my ($host)   = $dsn =~ /host=([^;]+)/;
