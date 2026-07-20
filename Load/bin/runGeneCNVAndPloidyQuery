@@ -19,7 +19,9 @@ my ($gusConfigFile,$taxonId,$orthoGroupFile,$geneSourceIdOrthologFile,$chrsForCa
 my @sequenceTypesToKeep = ("chromosome", "supercontig");
 my $sequenceTypesToKeepList = join(",", map { "'$_'" } @sequenceTypesToKeep);
 
-my $proteinToGeneSql = "
+sub makeProteinToGeneSql {
+    my ($sequenceType) = @_;
+    return "
 SELECT aas.source_id AS protein_source_id,
        gf.source_id  AS gene_source_id
   FROM dots.AASequence aas
@@ -31,7 +33,7 @@ SELECT aas.source_id AS protein_source_id,
   JOIN sres.OntologyTerm ot ON ns.sequence_ontology_id = ot.ontology_term_id
     WHERE aas.subclass_view = 'TranslatedAASequence'
     AND aas.taxon_id = $taxonId
-    AND ot.name IN ($sequenceTypesToKeepList)
+    AND ot.name = '$sequenceType'
     AND ns.taxon_id = $taxonId
     AND aas.taxon_id IN (
         SELECT taxon_id
@@ -39,6 +41,7 @@ SELECT aas.source_id AS protein_source_id,
         WHERE is_annotated_genome = 1
     )
 ";
+}
 
 my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name in ($sequenceTypesToKeepList) and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
 
@@ -56,54 +59,65 @@ my $db = GUS::ObjRelP::DbiDatabase-> new($gusConfig->{props}->{dbiDsn},
 
 my $dbh = $db->getQueryHandle();
 
-my $proteinToGeneStmt = $dbh->prepare($proteinToGeneSql);
-$proteinToGeneStmt->execute();
-
 my %proteinToGene;
-while (my @row = $proteinToGeneStmt->fetchrow_array()){
-    $proteinToGene{$row[0]} = $row[1];
-}
+foreach my $sequenceType (@sequenceTypesToKeep) {
+    my $proteinToGeneStmt = $dbh->prepare(makeProteinToGeneSql($sequenceType));
+    $proteinToGeneStmt->execute();
 
-my %proteinToGroup;
-open(GROUPS, "<$orthoGroupFile") or die "Cannot open $orthoGroupFile: $!";
-while (my $line = <GROUPS>) {
-    chomp $line;
-    my ($groupId, $proteinList) = split(/:\s*/, $line, 2);
-    next unless defined $proteinList;
-    foreach my $protein (split(/\s+/, $proteinList)) {
-        $proteinToGroup{$protein} = $groupId;
+    while (my @row = $proteinToGeneStmt->fetchrow_array()){
+        $proteinToGene{$row[0]} = $row[1];
     }
+    last if %proteinToGene;
 }
-close GROUPS;
 
-my @proteinsWithNoGroup;
-open(GENE, ">$geneSourceIdOrthologFile") or die "Cannot open $geneSourceIdOrthologFile: $!";
-while (my ($protein, $gene) = each %proteinToGene) {
-    my $group = $proteinToGroup{$protein};
-    unless ($group) {
-        (my $altProtein = $protein) =~ s/:/\_/g;
-        $group = $proteinToGroup{$altProtein};
+if (%proteinToGene) {
+    my %proteinToGroup;
+    open(GROUPS, "<$orthoGroupFile") or die "Cannot open $orthoGroupFile: $!";
+    while (my $line = <GROUPS>) {
+        chomp $line;
+        my ($groupId, $proteinList) = split(/:\s*/, $line, 2);
+        next unless defined $proteinList;
+        foreach my $protein (split(/\s+/, $proteinList)) {
+            $proteinToGroup{$protein} = $groupId;
+        }
     }
-    if ($group) {
-        print GENE "$gene\t$group\n";
-    } else {
-        push @proteinsWithNoGroup, $protein;
+    close GROUPS;
+
+    my @proteinsWithNoGroup;
+    open(GENE, ">$geneSourceIdOrthologFile") or die "Cannot open $geneSourceIdOrthologFile: $!";
+    while (my ($protein, $gene) = each %proteinToGene) {
+        my $group = $proteinToGroup{$protein};
+        unless ($group) {
+            (my $altProtein = $protein) =~ s/:/\_/g;
+            $group = $proteinToGroup{$altProtein};
+        }
+        if ($group) {
+            print GENE "$gene\t$group\n";
+        } else {
+            push @proteinsWithNoGroup, $protein;
+        }
     }
-}
-close GENE;
+    close GENE;
 
-if (@proteinsWithNoGroup) {
-    print STDERR "The following proteins have no group assignment in $orthoGroupFile:\n" . join("\n", @proteinsWithNoGroup) . "\n";
-}
+    if (@proteinsWithNoGroup) {
+        print STDERR "The following proteins have no group assignment in $orthoGroupFile:\n" . join("\n", @proteinsWithNoGroup) . "\n";
+    }
 
-my $chrsForCalcs = $dbh->prepare($chrsForCalcsSql);
-$chrsForCalcs->execute();
+    open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
+    close CHRS;
+} else {
+    open(GENE, ">$geneSourceIdOrthologFile") or die "Cannot open $geneSourceIdOrthologFile: $!";
+    close GENE;
 
-open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
-while (my @row = $chrsForCalcs->fetchrow_array()){
-    print CHRS "$row[0]\t\n";
+    my $chrsForCalcs = $dbh->prepare($chrsForCalcsSql);
+    $chrsForCalcs->execute();
+
+    open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
+    while (my @row = $chrsForCalcs->fetchrow_array()){
+        print CHRS "$row[0]\t\n";
+    }
+    close CHRS;
 }
-close CHRS;
 
 $dbh->disconnect();
 
