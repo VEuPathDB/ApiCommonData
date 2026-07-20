@@ -17,7 +17,6 @@ my ($gusConfigFile,$taxonId,$orthoGroupFile,$geneSourceIdOrthologFile,$chrsForCa
 
 
 my @sequenceTypesToKeep = ("chromosome", "supercontig");
-my $sequenceTypesToKeepList = join(",", map { "'$_'" } @sequenceTypesToKeep);
 
 sub makeProteinToGeneSql {
     my ($sequenceType) = @_;
@@ -43,7 +42,10 @@ SELECT aas.source_id AS protein_source_id,
 ";
 }
 
-my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name in ($sequenceTypesToKeepList) and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
+sub makeChrsForCalcsSql {
+    my ($sequenceType) = @_;
+    return "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name = '$sequenceType' and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
+}
 
 #$gusConfigFile = $ENV{GUS_HOME}."/config/gus.config";
 die "Config file $gusConfigFile does not exist" unless -e $gusConfigFile;
@@ -102,22 +104,27 @@ if (%proteinToGene) {
     if (@proteinsWithNoGroup) {
         print STDERR "The following proteins have no group assignment in $orthoGroupFile:\n" . join("\n", @proteinsWithNoGroup) . "\n";
     }
-
-    open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
-    close CHRS;
 } else {
     open(GENE, ">$geneSourceIdOrthologFile") or die "Cannot open $geneSourceIdOrthologFile: $!";
     close GENE;
-
-    my $chrsForCalcs = $dbh->prepare($chrsForCalcsSql);
-    $chrsForCalcs->execute();
-
-    open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
-    while (my @row = $chrsForCalcs->fetchrow_array()){
-        print CHRS "$row[0]\t\n";
-    }
-    close CHRS;
 }
+
+my @chrsForCalcs;
+foreach my $sequenceType (@sequenceTypesToKeep) {
+    my $chrsForCalcsStmt = $dbh->prepare(makeChrsForCalcsSql($sequenceType));
+    $chrsForCalcsStmt->execute();
+
+    while (my @row = $chrsForCalcsStmt->fetchrow_array()){
+        push @chrsForCalcs, $row[0];
+    }
+    last if @chrsForCalcs;
+}
+
+open(CHRS, ">$chrsForCalcsFile") or die "Cannot open $chrsForCalcsFile: $!";
+foreach my $sourceId (@chrsForCalcs) {
+    print CHRS "$sourceId\t\n";
+}
+close CHRS;
 
 $dbh->disconnect();
 
