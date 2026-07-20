@@ -14,21 +14,27 @@ my ($gusConfigFile,$taxonId,$orthoGroupFile,$geneSourceIdOrthologFile,$chrsForCa
             "gusConfigFile=s" => \$gusConfigFile,
             "chrsForCalcsFile=s" => \$chrsForCalcsFile);
 
+
+
 my $proteinToGeneSql = "
 SELECT aas.source_id AS protein_source_id,
        gf.source_id  AS gene_source_id
-FROM dots.AASequence aas
-JOIN dots.TranslatedAASequence tas ON aas.aa_sequence_id = tas.aa_sequence_id
-JOIN dots.TranslatedAAFeature taf ON taf.aa_sequence_id = tas.aa_sequence_id
-JOIN dots.Transcript t ON taf.na_feature_id = t.na_feature_id
-JOIN dots.GeneFeature gf ON t.parent_id = gf.na_feature_id
-WHERE aas.subclass_view = 'TranslatedAASequence'
-  AND aas.taxon_id = $taxonId
-  AND aas.taxon_id IN (
-      SELECT taxon_id
-      FROM apidb.organism
-      WHERE is_annotated_genome = 1
-  )
+  FROM dots.AASequence aas
+  JOIN dots.TranslatedAASequence tas ON aas.aa_sequence_id = tas.aa_sequence_id
+  JOIN dots.TranslatedAAFeature taf ON taf.aa_sequence_id = tas.aa_sequence_id
+  JOIN dots.Transcript t ON taf.na_feature_id = t.na_feature_id
+  JOIN dots.GeneFeature gf ON t.parent_id = gf.na_feature_id
+  JOIN dots.NASequence ns ON gf.na_sequence_id = ns.na_sequence_id
+  JOIN sres.OntologyTerm ot ON ns.sequence_ontology_id = ot.ontology_term_id
+    WHERE aas.subclass_view = 'TranslatedAASequence'
+    AND aas.taxon_id = $taxonId    
+    AND ot.name IN ('chromosome','supercontig')
+    AND ns.taxon_id = $taxonId
+    AND aas.taxon_id IN (
+        SELECT taxon_id
+        FROM apidb.organism
+        WHERE is_annotated_genome = 1
+    )
 ";
 
 my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name in ('chromosome','supercontig') and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
