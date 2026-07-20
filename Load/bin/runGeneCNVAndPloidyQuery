@@ -16,6 +16,9 @@ my ($gusConfigFile,$taxonId,$orthoGroupFile,$geneSourceIdOrthologFile,$chrsForCa
 
 
 
+my @sequenceTypesToKeep = ("chromosome", "supercontig");
+my $sequenceTypesToKeepList = join(",", map { "'$_'" } @sequenceTypesToKeep);
+
 my $proteinToGeneSql = "
 SELECT aas.source_id AS protein_source_id,
        gf.source_id  AS gene_source_id
@@ -27,8 +30,8 @@ SELECT aas.source_id AS protein_source_id,
   JOIN dots.NASequence ns ON gf.na_sequence_id = ns.na_sequence_id
   JOIN sres.OntologyTerm ot ON ns.sequence_ontology_id = ot.ontology_term_id
     WHERE aas.subclass_view = 'TranslatedAASequence'
-    AND aas.taxon_id = $taxonId    
-    AND ot.name IN ('chromosome','supercontig')
+    AND aas.taxon_id = $taxonId
+    AND ot.name IN ($sequenceTypesToKeepList)
     AND ns.taxon_id = $taxonId
     AND aas.taxon_id IN (
         SELECT taxon_id
@@ -37,7 +40,7 @@ SELECT aas.source_id AS protein_source_id,
     )
 ";
 
-my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name in ('chromosome','supercontig') and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
+my $chrsForCalcsSql = "select ns.source_id from dots.nasequence ns, sres.ontologyterm ot where ot.name in ($sequenceTypesToKeepList) and ot.ontology_term_id = ns.sequence_ontology_id and ns.taxon_id = $taxonId";
 
 #$gusConfigFile = $ENV{GUS_HOME}."/config/gus.config";
 die "Config file $gusConfigFile does not exist" unless -e $gusConfigFile;
