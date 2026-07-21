@@ -39,6 +39,11 @@ is($n, 3, 'three data rows transformed');
 
 my $cols = join(", ", @{geneCoexpressionColumns()});
 
+# NOTE: this deliberately re-assembles the same BEGIN/DELETE/\copy/COMMIT shape
+# that the plugin's loadAll + copyCommand produce, rather than instantiating the
+# GUS plugin (which needs a full PluginMgr bootstrap). Keep this in lockstep with
+# InsertGeneCoexpression::loadAll/copyCommand — if that SQL shape changes, update
+# it here too. (Mirrors the insertVariationFeatures integration test.)
 sub load_once {
   my $sqlFile = "$dir/load.sql";
   open(my $s, '>', $sqlFile) or die $!;
@@ -47,7 +52,14 @@ sub load_once {
   print $s "\\copy $SCHEMA.GeneCoexpression ($cols) FROM '$tmpFile' WITH (FORMAT CSV, DELIMITER E'\\t', QUOTE '`', ENCODING 'UTF8')\n";
   print $s "COMMIT;\n";
   close $s;
-  return system("$PSQL -v ON_ERROR_STOP=1 -f '$sqlFile' >/dev/null 2>&1");
+  my $logFile = "$dir/psql.log";
+  my $rc = system("$PSQL -v ON_ERROR_STOP=1 -f '$sqlFile' >'$logFile' 2>&1");
+  if ($rc != 0 && -e $logFile) {
+    open(my $lh, '<', $logFile) or return $rc;
+    diag("psql: $_") while <$lh>;
+    close $lh;
+  }
+  return $rc;
 }
 
 sub count_rows {
