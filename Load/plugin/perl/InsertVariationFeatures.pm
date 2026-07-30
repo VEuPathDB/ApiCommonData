@@ -31,7 +31,10 @@ sub getDocumentation {
   return {
     purpose          => $purpose,
     purposeBrief     => $purpose,
-    notes            => "Undo via undoPreprocess (no row_alg_invocation_id on these tables).",
+    notes            => "Undo via undoPreprocess (no row_alg_invocation_id on these tables). "
+                      . "modification_date is not loaded: the columns default to localtimestamp so "
+                      . "Postgres stamps each COPY row, which is what TuningManager reads to detect "
+                      . "that these external dependencies changed.",
     tablesAffected   => "ApiDB.VariationFeature, ApiDB.VariationTranscriptProduct, ApiDB.VariationEffect",
     tablesDependedOn => "dots.Transcript, dots.ExternalNaSequence, apidb.Organism, sres.ExternalDatabaseRelease",
     howToRestart     => "Re-run; the load deletes existing rows for this external_database_release_id first.",

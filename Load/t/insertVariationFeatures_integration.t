@@ -70,6 +70,17 @@ is(count1('VariationFeature'), 1504, 'VariationFeature loaded');
 is(count1('VariationTranscriptProduct'), 781, 'VariationTranscriptProduct loaded');
 is(count1('VariationEffect'), 1978, 'VariationEffect loaded');
 
+# modification_date is supplied by the column default, not by the copy stream, so
+# assert Postgres actually stamped every row. If this fails the stub tables in
+# $SCHEMA predate the column (apply addModificationDateToVariationTables.sql) --
+# and in a real instance it would mean TuningManager can never see these tables
+# change.
+for my $tbl (qw/VariationFeature VariationTranscriptProduct VariationEffect/) {
+  my $stale = `$PSQL -tAc "SELECT count(*) FROM $SCHEMA.$tbl WHERE modification_date IS NULL OR modification_date < localtimestamp - interval '1 hour'"`;
+  chomp $stale;
+  is($stale, 0, "$tbl modification_date stamped on every row");
+}
+
 # Intergenic rows -> NULL na_feature_id: 1978 - 1181 = 797 non-null.
 my $nn = `$PSQL -tAc "SELECT count(na_feature_id) FROM $SCHEMA.VariationEffect"`;
 chomp $nn;

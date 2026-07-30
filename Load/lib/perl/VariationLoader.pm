@@ -13,6 +13,11 @@ our @EXPORT_OK = qw/
 # Canonical output column order. The transforms below emit values in exactly
 # this order; the plugin uses these same lists to build each \copy field list.
 # Keep the two in lockstep — the unit tests assert the counts match.
+#
+# modification_date is deliberately NOT in these lists. All three tables declare
+# DEFAULT localtimestamp (createVariationTables.sql), so Postgres stamps it as
+# each COPY row lands — the database clock, not the loader host's. Adding it here
+# would override that with a Perl-side timestamp; leave it out.
 
 sub variationFeatureColumns {
   return [ qw/
