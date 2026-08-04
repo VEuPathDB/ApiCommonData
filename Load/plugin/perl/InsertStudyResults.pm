@@ -233,6 +233,9 @@ sub addResults {
   elsif ($protocolName =~ /geneCNV/) {
     $tableString = "ApiDB::GeneCopyNumber";
   }
+  elsif ($protocolName =~ /Indel/) {
+    $tableString = "ApiDB::Indel";
+  }
   elsif ($protocolName =~ /simple_ontology_term_results/) {
     $tableString = "ApiDB::OntologyTermResult";
   }
@@ -713,6 +716,7 @@ sub undoTables {
     'Results.CompoundMassSpec',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
+    'ApiDB.Indel',
     'ApiDB.ONTOLOGYTERMRESULT',
     'ApiDB.SUBJECTRESULT',
     'ApiDB.INTRONJUNCTION',
