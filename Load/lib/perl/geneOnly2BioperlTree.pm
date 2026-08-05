@@ -83,15 +83,18 @@ sub preprocess {
 		$transcript->add_tag_value("ID", $transcriptID);
 		$transcript = &copyQualifiers($geneFeature, $transcript);
 
+
 		my @exonLocs = $geneLoc->each_Location();
 		foreach my $exonLoc (@exonLocs){
 		  my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
-		  if ($exonLoc->strand == -1) {
-		    $exon->add_tag_value('CodingStart', $exonLoc->end());
-		    $exon->add_tag_value('CodingEnd', $exonLoc->start());
-		  } else {
-		    $exon->add_tag_value('CodingStart', $exonLoc->start());
-		    $exon->add_tag_value('CodingEnd', $exonLoc->end());
+		  unless ($transcript->has_tag("pseudo")) {
+		    if ($exonLoc->strand == -1) {
+		      $exon->add_tag_value('CodingStart', $exonLoc->end());
+		      $exon->add_tag_value('CodingEnd', $exonLoc->start());
+		    } else {
+		      $exon->add_tag_value('CodingStart', $exonLoc->start());
+		      $exon->add_tag_value('CodingEnd', $exonLoc->end());
+		    }
 		  }
 		  $transcript->add_SeqFeature($exon);
 		}
