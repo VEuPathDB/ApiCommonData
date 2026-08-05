@@ -27,6 +27,9 @@ my ($organismAbbrev, $format, $dbVer, $mappingFile, $soTerm, $organismFullName,
 &usage() if($help);
 #&usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer && $ifUpdatedAnnot);
 &usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer);
+if (defined $format && $format =~ /^(genbank|embl)$/i) {
+  &usage("Missing a Required Argument") unless(defined $organismAbbrev && $dbVer && $buildNum);
+}
 
 my $dbName = $organismAbbrev."_primary_genome_RSRC";
 
