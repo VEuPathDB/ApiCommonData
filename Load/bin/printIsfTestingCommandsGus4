@@ -21,11 +21,12 @@ my ($organismAbbrev, $format, $dbVer, $mappingFile, $soTerm, $organismFullName,
             'inputFileOrDir=s' => \$inputFileOrDir,
             'sequenceFile=s' => \$sequenceFile,
             'regexSourceId=s' => \$regexSourceId,
-            'ifUpdatedAnnot=s' => \$ifUpdatedAnnot,
+#            'ifUpdatedAnnot=s' => \$ifUpdatedAnnot,
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
-&usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer && $ifUpdatedAnnot);
+#&usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer && $ifUpdatedAnnot);
+&usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer);
 
 my $dbName = $organismAbbrev."_primary_genome_RSRC";
 
@@ -82,8 +83,8 @@ if ($format =~ /gff/i) {
   print "## for transcriptInfo\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective PRINT_TRANSCRIPT_INFO --postprocessingDir ./ > isf.log 2>&1 &\n\n";
 
-  ($ifUpdatedAnnot =~ /^Y/i ) ? print "apiGenerateTranscriptIds $buildNum transcriptInfo OLD_transcriptInfoAndIds > ../../final/transcriptInfoAndIds\n\n"
-    : print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
+#  ($ifUpdatedAnnot =~ /^Y/i ) ? print "apiGenerateTranscriptIds $buildNum transcriptInfo OLD_transcriptInfoAndIds > ../../final/transcriptInfoAndIds\n\n"
+  print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
 
   print "## for loading\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
@@ -98,8 +99,8 @@ if ($format =~ /gff/i) {
 
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective PRINT_TRANSCRIPT_INFO --postprocessingDir ./ > isf.log 2>&1 &\n\n";
 
-  ($ifUpdatedAnnot =~ /^Y/i) ? print "apiGenerateTranscriptIds $buildNum transcriptInfo OLD_transcriptInfoAndIds > ../../final/transcriptInfoAndIds\n\n"
-    : print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
+#  ($ifUpdatedAnnot =~ /^Y/i) ? print "apiGenerateTranscriptIds $buildNum transcriptInfo OLD_transcriptInfoAndIds > ../../final/transcriptInfoAndIds\n\n"
+  print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
 
   print "## for loading\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
@@ -117,10 +118,10 @@ print "gus4CreateGenbankTableFile --organismAbbrev $organismAbbrev --extDbName $
 print "## cd ../ then run the command\n";
 print "tbl2asn -p $organismAbbrev -t ~/template.sbt -V v -Z $organismAbbrev/discrep\n\n";
 
-if ($ifUpdatedAnnot =~ /^Y/i) {
-  print "Please make a transcript ID aliases file to load\n";
-  print "apiValidateTranscriptIds --transcriptIdsFile new_transcriptInfoAndIds --prevTranscriptIdsFile old_transcriptInfoAndIds --oldGeneIdsMapFile gene_aliases > aliases.txt\n";
-}
+#if ($ifUpdatedAnnot =~ /^Y/i) {
+#  print "Please make a transcript ID aliases file to load\n";
+#  print "apiValidateTranscriptIds --transcriptIdsFile new_transcriptInfoAndIds --prevTranscriptIdsFile old_transcriptInfoAndIds --oldGeneIdsMapFile gene_aliases > aliases.txt\n";
+#}
 
 sub usage {
   die
@@ -139,7 +140,7 @@ where
   --inputFileOrDir: input annotation file or dir, default is Genbank: ../whole_genome.gbf, GFF3: ../whole_genome.gff, embl: ../whole_genome.embl
   --sequenceFile: input fasta sequence file name, only for gff3 format, default is ../whole_genome.fasta, 
   --regexSourceId: optional, regExp for sequence source id on the defline of the fasta file, only for gff3 format, default is >(\\S+?)(\\|\\w\+\$|\$)
-  --ifUpdatedAnnot: required, Y/yes, Y/y or No/no, N/n
+#  --ifUpdatedAnnot: required, Y/yes, Y/y or No/no, N/n
 
 ";
 }
