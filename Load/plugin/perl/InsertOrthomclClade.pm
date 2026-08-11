@@ -256,9 +256,9 @@ sub parseTaxonToCladeFile {
     my $sql = "SELECT o.orthomcl_abbrev, tn.name
                FROM apidb.organism o
                JOIN sres.taxonname tn ON o.taxon_id = tn.taxon_id
-               WHERE 
-                    o.is_annotated_genome = 1
-                    OR (o.is_annotated_genome = 0 AND o.project_name = 'OrthoMCL')";
+               WHERE tn.name_class = 'scientific name'
+                    AND (o.is_annotated_genome = 1
+                    OR (o.is_annotated_genome = 0 AND o.project_name = 'OrthoMCL'))";
     my $abbrevToNameQuery = $dbh->prepare($sql);
     $abbrevToNameQuery->execute();
 
