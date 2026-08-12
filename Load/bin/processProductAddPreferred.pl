@@ -34,9 +34,14 @@ while (<IN>) {
     $assignedProduct{$items[0]}{$pkey} = 1;
   }
 
-  if ($items[2] == 1 || $items[2] =~ /true/) {
-    $isPreferred{$items[0]} = 1;
-    $isPreferredProd{$items[0]}{$pkey} = 1;
+  if (defined $items[2] && $items[2] ne '') {
+    if ($items[2] == 1 || $items[2] =~ /true/i) {
+      $isPreferred{$items[0]} = 1;
+      $isPreferredProd{$items[0]}{$pkey} = 1;
+    } elsif ($items[2] == 0 || $items[2] =~ /false/i) {
+      $isPreferred{$items[0]} = 1;
+      $isPreferredProd{$items[0]}{$pkey} = 0;
+    }
   }
 }
 
@@ -44,12 +49,12 @@ my $is_preferred;
 foreach my $k (sort keys %products) {
 #  print STDERR "$k, $#{$products{$k}}\n";
   foreach my $i (0..$#{$products{$k}}) {
-    if ($#{$products{$k}} == 0 ) {
+    if ($#{$products{$k}} == 0 && $isPreferred{$k} != 1) {
       $is_preferred = 1;
     } else {
       if ($isPreferred{$k}) {
 	if ($isPreferredProd{$k}{$products{$k}[$i]}) {
-	  $is_preferred = 1;
+	  $is_preferred = $isPreferredProd{$k}{$products{$k}[$i]};
 	} else {
 	  $is_preferred = 0;
 	}
