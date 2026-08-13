@@ -233,6 +233,7 @@ if ($isEbiGenome =~ /^y/i ) {
   print PO "    <prop name=\"isNotEbiGenome\">true</prop>\n";
 }
 
+$excelInfo{$organismAbbrev}{"annotationIncludesTRNAs"} = &checkAnnotationIncludesTRNAs();
 printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "annotationIncludesTRNAs");
 printLinesBasedProject ($projectName);
 
@@ -979,6 +980,25 @@ sub printRegularLine {
   my ($excelInfoPoint, $organismAbbrev, $item) = @_;
   print PO "    <prop name=\"$item\">$excelInfoPoint->{$organismAbbrev}->{$item}</prop>\n";
   return 0;
+}
+
+sub checkAnnotationIncludesTRNAs { ## read ./isfTest/postLoadQA.txt and check for a line like "tRNA_gene =\d+"
+  my $qaFile = "./isfTest/postLoadQA.txt";
+  my $found = "N";
+
+  if (open (QA, $qaFile)) {
+    while (<QA>) {
+      if (/tRNA_gene\s*=\s*\d+/) {
+        $found = "Y";
+        last;
+      }
+    }
+    close (QA);
+  } else {
+    print STDERR "Warning: can not open $qaFile to check annotationIncludesTRNAs, defaulting to false\n";
+  }
+
+  return $found;
 }
 
 sub printTrueOrFalseLine { ## take 3 or 4 arguments depend if need judge based on the value of the 4th argument
