@@ -5,8 +5,7 @@ use warnings;
 use Data::Dumper;
 
 use File::Find::Rule;
-use Digest::MD5 qw(md5_hex);
-use IO::File;
+use Digest::MD5;
 use Getopt::Long;
 use DBI;
 use CBIL::Util::PropertySet;
@@ -55,17 +54,10 @@ getOrgNames();
 
 
 
-## To get the projRelpaths (release-xyz)
 $downloadDir = "/var/www/Common/apiSiteFilesMirror/downloadSite/" if (!$downloadDir);
 
 my $projPath = $downloadDir . "UniDB/release-$build_number";
-my @projRelpaths;
-# print STDERR "Project path!! $projPath \n"; 
-opendir( my $DIR, $projPath );
-
-while (my $entry = readdir $DIR) {
-  push (@projRelpaths, $entry);
-}
+# print STDERR "Project path!! $projPath \n";
 
 my %fileInfo;
 
@@ -103,6 +95,14 @@ my %fileInfo;
 
     my $org = $f;
     $org =~s/^(.)*release\-\d+\.?\d*\/([a-zA-Z0-9\-\_.]+).*$/$2/;  #  "Pfalciparum 3D7", etc
+    # a few download dirs are named <ProjectDB>_<abbrev>, eg VectorBase_Cfelis;
+    # only fall back to the trailing abbrev if the whole dir name doesn't map.
+    # do this before the Orf50 rename below, which builds a filename from $org
+    unless ($orgName{$org}) {
+      (my $trimmed = $org) =~ s/^[A-Za-z]+(?:DB|Base)_//;
+      $org = $trimmed if $orgName{$trimmed};
+    }
+
     # needed for just "Orf50.gff.gz" files only
     if ($name eq 'Orf50.gff.gz'){
       $name = $projectName . "-" . $bld . "_" . $org . "_" . $name;
@@ -144,7 +144,11 @@ my %fileInfo;
     }
 
 
-    $fileInfo{$key}->{checksum} = md5_hex(do { local $/; IO::File->new("$f")->getline });
+    # read in chunks -- genome fastas run to 3Gb, and slurping one costs that much RSS
+    open(my $md5fh, '<', $f) or die "Cannot open $f: $!";
+    binmode $md5fh;
+    $fileInfo{$key}->{checksum} = Digest::MD5->new->addfile($md5fh)->hexdigest;
+    close($md5fh);
     $fileInfo{$key}->{size} = -s $f;
 
     my $path =$f;
@@ -166,6 +170,10 @@ my %fileInfo;
     $fileInfo{$key}->{data_type} = 'Gene Aliases' if ($f =~/^(.)+_GeneAliases.txt/);
     $fileInfo{$key}->{data_type} = 'Popset' if ($f =~/^(.)+_Isolates.fasta/);
     $fileInfo{$key}->{data_type} = 'Popset' if ($f =~/^(.)+Isolate.txt/);
+    # no semantic type for these; match the build number as \d+, it changes every release
+    $fileInfo{$key}->{data_type} = 'txt' if ($f =~/_gene_product_updates_b\d+\.txt$/);
+    $fileInfo{$key}->{data_type} = 'txt' if ($f =~/_UniProtMapping\.txt$/);
+    $fileInfo{$key}->{data_type} = 'txt' if ($f =~/_NCBILinkout_(.)+\.xml$/);
     $fileInfo{$key}->{data_type} = '' if (!$fileInfo{$key}->{data_type});
     # set the category
     my $dt = $fileInfo{$key}->{data_type};
@@ -184,6 +192,9 @@ my %fileInfo;
     $fileInfo{$key}->{category} = 'Annotation and Curation' if $dt eq 'Full GFF';
     $fileInfo{$key}->{category} = 'Genetic Variation' if $dt eq 'Popset';
     $fileInfo{$key}->{category} = 'LinkOuts' if ($f =~/^(.)+_NCBILinkout_(.)+.xml/);
+    # data_type is 'txt' for these, so the $dt tests above don't reach them
+    $fileInfo{$key}->{category} = 'Annotation and Curation' if ($f =~/_gene_product_updates_b\d+\.txt$/);
+    $fileInfo{$key}->{category} = 'LinkOuts' if ($f =~/_UniProtMapping\.txt$/);
 
     #PRINT THE RECORD
     print $key
