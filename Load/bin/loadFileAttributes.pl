@@ -59,15 +59,20 @@ my $sth = $dbh->prepare($sql) || die "Couldn't prepare statement: " . $dbh->errs
 open(my $fh, '<', $input_file) || die "Couldn't open $input_file: $!";
 
 my $count = 0;
+my $skipped = 0;
 while (my $line = <$fh>) {
   chomp $line;
   next unless $line;
   my ($file_id, $filename, $filepath, $organism, $build_num,
       $category, $file_type, $file_format, $filesize, $checksum) = split(/\t/, $line);
 
-  $sth->execute($file_id, $filename, $filepath, $organism, $build_num,
-                $category, $file_type, $file_format, $filesize, $checksum)
-    || die "Couldn't execute insert for $file_id: " . $sth->errstr;
+  # warn and carry on -- one rejected row must not cost us the rest of the file
+  unless ($sth->execute($file_id, $filename, $filepath, $organism, $build_num,
+                        $category, $file_type, $file_format, $filesize, $checksum)) {
+    print STDERR "SKIPPED $file_id (line $.): " . $sth->errstr . "\n";
+    $skipped++;
+    next;
+  }
 
   $count++;
   print STDERR "$count rows loaded\n" if ($count % 500 == 0);
@@ -77,7 +82,9 @@ close($fh);
 $sth->finish;
 $dbh->disconnect;
 
-print STDERR "Done. $count rows inserted into apidb.fileattributes.\n";
+print STDERR "Done. $count rows inserted into apidb.fileattributes";
+print STDERR ", $skipped row(s) SKIPPED" if $skipped;
+print STDERR ".\n";
 
 
 sub usage {
