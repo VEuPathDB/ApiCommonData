@@ -236,6 +236,7 @@ sub traverseSeqFeatures {
             snoRNA
             tRNA
             ncrna
+            ncRNA
             lncRNA
             lnc_RNA
             miRNA
