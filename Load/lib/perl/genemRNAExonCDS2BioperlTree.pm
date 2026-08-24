@@ -168,27 +168,31 @@ sub preprocess {
 		  $gene->remove_tag('ID');
 		  $gene->add_tag_value("ID",$geneID);
 
-                  ## update all pseudogene not loading CDS
-                  foreach my $RNA ($gene->get_SeqFeatures) {
-		    my($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID')
-                                                     : die "ERROR: missing transcript ID for case 2 at " . $gene->seq_id . " , " . $RNA->start . " .. " . $RNA->end . "\n";
-		    $tID =~ s/\:pseudogenic_transcript/\:mRNA/;
-		    $RNA->remove_tag('ID');
-		    $RNA->add_tag_value("ID",$tID);
 
-                    my $tType = $RNA->primary_tag();
-                    if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
-                      my ($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values("ID")
-                                                        : die "ERROR: missing transcript ID for case 3 at " . $gene->seq_id . " , " . $RNA->start . " .. " . $RNA->end . "\n";
-                      #print STDERR "found pseudo: $tID\n";
-                      foreach my $exon ($RNA->get_SeqFeatures) {
-                        $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
-                        $exon->add_tag_value('CodingStart', '');
-                        $exon->remove_tag('CodingEnd') if ($exon->has_tag('CodingEnd'));
-                        $exon->add_tag_value('CodingEnd', '');
-                      }
-                    }
-                  }
+		  if ($gene->primary_tag() eq 'coding_gene') {
+		    my $hasCoding = 0;
+		    my $hasPseudo = 0;
+		    my @RNAs = $gene->get_SeqFeatures;
+		    foreach my $RNA (@RNAs) {
+		      my $isPseudo = ($RNA->has_tag('pseudo') || $RNA->primary_tag() eq 'pseudogenic_transcript');
+
+		      if ($isPseudo) {
+			$hasPseudo = 1;
+			$RNA->primary_tag('pseudogenic_transcript');
+			foreach my $exon ($RNA->get_SeqFeatures) {
+			  $exon->remove_tag('CodingStart') if $exon->has_tag('CodingStart');
+			  $exon->add_tag_value('CodingStart', '');
+			  $exon->remove_tag('CodingEnd') if $exon->has_tag('CodingEnd');
+			  $exon->add_tag_value('CodingEnd', '');
+			}
+		      } else {
+			$hasCoding = 1;
+		      }
+		    }
+
+		    $gene->primary_tag('pseudogene') if ($hasPseudo && !$hasCoding);
+		  }
+
 		  push @processedFeatures, $gene;  ## normal gene
 		}
 
