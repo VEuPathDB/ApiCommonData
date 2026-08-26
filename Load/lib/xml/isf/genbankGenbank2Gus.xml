@@ -47,6 +47,37 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="pseudogene"		handler="api" method="setPseudo"/>
   </feature>
 
+  <feature name="pseudogene" so="pseudogene">
+    <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
+    <qualifier name="locus_tag"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="codon_start" ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="transcript_id"             ignore="true"/>
+    <qualifier name="note"			ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="curation"         ignore="true"/>
+    <qualifier name="EC_number"			ignore="true"/>
+    <qualifier name="experiment"			ignore="true"/>
+    <qualifier name="protein_id"           ignore="true"/>
+    <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_process" ignore="true"/>
+    <qualifier name="GO_function" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="function" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
+    <qualifier name="inference" ignore="true"/>
+    <qualifier name="artificial_location" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="colour" ignore="true"/>
+    <qualifier name="similarity" ignore="true"/>
+    <qualifier name="trans_splicing" ignore="true"/>
+    <qualifier name="pseudo"			handler="api" method="setPseudo"/>
+    <qualifier name="pseudogene"		handler="api" method="setPseudo"/>
+  </feature>
+
   <!-- genebank gene feature qualifiers reshaped into new coding_gene created
        from cds/rna, so ignore this feature -->
   <feature name="gene" ignore="true">
@@ -60,32 +91,35 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="anticodon"			handler="api" method="anticodon"/>
     <qualifier name="artificial_location"			ignore="true"/>
     <qualifier name="citation"	    		ignore="true"/>
-    <qualifier name="codon_start"			ignore="true"/>
     <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_recognized"          ignore="true"/>
+    <qualifier name="codon_start"			ignore="true"/>
+    <qualifier name="db_xref"          ignore="true"/>
     <qualifier name="EC_number"			ignore="true"/>
+    <qualifier name="exception"			ignore="true"/>
+    <qualifier name="experiment"			ignore="true"/>
     <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="GO_component"			ignore="true"/>
     <qualifier name="GO_function"			ignore="true"/>
     <qualifier name="GO_process"			ignore="true"/>
+    <qualifier name="inference" ignore="true"/>
+    <qualifier name="note"			ignore="true"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="protein_id"			ignore="true"/>
-    <qualifier name="note"			ignore="true"/>
     <qualifier name="ribosomal_slippage"			ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="selenocysteine"       ignore="true"/>
-    <qualifier name="CDSLength"          ignore="true"/>
-    <qualifier name="codon_recognized"          ignore="true"/>
-    <qualifier name="db_xref"          ignore="true"/>
-    <qualifier name="old_locus_tag" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="inference" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="standard_name"			ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="partial"         handler="api" method="setPartial"/>
     <qualifier name="pseudo"			handler="api" method="setPseudo"/>
+    <qualifier name="pseudogene"        handler="api" method="setPseudo"/>
   </feature>
 
   <feature name="mRNA" so="mRNA">
@@ -93,30 +127,29 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="anticodon"			handler="api" method="anticodon"/>
     <qualifier name="artificial_location"			ignore="true"/>
     <qualifier name="citation"	    		ignore="true"/>
-    <qualifier name="codon_start"			ignore="true"/>
     <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_recognized"          ignore="true"/>
+    <qualifier name="codon_start"			ignore="true"/>
+    <qualifier name="db_xref"          ignore="true"/>
     <qualifier name="EC_number"			ignore="true"/>
     <qualifier name="exception"			ignore="true"/>
     <qualifier name="experiment"			ignore="true"/>
     <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="GO_component"			ignore="true"/>
     <qualifier name="GO_function"			ignore="true"/>
     <qualifier name="GO_process"			ignore="true"/>
+    <qualifier name="inference" ignore="true"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="protein_id"			ignore="true"/>
     <qualifier name="note"			ignore="true"/>
     <qualifier name="ribosomal_slippage"			ignore="true"/>
+    <qualifier name="selenocysteine"       ignore="true"/>
     <qualifier name="standard_name"			ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="selenocysteine"       ignore="true"/>
-    <qualifier name="CDSLength"          ignore="true"/>
-    <qualifier name="codon_recognized"          ignore="true"/>
-    <qualifier name="db_xref"          ignore="true"/>
-    <qualifier name="old_locus_tag" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="inference" ignore="true"/>
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="trans_splicing" ignore="true"/>
     <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
