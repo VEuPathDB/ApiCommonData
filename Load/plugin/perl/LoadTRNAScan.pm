@@ -195,7 +195,7 @@ sub run {
 
   my $rnaId = $self->fetchSequenceOntologyId("tRNA_gene") || $self->error ("Can't retrieve so_id for tRNA_gene");
 
-  my $primTransc = $self->fetchSequenceOntologyId("transcript") || $self->error ("Can't retrieve so_id for transcript");
+  my $primTransc = $self->fetchSequenceOntologyId("tRNA") || $self->error ("Can't retrieve so_id for tRNA");
 
   my $exon = $self->fetchSequenceOntologyId("exon") || $self->error ("Can't retrieve so_id for exon");
 
@@ -381,7 +381,7 @@ sub getTranscript {
 
   $transcriptSourceId .= "-t_1";
 
-  my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "transcript",
+  my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "tRNA",
 						      'sequence_ontology_id' => $soIds->{'transcript'},
 						      'external_database_release_id' => $scanReleaseId,
 						      'source_id' => $transcriptSourceId,
