@@ -255,6 +255,10 @@ sub traverseSeqFeatures {
             V_gene_segment
             C_gene_segment
             primary_transcript
+            piRNA
+            circular_ncRNA
+            miRNA_primary_transcript
+            nc_primary_transcript
         );
 
       if ($RNA_TYPES{$type}) {
