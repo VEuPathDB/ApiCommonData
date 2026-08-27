@@ -96,7 +96,7 @@ sub run {
         LOOP
             started := clock_timestamp();
             RAISE NOTICE 'ANALYZE %.% ...', r.schema, r.tbl;
-            EXECUTE format('ANALYZE %I.%I', r.schema, r.tbl);
+            EXECUTE format('ANALYZE ONLY %I.%I', r.schema, r.tbl);
             RAISE NOTICE '  done in %', clock_timestamp() - started;
         END LOOP;
     END \$\$;
