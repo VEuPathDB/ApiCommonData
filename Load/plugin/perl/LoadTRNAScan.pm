@@ -193,7 +193,7 @@ sub run {
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
 						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
 
-  my $rnaId = $self->fetchSequenceOntologyId("tRNA_encoding") || $self->error ("Can't retrieve so_id for tRNA_gene");
+  my $rnaId = $self->fetchSequenceOntologyId("tRNA_gene") || $self->error ("Can't retrieve so_id for tRNA_gene");
 
   my $primTransc = $self->fetchSequenceOntologyId("transcript") || $self->error ("Can't retrieve so_id for transcript");
 
@@ -346,7 +346,7 @@ sub getGeneFeat {
 
   $sourceId =~ s/\s//g;
 
-  my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'name' => "tRNA_encoding",
+  my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'name' => "tRNA_gene",
 						     'sequence_ontology_id' => $soIds->{'geneFeat'},
 						     'external_database_release_id' => $scanReleaseId,
 						     'source_id' => $sourceId,
