@@ -1383,20 +1383,24 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
 
+  <feature name="lincRNA" so="lincRNA">
+    <qualifier name="ID"             column="source_id"/>
+  </feature>
+
   <feature name="piRNA" so="piRNA">
-    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="ID"             column="source_id"/>
   </feature>
 
   <feature name="circular_ncRNA" so="circular_ncRNA">
-    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="ID"             column="source_id"/>
   </feature>
 
   <feature name="miRNA_primary_transcript" so="circular_ncRNA">
-    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="ID"             column="source_id"/>
   </feature>
 
   <feature name="nc_primary_transcript" so="circular_ncRNA">
-    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="ID"             column="source_id"/>
   </feature>
 
   <feature name="piRNA_gene" so="piRNA_gene_encoding">
@@ -2336,6 +2340,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gap_type"              ignore="true"/>
   </feature> 
 
+  <feature name="transposable_element" table="DoTS::TransposableElement" so="transposable_element">
+    <qualifier name="ID"                column="source_id"/>
+    <qualifier name="Alias"             ignore="true"/>
+    <qualifier name="Name"              ignore="true"/>
+    <qualifier name="GO"                ignore="true"/>
+    <qualifier name="isPseudo"          ignore="true"/>
+    <qualifier name="isPartial"         ignore="true"/>
+  </feature>
 
   <feature name="mobile_element" ignore="true"/>
 <!--
