@@ -202,6 +202,7 @@ sub preprocess {
 
 	    }else{
 		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_utr'
+		   || $type eq 'transposable_element'
 		   || $type eq 'five_prime_utr' || $type eq 'splice_acceptor_site'){
 		    push @processedFeatures, $bioperlFeatureTree;  ## gap/repeat/UTR/splice
 		}
@@ -242,6 +243,7 @@ sub traverseSeqFeatures {
             ncrna
             ncRNA
             lncRNA
+            lincRNA
             lnc_RNA
             miRNA
             pseudogenic_transcript
