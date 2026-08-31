@@ -128,9 +128,9 @@ sub preprocess {
 			if ($geneFeature->get_SeqFeatures){
 			    next;
 			}else{
-			    $geneFeature->primary_tag("coding_gene");
+			    $geneFeature->primary_tag("pseudogene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("pseudogenic_transcript", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("ID", $gID.".mRNA");
 			    $transcript->add_tag_value("pseudo","");
 
@@ -138,14 +138,9 @@ sub preprocess {
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
                                 ## No need to assign CodingStart and CodingEnd for pseudogenes
-                                ## since pseudogenes do not load CDS and these fields will be reset to NULL later
-                                #if ($exonLoc->strand == -1){
-				#  $exon->add_tag_value('CodingStart', $exonLoc->end());
-				#  $exon->add_tag_value('CodingEnd', $exonLoc->start());
-				#} else {
-				#  $exon->add_tag_value('CodingStart', $exonLoc->start());
-				#  $exon->add_tag_value('CodingEnd', $exonLoc->end());
-				#}
+                                ## since pseudogenes are no longer loaded as coding_gene and don’t have CDS features anymore
+				$exon->add_tag_value('CodingStart', '');
+				$exon->add_tag_value('CodingEnd', '');
 
 				$transcript->add_SeqFeature($exon);
 			    }
