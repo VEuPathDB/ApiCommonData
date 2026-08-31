@@ -306,6 +306,14 @@ sub traverseSeqFeatures {
 	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
 	  $gene->add_tag_value("ID",$geneID);
 	  $gene = &copyQualifiers($geneFeature, $gene);
+	} elsif ($type eq 'coding' && $gene->primary_tag() ne 'coding_gene') {
+	  ## The gene's type was set from whichever transcript happened to be
+	  ## processed first (transcripts are visited in genomic-position order,
+	  ## not by type). If a gene has multiple transcripts of mixed type
+	  ## (e.g. one mRNA and one nc_primary_transcript), the presence of an
+	  ## mRNA transcript -- anywhere among them -- makes this a coding_gene,
+	  ## regardless of which transcript type was seen first.
+	  $gene->primary_tag('coding_gene');
 	}
 
 #	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
