@@ -256,6 +256,7 @@ sub traverseSeqFeatures {
             circular_ncRNA
             miRNA_primary_transcript
             nc_primary_transcript
+            precursor_RNA
         );
 
       if ($RNA_TYPES{$type}) {
