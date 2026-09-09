@@ -165,6 +165,16 @@ foreach my $geneSourceId (sort @{$geneModelLocations->getAllGeneIds()}) {
         $feature->add_tag_value("gene_id", $geneSourceId);
     }
 
+    if ($feature->has_tag('ID') && $feature->has_tag('Parent')) {
+      foreach my $id ($feature->get_tag_values("ID")) {
+        foreach my $parent ($feature->get_tag_values("Parent")) {
+          die "Invalid feature: ID=$id equals Parent=$parent "
+            . "type=" . $feature->primary_tag
+            . " gene=$geneSourceId\n"
+            if $id eq $parent;
+        }
+      }
+    }
 
   $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
   print GFF $feature->gff_string . "\n";
