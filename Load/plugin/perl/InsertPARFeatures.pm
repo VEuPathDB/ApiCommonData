@@ -158,6 +158,11 @@ SQL
 	     -strand => $isReversed ? "-1" : "+1" );
       my $mappedFeature = $agp->map($unmappedFeature);
 
+     die "Invalid FeatureLocation: feature_source_id=$featureSourceId " .
+         "na_feature_id=$naFeatureId has is_top_level=$isTopLevel; " .
+         "expected 1\n"
+         unless defined($isTopLevel) && $isTopLevel == 1;
+
       my $featureLocation
 	= GUS::Model::ApiDB::FeatureLocation->new({
 						   feature_type => $featureType,
@@ -170,7 +175,7 @@ SQL
 						   is_reversed => $isReversed,
 						   parent_id => $parentId,
 						   sequence_ontology_id => $sequenceOntologyId,
-						   is_top_level => 0,
+						   is_top_level => $isTopLevel,
 						   external_database_release_id => $externalDatabaseReleaseId
 						  });
 
