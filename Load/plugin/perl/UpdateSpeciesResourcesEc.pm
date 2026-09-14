@@ -175,6 +175,7 @@ sub getVeupathUrl {
 	tritrypdb => "tritrypdb.org/tritrypdb",
 	hostdb => "hostdb.org/hostdb",
 	schistodb => "schistodb.net/schisto",
+	helminthdb => "helminthdb.org/helminthdb",
 	vectorbase => "vectorbase.org/vectorbase"
      );
     
