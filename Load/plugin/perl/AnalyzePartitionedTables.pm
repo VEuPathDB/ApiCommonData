@@ -44,7 +44,7 @@ my $SCHEMA_ARG = 'schema';
 my $argsDeclaration =
   [
     stringArg({name => $SCHEMA_ARG,
-	      descr => 'schema to hold MY_DENOM_TABLE and temp tables',
+	      descr => 'schema containing the partitioned tables to analyze',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0
@@ -79,7 +79,7 @@ sub run {
 
   $dbh->do("set role gus_w");
 
-  $sql = <<SQL;
+  my $sql = <<SQL;
     DO \$\$
     DECLARE
         r        record;
