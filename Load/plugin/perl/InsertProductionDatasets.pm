@@ -65,8 +65,34 @@ sub run {
  
     my $projectName = $self->getArg('projectName');
     my $ua = LWP::UserAgent->new;
-    my $request = $ua->get("https://$projectName.org/a/service/record-types/dataset/searches/SitemapDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22", Accept => "application/json" );
-    my $data = decode_json($request->content);
+#   my $request = $ua->get("https://$projectName.org/a/service/record-types/dataset/searches/SitemapDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22", Accept => "application/json" );
+#   my $data = decode_json($request->content);
+
+    my $url = "https://$projectName.org/a/service/record-types/dataset/searches/SitemapDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22";
+
+    my $request = $ua->get(
+       $url,
+       Accept => 'application/json'
+    );
+
+    unless ($request->is_success) {
+        die "Failed to retrieve datasets from $url\n"
+            . "HTTP status: " . $request->status_line . "\n"
+            . "Response: " . $request->decoded_content . "\n";
+    }
+
+    my $data;
+
+    eval {
+        $data = decode_json($request->decoded_content);
+    };
+
+    if ($@) {
+        die "Server returned invalid JSON from $url\n"
+            . "Response: " . $request->decoded_content . "\n"
+            . "JSON error: $@\n";
+    } 
+
     my $rowCount = 0;
     foreach my $record (@{ $data->{records}}){
 	my @references = (@{ $record->{tables}->{Version}});
