@@ -161,9 +161,9 @@ sub preprocess {
 			    ## Detach all current children the bare exons for option b
 			    $geneFeature->remove_SeqFeatures();
 
-			    $geneFeature->primary_tag("coding_gene");
+			    $geneFeature->primary_tag("pseudogene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("pseudogenic_transcript", $geneLoc, $bioperlSeq);
 			    ($gID) = $geneFeature->get_tag_values("ID") if ($geneFeature->has_tag("ID"));
 			    if ($geneFeature->has_tag("ID")) {
 			      ($gID) = $geneFeature->get_tag_values("ID");
@@ -172,21 +172,25 @@ sub preprocess {
 			    } else {
 			      die ("pseudogene missing ID at $geneLoc->start() ... $geneLoc->end()......\n");
 			    }
-			    $transcript->add_tag_value("ID", $gID.".mRNA");
+			    $transcript->add_tag_value("ID", $gID.".T");
 			    $transcript->add_tag_value("pseudo","");
 
 
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
-                                if ($exonLoc->strand == -1){
+                                #if ($exonLoc->strand == -1){
+                                ### No need to assign CodingStart and CodingEnd for pseudogenes
+                                ### since pseudogenes do not load CDS and these fields will be reset to NULL later
+				#  $exon->add_tag_value('CodingStart', $exonLoc->end());
+				#  $exon->add_tag_value('CodingEnd', $exonLoc->start());
+				#} else {
+				#  $exon->add_tag_value('CodingStart', $exonLoc->start());
+				#  $exon->add_tag_value('CodingEnd', $exonLoc->end());
+				#}
                                 ## No need to assign CodingStart and CodingEnd for pseudogenes
-                                ## since pseudogenes do not load CDS and these fields will be reset to NULL later
-				  $exon->add_tag_value('CodingStart', $exonLoc->end());
-				  $exon->add_tag_value('CodingEnd', $exonLoc->start());
-				} else {
-				  $exon->add_tag_value('CodingStart', $exonLoc->start());
-				  $exon->add_tag_value('CodingEnd', $exonLoc->end());
-				}
+                                ## since pseudogenes are no longer loaded as coding_gene and don’t have CDS features anymore
+                                $exon->add_tag_value('CodingStart', '');
+                                $exon->add_tag_value('CodingEnd', '');
 				$transcript->add_SeqFeature($exon);
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
@@ -207,25 +211,35 @@ sub preprocess {
 		  $gene->remove_tag('ID');
 		  $gene->add_tag_value("ID",$geneID);
 
-                  ## update all pseudogene not loading CDS
-                  foreach my $RNA ($gene->get_SeqFeatures) {
-		    my($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing transcript ID for case 2\n";
-		    $tID =~ s/\:pseudogenic_transcript/\:mRNA/;
-		    $RNA->remove_tag('ID');
-		    $RNA->add_tag_value("ID",$tID);
+		  if ($gene->primary_tag() eq 'coding_gene') {
+                    my $hasCoding = 0;
+                    my $hasPseudo = 0;
 
-                    my $tType = $RNA->primary_tag();
-                    if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
-                      my ($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values("ID") : die "ERROR: missing transcript ID for case 3\n";
-                      #print STDERR "found pseudo: $tID\n";
-                      foreach my $exon ($RNA->get_SeqFeatures) {
-                        $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
-                        $exon->add_tag_value('CodingStart', '');
-                        $exon->remove_tag('CodingEnd') if ($exon->has_tag('CodingEnd'));
-                        $exon->add_tag_value('CodingEnd', '');
-                      }
-                    }
-                  }
+		    ## update all pseudogene not loading CDS
+		    foreach my $RNA ($gene->get_SeqFeatures) {
+		      my($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing transcript ID for case 2\n";
+		      $tID =~ s/\:pseudogenic_transcript/\.T/;
+		      $RNA->remove_tag('ID');
+		      $RNA->add_tag_value("ID",$tID);
+
+		      my $isPseudo = ($RNA->has_tag('pseudo') || $RNA->primary_tag() eq 'pseudogenic_transcript');
+
+		      if ($isPseudo) {
+			my ($tID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values("ID") : die "ERROR: missing transcript ID for case 3\n";
+			$hasPseudo = 1;
+			$RNA->primary_tag('pseudogenic_transcript');
+			foreach my $exon ($RNA->get_SeqFeatures) {
+			  $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
+			  $exon->add_tag_value('CodingStart', '');
+			  $exon->remove_tag('CodingEnd') if ($exon->has_tag('CodingEnd'));
+			  $exon->add_tag_value('CodingEnd', '');
+			}
+		      } else {
+			 $hasCoding = 1;
+		      }
+		    }
+		    $gene->primary_tag('pseudogene') if ($hasPseudo && !$hasCoding);
+		  }
 		  push @processedFeatures, $gene;  ## normal gene
 		}
 

@@ -2,7 +2,7 @@
 
 use strict;
 use Getopt::Long;
-use GUS::Supported::GusConfig;
+#use GUS::Supported::GusConfig;
 use Data::Dumper;
 
 
@@ -29,6 +29,7 @@ my %xmlFiles = (
 		       ToxoDB => 'ToxoDB.xml',
 		       TrichDB => 'TrichDB.xml',
 		       TriTrypDB => 'TriTrypDB.xml',
+		       HelminthDB => 'HelminthDB.xml',
 		       VectorBase => 'VectorBase.xml'
 );
 

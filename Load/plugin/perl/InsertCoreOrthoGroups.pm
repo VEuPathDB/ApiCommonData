@@ -150,7 +150,9 @@ sub _parseGroup {
     my @proteins = split(/\s+/, (split(/:\s/, $line))[1] // '');
 
     my $groupId;
-    if ($line = /^(OG\d+_\d+):\s.*/) {
+    # r(subVersion) is optional: OG<buildVersion>r<subVersion>_<N> (current) or
+    # bare OG<buildVersion>_<N> (predates the subVersion scheme).
+    if ($line =~ /^(OG\d+(?:r\d+)?_\d+):\s.*/) {
         $groupId = $1;
     }
     else {

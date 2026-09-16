@@ -128,9 +128,9 @@ sub preprocess {
 			if ($geneFeature->get_SeqFeatures){
 			    next;
 			}else{
-			    $geneFeature->primary_tag("coding_gene");
+			    $geneFeature->primary_tag("pseudogene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("pseudogenic_transcript", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("ID", $gID.".mRNA");
 			    $transcript->add_tag_value("pseudo","");
 
@@ -138,14 +138,9 @@ sub preprocess {
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
                                 ## No need to assign CodingStart and CodingEnd for pseudogenes
-                                ## since pseudogenes do not load CDS and these fields will be reset to NULL later
-                                #if ($exonLoc->strand == -1){
-				#  $exon->add_tag_value('CodingStart', $exonLoc->end());
-				#  $exon->add_tag_value('CodingEnd', $exonLoc->start());
-				#} else {
-				#  $exon->add_tag_value('CodingStart', $exonLoc->start());
-				#  $exon->add_tag_value('CodingEnd', $exonLoc->end());
-				#}
+                                ## since pseudogenes are no longer loaded as coding_gene and don’t have CDS features anymore
+				$exon->add_tag_value('CodingStart', '');
+				$exon->add_tag_value('CodingEnd', '');
 
 				$transcript->add_SeqFeature($exon);
 			    }
@@ -202,6 +197,7 @@ sub preprocess {
 
 	    }else{
 		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_utr'
+		   || $type eq 'transposable_element'
 		   || $type eq 'five_prime_utr' || $type eq 'splice_acceptor_site'){
 		    push @processedFeatures, $bioperlFeatureTree;  ## gap/repeat/UTR/splice
 		}
@@ -242,6 +238,7 @@ sub traverseSeqFeatures {
             ncrna
             ncRNA
             lncRNA
+            lincRNA
             lnc_RNA
             miRNA
             pseudogenic_transcript
@@ -255,6 +252,11 @@ sub traverseSeqFeatures {
             V_gene_segment
             C_gene_segment
             primary_transcript
+            piRNA
+            circular_ncRNA
+            miRNA_primary_transcript
+            nc_primary_transcript
+            precursor_RNA
         );
 
       if ($RNA_TYPES{$type}) {
@@ -300,6 +302,14 @@ sub traverseSeqFeatures {
 	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
 	  $gene->add_tag_value("ID",$geneID);
 	  $gene = &copyQualifiers($geneFeature, $gene);
+	} elsif ($type eq 'coding' && $gene->primary_tag() ne 'coding_gene') {
+	  ## The gene's type was set from whichever transcript happened to be
+	  ## processed first (transcripts are visited in genomic-position order,
+	  ## not by type). If a gene has multiple transcripts of mixed type
+	  ## (e.g. one mRNA and one nc_primary_transcript), the presence of an
+	  ## mRNA transcript -- anywhere among them -- makes this a coding_gene,
+	  ## regardless of which transcript type was seen first.
+	  $gene->primary_tag('coding_gene');
 	}
 
 #	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
