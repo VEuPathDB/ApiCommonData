@@ -464,12 +464,12 @@ sub traverseSeqFeatures {
 	    }
 
 	    if($gene->location->start > $transcript->location->start){
-		$plugin->log("The transcript for gene $geneID is not within parent boundaries.\n");
+		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
 		$gene->location->start($transcript->location->start);
 	    }
 
 	    if($gene->location->end < $transcript->location->end){
-		$plugin->log("The transcript for gene $geneID is not within parent boundaries.\n");
+		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
 		$gene->location->end($transcript->location->end);
 	    }
 
