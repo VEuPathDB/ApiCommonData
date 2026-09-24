@@ -64,6 +64,8 @@ my $soTerms = { #'coding_gene'=>'protein_coding',
 		'precursor_RNA_gene'=> 'ncRNA_gene',
 		'piRNA'=> 'piRNA',
 		'circular_ncRNA'=> 'circular_ncRNA',
+		'scaRNA'=> 'scaRNA',
+		'scaRNA_gene'=> 'scaRNA_gene',
 		'miRNA_primary_transcript'=> 'miRNA_primary_transcript',
 		'nc_primary_transcript'=> 'nc_primary_transcript',
 		'transcript' => 'transcript',
@@ -272,7 +274,7 @@ sub makeGusGene {
   my $type = $bioperlGene->primary_tag();
 
   $plugin->error("Trying to make gus skeleton from a tree rooted with an unexpected type: '$type'") 
-     unless (grep {$type eq $_} ("haplotype_block","coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene", "misc_feature_gene", "repeated_gene","pseudo_gene","SRP_RNA_gene","RNase_MRP_RNA_gene","RNase_P_gene","RNase_MRP_gene","RNase_P_RNA_gene","ncRNA_gene", "tmRNA_gene", "scRNA_gene", "miRNA_gene", "transposable_element_gene","telomerase_RNA_gene", "antisense_RNA_gene", "lncRNA_gene", "pre_miRNA_gene", "siRNA_gene", "guide_RNA_gene", "pseudogene", "piRNA_gene", "circular_ncRNA_gene", "nc_primary_transcript_gene", "miRNA_primary_transcript_gene", "lincRNA_gene", "precursor_RNA_gene"));
+     unless (grep {$type eq $_} ("haplotype_block","coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene", "misc_feature_gene", "repeated_gene","pseudo_gene","SRP_RNA_gene","RNase_MRP_RNA_gene","RNase_P_gene","RNase_MRP_gene","RNase_P_RNA_gene","ncRNA_gene", "tmRNA_gene", "scRNA_gene", "miRNA_gene", "transposable_element_gene","telomerase_RNA_gene", "antisense_RNA_gene", "lncRNA_gene", "pre_miRNA_gene", "siRNA_gene", "guide_RNA_gene", "pseudogene", "piRNA_gene", "circular_ncRNA_gene", "nc_primary_transcript_gene", "miRNA_primary_transcript_gene", "lincRNA_gene", "precursor_RNA_gene", "scaRNA_gene"));
 
   my $gusGene = $plugin->makeSkeletalGusFeature($bioperlGene, $genomicSeqId,
 						$dbRlsId, 

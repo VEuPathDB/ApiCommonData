@@ -241,6 +241,7 @@ sub traverseSeqFeatures {
             lincRNA
             lnc_RNA
             miRNA
+            scaRNA
             pseudogenic_transcript
             scRNA
             srpRNA

@@ -1437,6 +1437,32 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"        ignore="true"/>
   </feature>
 
+  <feature name="scaRNA" so="scaRNA">
+    <qualifier name="ID"             column="source_id"/>
+    <qualifier name="Dbxref"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
+    <qualifier name="inference"         ignore="true"/>
+    <qualifier name="locus_biotype"  ignore="true"/>
+    <qualifier name="Name"           ignore="true"/>
+    <qualifier name="Note"           ignore="true"/>
+    <qualifier name="product"        ignore="true"/>
+    <qualifier name="transcript_id"        ignore="true"/>
+  </feature>
+
+  <feature name="scaRNA_gene" so="scaRNA_gene_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Dbxref"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
+    <qualifier name="inference"         ignore="true"/>
+    <qualifier name="locus_biotype"  ignore="true"/>
+    <qualifier name="Name"           ignore="true"/>
+    <qualifier name="Note"           ignore="true"/>
+    <qualifier name="product"        ignore="true"/>
+    <qualifier name="transcript_id"        ignore="true"/>
+  </feature>
+
   <feature name="precursor_RNA_gene" so="ncRNA_gene_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Dbxref"         ignore="true"/>
