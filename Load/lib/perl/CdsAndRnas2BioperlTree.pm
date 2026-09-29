@@ -17,7 +17,15 @@ use Data::Dumper;
 # (5) add to gene
 # (6) create exons from gene location
 # (7) add to transcript
+#
+# Pseudogenes: a CDS carrying a pseudo (or pseudogene) qualifier is loaded as
+#   pseudo_gene -> pseudogenic_transcript -> exons
 
+my $PSEUDO_GENE_TYPE       = "pseudogene";
+my $PSEUDO_TRANSCRIPT_TYPE = "pseudogenic_transcript";
+
+my @TRANSLATION_QUALIFIERS = ("translation", "protein_id", "codon_start",
+                              "transl_table", "transl_except");
 
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
@@ -36,6 +44,13 @@ sub preprocess {
 	  }
       }
 
+      # is this CDS a pseudogene?
+      my $isPseudo = 0;
+      if ($type eq 'coding' &&
+          ($bioperlFeatureTree->has_tag('pseudo') || $bioperlFeatureTree->has_tag('pseudogene'))) {
+        $isPseudo = 1;
+      }
+
       my ($geneID) = $bioperlFeatureTree->get_tag_values('ID') if ($bioperlFeatureTree->has_tag('ID'));
 
       if($bioperlFeatureTree->has_tag('systematic_id')){
@@ -47,15 +62,23 @@ sub preprocess {
       }
       print "processing gene $geneID ...\n";
 
-      $bioperlFeatureTree->primary_tag("${type}_gene");
+      if ($isPseudo) {
+        print "  $geneID is a pseudogene; loading as $PSEUDO_GENE_TYPE / $PSEUDO_TRANSCRIPT_TYPE\n";
+        foreach my $q (@TRANSLATION_QUALIFIERS) {
+          $bioperlFeatureTree->remove_tag($q) if $bioperlFeatureTree->has_tag($q);
+        }
+        $bioperlFeatureTree->primary_tag($PSEUDO_GENE_TYPE);
+      } else {
+        $bioperlFeatureTree->primary_tag("${type}_gene");
+      }
 
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
       $gene->add_tag_value("ID",$geneID) if (!$bioperlFeatureTree->has_tag('ID'));
 
-#      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
       my $transType = $type;
       $transType = "mRNA" if ($transType eq "coding");
+      $transType = $PSEUDO_TRANSCRIPT_TYPE if ($isPseudo);
       my $transcript = &makeBioperlFeature("$transType", $geneLoc, $bioperlSeq);
 
       $transcript = &copyQualifiers($bioperlFeatureTree, $transcript);
@@ -74,7 +97,7 @@ sub preprocess {
 	my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
 
 	my($codingStart,$codingEnd);
-	if($type eq 'coding'){
+	if($type eq 'coding' && !$isPseudo){
 	  if($exon->location->strand == -1){
 
 	    $codingStart = $exon->location->end;
@@ -98,17 +121,20 @@ sub preprocess {
 	    $exon->add_tag_value('CodingEnd',$codingEnd);
 	  }
 	  $exon->add_tag_value('type','coding');
+	  $CDSLength += (abs($codingStart - $codingEnd) + 1);
 	}else{
+	  # RNA genes and pseudogenes: no coding coordinates (loaded as null)
 	  $exon->add_tag_value('CodingStart','');
-	  $exon->add_tag_value('CodingEnd',''); 
+	  $exon->add_tag_value('CodingEnd','');
+	  $CDSLength += (abs($codingStart - $codingEnd) + 1) unless $isPseudo;
 	}
-	$CDSLength += (abs($codingStart - $codingEnd) + 1);
 	push(@exons,$exon);
       }
 
-      $transcript->add_tag_value('CDSLength',$CDSLength);
+      # no CDS for a pseudogene, so no CDSLength (and no trailing-NA adjustment)
+      $transcript->add_tag_value('CDSLength',$CDSLength) unless $isPseudo;
 
-      my $trailingNAs = $CDSLength%3;
+      my $trailingNAs = $isPseudo ? 0 : $CDSLength%3;
       my $exonCtr = 0;
 
       foreach my $exon (sort {$a->location->start() <=> $b->location->start()} @exons){
