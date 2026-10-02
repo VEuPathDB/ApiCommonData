@@ -35,11 +35,11 @@ sub preprocess {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
 
-	    if($type eq 'pseudogene'){
-		$bioperlFeatureTree->primary_tag('gene');
-		$bioperlFeatureTree->add_tag_value("pseudo","");
-		$type = "gene";
-	    }
+#	    if($type eq 'pseudogene'){
+#		$bioperlFeatureTree->primary_tag('gene');
+#		$bioperlFeatureTree->add_tag_value("pseudo","");
+#		$type = "gene";
+#	    }
 
 	    if($type eq 'repeat_region'){
 		if($bioperlFeatureTree->has_tag("satellite")){
