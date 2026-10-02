@@ -68,6 +68,34 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isPseudo"     handler="api"    method="setPseudo"/>
   </feature>
 
+  <feature name="pseudogene" so="pseudogene">
+    <validator name="validateGene"                     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
+    <qualifier name="ID"                               handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="gene_id"                          ignore="true"/>
+    <qualifier name="score"                            ignore="true"/>
+    <qualifier name="transcript_id"                    ignore="true"/>
+    <qualifier name="Partial"                          handler="api"    method="setPartial"/>
+    <qualifier name="partial"                          handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"                           handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"                         handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="pseudogenic_transcript" so="pseudogenic_transcript">
+    <qualifier name="ID"                               column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="gene_id"                          ignore="true"/>
+    <qualifier name="score"                            ignore="true"/>
+    <qualifier name="transcript_id"                    ignore="true"/>
+    <qualifier name="transl_table"                     ignore="true"/>
+	<qualifier name="transl_except"                    ignore="true"/>
+    <qualifier name="translation"                      ignore="true"/>
+    <qualifier name="partial"                          handler="api"    method="setPartial"/>
+    <qualifier name="Partial"                          handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"                           handler="api"    method="setPseudo"/>
+    <qualifier name="Pseudo"                           handler="api"    method="setPseudo"/>
+    <qualifier name="pseudogene"                       handler="api"    method="setPseudo"/>
+  </feature>
+
   <feature name="mRNA" so="mRNA">
     <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
     <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
