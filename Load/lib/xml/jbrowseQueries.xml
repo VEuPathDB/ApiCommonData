@@ -85,6 +85,8 @@ FROM webready.featurelocation_p fl, sres.OntologyTerm ot
 WHERE fl.org_abbrev = '$org_abbrev'
   AND ot.ontology_term_id = fl.sequence_ontology_id
   AND ot.name = 'centromere'
+  AND fl.start_min > 0
+  AND fl.end_max >= fl.start_min
       ]]>
     </sql>
   </track>
