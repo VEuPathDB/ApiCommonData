@@ -47,6 +47,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="exception" ignore="true"/>
+    <qualifier name="experiment" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="fiveEndPartial" ignore="true"/>
     <qualifier name="fmax_partial" ignore="true"/>
@@ -160,6 +161,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="end_range" ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="exception" ignore="true"/>
+    <qualifier name="experiment" ignore="true"/>
     <qualifier name="extra_copy_number" ignore="true"/>
     <qualifier name="fiveEndPartial" ignore="true"/>
     <qualifier name="fmax_partial" ignore="true"/>
@@ -466,6 +468,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="protein_id" ignore="true"/>
     <qualifier name="proteins_match_source" ignore="true"/>
+    <qualifier name="pseudogene" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="sequence_ID" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
@@ -2489,7 +2492,18 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isPartial"         ignore="true"/>
   </feature>
 
-  <feature name="mobile_element" ignore="true"/>
+  <feature name="mobile_genetic_element" table="DoTS::TransposableElement" so="transposable_element">
+    <qualifier name="ID"                column="source_id"/>
+    <qualifier name="Alias"             ignore="true"/>
+    <qualifier name="gbkey"             ignore="true"/>
+    <qualifier name="mobile_element_type"    ignore="true"/>
+    <qualifier name="Name"              ignore="true"/>
+    <qualifier name="GO"                ignore="true"/>
+    <qualifier name="pseudo"            ignore="true"/>
+    <qualifier name="isPseudo"          ignore="true"/>
+    <qualifier name="isPartial"         ignore="true"/>
+  </feature>
+
   <feature name="mobile_element" table="DoTS::TransposableElement" so="transposable_element">
     <qualifier name="ID"                column="source_id"/>
     <qualifier name="Alias"             ignore="true"/>
