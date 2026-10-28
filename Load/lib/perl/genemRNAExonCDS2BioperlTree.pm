@@ -205,7 +205,8 @@ sub preprocess {
 
 	}
     ## one bulk call here replaces the N individual calls
-    $bioperlSeq->add_SeqFeature(@processedFeatures) if @processedFeatures;
+    #$bioperlSeq->add_SeqFeature(@processedFeatures) if @processedFeatures;
+    $bioperlSeq->add_SeqFeature($_) for @processedFeatures;
 }
 
 sub traverseSeqFeatures {
