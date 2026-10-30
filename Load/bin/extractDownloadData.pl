@@ -57,6 +57,8 @@ getOrgNames();
 $downloadDir = "/var/www/Common/apiSiteFilesMirror/downloadSite/" if (!$downloadDir);
 
 my $projPath = $downloadDir . "UniDB/release-$build_number";
+# a missing release dir would otherwise give an empty output and exit 0
+die "Release directory not found: $projPath\n" unless (-d $projPath);
 # print STDERR "Project path!! $projPath \n";
 
 my %fileInfo;
@@ -254,5 +256,6 @@ sub usage {
     print STDERR "$m\n\n";
   }
   print STDERR "usage:\nperl extractDownloadData.pl --gusConfigFile <GUS_CONFIG> --build_number <BUILD> [--downloadDir <DIR>]\n";
-  exit;
+  # non-zero on an error so a workflow step sees the failure; --help is not one
+  exit($m ? 1 : 0);
 }
