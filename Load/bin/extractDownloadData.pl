@@ -254,5 +254,6 @@ sub usage {
     print STDERR "$m\n\n";
   }
   print STDERR "usage:\nperl extractDownloadData.pl --gusConfigFile <GUS_CONFIG> --build_number <BUILD> [--downloadDir <DIR>]\n";
-  exit;
+  # non-zero on an error so a workflow step sees the failure; --help is not one
+  exit($m ? 1 : 0);
 }

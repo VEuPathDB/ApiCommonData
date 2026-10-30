@@ -107,5 +107,6 @@ sub usage {
     print STDERR "$m\n\n";
   }
   print STDERR "usage:\nperl loadFileAttributes.pl --gusConfigFile <GUS_CONFIG> --input_file <TAB_FILE>\n";
-  exit;
+  # non-zero on an error so a workflow step sees the failure; --help is not one
+  exit($m ? 1 : 0);
 }
