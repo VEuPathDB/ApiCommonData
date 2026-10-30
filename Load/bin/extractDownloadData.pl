@@ -57,6 +57,8 @@ getOrgNames();
 $downloadDir = "/var/www/Common/apiSiteFilesMirror/downloadSite/" if (!$downloadDir);
 
 my $projPath = $downloadDir . "UniDB/release-$build_number";
+# a missing release dir would otherwise give an empty output and exit 0
+die "Release directory not found: $projPath\n" unless (-d $projPath);
 # print STDERR "Project path!! $projPath \n";
 
 my %fileInfo;
