@@ -218,9 +218,11 @@ sub getOrgNames{
   my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
 
   my $sql =
-  q{SELECT organism_name as organism,
-           name_for_filenames as fileAbbrev
-    FROM apidbtuning.organismAttributes
+  q{SELECT tn.name as organism,
+           o.name_for_filenames as fileAbbrev
+    FROM apidb.organism o
+      JOIN sres.taxonname tn ON tn.taxon_id = o.taxon_id
+                            AND tn.name_class = 'scientific name'
     UNION
     SELECT distinct  ea.organism,
            regexp_replace(ea.organism, '^(\S)\S+\s+(\S+).*$', '\1\2') as  fileAbbrev
