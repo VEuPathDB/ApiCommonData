@@ -217,16 +217,26 @@ my %fileInfo;
 sub getOrgNames{
   my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
 
+  # one name per abbrev: min() picks the plain species name over its
+  # subspecies/strains (Tbrucei -> 'Trypanosoma brucei'), the same every run
   my $sql =
-  q{SELECT tn.name as organism,
-           o.name_for_filenames as fileAbbrev
-    FROM apidb.organism o
-      JOIN sres.taxonname tn ON tn.taxon_id = o.taxon_id
-                            AND tn.name_class = 'scientific name'
-    UNION
-    SELECT distinct  ea.organism,
-           regexp_replace(ea.organism, '^(\S)\S+\s+(\S+).*$', '\1\2') as  fileAbbrev
-    FROM webready.estattributes_p ea};
+  q{SELECT min(organism) as organism, fileAbbrev
+    FROM (
+      SELECT tn.name as organism,
+             o.name_for_filenames as fileAbbrev
+      FROM apidb.organism o
+        JOIN sres.taxonname tn ON tn.taxon_id = o.taxon_id
+                              AND tn.name_class = 'scientific name'
+      UNION
+      -- species-level EST dirs are named name_for_filenames minus the strain,
+      -- e.g. PcotianaeINRA-310 -> Pcotianae
+      SELECT DISTINCT ea.organism,
+             left(o.name_for_filenames, length(o.name_for_filenames) - length(o.strain_abbrev)) as fileAbbrev
+      FROM (SELECT DISTINCT organism, org_abbrev FROM webready.estattributes_p) ea
+        JOIN apidb.organism o ON o.abbrev = ea.org_abbrev
+      WHERE right(o.name_for_filenames, length(o.strain_abbrev)) = o.strain_abbrev
+    ) names
+    GROUP BY fileAbbrev};
 
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
