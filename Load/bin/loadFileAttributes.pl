@@ -47,7 +47,9 @@ my $usr = $gusconfig->{props}->{databaseLogin};
 my $pwd = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 
-my $dbh = DBI->connect($dsn, $usr, $pwd) || die "Couldn't connect to database: " . DBI->errstr;
+# the whole file is one transaction: it commits only if every row went in
+my $dbh = DBI->connect($dsn, $usr, $pwd, {AutoCommit => 0, PrintError => 0, RaiseError => 0})
+  || die "Couldn't connect to database: " . DBI->errstr;
 
 my $sql = q{INSERT INTO apidb.fileattributes
               (file_id, filename, filepath, organism, build_num,
@@ -66,13 +68,17 @@ while (my $line = <$fh>) {
   my ($file_id, $filename, $filepath, $organism, $build_num,
       $category, $file_type, $file_format, $filesize, $checksum) = split(/\t/, $line);
 
-  # warn and carry on -- one rejected row must not cost us the rest of the file
+  # carry on past a rejected row so one run reports every bad row; the
+  # savepoint keeps the transaction usable after the failed insert
+  $dbh->do("SAVEPOINT row_insert") || die "Couldn't set savepoint: " . $dbh->errstr;
   unless ($sth->execute($file_id, $filename, $filepath, $organism, $build_num,
                         $category, $file_type, $file_format, $filesize, $checksum)) {
     print STDERR "SKIPPED $file_id (line $.): " . $sth->errstr . "\n";
+    $dbh->do("ROLLBACK TO SAVEPOINT row_insert") || die "Couldn't roll back to savepoint: " . $dbh->errstr;
     $skipped++;
     next;
   }
+  $dbh->do("RELEASE SAVEPOINT row_insert") || die "Couldn't release savepoint: " . $dbh->errstr;
 
   $count++;
   print STDERR "$count rows loaded\n" if ($count % 500 == 0);
@@ -80,11 +86,19 @@ while (my $line = <$fh>) {
 
 close($fh);
 $sth->finish;
+
+# all or nothing, so a failed load leaves no partial release behind
+if ($skipped) {
+  $dbh->rollback;
+  $dbh->disconnect;
+  print STDERR "FAILED. $skipped row(s) SKIPPED; rolled back, nothing loaded into apidb.fileattributes.\n";
+  exit 1;
+}
+
+$dbh->commit || die "Couldn't commit: " . $dbh->errstr;
 $dbh->disconnect;
 
-print STDERR "Done. $count rows inserted into apidb.fileattributes";
-print STDERR ", $skipped row(s) SKIPPED" if $skipped;
-print STDERR ".\n";
+print STDERR "Done. $count rows inserted into apidb.fileattributes.\n";
 
 
 sub usage {
