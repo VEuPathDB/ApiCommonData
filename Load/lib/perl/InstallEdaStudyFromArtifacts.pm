@@ -29,7 +29,7 @@ because the code here requires a user dataset ID, which internal datasets do not
 sub new {
     my ($class, $hash) = @_;
 
-    my @requiredVars = ('DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_PLATFORM', 'DB_USER', 'DB_PASS', 'DB_SCHEMA', 'DATA_FILES', 'INPUT_DIR');
+    my @requiredVars = ('DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASS', 'DB_SCHEMA', 'DATA_FILES', 'INPUT_DIR');
     foreach(@requiredVars) {
         unless($hash->{$_}) {
             die "Missing required value for:   $_"
@@ -38,8 +38,6 @@ sub new {
 
     my $self = bless $hash, $class;
 
-    my $dbPlatform = $self->getDbPlatform();
-    die "Invalid db platform '$dbPlatform'\n" unless $dbPlatform eq 'Oracle' or $dbPlatform eq 'Postgres';
     my $dbHost = $self->getDbHost();
     my $dbPort = $self->getDbPort();
     my $dbName = $self->getDbName();
@@ -49,9 +47,7 @@ sub new {
     my $dbh;
     unless ($self->isDryRun) {
 	
-        my $connectString = $dbPlatform eq 'Oracle'?
-	    "dbi:${dbPlatform}://${dbHost}:${dbPort}/${dbName}" :
-	    "DBI:Pg:dbname=$dbName;host=$dbHost;port=$dbPort";
+        my $connectString = "DBI:Pg:dbname=$dbName;host=$dbHost;port=$dbPort";
 	
         $dbh = DBI->connect($connectString, $dbUser, $dbPass)
             || die "Couldn't connect to database: " . DBI->errstr;
@@ -71,7 +67,7 @@ sub getUserDatasetId { $_[0]->{USER_DATASET_ID} }
 sub getDbHost { $_[0]->{DB_HOST} }
 sub getDbPort { $_[0]->{DB_PORT} }
 sub getDbName { $_[0]->{DB_NAME} }
-sub getDbPlatform { $_[0]->{DB_PLATFORM} }
+sub getDbPlatform { return 'Postgres' }
 sub getDbUser { $_[0]->{DB_USER} }
 sub getDbPass { $_[0]->{DB_PASS} }
 sub getDbSchema { $_[0]->{DB_SCHEMA} }
