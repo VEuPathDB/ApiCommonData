@@ -245,6 +245,8 @@ sub filterInputAndLoad {
             my $sourceId = $a[3];
             my $alphaFoldVersion = $a[4];
 
+            next unless $sourceId =~ /^AF-\Q$uniprot\E-F\d+$/;
+
             my $valuesHash = {alphafold_id => $primaryKeyValue,
                         uniprot_id => $uniprot,
                         first_residue_index => $firstResidueIndex,
