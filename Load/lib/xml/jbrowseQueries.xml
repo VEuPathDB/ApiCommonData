@@ -95,7 +95,12 @@ WHERE fl.org_abbrev = '$org_abbrev'
      <track name="spliceSites" type="genomic" fileSuffix="gff">
    <sql>
      <![CDATA[
- with singleDatasets as (
+ with transcripts as (
+ SELECT distinct na_sequence_id, type, strand, location, is_unique, gene_source_id, dist_to_cds
+ FROM webready.SpliceSiteTranscript_p
+ WHERE org_abbrev = '$org_abbrev'
+  ),
+ singleDatasets as (
  SELECT seq.source_id as sequence_source_id
        , ssf.segment_start
        , ssf.strand
@@ -117,21 +122,29 @@ WHERE fl.org_abbrev = '$org_abbrev'
           on sl.protocol_app_node_id = pan.protocol_app_node_id
         join apidb.spliceSiteFeature ssf
           on pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
-        join webready.SpliceSiteTranscript_p gtable
-          on (ssf.na_sequence_id = gtable.na_sequence_id AND ssf.type = gtable.type AND ssf.strand=gtable.strand and gtable.location=ssf.segment_start)
+        join transcripts gtable
+          on (ssf.na_sequence_id = gtable.na_sequence_id AND ssf.type = gtable.type AND ssf.strand=gtable.strand
+              and gtable.location=ssf.segment_start and gtable.is_unique = ssf.is_unique)
         join webready.genomicseqattributes_p seq
           on ssf.na_sequence_id = seq.na_sequence_id
  WHERE ssf.type in ('Poly A', 'Splice Site')
    and ed.name not like '%TSS_raw_data%' -- some fungidb data was loaded as tss (see track below)
    and s.node_type = 'feature_loc'
    and ssf.count_per_million > 0
-   and gtable.org_abbrev = '$org_abbrev'
    and seq.org_abbrev = '$org_abbrev'
+  ),
+ -- one row per site and sample: unique and non-unique reads summed
+ samples as (
+ SELECT sequence_source_id, segment_start, strand, gene_source_id, type, dist_to_cds, dataset, sample, protocol_app_node_id
+       , sum(count_per_million) as count_per_million
+       , concat_ws('_', sequence_source_id, segment_start, strand, replace(type, ' ', ''), gene_source_id) as site_id
+ FROM singleDatasets
+ GROUP BY sequence_source_id, segment_start, strand, gene_source_id, type, dist_to_cds, dataset, sample, protocol_app_node_id
   )
   select sequence_source_id
-       , concat(sequence_source_id, '_' , dataset, '_', protocol_app_node_id, '_', segment_start) as feature_id
+       , concat(site_id, '_', dataset, '_', protocol_app_node_id) as feature_id
        , 'ss_pa_subfeature' as feature
-       , concat(sequence_source_id , '_' , segment_start) as parent_id
+       , site_id as parent_id
        , 'VEuPathDB' as source
        , segment_start as startm
        , segment_start as end
@@ -143,10 +156,10 @@ WHERE fl.org_abbrev = '$org_abbrev'
              , '$dlm', 'ext_db_name=', dataset
              , '$dlm', 'sample=', sample
              ) as atts
-  from singledatasets
-  UNION
+  from samples
+  UNION ALL
     select sequence_source_id
-       , concat(sequence_source_id , '_' , segment_start) as feature_id
+       , site_id as feature_id
        , 'ss_pa' as feature
        , '' as parent_id
        , 'VEuPathDB' as source
@@ -158,8 +171,8 @@ WHERE fl.org_abbrev = '$org_abbrev'
              , '$dlm', 'feature_type=', type
              , '$dlm', 'utr_length=', dist_to_cds
              ) as atts
-  from singledatasets
-  GROUP BY sequence_source_id, segment_start, strand, gene_source_id, dist_to_cds, type
+  from samples
+  GROUP BY site_id, sequence_source_id, segment_start, strand, gene_source_id, dist_to_cds, type
       ]]>
     </sql>
   </track>
