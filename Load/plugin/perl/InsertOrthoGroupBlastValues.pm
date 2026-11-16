@@ -161,15 +161,35 @@ sub run {
 
   $primaryKeyInt = 0 unless defined $primaryKeyInt;
 
+  my %validGroupIds;
+  my $groupSql = "SELECT group_id FROM apidb.orthologgroup";
+  my $groupSh = $dbh->prepare($groupSql);
+  $groupSh->execute();
+  while (my ($groupId) = $groupSh->fetchrow_array()) {
+    $validGroupIds{$groupId} = 1;
+  }
+  $groupSh->finish();
+
+  my $skippedCount = 0;
+
   open(VAL, $groupBlastValuesFile) or die "Cannot open map file $groupBlastValuesFile for reading:$!";
   while(<VAL>) {
     chomp;
     my ($group_id,$qseq,$sseq,$evalue) = split(/\t/, $_);
+
+    unless ($validGroupIds{$group_id}) {
+      print STDERR "Skipping blast value row: group $group_id not present in apidb.orthologgroup (likely skipped during group insertion for lack of any valid member sequence)\n";
+      $skippedCount++;
+      next;
+    }
+
     $self->makeBlastValues($primaryKeyInt,$group_id,$qseq,$sseq,$evalue,$row_group_id,$row_user_id,$row_project_id,$row_alg_invocation_id,$user_read,$user_write,$group_read,$group_write,$other_read,$other_write,$modification_date);
-    $primaryKeyInt += 1;  
+    $primaryKeyInt += 1;
     $self->undefPointerCache();
   }
   close VAL;
+
+  print STDERR "Skipped $skippedCount blast value row(s) referencing a non-existent group\n" if $skippedCount;
 
   print "$primaryKeyInt\n";
 
