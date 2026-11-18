@@ -4,17 +4,18 @@ use warnings;
 
 use Data::Dumper;
 
-use File::Find::Rule;
+use File::Find;
 use Digest::MD5;
 use Getopt::Long;
 use DBI;
 use CBIL::Util::PropertySet;
 
-my ($help, $downloadDir, $gusConfigFile, $build_number);
+my ($help, $downloadDir, $stagingDir, $gusConfigFile, $build_number);
 my $projectName = 'UniDB';
 
 &GetOptions('help' => \$help,
             'downloadDir=s' => \$downloadDir,
+            'stagingDir=s' => \$stagingDir,
             'gusConfigFile=s' => \$gusConfigFile,
             'build_number=i' => \$build_number,
     );
@@ -56,21 +57,44 @@ getOrgNames();
 
 $downloadDir = "/var/www/Common/apiSiteFilesMirror/downloadSite/" if (!$downloadDir);
 
-my $projPath = $downloadDir . "UniDB/release-$build_number";
-# a missing release dir would otherwise give an empty output and exit 0
-die "Release directory not found: $projPath\n" unless (-d $projPath);
-# print STDERR "Project path!! $projPath \n";
+# each file as [file to read, path as published under $downloadDir]
+my @files;
+
+if ($stagingDir) {
+  # the workflow's staging copy, before it is published:
+  #   <stagingDir>/<Project>/release-CURRENT/<Org>/...
+  # publishing merges the projects into UniDB/release-<build>, renames
+  # CURRENT to the build number and drops empty files; do the same to the
+  # paths here.  OrthoMCL is published separately, not under UniDB.
+  # Publishing also prefixes <Org>/txt/gene_product_updates_b<N>.txt with
+  # <Project>-<build>_<Org>_; without it every org's copy has the same name,
+  # hence the same file_id.
+  die "Staging directory not found: $stagingDir\n" unless (-d $stagingDir);
+  foreach my $projDir (sort glob("$stagingDir/*")) {
+    next if $projDir =~ m{/OrthoMCL$};
+    (my $project = $projDir) =~ s{^.*/}{};
+    my $currentDir = "$projDir/release-CURRENT";
+    next unless (-d $currentDir);
+    foreach my $src (listFiles($currentDir)) {
+      next if (-z $src);
+      (my $rel = substr($src, length($currentDir) + 1)) =~ s/CURRENT/$build_number/g;
+      $rel =~ s{^([^/]+)/txt/(gene_product_updates_b\d+\.txt)$}{$1/txt/${project}-${build_number}_$1_$2};
+      push @files, [$src, $downloadDir . "UniDB/release-$build_number/$rel"];
+    }
+  }
+  die "No files found in $stagingDir/*/release-CURRENT\n" unless (@files);
+} else {
+  my $projPath = $downloadDir . "UniDB/release-$build_number";
+  # a missing release dir would otherwise give an empty output and exit 0
+  die "Release directory not found: $projPath\n" unless (-d $projPath);
+  @files = map { [$_, $_] } listFiles($projPath);
+}
 
 my %fileInfo;
 
-  ###   ONLY fasta and gff files, say
-  # my @files = File::Find::Rule->file()->name('*.fasta','*.gff')->in($path);
-
-  ### ALL FILES
-  my @files = File::Find::Rule->file()->name('*')->in($projPath);
-
   my $count = 1;
-  foreach my $f (sort @files){
+  foreach my $pair (sort { $a->[1] cmp $b->[1] } @files){
+    my ($src, $f) = @$pair;
     $count++ ; 
     print STDERR "$count FILE \n" if ($count % 100==0);
     ## Some of the exceptions!
@@ -147,11 +171,11 @@ my %fileInfo;
 
 
     # read in chunks -- genome fastas run to 3Gb, and slurping one costs that much RSS
-    open(my $md5fh, '<', $f) or die "Cannot open $f: $!";
+    open(my $md5fh, '<', $src) or die "Cannot open $src: $!";
     binmode $md5fh;
     $fileInfo{$key}->{checksum} = Digest::MD5->new->addfile($md5fh)->hexdigest;
     close($md5fh);
-    $fileInfo{$key}->{size} = -s $f;
+    $fileInfo{$key}->{size} = -s $src;
 
     my $path =$f;
     $path =~ s/$downloadDir$projectName/\/common\/downloads/;
@@ -216,6 +240,14 @@ my %fileInfo;
 
 
 
+# every plain file under $dir (core File::Find, so no CPAN module is needed on the workflow host)
+sub listFiles {
+  my ($dir) = @_;
+  my @found;
+  find({ wanted => sub { push @found, $File::Find::name if -f $_ }, no_chdir => 1 }, $dir);
+  return @found;
+}
+
 sub getOrgNames{
   my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
 
@@ -255,7 +287,10 @@ sub usage {
   if($m) {
     print STDERR "$m\n\n";
   }
-  print STDERR "usage:\nperl extractDownloadData.pl --gusConfigFile <GUS_CONFIG> --build_number <BUILD> [--downloadDir <DIR>]\n";
+  print STDERR "usage:\nperl extractDownloadData.pl --gusConfigFile <GUS_CONFIG> --build_number <BUILD> [--downloadDir <DIR>] [--stagingDir <DIR>]\n"
+    . "  --downloadDir  published download site root (with trailing /), read from <DIR>UniDB/release-<BUILD>\n"
+    . "  --stagingDir   read the workflow's staging copy instead, <DIR>/<Project>/release-CURRENT; paths are\n"
+    . "                 written as they will be published under --downloadDir\n";
   # non-zero on an error so a workflow step sees the failure; --help is not one
   exit($m ? 1 : 0);
 }
