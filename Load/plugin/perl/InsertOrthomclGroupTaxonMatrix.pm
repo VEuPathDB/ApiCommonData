@@ -8,6 +8,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::OrthologGroupTaxon;
+use GUS::Model::ApiDB::OrthologGroupTaxon_Table;
 use FileHandle;
 use File::Temp qw/ tempdir /;
 use POSIX qw/ strftime /;
